@@ -260,6 +260,8 @@
   table.gear td.unit{ font-weight: 600; white-space: nowrap; }
   table.gear td.type{ color: var(--trace); font-family: var(--font-mono); font-size: 0.82rem; white-space: nowrap; }
   table.gear td.note{ color: var(--ash); }
+  table.gear td.note a{ color: var(--paper); text-decoration: none; border-bottom: 1px solid var(--hairline-strong); }
+  table.gear td.note a:hover{ color: var(--trace); border-color: var(--trace); }
 
   /* ---------- SESSIONS ---------- */
   .sessions{ display: flex; flex-direction: column; }
@@ -479,6 +481,7 @@
             <tr><td class="unit">AKG mic + compressor</td><td class="type">Mic / Outboard</td><td class="note">AKG microphone run through outboard compression.</td></tr>
             <tr><td class="unit">Lenovo ThinkPad</td><td class="type">Production PC</td><td class="note">Runs every session, start to mixdown.</td></tr>
             <tr><td class="unit">FL Studio</td><td class="type">DAW</td><td class="note">Primary recording and production software.</td></tr>
+            <tr><td class="unit">Dirty Bass</td><td class="type">Plugin / in-house</td><td class="note">VST3 synth built here with JUCE, for gritty saturated bass — sawtooth and sub oscillator through a tanh waveshaper into a state-variable filter, eight voices. <a href="https://github.com/despite-the-finite/dirty-bass" target="_blank" rel="noopener">Source on GitHub</a>.</td></tr>
             <tr><td class="unit">Acoustic panels</td><td class="type">Treatment</td><td class="note">Broadband absorption across the front wall.</td></tr>
           </tbody>
         </table>
