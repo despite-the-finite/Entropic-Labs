@@ -211,6 +211,17 @@
     color: var(--ash);
     word-break: break-all;
   }
+  .play-note{
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    color: var(--ash);
+    border-left: 1px solid var(--hairline-strong);
+    padding-left: 1rem;
+  }
+  @media (max-width: 640px){
+    .play-note{ border-left: 0; padding-left: 0; }
+  }
   .game-body p{ color: #E4DFF2; margin: 0 0 1.1rem; }
   .game-body p:last-child{ margin-bottom: 0; }
   .game-body code{
@@ -259,7 +270,7 @@
     <span class="eyebrow">Side room · Game design</span>
     <h1>Games</h1>
     <p class="lede">Entropic Labs is a recording and production studio first. Game design is the side room — a minor function of the studio, run the same way a session is: start from noise, keep whatever holds together.</p>
-    <p class="note">Both projects below run in a browser and are kept in the open. Follow a link to go straight to its source on GitHub.</p>
+    <p class="note">Both projects below run in a browser and are kept in the open — play the one that's hosted, or go straight to either project's source on GitHub.</p>
     <a class="back-link" href="index.html">← Back to the studio</a>
   </div>
 </header>
@@ -278,7 +289,8 @@
           <h2>Donnell and McBurns: An EPC Epic</h2>
           <p class="game-meta">Browser RPG · Phaser 3 · No build step</p>
           <div class="game-cta">
-            <a class="btn btn-solid" href="https://github.com/despite-the-finite/Work-Video-Game-Meridian" target="_blank" rel="noopener">Click here to see video game</a>
+            <a class="btn btn-solid" href="play/meridian/" target="_blank" rel="noopener">Play it now</a>
+            <a class="btn btn-line" href="https://github.com/despite-the-finite/Work-Video-Game-Meridian" target="_blank" rel="noopener">Click here to see video game</a>
             <span class="game-repo">github.com/despite-the-finite/Work-Video-Game-Meridian</span>
           </div>
           <div class="game-body">
@@ -293,8 +305,9 @@
           <h2>Live Trivia</h2>
           <p class="game-meta">Browser trivia platform · Serverless API · Postgres</p>
           <div class="game-cta">
-            <a class="btn btn-solid" href="https://github.com/despite-the-finite/Trivia-Game" target="_blank" rel="noopener">Click here to see video game</a>
+            <a class="btn btn-line" href="https://github.com/despite-the-finite/Trivia-Game" target="_blank" rel="noopener">Click here to see video game</a>
             <span class="game-repo">github.com/despite-the-finite/Trivia-Game</span>
+            <span class="play-note">Playable once its server is live — this one runs on an API and database, not a static page</span>
           </div>
           <div class="game-body">
             <p>A trivia platform whose questions are built from the live internet rather than shipped inside the app. Questions on current events, science, and world geography are generated server-side from cited sources, validated, cached, and served through a serverless API, with scores, friends, leaderboards, and challenges all authoritative on the server. New trivia appears on its own schedule — nobody has to ship a new build for the game to have something new to ask.</p>

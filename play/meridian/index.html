@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>EPC QUEST</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: #14161c;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Courier New', monospace;
+  }
+  #game-container {
+    box-shadow: 0 0 0 4px #2a2d3a, 0 0 40px rgba(0,0,0,0.6);
+    cursor: none;
+  }
+  #boot-status {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #ffe9a8;
+    font-size: 16px;
+    text-align: center;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  #boot-status.error {
+    color: #ff8a8a;
+    font-size: 13px;
+    white-space: pre-wrap;
+    align-items: flex-start;
+    text-align: left;
+  }
+  #boot-bar-track {
+    margin-top: 14px;
+    width: 220px;
+    height: 10px;
+    border: 1px solid #4a4d5a;
+    background: #1c1e26;
+  }
+  #boot-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: #ffe9a8;
+    transition: width 0.15s ease-out;
+  }
+  #boot-status.error #boot-bar-track {
+    display: none;
+  }
+</style>
+</head>
+<body>
+<div id="game-container"></div>
+
+<!-- Plain HTML/CSS, no dependency on any script below — shows immediately,
+     and stays up (with the real error, if there was one) if anything below
+     fails to load or throws, instead of a silent blank page. main.js
+     removes this once the game actually starts. -->
+<div id="boot-status">
+  <div id="boot-status-text">Loading...</div>
+  <div id="boot-bar-track"><div id="boot-bar-fill"></div></div>
+</div>
+<script>
+  (function () {
+    var statusEl = document.getElementById("boot-status");
+    var textEl = document.getElementById("boot-status-text");
+    var fillEl = document.getElementById("boot-bar-fill");
+
+    window.addEventListener("error", function (e) {
+      if (!statusEl) return;
+      statusEl.className = "error";
+      statusEl.textContent =
+        "Failed to load: " + (e.message || "unknown error") +
+        (e.filename ? "\n" + e.filename + ":" + e.lineno : "");
+    });
+
+    // Every script the game needs, loaded one at a time (in this order —
+    // later files reference globals earlier ones define) via plain
+    // <script src>, same as before: this still works from a bare file://
+    // page with no server. The only addition is a byte-weighted progress
+    // bar — Phaser's vendored build alone is ~90% of everything on this
+    // list, so weighting by file count would leave the bar sitting near 0%
+    // for nearly the whole real load.
+    var SCRIPTS = [
+      ["src/vendor/phaser.min.js", 1181917], // Phaser 3, vendored locally — no CDN dependency
+      ["src/audio.js", 3622],
+      ["src/data/ranks.js", 1499],
+      ["src/data/bonus.js", 1236],
+      ["src/data/coworkers.js", 11330],
+      ["src/data/enemies.js", 4805],
+      ["src/data/bosses.js", 1002],
+      ["src/data/clients.js", 5324],
+      ["src/data/site_hazards.js", 3768],
+      ["src/data/floorplan.js", 12449],
+      ["src/data/sitevisits.js", 16893],
+      ["src/data/visitors.js", 6334],
+      ["src/scenes/TitleScene.js", 6000],
+      ["src/scenes/IntroScene.js", 2823],
+      ["src/scenes/BootScene.js", 17537],
+      ["src/scenes/OfficeScene.js", 24947],
+      ["src/scenes/TransitionScene.js", 1129],
+      ["src/scenes/PromotionScene.js", 2205],
+      ["src/scenes/SiteVisitScene.js", 11708],
+      ["src/scenes/VisitorScene.js", 9556],
+      ["src/scenes/BattleScene.js", 12863],
+      ["src/main.js", 2005], // entry point — builds PLAYER_STATE/config and starts the game
+    ];
+    var totalWeight = SCRIPTS.reduce(function (sum, s) { return sum + s[1]; }, 0);
+    var loadedWeight = 0;
+
+    function setProgress(pct) {
+      if (fillEl) fillEl.style.width = pct + "%";
+      if (textEl) textEl.textContent = "Loading... " + pct + "%";
+    }
+
+    function loadNext(i) {
+      if (i >= SCRIPTS.length) return;
+      var src = SCRIPTS[i][0];
+      var weight = SCRIPTS[i][1];
+      var script = document.createElement("script");
+      script.src = src;
+      script.onload = function () {
+        loadedWeight += weight;
+        setProgress(Math.round((loadedWeight / totalWeight) * 100));
+        loadNext(i + 1);
+      };
+      script.onerror = function () {
+        if (!statusEl) return;
+        statusEl.className = "error";
+        statusEl.textContent = "Failed to load script: " + src;
+      };
+      document.body.appendChild(script);
+    }
+
+    setProgress(0);
+    loadNext(0);
+  })();
+</script>
+</body>
+</html>
