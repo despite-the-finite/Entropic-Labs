@@ -1,0 +1,330 @@
+<title>Games — Entropic Labs</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Video game design at Entropic Labs — a minor function of the studio. Browser games by Despite the Finite, with source on GitHub.">
+<style>
+  :root{
+    --ink: #07050F;
+    --panel: #130E22;
+    --panel-raised: #1C1433;
+    --ash: #9C93B8;
+    --paper: #F1EEFB;
+    --signal: #FF3FA0;
+    --trace: #2FE0C7;
+    --violet: #7C4DFF;
+    --hairline: rgba(241,238,251,0.12);
+    --hairline-strong: rgba(241,238,251,0.22);
+
+    --font-display: "Arial Narrow", "Helvetica Neue Condensed", "Roboto Condensed", Arial, sans-serif;
+    --font-body: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    --font-mono: ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ background: var(--ink); }
+  body{
+    margin: 0;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection{ background: var(--signal); color: var(--ink); }
+
+  a{ color: inherit; }
+  a:focus-visible, button:focus-visible{
+    outline: 2px solid var(--trace);
+    outline-offset: 3px;
+  }
+
+  h1, h2, h3{
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    text-wrap: balance;
+    margin: 0;
+  }
+
+  .eyebrow{
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--trace);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+  }
+
+  .wrap{
+    max-width: 74rem;
+    margin: 0 auto;
+    padding: 0 clamp(1.25rem, 4vw, 3rem);
+  }
+
+  /* ---------- NAV ---------- */
+  .topnav{
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 50;
+    background: linear-gradient(var(--ink) 60%, rgba(7,5,15,0));
+    padding: 1.1rem 0 2rem;
+  }
+  .topnav .wrap{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .brand{
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 1.05rem;
+    letter-spacing: 0.03em;
+    text-decoration: none;
+  }
+  .brand span{ color: var(--signal); }
+  .navlinks{
+    display: flex;
+    gap: clamp(0.9rem, 2vw, 1.8rem);
+    list-style: none;
+    margin: 0; padding: 0;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .navlinks a{ text-decoration: none; color: var(--ash); transition: color .15s ease; }
+  .navlinks a:hover{ color: var(--paper); }
+  .navlinks a[aria-current="page"]{ color: var(--paper); }
+  @media (max-width: 640px){ .navlinks{ display: none; } }
+
+  /* ---------- PAGE HEAD ---------- */
+  .page-head{
+    padding-top: clamp(6.5rem, 13vw, 9.5rem);
+    padding-bottom: clamp(2.5rem, 6vw, 4rem);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .page-head h1{
+    font-size: clamp(2.4rem, 5vw + 1rem, 4.6rem);
+    margin: 1.1rem 0 0;
+  }
+  .page-head .lede{
+    max-width: 58ch;
+    color: #E4DFF2;
+    font-size: clamp(1.05rem, 1vw + 0.9rem, 1.25rem);
+    margin: 1.4rem 0 0;
+  }
+  .page-head .note{
+    max-width: 58ch;
+    color: var(--ash);
+    margin: 1rem 0 0;
+  }
+  .back-link{
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ash);
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 2rem;
+  }
+  .back-link:hover{ color: var(--trace); }
+
+  /* ---------- BUTTONS ---------- */
+  .btn{
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 0.95rem 1.5rem;
+    border-radius: 2px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6em;
+    transition: transform .15s ease, background .15s ease, border-color .15s ease;
+  }
+  .btn-solid{ background: var(--signal); color: var(--ink); }
+  .btn-solid:hover{ transform: translateY(-1px); background: #ff5fb3; }
+  .btn-line{ border: 1px solid var(--hairline-strong); color: var(--paper); }
+  .btn-line:hover{ border-color: var(--trace); color: var(--trace); }
+
+  /* ---------- SECTIONS ---------- */
+  section{ padding: clamp(3.5rem, 8vw, 6rem) 0; }
+  .section-head{
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: clamp(2rem, 5vw, 3.2rem);
+    border-bottom: 1px solid var(--hairline);
+    padding-bottom: 1.4rem;
+  }
+  .section-head h2{ font-size: clamp(1.7rem, 2.4vw + 1rem, 2.6rem); }
+  .section-index{ font-family: var(--font-mono); font-size: 0.75rem; color: var(--ash); white-space: nowrap; }
+
+  .reveal{ opacity: 0; transform: translateY(14px); transition: opacity .6s ease, transform .6s ease; }
+  .reveal.in{ opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce){ .reveal{ opacity: 1; transform: none; transition: none; } }
+
+  /* ---------- GAME ENTRIES ---------- */
+  .games{ display: flex; flex-direction: column; gap: clamp(2rem, 5vw, 3.5rem); }
+  .game{
+    background: var(--panel);
+    border: 1px solid var(--hairline);
+    border-left: 2px solid var(--signal);
+    padding: clamp(1.5rem, 4vw, 2.6rem);
+  }
+  .game-index{
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    color: var(--ash);
+    display: block;
+    margin-bottom: 0.7rem;
+  }
+  .game h2{ font-size: clamp(1.5rem, 2vw + 1rem, 2.3rem); }
+  .game-meta{
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    color: var(--trace);
+    margin: 0.7rem 0 0;
+  }
+  .game-cta{
+    display: flex;
+    align-items: center;
+    gap: 1rem 1.4rem;
+    flex-wrap: wrap;
+    margin: 1.6rem 0 1.8rem;
+    padding-bottom: 1.8rem;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .game-repo{
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--ash);
+    word-break: break-all;
+  }
+  .game-body p{ color: #E4DFF2; margin: 0 0 1.1rem; }
+  .game-body p:last-child{ margin-bottom: 0; }
+  .game-body code{
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    color: var(--trace);
+    background: rgba(241,238,251,0.06);
+    padding: 0.1em 0.35em;
+    border-radius: 2px;
+  }
+  @media (min-width: 900px){
+    .game-body{ max-width: 78ch; }
+  }
+
+  footer{
+    border-top: 1px solid var(--hairline);
+    padding: 2.2rem 0 3rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    color: var(--ash);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+  }
+</style>
+
+<nav class="topnav">
+  <div class="wrap">
+    <a class="brand" href="index.html">ENTROPIC<span>·</span>LABS</a>
+    <ul class="navlinks">
+      <li><a href="index.html#manifesto">Manifesto</a></li>
+      <li><a href="index.html#producer">Producer</a></li>
+      <li><a href="index.html#studio">Studio</a></li>
+      <li><a href="index.html#gear">Gear</a></li>
+      <li><a href="index.html#sessions">Projects</a></li>
+      <li><a href="games.html" aria-current="page">Games</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="page-head">
+  <div class="wrap">
+    <span class="eyebrow">Side room · Game design</span>
+    <h1>Games</h1>
+    <p class="lede">Entropic Labs is a recording and production studio first. Game design is the side room — a minor function of the studio, run the same way a session is: start from noise, keep whatever holds together.</p>
+    <p class="note">Both projects below run in a browser and are kept in the open. Follow a link to go straight to its source on GitHub.</p>
+    <a class="back-link" href="index.html">← Back to the studio</a>
+  </div>
+</header>
+
+<main>
+  <section id="catalog">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2>Game catalog</h2>
+        <span class="section-index">G / TWO PROJECTS</span>
+      </div>
+
+      <div class="games">
+        <article class="game reveal">
+          <span class="game-index">G.01</span>
+          <h2>Donnell and McBurns: An EPC Epic</h2>
+          <p class="game-meta">Browser RPG · Phaser 3 · No build step</p>
+          <div class="game-cta">
+            <a class="btn btn-solid" href="https://github.com/despite-the-finite/Work-Video-Game-Meridian" target="_blank" rel="noopener">Click here to see video game</a>
+            <span class="game-repo">github.com/despite-the-finite/Work-Video-Game-Meridian</span>
+          </div>
+          <div class="game-body">
+            <p>A browser RPG about climbing the corporate ladder at an EPC — engineering, procurement, construction — company, built with Phaser 3 and no build step at all. You play Karsh, freshly promoted to Engineering Manager and working toward Executive: walking the office, fighting in conference rooms and huddle spaces, running site visits across five industries, and negotiating change orders with clients. Opening <code>index.html</code> in a browser is the entire install.</p>
+            <p>The office runs three floors, each with its own palette — GFS for Engineering, CDB for Construction, and the executive floor, where nobody will speak to you until you've made Director and the fights are deliberately far tougher than anything below. Your cubicle is home base and the single hub for every mode: Office, Site Visit, Visitor Day, or PTO. Battles are turn-based and never random — every conference room and utility room holds one battle object you walk up to and engage, against corporate-satire enemies like Scope Creep, Reply-All Storm, and Deadline Wraith. Levelling advances your actual job title up the ladder from Engineering Manager to VP, while Executive has to be earned upstairs: a scripted Performance Review boss fight, then all four executive-floor bosses — the COO, the CFO, General Counsel, and the Board.</p>
+            <p>Progress deliberately takes both halves of the job. A Bonus Potential reputation score runs alongside XP, and neither a maxed bar nor an XP overflow actually applies until a change order is approved on a site visit — six sites, from a refinery turnaround to a bridge replacement and a water treatment upgrade, each with Safety, Schedule, and Quality checkpoints and a client negotiation at the end. Underneath, there are no image assets at all: every sprite and background is generated procedurally at boot through Phaser's Graphics API, and each character's skin tone, hair, and wardrobe are derived deterministically from a hash of its texture key, so the cast reads as individuals while the game still runs from a plain <code>file://</code> page. The rest is data-driven, which makes new coworkers, sites, and story beats drop-in additions.</p>
+          </div>
+        </article>
+
+        <article class="game reveal">
+          <span class="game-index">G.02</span>
+          <h2>Live Trivia</h2>
+          <p class="game-meta">Browser trivia platform · Serverless API · Postgres</p>
+          <div class="game-cta">
+            <a class="btn btn-solid" href="https://github.com/despite-the-finite/Trivia-Game" target="_blank" rel="noopener">Click here to see video game</a>
+            <span class="game-repo">github.com/despite-the-finite/Trivia-Game</span>
+          </div>
+          <div class="game-body">
+            <p>A trivia platform whose questions are built from the live internet rather than shipped inside the app. Questions on current events, science, and world geography are generated server-side from cited sources, validated, cached, and served through a serverless API, with scores, friends, leaderboards, and challenges all authoritative on the server. New trivia appears on its own schedule — nobody has to ship a new build for the game to have something new to ask.</p>
+            <p>Gathering facts and writing questions are kept as separate jobs. Providers fetch real source material — wire services and public broadcasters for news, research-institution feeds for science, REST Countries and Wikidata for geography — and store the title, URL, publisher, and publication date before any of it reaches a model, which is then asked to write questions from that material and nothing else; it is never asked what is true. Geography doesn't trust a model at all: both answers and distractors come out of structured datasets through deterministic templates. Candidates are rejected rather than repaired, against a checklist — four distinct options, no speculative or opinion framing, no relative dates that stop being true once cached, a source URL that was actually supplied, no duplicate fingerprint — and every rejection is recorded with its reason, so a weak batch can be explained instead of guessed at.</p>
+            <p>The browser never sees the answer key. A question arrives as text and four options; only once the player answers does the server check it, compute the points, record the result, and reveal the correct answer with its explanation and source. Points scale with difficulty and carry a speed bonus that decays to the twenty-second limit, plus streak multipliers — arranged so rapid guessing is never worth it, since a wrong answer costs the streak, an inhumanly fast answer forfeits the bonus, and the client's claimed response time is reconciled against the server's own measurement. Around that sit one-field accounts (a name gets you a player id and a friend code like KARSH-7F4X), friends and leaderboards, head-to-head challenges that freeze both the question ids and the answer order so both players get an identical test, and a global daily challenge seeded deterministically from the UTC date. It is online only, on purpose.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span>ENTROPIC LABS — EST. 2026</span>
+  <span>© 2026 ENTROPIC LABS</span>
+</footer>
+
+<script>
+  (function(){
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var revealEls = document.querySelectorAll('.reveal');
+    if('IntersectionObserver' in window && !reduceMotion){
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if(entry.isIntersecting){ entry.target.classList.add('in'); io.unobserve(entry.target); }
+        });
+      }, { threshold: 0.15 });
+      revealEls.forEach(function(el){ io.observe(el); });
+    } else {
+      revealEls.forEach(function(el){ el.classList.add('in'); });
+    }
+  })();
+</script>
