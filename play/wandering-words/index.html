@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#1d3b2a">
+<meta name="description" content="Indra and the Wandering Words - a magical reading adventure for young readers.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Indra and the Wandering Words</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>📖</text></svg>">
+<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+<div id="app" aria-live="polite">
+  <div id="screens"></div>
+  <div id="fx" aria-hidden="true"></div>
+  <div id="overlays"></div>
+</div>
+
+<noscript>
+  <div style="padding:2rem;font:1.2rem system-ui">This adventure needs JavaScript turned on.</div>
+</noscript>
+
+<!-- core -->
+<script src="js/util.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/state.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/art.js"></script>
+
+<!-- data -->
+<script src="js/data/letters.js"></script>
+<script src="js/data/words.js"></script>
+<script src="js/data/characters.js"></script>
+<script src="js/data/stories.js"></script>
+<script src="js/data/chapters.js"></script>
+
+<!-- systems -->
+<script src="js/progression.js"></script>
+<script src="js/readingEngine.js"></script>
+<script src="js/ui.js"></script>
+
+<!-- minigames -->
+<script src="js/minigames/base.js"></script>
+<script src="js/minigames/letterFireflies.js"></script>
+<script src="js/minigames/mushroomMatch.js"></script>
+<script src="js/minigames/soundStones.js"></script>
+<script src="js/minigames/magicSpell.js"></script>
+<script src="js/minigames/wordBridge.js"></script>
+<script src="js/minigames/treasureCave.js"></script>
+<script src="js/minigames/storyDetective.js"></script>
+<script src="js/minigames/rhymeTime.js"></script>
+
+<!-- screens -->
+<script src="js/screens/title.js"></script>
+<script src="js/screens/characterCreator.js"></script>
+<script src="js/screens/worldMap.js"></script>
+<script src="js/screens/chapter.js"></script>
+<script src="js/screens/adventureBook.js"></script>
+<script src="js/screens/parentMode.js"></script>
+
+<!-- boot -->
+<script src="js/dev.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>

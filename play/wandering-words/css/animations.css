@@ -1,0 +1,167 @@
+/* ==========================================================================
+   Motion: screen transitions, character life, particles, celebrations
+   ========================================================================== */
+
+@keyframes screenIn  { from { opacity: 0; transform: scale(.96) translateY(1.2rem); }
+                       to   { opacity: 1; transform: none; } }
+@keyframes screenOut { from { opacity: 1; transform: none; }
+                       to   { opacity: 0; transform: scale(1.03); } }
+@keyframes fadeIn    { from { opacity: 0 } to { opacity: 1 } }
+@keyframes modalIn   { from { opacity: 0; transform: translateY(2rem) scale(.9) }
+                       to   { opacity: 1; transform: none } }
+
+@keyframes pop {
+  0%   { transform: scale(1) }
+  45%  { transform: scale(1.18) }
+  100% { transform: scale(1) }
+}
+@keyframes rewardPop {
+  0%   { transform: scale(0) rotate(-25deg); opacity: 0 }
+  60%  { transform: scale(1.3) rotate(8deg); opacity: 1 }
+  100% { transform: scale(1) rotate(0) }
+}
+@keyframes cheerIn {
+  0%   { transform: translate(-50%,-50%) scale(.4); opacity: 0 }
+  30%  { transform: translate(-50%,-50%) scale(1.12); opacity: 1 }
+  75%  { transform: translate(-50%,-50%) scale(1); opacity: 1 }
+  100% { transform: translate(-50%,-115%) scale(.92); opacity: 0 }
+}
+@keyframes wobble {
+  0%,100% { transform: translateX(0) rotate(0) }
+  20% { transform: translateX(-.5rem) rotate(-4deg) }
+  45% { transform: translateX(.45rem) rotate(4deg) }
+  70% { transform: translateX(-.25rem) rotate(-2deg) }
+}
+@keyframes choiceFade {
+  to { opacity: 0; transform: scale(.6) translateY(1rem); }
+}
+@keyframes hintGlow {
+  0%,100% { box-shadow: 0 .4rem 0 #d9b97e, 0 0 0 rgba(255,201,77,0) }
+  50%     { box-shadow: 0 .4rem 0 #d9b97e, 0 0 1.6rem .4rem rgba(255,201,77,.95) }
+}
+@keyframes bob     { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-.35rem) } }
+@keyframes beacon  { 0%,100% { transform: scale(1);   box-shadow: 0 .5rem 0 #cf9f57, 0 0 0 rgba(255,201,77,.6) }
+                     50%     { transform: scale(1.06); box-shadow: 0 .5rem 0 #cf9f57, 0 0 2rem 1rem rgba(255,201,77,.55) } }
+
+/* --- ambient character life ------------------------------------------------ */
+.breathe   { animation: breathe 3.4s ease-in-out infinite; transform-origin: 50% 100%; }
+@keyframes breathe { 0%,100% { transform: scale(1,1) } 50% { transform: scale(1.025,.985) } }
+
+.hop       { animation: hop 2.4s ease-in-out infinite; }
+@keyframes hop { 0%,72%,100% { transform: translateY(0) } 80% { transform: translateY(-14%) } 88% { transform: translateY(0) } }
+
+.sway      { animation: sway 4.6s ease-in-out infinite; transform-origin: 50% 100%; }
+@keyframes sway { 0%,100% { transform: rotate(-2.2deg) } 50% { transform: rotate(2.2deg) } }
+
+.float     { animation: floaty 5s ease-in-out infinite; }
+@keyframes floaty { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-8%) } }
+
+.enter-left  { animation: enterLeft .6s cubic-bezier(.2,1.2,.35,1) both; }
+@keyframes enterLeft  { from { opacity: 0; transform: translateX(-3rem) scale(.8) } to { opacity: 1; transform: none } }
+.enter-right { animation: enterRight .6s cubic-bezier(.2,1.2,.35,1) both; }
+@keyframes enterRight { from { opacity: 0; transform: translateX(3rem) scale(.8) } to { opacity: 1; transform: none } }
+.enter-up    { animation: enterUp .55s cubic-bezier(.2,1.2,.35,1) both; }
+@keyframes enterUp    { from { opacity: 0; transform: translateY(2.5rem) scale(.9) } to { opacity: 1; transform: none } }
+
+.stagger > * { animation: enterUp .5s cubic-bezier(.2,1.2,.35,1) both; }
+.stagger > *:nth-child(1) { animation-delay: .04s }
+.stagger > *:nth-child(2) { animation-delay: .10s }
+.stagger > *:nth-child(3) { animation-delay: .16s }
+.stagger > *:nth-child(4) { animation-delay: .22s }
+.stagger > *:nth-child(5) { animation-delay: .28s }
+.stagger > *:nth-child(6) { animation-delay: .34s }
+
+/* --- environment motion ---------------------------------------------------- */
+.drift-slow { animation: drift 46s linear infinite; }
+.drift-mid  { animation: drift 32s linear infinite; }
+@keyframes drift { from { transform: translateX(-30vw) } to { transform: translateX(120vw) } }
+
+.twinkle { animation: twinkle 2.6s ease-in-out infinite; }
+@keyframes twinkle { 0%,100% { opacity: .25; transform: scale(.8) } 50% { opacity: 1; transform: scale(1.15) } }
+
+.grass-wave { animation: grassWave 3.8s ease-in-out infinite; transform-origin: 50% 100%; }
+@keyframes grassWave { 0%,100% { transform: skewX(-4deg) } 50% { transform: skewX(4deg) } }
+
+/* --- particles ------------------------------------------------------------- */
+.p {
+  position: absolute; pointer-events: none;
+  will-change: transform, opacity;
+}
+.p-spark {
+  width: .7rem; height: .7rem; border-radius: 50%;
+  background: radial-gradient(circle, #fff 0%, var(--gold) 45%, rgba(255,201,77,0) 70%);
+  animation: sparkOut var(--dur, 1s) ease-out forwards;
+}
+@keyframes sparkOut {
+  0%   { transform: translate(0,0) scale(.3); opacity: 1 }
+  100% { transform: translate(var(--dx), var(--dy)) scale(1.5); opacity: 0 }
+}
+.p-confetti {
+  width: .8rem; height: 1.1rem; border-radius: .2rem;
+  animation: confettiFall var(--dur, 2.6s) linear forwards;
+}
+@keyframes confettiFall {
+  0%   { transform: translateY(-12vh) rotate(0deg); opacity: 1 }
+  100% { transform: translateY(112vh) rotate(var(--spin, 720deg)); opacity: .9 }
+}
+.p-firefly {
+  width: 1rem; height: 1rem; border-radius: 50%;
+  background: radial-gradient(circle, #fffbe0 0%, #ffe066 40%, rgba(255,224,102,0) 70%);
+  animation: fireflyGlow 3s ease-in-out infinite;
+}
+@keyframes fireflyGlow { 0%,100% { opacity: .3 } 50% { opacity: 1 } }
+.p-leaf {
+  font-size: 1.4rem;
+  animation: leafFall var(--dur, 9s) linear infinite;
+}
+@keyframes leafFall {
+  0%   { transform: translate(0,-10vh) rotate(0) }
+  100% { transform: translate(var(--dx,6vw), 110vh) rotate(540deg) }
+}
+.p-word {
+  font-weight: 900; font-size: clamp(1.2rem,4vw,2rem); color: #fff;
+  text-shadow: 0 0 1rem var(--gold), 0 .1rem 0 var(--gold-deep);
+  animation: wordFly var(--dur,1.3s) cubic-bezier(.3,.1,.2,1) forwards;
+}
+@keyframes wordFly {
+  0%   { transform: translate(0,0) scale(1); opacity: 1 }
+  70%  { opacity: 1 }
+  100% { transform: translate(var(--dx), var(--dy)) scale(.35); opacity: 0 }
+}
+
+/* --- celebration ----------------------------------------------------------- */
+.fireworks-glow { animation: fireworksGlow 2.4s ease-in-out infinite; }
+@keyframes fireworksGlow {
+  0%,100% { filter: drop-shadow(0 0 1rem rgba(255,201,77,.6)) }
+  50%     { filter: drop-shadow(0 0 2.6rem rgba(255,154,209,.9)) }
+}
+.shake-in { animation: shakeIn .6s ease; }
+@keyframes shakeIn {
+  0%,100% { transform: translate(0,0) }
+  15% { transform: translate(-.5rem,.2rem) }
+  35% { transform: translate(.5rem,-.2rem) }
+  55% { transform: translate(-.3rem,.1rem) }
+  75% { transform: translate(.3rem,0) }
+}
+.rank-up { animation: rankUp 1.2s cubic-bezier(.2,1.4,.3,1) both; }
+@keyframes rankUp {
+  0%   { transform: scale(0) rotate(-180deg); opacity: 0 }
+  55%  { transform: scale(1.35) rotate(10deg); opacity: 1 }
+  100% { transform: scale(1) rotate(0) }
+}
+
+/* --- gentle "try again" ---------------------------------------------------- */
+.nudge { animation: nudge .45s ease; }
+@keyframes nudge { 0%,100% { transform: none } 50% { transform: translateY(-.4rem) rotate(-3deg) } }
+
+/* --- magic spell slots ----------------------------------------------------- */
+.slot-fill { animation: slotFill .35s cubic-bezier(.2,1.5,.4,1) both; }
+@keyframes slotFill { from { transform: scale(.3) rotate(-15deg); opacity: 0 } to { transform: none; opacity: 1 } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01s !important;
+  }
+}
