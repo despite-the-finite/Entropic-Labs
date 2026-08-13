@@ -41,14 +41,20 @@
     </div>
     <div class="body-copy">
       <p>Entropic Labs is a recording and production studio first. Game design is the side room — a minor function of the studio, run the same way a session is: start from noise, keep whatever holds together.</p>
-      <p style="color:var(--ash);font-size:0.95rem">Every project runs in a browser and is kept in the open. Two are playable right here; each one links to its source on GitHub.</p>
+      <p style="color:var(--ash);font-size:0.9rem">Tap a game for the full write-up. Two are playable right here.</p>
     </div>
   </section>
 
-  <article class="game">
-    <span class="game-index">G.01</span>
-    <h2>Donnell and McBurns: An EPC Epic</h2>
-    <p class="game-meta">Browser RPG · Phaser 3 · No build step</p>
+  <details class="game">
+    <summary>
+      <span class="summary-main">
+        <span class="game-index">G.01</span>
+        <h2>Donnell and McBurns: An EPC Epic</h2>
+        <span class="game-meta">Browser RPG · Phaser 3 · No build step</span>
+      </span>
+      <span class="game-toggle" aria-hidden="true"></span>
+    </summary>
+    <div class="game-panel">
     <p class="game-flag">Keyboard only — arrow keys or WASD to move, SPACE to talk and fight. Best on a laptop; a phone can open it but can't play it.</p>
     <div class="cta-stack">
       <a class="btn btn-solid" href="../play/meridian/">Play it now</a>
@@ -56,18 +62,22 @@
     </div>
     <div class="game-body">
       <p>A browser RPG about climbing the corporate ladder at an EPC — engineering, procurement, construction — company, built with Phaser 3 and no build step at all. You play Karsh, freshly promoted to Engineering Manager and working toward Executive: walking the office, fighting in conference rooms and huddle spaces, running site visits across five industries, and negotiating change orders with clients.</p>
-      <details class="more">
-        <summary><span>Read more</span></summary>
         <p>The office runs three floors, each with its own palette — GFS for Engineering, CDB for Construction, and the executive floor, where nobody will speak to you until you've made Director and the fights are deliberately far tougher than anything below. Your cubicle is home base and the single hub for every mode: Office, Site Visit, Visitor Day, or PTO. Battles are turn-based and never random — every conference room and utility room holds one battle object you walk up to and engage, against corporate-satire enemies like Scope Creep, Reply-All Storm, and Deadline Wraith. Levelling advances your actual job title up the ladder from Engineering Manager to VP, while Executive has to be earned upstairs: a scripted Performance Review boss fight, then all four executive-floor bosses — the COO, the CFO, General Counsel, and the Board.</p>
         <p>Progress deliberately takes both halves of the job. A Bonus Potential reputation score runs alongside XP, and neither a maxed bar nor an XP overflow actually applies until a change order is approved on a site visit — six sites, from a refinery turnaround to a bridge replacement and a water treatment upgrade, each with Safety, Schedule, and Quality checkpoints and a client negotiation at the end. Underneath, there are no image assets at all: every sprite and background is generated procedurally at boot through Phaser's Graphics API, and each character's skin tone, hair, and wardrobe are derived deterministically from a hash of its texture key, so the cast reads as individuals while the game still runs from a plain <code>file://</code> page.</p>
-      </details>
     </div>
-  </article>
+    </div>
+  </details>
 
-  <article class="game">
-    <span class="game-index">G.02</span>
-    <h2>Indra and the Wandering Words</h2>
-    <p class="game-meta">Browser reading adventure · Ages 4–5 · No build step</p>
+  <details class="game">
+    <summary>
+      <span class="summary-main">
+        <span class="game-index">G.02</span>
+        <h2>Indra and the Wandering Words</h2>
+        <span class="game-meta">Browser reading adventure · Ages 4–5 · No build step</span>
+      </span>
+      <span class="game-toggle" aria-hidden="true"></span>
+    </summary>
+    <div class="game-panel">
     <p class="game-flag">Touch-friendly and built for a tablet or phone — tap to play, and it speaks the cues aloud. The first tap unlocks the voice.</p>
     <div class="cta-stack">
       <a class="btn btn-solid" href="../play/wandering-words/">Play it now</a>
@@ -75,31 +85,33 @@
     </div>
     <div class="game-body">
       <p>A reading adventure for a four-to-five-year-old that is an adventure game first: the child explores a forest, meets characters, finds secrets, and collects treasure, and reading is the magic that makes all of it work. Every word in the world lives in the Great Book of Everything, and one night the words flew out and scattered across the kingdom as little glowing lights — so bridges forgot how to be bridges and doors forgot how to open. The player is a Word Keeper: reading a word calls it home, and the world mends itself a piece at a time.</p>
-      <details class="more">
-        <summary><span>Read more</span></summary>
         <p>There is no villain and nothing frightening in it. Pip, a very small fox who is very sure he is very brave, comes along as a companion; Luma the owl keeps the Book; and Grumblewink, who took the letters because nobody ever read him a story, ends up a friend. Chapter 1, the Letter Forest, is fully playable — a thirteen-scene journey that catches letter fireflies, sorts Bramble's mushrooms, follows a butterfly to a secret glade, crosses the Sound River with Poppy, learns spell-building from Luma, and then talks Grumblewink through a five-lock finale, at roughly twenty-three reading interactions across ten to fifteen minutes. Progress shows as Reading Power with ranks from Letter Explorer up to Word Keeper, never a score or a grade, and difficulty adapts per skill invisibly: three clean answers raise the ceiling, two misses quietly lower it.</p>
         <p>The design is careful about failure. A wrong answer gets no buzzer, no red X, and no failure screen — just a friendly "Almost!" while the option fades out of the way; the three-step hint ladder gives a picture clue, then the sound, then the answer itself, and hints still earn full Reading Power, so asking for help is never penalised and two misses auto-reveal so she can never be stuck. It autosaves after every single answer, and nothing leaves the browser: no accounts, no network calls, no analytics, no adverts. A Parent Zone behind a two-and-a-half-second hold and a multiplication question reports per-skill accuracy, letters and words mastered, and hints used, none of it ever visible to the child.</p>
-      </details>
     </div>
-  </article>
+    </div>
+  </details>
 
-  <article class="game">
-    <span class="game-index">G.03</span>
-    <h2>Live Trivia</h2>
-    <p class="game-meta">Browser trivia platform · Serverless API · Postgres</p>
+  <details class="game">
+    <summary>
+      <span class="summary-main">
+        <span class="game-index">G.03</span>
+        <h2>Live Trivia</h2>
+        <span class="game-meta">Browser trivia platform · Serverless API · Postgres</span>
+      </span>
+      <span class="game-toggle" aria-hidden="true"></span>
+    </summary>
+    <div class="game-panel">
     <p class="game-flag">Playable once its server is live — this one runs on an API and database, not a static page.</p>
     <div class="cta-stack">
       <a class="btn btn-line" href="https://github.com/despite-the-finite/Trivia-Game" target="_blank" rel="noopener">See the code</a>
     </div>
     <div class="game-body">
       <p>A trivia platform whose questions are built from the live internet rather than shipped inside the app. Questions on current events, science, and world geography are generated server-side from cited sources, validated, cached, and served through a serverless API, with scores, friends, leaderboards, and challenges all authoritative on the server. New trivia appears on its own schedule — nobody has to ship a new build for the game to have something new to ask.</p>
-      <details class="more">
-        <summary><span>Read more</span></summary>
         <p>Gathering facts and writing questions are kept as separate jobs. Providers fetch real source material — wire services and public broadcasters for news, research-institution feeds for science, REST Countries and Wikidata for geography — and store the title, URL, publisher, and publication date before any of it reaches a model, which is then asked to write questions from that material and nothing else; it is never asked what is true. Geography doesn't trust a model at all: both answers and distractors come out of structured datasets through deterministic templates. Candidates are rejected rather than repaired, against a checklist — four distinct options, no speculative or opinion framing, no relative dates that stop being true once cached, a source URL that was actually supplied, no duplicate fingerprint.</p>
         <p>The browser never sees the answer key. A question arrives as text and four options; only once the player answers does the server check it, compute the points, record the result, and reveal the correct answer with its explanation and source. Points scale with difficulty and carry a speed bonus that decays to the twenty-second limit, plus streak multipliers — arranged so rapid guessing is never worth it. Around that sit one-field accounts, friends and leaderboards, head-to-head challenges that freeze both the question ids and the answer order, and a global daily challenge seeded deterministically from the UTC date.</p>
-      </details>
     </div>
-  </article>
+    </div>
+  </details>
 </main>
 
 <footer>

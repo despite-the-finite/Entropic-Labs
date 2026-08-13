@@ -260,6 +260,7 @@ body.menu-open{ overflow: hidden; }
   gap: 0.7rem;
   margin-top: 1.6rem;
 }
+.game-panel .cta-stack{ margin-top: 0; }
 
 /* ---------- SECTIONS ---------- */
 section{ padding: 2.8rem 0; border-bottom: 1px solid var(--hairline); }
@@ -421,47 +422,73 @@ figure{ margin: 0; }
 }
 .jack-value{ font-size: 1.02rem; word-break: break-word; }
 .jack-value a{ color: var(--paper); }
-.reveal-btn{
+.contact-note{
   font-family: var(--font-mono);
   font-size: 0.7rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  background: none;
-  border: 1px dashed var(--hairline-strong);
-  color: var(--trace);
-  border-radius: 2px;
-  min-height: 2.75rem;
-  padding: 0 1rem;
-  cursor: pointer;
+  line-height: 1.7;
+  color: var(--ash);
+  padding-left: 0.9rem;
+  border-left: 2px solid var(--hairline-strong);
 }
 
-/* ---------- GAMES ---------- */
+/* ---------- GAMES ----------
+   Each game is a disclosure, so the catalog stays a short list on a phone and
+   the write-up plus play button open on the one that gets tapped. */
 .game{
   border-bottom: 1px solid var(--hairline);
-  padding: 1.8rem var(--pad);
 }
 .game:first-of-type{ border-top: 1px solid var(--hairline); }
+.game > summary{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.9rem;
+  padding: 1.15rem var(--pad);
+  cursor: pointer;
+  list-style: none;
+}
+.game > summary::-webkit-details-marker{ display: none; }
+.summary-main{ display: flex; flex-direction: column; gap: 0.4rem; }
+.game[open] > summary{ border-bottom: 1px solid var(--hairline); }
+.game-panel{ padding: 1.4rem var(--pad) 1.8rem; }
 .game-index{
   font-family: var(--font-mono);
   font-size: 0.68rem;
   letter-spacing: 0.14em;
   color: var(--ash);
   display: block;
-  margin-bottom: 0.5rem;
 }
-.game h2{ font-size: 1.45rem; }
+.game h2{ font-size: 1.3rem; }
 .game-meta{
   font-family: var(--font-mono);
   font-size: 0.7rem;
   color: var(--trace);
-  margin: 0.6rem 0 0;
+  margin: 0;
   line-height: 1.5;
+  display: block;
 }
+.game-toggle{
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--trace);
+  border: 1px solid var(--hairline-strong);
+  border-radius: 2px;
+  min-height: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 0.75rem;
+  white-space: nowrap;
+}
+.game-toggle::after{ content: "View +"; }
+.game[open] .game-toggle::after{ content: "Close –"; }
 .game-flag{
   font-family: var(--font-mono);
   font-size: 0.7rem;
   color: var(--ash);
-  margin: 0.9rem 0 0;
+  margin: 0 0 1.2rem;
   padding: 0.7rem 0.85rem;
   border-left: 2px solid var(--hairline-strong);
   background: rgba(241,238,251,0.03);
@@ -482,25 +509,6 @@ figure{ margin: 0; }
   padding: 0.1em 0.35em;
   border-radius: 2px;
 }
-details.more{ margin-top: 1rem; }
-details.more summary{
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--trace);
-  cursor: pointer;
-  min-height: 2.75rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5em;
-  list-style: none;
-}
-details.more summary::-webkit-details-marker{ display: none; }
-details.more summary::after{ content: "+"; font-size: 1rem; }
-details.more[open] summary::after{ content: "–"; }
-details.more[open] summary span::after{ content: " less"; }
-details.more > *:not(summary){ margin-top: 0.2rem; }
 
 /* ---------- FOOTER ---------- */
 footer{

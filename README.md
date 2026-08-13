@@ -57,7 +57,19 @@ once across them.
 - Gear list — recording equipment
 - Projects — placeholder catalog for upcoming releases
 - Side room — game design as a minor function, linking out to `games.html`
-- Contact — email and location shared on request only
+- Contact — booking terms and hours only; see the note below
+
+## Contact details
+
+**No contact details live in this repo — keep it that way.** Anything a browser can
+render, a visitor or a scraper can read; encoding a value only hides it from the
+person reading the page, not from anyone who looks at the source. The contact
+section therefore carries booking terms, hours, and the fact that the location is
+shared once a session is confirmed, and nothing else. The "Book a session" buttons
+scroll to that section rather than opening a mail client.
+
+To take bookings, add a hosted form (Formspree, Tally, a Google Form) and point the
+buttons at it — the form provider holds the address, so the page never publishes one.
 
 ## Games page
 
@@ -67,8 +79,10 @@ once across them.
 2. **Indra and the Wandering Words** ([Learn-to-Read](https://github.com/despite-the-finite/Learn-to-Read)) — playable at [`/play/wandering-words/`](https://despite-the-finite.github.io/Entropic-Labs/play/wandering-words/)
 3. **Live Trivia** ([Trivia-Game](https://github.com/despite-the-finite/Trivia-Game))
 
-Each entry carries a link straight to the project on GitHub plus a three-paragraph
-summary of its README.
+Each entry is a disclosure: the catalog reads as three concise rows, and picking one
+opens its three-paragraph write-up along with its play and source buttons. That's
+plain `<details>`/`<summary>`, so it needs no JavaScript and stays keyboard
+accessible.
 
 The first two are playable on the site itself: both are entirely static — Meridian
 vendors Phaser 3 locally and generates all its art procedurally at boot, and the

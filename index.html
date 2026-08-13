@@ -347,29 +347,25 @@
   .jack-value{ font-size: 1rem; }
   .jack-value a{ text-decoration: none; border-bottom: 1px solid var(--hairline-strong); }
   .jack-value a:hover{ border-color: var(--trace); color: var(--trace); }
-  .reveal-btn{
+  .contact-note{
     font-family: var(--font-mono);
     font-size: 0.72rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    background: none;
-    border: 1px dashed var(--hairline-strong);
-    color: var(--trace);
-    padding: 0.45rem 0.75rem;
-    cursor: pointer;
-    transition: border-color .15s ease, color .15s ease;
+    line-height: 1.7;
+    color: var(--ash);
+    max-width: 46ch;
+    margin: 1rem 0 0;
+    padding-left: 0.9rem;
+    border-left: 2px solid var(--hairline-strong);
   }
-  .reveal-btn:hover{ border-color: var(--trace); color: var(--paper); }
 
   .contact-cta{
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.5rem;
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
     margin-top: 2rem;
   }
-  .contact-cta p{ color: var(--ash); max-width: 34ch; margin: 0; }
+  .contact-cta p{ color: #E4DFF2; max-width: 58ch; margin: 0; }
 
   /* ---------- SIDE ROOM / GAMES ---------- */
   .sideroom{
@@ -423,7 +419,7 @@
     <span class="eyebrow"><span class="rec-dot"></span> Session live · By appointment</span>
     <p class="hero-sub">Entropic Labs is a recording and production studio built on one idea: order emerges from noise if you listen long enough. Real amps, a pedalboard built over years, and a room tuned for patience and for accidents.</p>
     <div class="cta-row">
-      <a class="btn btn-solid mail-link" href="#contact" data-mail="REDACTED">Book a session</a>
+      <a class="btn btn-solid" href="#contact">Book a session</a>
       <a class="btn btn-line" href="#gear">View the gear</a>
     </div>
   </div>
@@ -567,20 +563,20 @@
         <h2>Book time</h2>
         <span class="section-index">07 / CONTACT</span>
       </div>
+      <!-- No contact details live in this page. Anything a browser can show, a
+           visitor (or a scraper) can read — encoding it only hides it from the
+           reader, not from anyone looking. Booking runs through an enquiry that
+           the studio answers privately. -->
       <div class="patchbay reveal">
         <div class="jack">
           <div class="jack-ring"></div>
-          <span class="jack-label">Email</span>
-          <span class="jack-value reveal-field" data-b64="REDACTED" data-type="mail">
-            <button type="button" class="reveal-btn">Request email</button>
-          </span>
+          <span class="jack-label">Booking</span>
+          <span class="jack-value">By enquiry</span>
         </div>
         <div class="jack">
           <div class="jack-ring"></div>
           <span class="jack-label">Location</span>
-          <span class="jack-value reveal-field" data-b64="REDACTED" data-type="text">
-            <button type="button" class="reveal-btn">Request address</button>
-          </span>
+          <span class="jack-value">Shared once a session is confirmed</span>
         </div>
         <div class="jack">
           <div class="jack-ring"></div>
@@ -589,13 +585,13 @@
         </div>
         <div class="jack">
           <div class="jack-ring"></div>
-          <span class="jack-label">Social</span>
-          <span class="jack-value"><a href="#">@entropiclabs</a></span>
+          <span class="jack-label">Response</span>
+          <span class="jack-value">Within a day or two</span>
         </div>
       </div>
       <div class="contact-cta reveal">
-        <p>Sessions run by appointment only — email with a rough date, what you're working on, and a link to a reference track if you've got one.</p>
-        <a class="btn btn-solid mail-link" href="#contact" data-mail="REDACTED">Book a session</a>
+        <p>Sessions run by appointment only. Send a rough date, what you're working on, and a link to a reference track if you've got one — the studio replies with everything you need, including where it is.</p>
+        <p class="contact-note">An enquiry form is going up here shortly. Until then the studio isn't publishing a contact address — nothing on this page can be scraped.</p>
       </div>
     </div>
   </section>
@@ -610,27 +606,6 @@
 <script>
   (function(){
     var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    // contact details are withheld until requested
-    document.querySelectorAll('.reveal-field .reveal-btn').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        var field = btn.closest('.reveal-field');
-        var value = atob(field.dataset.b64);
-        if(field.dataset.type === 'mail'){
-          field.innerHTML = '<a href="mailto:' + value + '">' + value + '</a>';
-        } else {
-          field.textContent = value;
-        }
-      });
-    });
-
-    // booking CTAs decode the mail address on click rather than exposing it in markup
-    document.querySelectorAll('.mail-link').forEach(function(link){
-      link.addEventListener('click', function(e){
-        e.preventDefault();
-        window.location.href = 'mailto:' + atob(link.dataset.mail);
-      });
-    });
 
     // scroll reveal
     var revealEls = document.querySelectorAll('.reveal');
