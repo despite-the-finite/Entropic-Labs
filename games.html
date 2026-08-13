@@ -1,6 +1,29 @@
 <title>Games — Entropic Labs</title>
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="Video game design at Entropic Labs — a minor function of the studio. Browser games by Despite the Finite, with source on GitHub.">
+<link rel="alternate" media="only screen and (max-width: 820px)" href="m/games.html">
+<script>
+  /* Phones open the mobile build at m/games.html instead. See index.html for
+     the full note: ?full=1 pins the full site, loading m/ clears the pin. */
+  (function(){
+    var TARGET = 'm/games.html';
+    try{
+      if(/[?&]full=1(&|$)/.test(location.search)){
+        try{ localStorage.setItem('el-view', 'full'); }catch(e){}
+        return;
+      }
+      try{ if(localStorage.getItem('el-view') === 'full') return; }catch(e){}
+      var ua = navigator.userAgent || '';
+      var uaMobile = navigator.userAgentData ? navigator.userAgentData.mobile === true : false;
+      var isPhone = /iPhone|iPod|Android.*Mobile|Windows Phone|IEMobile|BlackBerry|BB10|Opera Mini|Mobile.*Firefox/i.test(ua);
+      var smallTouch = window.matchMedia
+        ? window.matchMedia('(max-width: 820px) and (pointer: coarse)').matches
+        : false;
+      if(uaMobile || isPhone || smallTouch) location.replace(TARGET + location.hash);
+    }catch(e){}
+  })();
+</script>
 <style>
   :root{
     --ink: #07050F;
@@ -236,6 +259,8 @@
     .game-body{ max-width: 78ch; }
   }
 
+  footer .view-switch{ color: var(--ash); text-decoration: none; border-bottom: 1px solid var(--hairline-strong); }
+  footer .view-switch:hover{ color: var(--trace); border-color: var(--trace); }
   footer{
     border-top: 1px solid var(--hairline);
     padding: 2.2rem 0 3rem;
@@ -338,6 +363,7 @@
 
 <footer>
   <span>ENTROPIC LABS — EST. 2026</span>
+  <span><a class="view-switch" href="m/games.html">Mobile site</a></span>
   <span>© 2026 ENTROPIC LABS</span>
 </footer>
 

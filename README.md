@@ -8,7 +8,9 @@ Landing page for Entropic Labs, a recording and production studio run by **Despi
 
 ## Contents
 
-- `index.html` — the entire site: markup, styles, and scripts in a single self-contained file (images embedded inline).
+- `index.html` — the desktop site: markup, styles, and scripts in one file, with images loaded from `img/`.
+- `m/` — the mobile build, served automatically to phones (see below).
+- `img/` — the site's photography, at two sizes each: full for desktop, `-mobile` for phones.
 - `games.html` — the games page: video game design as a minor function of the studio, with links to each project's source.
 - `play/meridian/` — a hosted copy of *Donnell and McBurns: An EPC Epic*, so it's playable straight from the site. Read-only; see `play/meridian/UPSTREAM.md` for the source commit and how to refresh it.
 - `play/wandering-words/` — a hosted copy of *Indra and the Wandering Words*, same arrangement; see `play/wandering-words/UPSTREAM.md`.
@@ -19,9 +21,36 @@ Landing page for Entropic Labs, a recording and production studio run by **Despi
 
 Open `index.html` in a browser to preview, or in any editor to make changes. There's no build step — commit and push to `main`, and GitHub Pages picks up the change automatically within a minute or two.
 
+Content lives in two places now, so a copy change to a section usually needs the same
+edit in `m/`. Preview the mobile build with a local server (`npx http-server -s .`)
+and your browser's device toolbar, since the redirect below keys off the device.
+
+## Mobile
+
+Phones get `m/` instead of the desktop pages, decided by a short script in the
+`<head>` of `index.html` and `games.html`. It treats a visitor as mobile on any of
+three signals: `navigator.userAgentData.mobile`, a phone user-agent string, or a
+viewport of 820px or less with a coarse pointer. Small tablets match that last one
+too, which is intended — the mobile layout suits them. A desktop with a touchscreen
+does not, because its viewport is wider than 820px.
+
+- Deep links survive: `index.html#gear` lands on `m/#gear`.
+- **Opting out:** the mobile pages link to `?full=1`, which pins the full site in
+  `localStorage` for that browser and follows you across pages.
+- **Opting back in:** loading anything under `m/` clears the pin. The desktop footer
+  has a "Mobile site" link for that.
+
+The mobile build is deliberately not just narrower CSS: the gear list becomes cards
+instead of a table that scrolls sideways, the nav becomes a full-screen menu, buttons
+are full-width at 52px, the long game write-ups sit behind a "Read more" disclosure,
+and it loads the `-mobile` images (191KB for all three, against 640KB).
+
+`m/mobile.css` is shared by both mobile pages rather than inlined, so it's cached
+once across them.
+
 ## Sections
 
-- Hero — studio wordmark and booking CTA
+- Hero — the `ENTROPIC LABS / MUSIC ENGINEERING / STUDIO` backdrop, plus the booking CTA
 - Manifesto — studio philosophy
 - Behind the board — lead producer bio
 - Inside the room — studio photo
