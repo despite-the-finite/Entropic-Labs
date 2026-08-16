@@ -12,6 +12,7 @@ Landing page for Entropic Labs, a recording and production studio run by **Despi
 - `m/` — the mobile build, served automatically to phones (see below).
 - `img/` — the site's photography, at two sizes each: full for desktop, `-mobile` for phones.
 - `games.html` — the games page: video game design as a minor function of the studio, with links to each project's source.
+- `observatory.html` + `observatory/` — the Observatory: an interactive star chart of things worth wondering about. One responsive page rather than a desktop page plus an `m/` twin; see below.
 - `play/meridian/` — a hosted copy of *Donnell and McBurns: An EPC Epic*, so it's playable straight from the site. Read-only; see `play/meridian/UPSTREAM.md` for the source commit and how to refresh it.
 - `play/wandering-words/` — a hosted copy of *Indra and the Wandering Words*, same arrangement; see `play/wandering-words/UPSTREAM.md`.
 - `entropic-labs-banner.svg` — the banner at the top of this README.
@@ -24,6 +25,8 @@ Open `index.html` in a browser to preview, or in any editor to make changes. The
 Content lives in two places now, so a copy change to a section usually needs the same
 edit in `m/`. Preview the mobile build with a local server (`npx http-server -s .`)
 and your browser's device toolbar, since the redirect below keys off the device.
+The Observatory is the exception — it is a single responsive page, so its content
+is edited once, in `observatory/data/observations.js`.
 
 ## Mobile
 
@@ -57,6 +60,7 @@ once across them.
 - Gear list — recording equipment
 - Projects — placeholder catalog for upcoming releases
 - Side room — game design as a minor function, linking out to `games.html`
+- The observatory — curiosity as the third room, linking out to `observatory.html`
 - Contact — booking terms and hours only; see the note below
 
 ## Contact details
@@ -101,3 +105,68 @@ Deploying it (Vercel plus a Postgres URL and an Anthropic API key) would give it
 Dirty Bass, the in-house VST3 synth, is listed on the studio side in the gear
 table instead of here — it loads in a DAW rather than a browser, so it has no
 play link, just a link to its source.
+
+## The Observatory
+
+`observatory.html` is the third room. Studio is what gets made, Games is what
+gets played, and the Observatory is what gets wondered about: an interactive
+star chart where each star is a catalogued observation, from cities found under
+the Amazon to why the galaxy is so quiet.
+
+```
+observatory.html            the shell
+observatory/
+  observatory.css           styles — the site palette, one stop darker
+  data/observations.js      ALL the content: categories + observations
+  telemetry.js              moon phase, Voyager range, clock — pure functions
+  starfield.js              canvas engine: camera, parallax, hit-testing
+  observatory.js            controller: state machine, routing, panels
+```
+
+**Adding an observation** means appending one object to `OBSERVATIONS` in
+`observatory/data/observations.js`. Nothing else needs touching — the star map
+places it on its field's ring automatically, the catalogue lists it, the record
+view renders whichever fields are present, and the counter in the status panel
+picks it up. Adding a whole new field of curiosity means appending to
+`CATEGORIES` with a position in chart space. The field list at the top of that
+file documents every supported key.
+
+**Routing** is the URL: `#lost-civilizations` opens a field, `#obs-0047` opens
+a record, `#unidentified` opens the anomaly. Every record is linkable and the
+back button behaves.
+
+**No `m/` twin, on purpose.** The other pages are prose, so a hand-tuned mobile
+copy is cheap and worth it. This one is a canvas app whose layout is computed at
+runtime from the viewport and pointer type, and a second copy would only ever
+drift out of sync. Instead it branches internally: portrait squeezes the chart
+horizontally and stretches it vertically rather than scaling it down, panels
+become bottom sheets, observation labels are always drawn on touch instead of
+on hover, and the panel-clearance maths measures the open panel rather than
+assuming a breakpoint. Both `index.html` and `m/index.html` link straight here;
+because this page carries no redirect script, it is safe to enter from either.
+
+**Telemetry** is computed in the browser with no network calls. The moon phase
+uses the standard low-precision astronomical solution and lands on published
+new and full moons to the percentage point. Voyager 1's range is extrapolated
+from a dated reference constant at the top of `telemetry.js` — back-extrapolate
+it to the 2012 heliopause crossing and it gives 121.8 AU against the published
+~121, so it stays right on its own rather than needing manual edits. Each row
+is labelled live, computed, or nominal, and the panel says which is which.
+
+**Content rules.** Every record carries a `certainty` block that separates
+ESTABLISHED from HYPOTHESIS, CONTESTED, UNRESOLVED and SPECULATION, because the
+point of the room is that most of this is unfinished. Source links point at the
+publishing journal or institution rather than deep links, so they keep working;
+the citation itself names the specific paper.
+
+**Performance.** No frameworks and no dependencies. One pre-rendered glow
+sprite instead of per-star gradients, background stars as plain fillRects, and
+the loop idles at ~30fps, rises to full rate only while something is moving,
+and stops dead when the tab is hidden. Under `prefers-reduced-motion` it drops
+drift, twinkle and camera easing entirely and draws on demand only — zero
+background frames.
+
+**The anomaly.** There is one unidentified object on the chart, marked `?`. It
+opens a deliberately incomplete record pointing at Sublevel −1, which does not
+exist yet. That is the intended state: a doorway, not a room. Its presentation
+is the `special: 'anomaly'` branch in `observatory.js`.

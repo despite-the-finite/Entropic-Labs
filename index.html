@@ -380,6 +380,8 @@
     padding: clamp(1.5rem, 4vw, 2.4rem);
   }
   .sideroom p{ color: #E4DFF2; max-width: 62ch; margin: 0; }
+  /* the observatory is the same kind of room, marked in the other colour */
+  .sideroom.dark-room{ border-left-color: var(--trace); }
 
   footer .view-switch{ color: var(--ash); text-decoration: none; border-bottom: 1px solid var(--hairline-strong); }
   footer .view-switch:hover{ color: var(--trace); border-color: var(--trace); }
@@ -407,6 +409,7 @@
       <li><a href="#gear">Gear</a></li>
       <li><a href="#sessions">Projects</a></li>
       <li><a href="games.html">Games</a></li>
+      <li><a href="observatory.html">Observatory</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
   </div>
@@ -557,11 +560,24 @@
     </div>
   </section>
 
+  <section id="observatory">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2>The observatory</h2>
+        <span class="section-index">07 / CURIOSITY</span>
+      </div>
+      <div class="sideroom dark-room reveal">
+        <p>The studio is what gets made here and the side room is what gets played. The Observatory is the third one — a darker room with a chart on the ceiling, catalogued with whatever this place finds worth wondering about: cities found under the Amazon, what a tardigrade survives, why the galaxy is so quiet. It runs on the same principle as a session. Start from noise, keep whatever holds together, and be honest about how much is still unresolved.</p>
+        <a class="btn btn-solid" href="observatory.html">Enter the Observatory</a>
+      </div>
+    </div>
+  </section>
+
   <section id="contact">
     <div class="wrap">
       <div class="section-head reveal">
         <h2>Book time</h2>
-        <span class="section-index">07 / CONTACT</span>
+        <span class="section-index">08 / CONTACT</span>
       </div>
       <!-- No contact details live in this page. Anything a browser can show, a
            visitor (or a scraper) can read — encoding it only hides it from the
