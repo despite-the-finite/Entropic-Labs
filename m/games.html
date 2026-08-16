@@ -58,7 +58,6 @@
     <p class="game-flag">Plays on this phone. On-screen controls appear on a touchscreen — a thumb pad plus SPACE and H buttons; slide between directions without lifting, hold a corner to walk diagonally. On a keyboard it's arrow keys or WASD, SPACE to talk and fight.</p>
     <div class="cta-stack">
       <a class="btn btn-solid" href="../play/meridian/">Play it now</a>
-      <a class="btn btn-line" href="https://github.com/despite-the-finite/Work-Video-Game-Meridian" target="_blank" rel="noopener">See the code</a>
     </div>
     <div class="game-body">
       <p>A browser RPG about climbing the corporate ladder at an EPC — engineering, procurement, construction — company, built with Phaser 3 and no build step at all. You play Karsh, freshly promoted to Engineering Manager and working toward Executive: walking the office, fighting in conference rooms and huddle spaces, running site visits across five industries, and negotiating change orders with clients. It draws at a fixed 640×480 and scales up to fill the window at 4:3, so it fills a phone screen rather than sitting in a small box.</p>
@@ -81,7 +80,6 @@
     <p class="game-flag">Touch-friendly and built for a tablet or phone — tap to play, and it speaks the cues aloud. The first tap unlocks the voice.</p>
     <div class="cta-stack">
       <a class="btn btn-solid" href="../play/wandering-words/">Play it now</a>
-      <a class="btn btn-line" href="https://github.com/despite-the-finite/Learn-to-Read" target="_blank" rel="noopener">See the code</a>
     </div>
     <div class="game-body">
       <p>A reading adventure for a four-to-five-year-old that is an adventure game first: the child explores a forest, meets characters, finds secrets, and collects treasure, and reading is the magic that makes all of it work. Every word in the world lives in the Great Book of Everything, and one night the words flew out and scattered across the kingdom as little glowing lights — so bridges forgot how to be bridges and doors forgot how to open. The player is a Word Keeper: reading a word calls it home, and the world mends itself a piece at a time.</p>
@@ -102,9 +100,6 @@
     </summary>
     <div class="game-panel">
     <p class="game-flag">Playable once its server is live — this one runs on an API and database, not a static page.</p>
-    <div class="cta-stack">
-      <a class="btn btn-line" href="https://github.com/despite-the-finite/Trivia-Game" target="_blank" rel="noopener">See the code</a>
-    </div>
     <div class="game-body">
       <p>A trivia platform whose questions are built from the live internet rather than shipped inside the app. Questions on current events, science, and world geography are generated server-side from cited sources, validated, cached, and served through a serverless API, with scores, friends, leaderboards, and challenges all authoritative on the server. New trivia appears on its own schedule — nobody has to ship a new build for the game to have something new to ask.</p>
         <p>Gathering facts and writing questions are kept as separate jobs. Providers fetch real source material — wire services and public broadcasters for news, research-institution feeds for science, REST Countries and Wikidata for geography — and store the title, URL, publisher, and publication date before any of it reaches a model, which is then asked to write questions from that material and nothing else; it is never asked what is true. Geography doesn't trust a model at all: both answers and distractors come out of structured datasets through deterministic templates. Candidates are rejected rather than repaired, against a checklist — four distinct options, no speculative or opinion framing, no relative dates that stop being true once cached, a source URL that was actually supplied, no duplicate fingerprint.</p>

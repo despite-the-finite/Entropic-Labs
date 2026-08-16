@@ -75,9 +75,12 @@ buttons at it — the form provider holds the address, so the page never publish
 
 `games.html` covers the studio's game design work, in order:
 
-1. **Donnell and McBurns: An EPC Epic** ([Work-Video-Game-Meridian](https://github.com/despite-the-finite/Work-Video-Game-Meridian)) — playable at [`/play/meridian/`](https://despite-the-finite.github.io/Entropic-Labs/play/meridian/)
-2. **Indra and the Wandering Words** ([Learn-to-Read](https://github.com/despite-the-finite/Learn-to-Read)) — playable at [`/play/wandering-words/`](https://despite-the-finite.github.io/Entropic-Labs/play/wandering-words/)
-3. **Live Trivia** ([Trivia-Game](https://github.com/despite-the-finite/Trivia-Game))
+1. **Donnell and McBurns: An EPC Epic** — playable at [`/play/meridian/`](https://despite-the-finite.github.io/Entropic-Labs/play/meridian/)
+2. **Indra and the Wandering Words** — playable at [`/play/wandering-words/`](https://despite-the-finite.github.io/Entropic-Labs/play/wandering-words/)
+3. **Live Trivia**
+
+The site no longer links to any game's source. Each hosted copy still records where
+it came from in its own `UPSTREAM.md`, which is what a refresh needs.
 
 Each entry is a disclosure: the catalog reads as three concise rows, and picking one
 opens its three-paragraph write-up along with its play and source buttons. That's
