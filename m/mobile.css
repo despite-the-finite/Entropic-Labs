@@ -208,10 +208,48 @@ body.menu-open{ overflow: hidden; }
 /* ---------- HERO ---------- */
 /* overrides the shared section padding so the banner meets the bar */
 .hero{ padding: 0; border-bottom: 1px solid var(--hairline); }
+/* Lighter than the desktop treatment — a fade in, a very slow push, and an
+   aurora that breathes. No sheen sweep here: one fewer continuous layer to
+   composite on a phone. */
+.hero-media{
+  position: relative;
+  overflow: hidden;
+  background: var(--ink);
+  animation: hero-fade 900ms ease-out both;
+}
 .hero-banner{
   display: block;
   width: 100%;
   height: auto;
+  transform-origin: 50% 42%;
+  animation: hero-push 64s ease-in-out infinite alternate;
+}
+.hero-aurora{
+  position: absolute;
+  inset: -12%;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  background:
+    radial-gradient(38% 44% at 33% 33%, rgba(124,77,255,0.28), transparent 70%),
+    radial-gradient(30% 38% at 67% 27%, rgba(255,63,160,0.18), transparent 72%);
+  animation: hero-aurora 30s ease-in-out infinite alternate;
+}
+@keyframes hero-fade{ from{ opacity: 0; } to{ opacity: 1; } }
+@keyframes hero-push{
+  from{ transform: scale(1.004); }
+  to{ transform: scale(1.04); }
+}
+@keyframes hero-aurora{
+  from{ transform: translate3d(-1.5%,-1%,0) scale(1); opacity: 0.5; }
+  to{ transform: translate3d(2%,1.5%,0) scale(1.08); opacity: 0.92; }
+}
+.hero-content > *{ animation: hero-rise 700ms cubic-bezier(.16,.84,.44,1) both; }
+.hero-content .eyebrow{ animation-delay: 240ms; }
+.hero-content .hero-sub{ animation-delay: 380ms; }
+.hero-content .cta-stack{ animation-delay: 520ms; }
+@keyframes hero-rise{
+  from{ opacity: 0; transform: translateY(10px); }
+  to{ opacity: 1; transform: none; }
 }
 .hero-content{ padding: 1.6rem var(--pad) 2.2rem; }
 .rec-dot{
@@ -553,5 +591,7 @@ footer{
 
 @media (prefers-reduced-motion: reduce){
   .rec-dot{ animation: none; }
+  .hero-media, .hero-banner, .hero-aurora, .hero-content > *{ animation: none; }
+  .hero-aurora{ opacity: 0.6; }
   *{ transition: none !important; }
 }

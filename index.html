@@ -140,10 +140,72 @@
     background: var(--ink);
     border-bottom: 1px solid var(--hairline);
   }
+  /* The banner is a flat JPEG, so the motion is layered over it: a very slow
+     push on the image, an aurora that breathes across the nebula, and a sheen
+     that crosses every so often. Transform/opacity only, so it stays on the
+     compositor. All of it stops under prefers-reduced-motion. */
+  .hero-media{
+    position: relative;
+    overflow: hidden;
+    background: var(--ink);
+    animation: hero-fade 900ms ease-out both;
+  }
   .hero-banner{
     display: block;
     width: 100%;
     height: auto;
+    transform-origin: 50% 42%;
+    animation: hero-push 52s ease-in-out infinite alternate;
+  }
+  .hero-aurora,
+  .hero-sweep{
+    position: absolute;
+    pointer-events: none;
+  }
+  .hero-aurora{
+    inset: -12%;
+    mix-blend-mode: screen;
+    background:
+      radial-gradient(38% 44% at 33% 33%, rgba(124,77,255,0.30), transparent 70%),
+      radial-gradient(30% 38% at 67% 27%, rgba(255,63,160,0.20), transparent 72%);
+    animation: hero-aurora 26s ease-in-out infinite alternate;
+  }
+  .hero-sweep{
+    top: 0; bottom: 0; left: 0;
+    width: 38%;
+    background: linear-gradient(100deg,
+      transparent,
+      rgba(241,238,251,0.05) 42%,
+      rgba(47,224,199,0.045) 58%,
+      transparent);
+    transform: translate3d(-160%,0,0) skewX(-12deg);
+    animation: hero-sweep 17s ease-in-out infinite;
+  }
+  @keyframes hero-fade{ from{ opacity: 0; } to{ opacity: 1; } }
+  @keyframes hero-push{
+    from{ transform: scale(1.004); }
+    to{ transform: scale(1.05); }
+  }
+  @keyframes hero-aurora{
+    from{ transform: translate3d(-1.5%,-1%,0) scale(1); opacity: 0.5; }
+    to{ transform: translate3d(2%,1.5%,0) scale(1.09); opacity: 0.95; }
+  }
+  @keyframes hero-sweep{
+    0%, 64%{ transform: translate3d(-160%,0,0) skewX(-12deg); }
+    100%{ transform: translate3d(330%,0,0) skewX(-12deg); }
+  }
+  .hero-content > *{ animation: hero-rise 700ms cubic-bezier(.16,.84,.44,1) both; }
+  .hero-content .eyebrow{ animation-delay: 260ms; }
+  .hero-content .hero-sub{ animation-delay: 400ms; }
+  .hero-content .cta-row{ animation-delay: 540ms; }
+  @keyframes hero-rise{
+    from{ opacity: 0; transform: translateY(10px); }
+    to{ opacity: 1; transform: none; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .hero-media, .hero-banner, .hero-aurora, .hero-content > *{ animation: none; }
+    .hero-sweep{ display: none; }
+    .hero-aurora{ opacity: 0.6; }
   }
   .hero-content{
     position: relative;
@@ -417,7 +479,11 @@
 
 <header class="hero">
   <h1 class="sr-only">Entropic Labs — Music Engineering / Studio</h1>
-  <img class="hero-banner" src="img/hero.jpg" alt="Entropic Labs, Music Engineering / Studio — wordmark glowing over a violet nebula sky, with cascading code, neon figures in motion, and a spectrum analyser along the bottom" width="2400" height="1350" fetchpriority="high">
+  <div class="hero-media">
+    <img class="hero-banner" src="img/hero.jpg" alt="Entropic Labs, Music Engineering / Studio — wordmark glowing over a violet nebula sky, with cascading code, neon figures in motion, and a spectrum analyser along the bottom" width="2400" height="1350" fetchpriority="high">
+    <span class="hero-aurora" aria-hidden="true"></span>
+    <span class="hero-sweep" aria-hidden="true"></span>
+  </div>
   <div class="hero-content wrap">
     <span class="eyebrow"><span class="rec-dot"></span> Session live · By appointment</span>
     <p class="hero-sub">Entropic Labs is a recording and production studio built on one idea: order emerges from noise if you listen long enough. Real amps, a pedalboard built over years, and a room tuned for patience and for accidents.</p>
