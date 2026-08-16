@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
+<!-- Without this a phone lays the page out at ~980px and zooms out, so the
+     game would render tiny. viewport-fit=cover lets the safe-area insets
+     below account for notches and home indicators. -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
 <title>EPC QUEST</title>
 <style>
   html, body {
@@ -9,14 +13,26 @@
     padding: 0;
     background: #14161c;
     height: 100%;
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'Courier New', monospace;
   }
+  /* Fills the window — Phaser's Scale Manager (see main.js) fits the 640x480
+     canvas inside it, centered, so the game scales up to whatever room the
+     browser gives it instead of sitting at a fixed 640x480. */
   #game-container {
-    box-shadow: 0 0 0 4px #2a2d3a, 0 0 40px rgba(0,0,0,0.6);
+    width: 100vw;
+    height: 100vh;
+    /* dvh where supported: mobile browsers count their collapsing address
+       bar in vh, which leaves the canvas taller than the visible page. */
+    height: 100dvh;
     cursor: none;
+  }
+  /* Frame the canvas itself rather than the (now full-window) container. */
+  #game-container canvas {
+    box-shadow: 0 0 0 4px #2a2d3a, 0 0 40px rgba(0,0,0,0.6);
   }
   #boot-status {
     position: fixed;
@@ -54,10 +70,157 @@
   #boot-status.error #boot-bar-track {
     display: none;
   }
+
+  /* ---- On-screen touch controls (see src/touch.js) ----
+     Hidden until touch.js decides this is a touch device, so a desktop
+     player never sees them. */
+  #touch-controls {
+    display: none;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    box-sizing: border-box;
+    padding: 10px 20px;
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    z-index: 10;
+    /* The browser must not treat these as scroll/zoom gestures — without
+       this, dragging the D-pad pans the page instead of moving Karsh. */
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  #touch-controls.visible {
+    display: flex;
+  }
+  #touch-dpad {
+    position: relative;
+    flex: none;
+    width: min(40vw, 180px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: rgba(20, 22, 28, 0.72);
+    box-shadow: 0 0 0 2px #2a2d3a;
+    touch-action: none;
+  }
+  .touch-arrow {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34%;
+    height: 34%;
+    color: #ffe9a8;
+    font-size: min(6vw, 26px);
+    line-height: 1;
+    /* Input is read from the thumb's position on the pad as a whole, so
+       the arrows are decoration — let presses fall through to the pad. */
+    pointer-events: none;
+    opacity: 0.55;
+  }
+  .touch-arrow.active {
+    opacity: 1;
+    text-shadow: 0 0 8px #ffe9a8;
+  }
+  #touch-dpad-up    { top: 2%;    left: 33%; }
+  #touch-dpad-down  { bottom: 2%; left: 33%; }
+  #touch-dpad-left  { left: 2%;   top: 33%; }
+  #touch-dpad-right { right: 2%;  top: 33%; }
+  #touch-buttons {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 12px;
+  }
+  .touch-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(20, 22, 28, 0.72);
+    box-shadow: 0 0 0 2px #2a2d3a;
+    color: #ffe9a8;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    letter-spacing: 1px;
+    touch-action: none;
+  }
+  .touch-btn.active {
+    background: rgba(255, 233, 168, 0.22);
+    box-shadow: 0 0 0 2px #ffe9a8;
+  }
+  #touch-btn-space {
+    width: min(28vw, 122px);
+    aspect-ratio: 1;
+    font-size: min(3.6vw, 15px);
+  }
+  #touch-btn-h {
+    width: min(17vw, 74px);
+    aspect-ratio: 1;
+    font-size: min(4.4vw, 19px);
+  }
+  /* Portrait: give the controls a band of their own below the game rather
+     than covering it — the letterboxing from a 4:3 canvas on a tall phone
+     leaves plenty of room, and the game scales into whatever is left. */
+  @media (pointer: coarse) and (orientation: portrait) {
+    #game-container {
+      height: 62vh;
+      height: 62dvh;
+      /* body centers its children; without this the shortened container
+         floats to the middle of the viewport and the game overlaps the
+         (fixed-position) controls band instead of sitting above it. */
+      align-self: flex-start;
+    }
+    #touch-controls {
+      height: 38vh;
+      height: 38dvh;
+    }
+  }
+  /* Landscape: no vertical room to split, so the controls float over the
+     canvas edges — translucent, and tucked into the corners where the
+     game draws its own HUD least. */
+  @media (pointer: coarse) and (orientation: landscape) {
+    #touch-controls {
+      padding: 6px 14px;
+      padding-bottom: calc(6px + env(safe-area-inset-bottom));
+      opacity: 0.9;
+    }
+    #touch-dpad {
+      width: min(26vw, 34vh, 150px);
+    }
+    #touch-btn-space {
+      width: min(19vw, 24vh, 104px);
+      font-size: min(2.4vw, 14px);
+    }
+    #touch-btn-h {
+      width: min(12vw, 16vh, 64px);
+      font-size: min(3vw, 17px);
+    }
+  }
 </style>
 </head>
 <body>
 <div id="game-container"></div>
+
+<!-- Touch controls. Inert (and hidden) until src/touch.js wires them up;
+     it synthesizes the same key events the scenes already listen for, so
+     the labels match the game's own on-screen hints. -->
+<div id="touch-controls">
+  <div id="touch-dpad">
+    <div class="touch-arrow" id="touch-dpad-up">&#9650;</div>
+    <div class="touch-arrow" id="touch-dpad-left">&#9664;</div>
+    <div class="touch-arrow" id="touch-dpad-right">&#9654;</div>
+    <div class="touch-arrow" id="touch-dpad-down">&#9660;</div>
+  </div>
+  <div id="touch-buttons">
+    <div class="touch-btn" id="touch-btn-h">H</div>
+    <div class="touch-btn" id="touch-btn-space">SPACE</div>
+  </div>
+</div>
 
 <!-- Plain HTML/CSS, no dependency on any script below — shows immediately,
      and stays up (with the real error, if there was one) if anything below
@@ -111,6 +274,7 @@
       ["src/scenes/VisitorScene.js", 9556],
       ["src/scenes/BattleScene.js", 12863],
       ["src/main.js", 2005], // entry point — builds PLAYER_STATE/config and starts the game
+      ["src/touch.js", 7938], // on-screen controls for phones/tablets — no-ops on desktop
     ];
     var totalWeight = SCRIPTS.reduce(function (sum, s) { return sum + s[1]; }, 0);
     var loadedWeight = 0;

@@ -50,9 +50,20 @@ const config = {
   // show when WebGL context creation fails (locked-down GPU drivers, remote
   // desktop/VDI, VMs) instead of relying on AUTO's fallback.
   type: Phaser.CANVAS,
+  // 640x480 stays the *design* resolution — every scene positions art and UI
+  // against that grid (320/240 centers, etc.) — but the Scale Manager blows
+  // the canvas up to fill the browser window, so the game is only this small
+  // internally. FIT keeps the 4:3 aspect (letterboxing rather than stretching
+  // or cropping), CENTER_BOTH centers the result in the page, and autoRound
+  // keeps the scaled canvas on whole pixels so the pixel art doesn't shimmer.
   width: 640,
   height: 480,
   parent: "game-container",
+  scale: {
+    mode: Phaser.Scale.FIT,
+    autoCenter: Phaser.Scale.CENTER_BOTH,
+    autoRound: true,
+  },
   pixelArt: true,
   backgroundColor: "#14161c",
   physics: {
