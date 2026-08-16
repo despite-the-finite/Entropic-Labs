@@ -11,7 +11,7 @@ Landing page for Entropic Labs, a recording and production studio run by **Despi
 - `index.html` — the desktop site: markup, styles, and scripts in one file, with images loaded from `img/`.
 - `m/` — the mobile build, served automatically to phones (see below).
 - `img/` — the site's photography, at two sizes each: full for desktop, `-mobile` for phones.
-- `games.html` — the games page: video game design as a minor function of the studio, with links to each project's source.
+- `games.html` — the games page: video game design as a minor function of the studio.
 - `observatory.html` + `observatory/` — the Observatory: an interactive star chart of things worth wondering about. One responsive page rather than a desktop page plus an `m/` twin; see below.
 - `play/meridian/` — a hosted copy of *Donnell and McBurns: An EPC Epic*, so it's playable straight from the site. Read-only; see `play/meridian/UPSTREAM.md` for the source commit and how to refresh it.
 - `play/wandering-words/` — a hosted copy of *Indra and the Wandering Words*, same arrangement; see `play/wandering-words/UPSTREAM.md`.
@@ -87,7 +87,7 @@ The site no longer links to any game's source. Each hosted copy still records wh
 it came from in its own `UPSTREAM.md`, which is what a refresh needs.
 
 Each entry is a disclosure: the catalog reads as three concise rows, and picking one
-opens its three-paragraph write-up along with its play and source buttons. That's
+opens its three-paragraph write-up along with its play button. That's
 plain `<details>`/`<summary>`, so it needs no JavaScript and stays keyboard
 accessible.
 
