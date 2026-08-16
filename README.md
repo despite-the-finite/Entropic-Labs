@@ -10,7 +10,8 @@ Landing page for Entropic Labs, a recording and production studio run by **Despi
 
 - `index.html` — the desktop site: markup, styles, and scripts in one file, with images loaded from `img/`.
 - `m/` — the mobile build, served automatically to phones (see below).
-- `img/` — the site's photography, at two sizes each: full for desktop, `-mobile` for phones.
+- `img/` — the site's photography, at two sizes each: full for desktop, `-mobile` for phones, plus the hero's figure sprites.
+- `hero.js` — the hero banner's live layers, shared by both builds (see below).
 - `games.html` — the games page: video game design as a minor function of the studio.
 - `observatory.html` + `observatory/` — the Observatory: an interactive star chart of things worth wondering about. One responsive page rather than a desktop page plus an `m/` twin; see below.
 - `play/meridian/` — a hosted copy of *Donnell and McBurns: An EPC Epic*, so it's playable straight from the site. Read-only; see `play/meridian/UPSTREAM.md` for the source commit and how to refresh it.
@@ -50,6 +51,34 @@ and it loads the `-mobile` images (191KB for all three, against 640KB).
 
 `m/mobile.css` is shared by both mobile pages rather than inlined, so it's cached
 once across them.
+
+## The hero banner
+
+The artwork arrived as one flat 4K image, and nothing in a flat image can move.
+So `img/hero.jpg` is a **backdrop with the animated parts painted out** — the
+strapline, the spectrum bars and the five figures — and those are layered back
+over it as live elements:
+
+| Element | How it lives now |
+|---|---|
+| Spectrum bars | Drawn into `.hero-fx` canvas, three detuned oscillators per bar so it reads as music rather than a wave. Colour ramp sampled from the original. |
+| Falling code | Same canvas. Extra glyph columns fall through the static ones already in the artwork. |
+| Strapline | Live SVG text over the erased band, turning slowly on its own axis. |
+| The five figures | Cut out of the artwork as sprites in `img/hero-fig-*.png` and screen-blended back at their exact positions. Each has its own animation: the biker takes bumps, the cyclist pedals, the skateboarder ollies, the snowboarder carves, the truck works its suspension. |
+
+Figures animate **on hover** where there's a pointer, and **take turns
+automatically** on touch, since a phone has no hover. Positions are in percent of
+the banner, so every layer stays registered at any width, and the slow push
+scales the whole scene rather than the backdrop alone.
+
+`layers.py` in the scratchpad produced the separation: it finds each figure by
+its glow, inpaints it out of the plate, and writes the sprite as the difference
+between original and plate — so a sprite composited at rest reproduces the
+source exactly. Re-running it needs the original 4K file.
+
+The canvas is capped at 30fps, stops when the tab is hidden or the hero scrolls
+out of view, and draws a single frozen frame under `prefers-reduced-motion`,
+where every animation is off.
 
 ## Sections
 

@@ -150,12 +150,113 @@
     background: var(--ink);
     animation: hero-fade 900ms ease-out both;
   }
+  /* The scene carries the slow push so every layer — backdrop, canvas,
+     figures, subtitle — scales together and stays registered. */
+  .hero-scene{
+    position: relative;
+    transform-origin: 50% 42%;
+    animation: hero-push 52s ease-in-out infinite alternate;
+  }
   .hero-banner{
     display: block;
     width: 100%;
     height: auto;
-    transform-origin: 50% 42%;
-    animation: hero-push 52s ease-in-out infinite alternate;
+  }
+  .hero-fx{
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  /* Figures cut out of the artwork, screen-blended back over the plate they
+     were removed from. Each animates on hover; on touch hero.js takes turns. */
+  .hero-fig{
+    position: absolute;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    mix-blend-mode: screen;
+    will-change: transform;
+  }
+  .hero-fig--bike{  left: 5.990%;  top: 64.630%; width: 8.906%;  height: 15.556%; background-image: url(img/hero-fig-bike.png);  transform-origin: 62% 88%; }
+  .hero-fig--cycle{ left: 20.677%; top: 66.157%; width: 8.203%;  height: 14.352%; background-image: url(img/hero-fig-cycle.png); transform-origin: 50% 92%; }
+  .hero-fig--skate{ left: 40.885%; top: 63.426%; width: 10.130%; height: 15.648%; background-image: url(img/hero-fig-skate.png); transform-origin: 40% 90%; }
+  .hero-fig--board{ left: 62.500%; top: 64.074%; width: 10.599%; height: 17.685%; background-image: url(img/hero-fig-board.png); transform-origin: 50% 86%; }
+  .hero-fig--truck{ left: 81.172%; top: 70.787%; width: 9.115%;  height: 11.759%; background-image: url(img/hero-fig-truck.png); transform-origin: 50% 92%; }
+
+  @media (hover: hover){
+    .hero-fig{ pointer-events: auto; }
+    .hero-fig--bike:hover,  .hero-fig--bike.is-playing { animation: fig-bike 1.5s ease-in-out infinite; }
+    .hero-fig--cycle:hover, .hero-fig--cycle.is-playing{ animation: fig-cycle 1.1s ease-in-out infinite; }
+    .hero-fig--skate:hover, .hero-fig--skate.is-playing{ animation: fig-skate 1.6s ease-in-out infinite; }
+    .hero-fig--board:hover, .hero-fig--board.is-playing{ animation: fig-board 2.4s ease-in-out infinite; }
+    .hero-fig--truck:hover, .hero-fig--truck.is-playing{ animation: fig-truck 1.2s ease-in-out infinite; }
+  }
+  .hero-fig--bike.is-playing { animation: fig-bike 1.5s ease-in-out infinite; }
+  .hero-fig--cycle.is-playing{ animation: fig-cycle 1.1s ease-in-out infinite; }
+  .hero-fig--skate.is-playing{ animation: fig-skate 1.6s ease-in-out infinite; }
+  .hero-fig--board.is-playing{ animation: fig-board 2.4s ease-in-out infinite; }
+  .hero-fig--truck.is-playing{ animation: fig-truck 1.2s ease-in-out infinite; }
+
+  /* jumping the bumps */
+  @keyframes fig-bike{
+    0%,100%{ transform: translate(0,0) rotate(0deg); }
+    28%{ transform: translate(-0.4%,-6%) rotate(-3.5deg); }
+    52%{ transform: translate(0.2%,-1.5%) rotate(1.5deg); }
+    72%{ transform: translate(0,0.8%) rotate(0.4deg); }
+  }
+  /* pedalling — a steady rise and fall out of the saddle */
+  @keyframes fig-cycle{
+    0%,100%{ transform: translateY(0) rotate(0deg); }
+    50%{ transform: translateY(-2.6%) rotate(-1.2deg); }
+  }
+  /* an ollie: crouch, pop, land */
+  @keyframes fig-skate{
+    0%,55%,100%{ transform: translateY(0) rotate(0deg); }
+    22%{ transform: translateY(1.2%) rotate(0deg); }
+    36%{ transform: translateY(-9%) rotate(-9deg); }
+    46%{ transform: translateY(-3%) rotate(-3deg); }
+  }
+  /* carving turns down the fall line */
+  @keyframes fig-board{
+    0%,100%{ transform: translateX(0) rotate(0deg); }
+    30%{ transform: translateX(-1.6%) rotate(4.5deg); }
+    70%{ transform: translateX(1.6%) rotate(-4.5deg); }
+  }
+  /* suspension working over rough ground */
+  @keyframes fig-truck{
+    0%,100%{ transform: translateY(0) rotate(0deg); }
+    25%{ transform: translateY(-2.2%) rotate(-1.4deg); }
+    60%{ transform: translateY(0.9%) rotate(1deg); }
+    80%{ transform: translateY(-0.8%) rotate(-0.4deg); }
+  }
+
+  /* the strapline, re-set as live text so it can turn on its own axis */
+  .hero-subtitle{
+    position: absolute;
+    left: 30.729%; top: 43.889%;
+    width: 38.542%; height: 2.870%;
+    perspective: 600px;
+    pointer-events: none;
+  }
+  .hero-subtitle svg{
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    animation: sub-turn 9s ease-in-out infinite;
+  }
+  .hero-subtitle text{
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 52px;
+    letter-spacing: 20px;
+    fill: #EAF6FF;
+  }
+  @keyframes sub-turn{
+    0%,100%{ transform: rotateY(-11deg) rotateX(2deg); }
+    50%{ transform: rotateY(11deg) rotateX(-2deg); }
   }
   .hero-aurora,
   .hero-sweep{
@@ -203,9 +304,11 @@
     to{ opacity: 1; transform: none; }
   }
   @media (prefers-reduced-motion: reduce){
-    .hero-media, .hero-banner, .hero-aurora, .hero-content > *{ animation: none; }
+    .hero-media, .hero-scene, .hero-aurora, .hero-content > *,
+    .hero-fig, .hero-subtitle svg{ animation: none; }
     .hero-sweep{ display: none; }
     .hero-aurora{ opacity: 0.6; }
+    .hero-subtitle svg{ transform: none; }
   }
   .hero-content{
     position: relative;
@@ -480,9 +583,22 @@
 <header class="hero">
   <h1 class="sr-only">Entropic Labs — Music Engineering / Studio</h1>
   <div class="hero-media">
-    <img class="hero-banner" src="img/hero.jpg" alt="Entropic Labs, Music Engineering / Studio — wordmark glowing over a violet nebula sky, with cascading code, neon figures in motion, and a spectrum analyser along the bottom" width="2400" height="1350" fetchpriority="high">
-    <span class="hero-aurora" aria-hidden="true"></span>
-    <span class="hero-sweep" aria-hidden="true"></span>
+    <div class="hero-scene">
+      <img class="hero-banner" src="img/hero.jpg" alt="Entropic Labs, Music Engineering / Studio — wordmark glowing over a violet nebula sky, with cascading code, neon figures in motion, and a spectrum analyser along the bottom" width="2400" height="1350" fetchpriority="high">
+      <canvas class="hero-fx" aria-hidden="true"></canvas>
+      <span class="hero-fig hero-fig--bike"  aria-hidden="true"></span>
+      <span class="hero-fig hero-fig--cycle" aria-hidden="true"></span>
+      <span class="hero-fig hero-fig--skate" aria-hidden="true"></span>
+      <span class="hero-fig hero-fig--board" aria-hidden="true"></span>
+      <span class="hero-fig hero-fig--truck" aria-hidden="true"></span>
+      <span class="hero-subtitle" aria-hidden="true">
+        <svg viewBox="1180 946 1480 62" preserveAspectRatio="xMidYMid meet">
+          <text x="1920" y="994" text-anchor="middle">MUSIC ENGINEERING / STUDIO</text>
+        </svg>
+      </span>
+      <span class="hero-aurora" aria-hidden="true"></span>
+      <span class="hero-sweep" aria-hidden="true"></span>
+    </div>
   </div>
   <div class="hero-content wrap">
     <span class="eyebrow"><span class="rec-dot"></span> Session live · By appointment</span>
@@ -685,6 +801,7 @@
   <span>© 2026 ENTROPIC LABS</span>
 </footer>
 
+<script src="hero.js" defer></script>
 <script>
   (function(){
     var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
