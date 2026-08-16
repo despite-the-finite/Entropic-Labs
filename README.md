@@ -64,17 +64,18 @@ over it as live elements:
 | Spectrum bars | Drawn into `.hero-fx` canvas, three detuned oscillators per bar so it reads as music rather than a wave. Colour ramp sampled from the original. |
 | Falling code | Same canvas. Extra glyph columns fall through the static ones already in the artwork. |
 | Strapline | Live SVG text over the erased band, turning slowly on its own axis. |
-| The five figures | Cut out of the artwork as sprites in `img/hero-fig-*.png` and screen-blended back at their exact positions. Each has its own animation: the biker takes bumps, the cyclist pedals, the skateboarder ollies, the snowboarder carves, the truck works its suspension. |
+| The five figures | Cut out of the artwork as sprites in `img/hero-fig-*.png` and screen-blended back at their exact positions, each animated as its own activity: the mountain biker's fork compresses and rebounds over a hit, the road cyclist holds an aero tuck while speed lines stream off the back, the skateboarder ollies (crouch, tail snap, level out, land and absorb), the snowboarder pops a 360 on the vertical axis, and the truck works both axles over trail chatter. Transform origins sit at each one's contact patch so compression loads onto the ground. |
 
 Figures animate **on hover** where there's a pointer, and **take turns
 automatically** on touch, since a phone has no hover. Positions are in percent of
 the banner, so every layer stays registered at any width, and the slow push
 scales the whole scene rather than the backdrop alone.
 
-`layers.py` in the scratchpad produced the separation: it finds each figure by
-its glow, inpaints it out of the plate, and writes the sprite as the difference
-between original and plate — so a sprite composited at rest reproduces the
-source exactly. Re-running it needs the original 4K file.
+`tools-hero-layers.py` produced the separation: it finds each figure by its glow,
+inpaints it out of the plate, and writes the sprite as the difference between
+original and plate — so a sprite composited at rest reproduces the source
+exactly. It is a one-off, kept for the record; re-running it needs the original
+4K artwork, which is not in the repo.
 
 The canvas is capped at 30fps, stops when the tab is hidden or the hero scrolls
 out of view, and draws a single frozen frame under `prefers-reduced-motion`,

@@ -81,6 +81,8 @@
                  [75,96,128],[87,90,136],[91,76,128],[93,63,119],[95,51,113],[100,45,110],[108,36,112]];
   var bars = [];
   var BAR_COUNT = 96;
+  var BAR_SPEED = 0.38;   // how fast the bars dance; lower is calmer
+  var BAR_EASE = 0.09;    // how hard each bar chases its target height
 
   function buildBars() {
     bars = [];
@@ -90,7 +92,7 @@
         p1: Math.random() * Math.PI * 2, s1: 0.5 + Math.random() * 0.7,
         p2: Math.random() * Math.PI * 2, s2: 1.3 + Math.random() * 1.1,
         p3: Math.random() * Math.PI * 2, s3: 2.6 + Math.random() * 1.8,
-        env: 0
+        h: 0
       });
     }
   }
@@ -107,14 +109,18 @@
     var strip = H - top;
     var gap = Math.max(1, W / 900);
     var bw = (W - gap * (BAR_COUNT - 1)) / BAR_COUNT;
+    var clock = time * BAR_SPEED;
     for (var i = 0; i < BAR_COUNT; i++) {
       var b = bars[i];
       var t = i / (BAR_COUNT - 1);
       // a slow envelope across the width keeps the silhouette of the original
-      var shape = 0.55 + 0.45 * Math.sin(t * Math.PI * 2.1 + time * 0.18);
-      var v = (Math.sin(time * b.s1 + b.p1) + Math.sin(time * b.s2 + b.p2) * 0.6
-               + Math.sin(time * b.s3 + b.p3) * 0.3) / 1.9;
-      var h = strip * (0.20 + 0.62 * Math.max(0, shape * 0.7 + v * 0.42));
+      var shape = 0.55 + 0.45 * Math.sin(t * Math.PI * 2.1 + clock * 0.18);
+      var v = (Math.sin(clock * b.s1 + b.p1) + Math.sin(clock * b.s2 + b.p2) * 0.6
+               + Math.sin(clock * b.s3 + b.p3) * 0.3) / 1.9;
+      var target = strip * (0.22 + 0.52 * Math.max(0, shape * 0.7 + v * 0.42));
+      // glide toward the target instead of snapping to it
+      b.h += (target - b.h) * BAR_EASE;
+      var h = b.h;
       var c = paletteAt(t);
       var x = i * (bw + gap);
       ctx.fillStyle = 'rgb(' + (c[0] | 0) + ',' + (c[1] | 0) + ',' + (c[2] | 0) + ')';
