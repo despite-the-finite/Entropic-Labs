@@ -27,13 +27,18 @@
                    'Some time after the monsoon', 'Nobody agrees'.
    era             an ERAS id. Optional — leave it out and the story still
                    sorts by year. Eras are labels, not facts; see ERAS below.
+   strand          a STRANDS id — whose line this happened on. 'amma', 'dad',
+                   'together', 'me', 'brother'. Leave it out and the story
+                   sits on the centre line at its year, which is right for
+                   anything that belongs to the family rather than to one
+                   person in it.
    location        free text: 'Bombay', 'The train to Lusaka'.
    place           a PLACES id, if this happened somewhere already listed.
                    Gives the story map coordinates without repeating them.
    coordinates     {lat, lon} — only if this story needs a point of its own
                    that isn't in PLACES. `place` is usually the better call.
    people          array of names or {name, relation} objects.
-                   [{ name: 'Ba', relation: 'grandmother' }, 'Mum']
+                   [{ name: 'Ba', relation: 'grandmother' }, 'Amma']
    category        a CATEGORIES id — which butterfly carries this one.
    tags            array of free-text tags. Cheap, searchable, no schema.
    story           array of paragraphs (strings). The story itself.
@@ -45,7 +50,7 @@
    audio           {src, label, transcript}. If present the story shows
                    'Hear them tell it'. `transcript` is an array of
                    paragraphs and is what makes the recording accessible.
-   source          who told it: 'Mum, at the kitchen table, 2026'.
+   source          who told it: 'Amma, at the kitchen table, 2026'.
                    Attribution is content, not metadata — it belongs in the
                    record.
    notes           array of {by, text} — where accounts differ, or where a
@@ -58,7 +63,7 @@
                    direction reads better.
    alternatePath   an optional branching moment. See ALTERNATE PATHS below.
    disputed        true, or a string: 'Dad's version differs on the year.'
-   classified      true, or a string reason: 'Mum has not cleared this one.'
+   classified      true, or a string reason: 'Amma has not cleared this one.'
                    A classified story keeps its title and its seal, and shows
                    no story text at all.
    chaosEvent      true — flags a small moment with long consequences. The
@@ -159,6 +164,49 @@
   ];
 
   /* ------------------------------------------------------------------------
+     STRANDS — the braid.
+
+     The trail is not one line. Two lives run alongside each other before they
+     meet, become one when they marry, and divide again each time somebody is
+     born. That shape is the archive's spine, and it is drawn from here.
+
+     id       slug. A story's `strand` field points at one of these.
+     label    drawn at the open end of the strand.
+     tone     hex. The strand's own light.
+     side     which way it sits off the centre line: -1, 0 or +1.
+     role     'parent'  runs in from before the record and converges at the union
+              'union'   the single line the parents become
+              'child'   branches off the union in the year it begins
+     begins   for a child, the year the strand starts. This is the branch point.
+     ends     optional year a strand stops. Leave it out and it runs on.
+
+     Add a third child and it gets its own branch; the sides just need
+     spreading (-1, 0, +1 and so on outward). Nothing else needs editing.
+     ------------------------------------------------------------------------ */
+  var STRANDS = [
+    { id: 'amma',     label: 'Amma',        tone: '#FF6B9A', side: -1, role: 'parent' },
+    { id: 'dad',      label: 'Dad',         tone: '#6FE3B8', side:  1, role: 'parent' },
+    { id: 'together', label: 'Together',    tone: '#FFC46B', side:  0, role: 'union' },
+    { id: 'me',       label: 'Me',          tone: '#FFC46B', side: -1, role: 'child', begins: 1987 },
+    { id: 'brother',  label: 'My brother',  tone: '#FF9D5C', side:  1, role: 'child', begins: 1990 }
+  ];
+
+  /* Where the two parent strands become one.
+
+     `unionYear` is deliberately null: nobody has supplied the year yet, and
+     putting a number here would be inventing one. Left null, the strands
+     still converge — the confluence simply sits before the first birth with
+     no date on it, which is the honest drawing of "this happened, we haven't
+     written down when". Fill the year in and the whole braid re-times itself
+     around it. */
+  var BRAID = {
+    unionYear: null,
+    unionLabel: 'Married',
+    unionNote: 'Two trails become one. The year has not been written down yet.',
+    birthLabel: 'Born'
+  };
+
+  /* ------------------------------------------------------------------------
      ERAS — the time rail.
 
      Deliberately empty. Eras are a family's own way of dividing its life and
@@ -202,6 +250,7 @@
          year: 1971,
          approximateDate: 'Some time in the spring',
          era: null,
+         strand: 'amma',
          location: 'Bombay',
          place: null,
          people: [{ name: '', relation: '' }],
@@ -212,8 +261,8 @@
            'Second paragraph.'
          ],
          images: [{ src: '', alt: '', caption: '', year: '', location: '' }],
-         audio: { src: '', label: 'Mum, recorded 2026', transcript: [''] },
-         source: 'Mum, at the kitchen table',
+         audio: { src: '', label: 'Amma, recorded 2026', transcript: [''] },
+         source: 'Amma, at the kitchen table',
          notes: [{ by: 'Dad', text: 'Remembers the month differently.' }],
          relatedStories: [],
          causedBy: [],
@@ -245,6 +294,9 @@
     ],
     enter: 'Follow the trail',
 
+    /* The mark in the corner of the way in. */
+    beforeTheFinite: 'Before the finite',
+
     /* Shown while STORIES is empty. */
     empty: {
       heading: 'The trail is just beginning.',
@@ -267,11 +319,11 @@
     flags: {
       classified: {
         label: 'Classified family history',
-        line: 'Publication currently prohibited by Mom.'
+        line: 'Publication currently prohibited by Amma.'
       },
       disputed: {
         label: 'Disputed account',
-        line: 'Dad’s recollection of these events differs substantially from Mom’s.'
+        line: 'Dad’s recollection of these events differs substantially from Amma’s.'
       },
       chaos: {
         label: 'Chaos event',
@@ -291,6 +343,69 @@
   };
 
   /* ------------------------------------------------------------------------
+     THE ESSAY — the room explaining its own premise.
+
+     Opened from "What is the butterfly effect?" and linkable at
+     butterfly.html#butterfly-effect. Kept here with the rest of the writing
+     rather than inside the interface.
+     ------------------------------------------------------------------------ */
+  var ESSAY = {
+    id: 'butterfly-effect',
+    trigger: 'What is the butterfly effect?',
+    title: 'The Butterfly Effect',
+    standfirst: 'A weather model, a rounding error, and the most misquoted idea in science.',
+    sections: [
+      {
+        heading: 'It started with a shortcut',
+        paragraphs: [
+          'In 1961 Edward Lorenz, a meteorologist at MIT, was re-running a weather simulation and did not want to start it from the beginning. He typed in the numbers from a printout partway through the previous run and went to get coffee.',
+          'The printout had rounded the values to three decimal places. The machine had been working to six. He had entered 0.506 where the computer had been holding 0.506127 — a difference of about one part in a thousand, the sort of error that no measurement of the real atmosphere could ever avoid.',
+          'The new forecast tracked the old one for a while, drifted, and then had nothing to do with it at all. Lorenz had expected a small difference to stay small. Instead the two weathers had become strangers.'
+        ]
+      },
+      {
+        heading: 'The talk that named it',
+        paragraphs: [
+          'Lorenz published the mathematics in 1963, in a paper about a simplified model of convection. Plotted, its solutions trace a shape that never repeats and never escapes — and which happens to look like a pair of wings.',
+          'The name arrived later and almost by accident. In 1972 Lorenz was down to speak at a meeting of the American Association for the Advancement of Science and had not supplied a title, so the session organiser, Philip Merilees, wrote one for him: "Does the Flap of a Butterfly’s Wings in Brazil Set Off a Tornado in Texas?"',
+          'Lorenz had used a seagull in earlier talks. The butterfly is the version that stuck.'
+        ]
+      },
+      {
+        heading: 'What it actually says',
+        paragraphs: [
+          'The idea is sensitive dependence on initial conditions: in some systems, differences too small to measure grow until they dominate. Such a system can be entirely deterministic — every step following exactly from the last — and still be unpredictable in practice, because you can never specify the starting point precisely enough.',
+          'What it does not say is that one butterfly causes one tornado. In a system like that, every tiny difference matters equally and none of them is special. Picking out a single flap and calling it the cause is not physics; it is storytelling, done backwards, from an outcome we already know.',
+          'Which is worth admitting up front in a room like this one, because that backwards storytelling is exactly what an archive does.'
+        ]
+      },
+      {
+        heading: 'And then there is the film',
+        paragraphs: [
+          'For most people the phrase does not come from Lorenz at all. It comes from The Butterfly Effect, the 2004 film written and directed by Eric Bress and J. Mackye Gruber, in which Ashton Kutcher plays a young man who discovers he can return to moments in his own past and change them.',
+          'He keeps going back to put things right. Every repair costs something somewhere else, each new present worse than the one he was trying to fix, until the only decent move left is to undo himself.',
+          'That is not really chaos theory — it is a film about regret, and about wanting a second run at a handful of specific days. Lorenz’s point was almost the opposite: not that you could go back and adjust one thing, but that you could never know which thing to adjust. Still, the film is why the phrase is in everybody’s mouth, and it is honest to say so.'
+        ]
+      },
+      {
+        heading: 'Why this room is built on it',
+        paragraphs: [
+          'A family is a system of exactly this kind. A decision that took an afternoon, a train that was late, a letter that went to the wrong house — and two generations later somebody exists who otherwise would not, in a country nobody had heard of at the time.',
+          'The trails here run forward only. Where a story led somewhere, the archive traces the line and shows it. Where somebody wonders what the other choice would have done, that branch is drawn dashed, labelled a life that never happened, and then taken back — because it is a thing the family imagines, not a thing the record knows.'
+        ]
+      }
+    ],
+    sources: [
+      { label: 'Lorenz, E. N. (1963). "Deterministic Nonperiodic Flow." Journal of the Atmospheric Sciences 20(2), 130–141.', url: 'https://journals.ametsoc.org/view/journals/atsc/20/2/1520-0469_1963_020_0130_dnf_2_0_co_2.xml' },
+      { label: 'Lorenz, E. N. (1972). "Predictability: Does the Flap of a Butterfly’s Wings in Brazil Set Off a Tornado in Texas?" Address to the American Association for the Advancement of Science, Washington DC.', url: 'https://www.aaas.org/' },
+      { label: 'Lorenz, E. N. (1993). The Essence of Chaos. University of Washington Press — where Lorenz tells the 1961 story himself.', url: 'https://uwapress.uw.edu/' },
+      { label: 'The Butterfly Effect (2004). Written and directed by Eric Bress and J. Mackye Gruber.', url: null }
+    ],
+    footnote: 'Citations name the specific work. Links point at the publishing journal or institution rather than a deep link, because those keep working.'
+  };
+  ARCHIVE.essay = ESSAY;
+
+  /* ------------------------------------------------------------------------
      A read-only sanity check. The controller runs it once and logs anything
      it finds; it never throws, because a typo in one story should not take
      the room down. Returns an array of strings.
@@ -301,10 +416,25 @@
     var catIds = {};
     var eraIds = {};
     var placeIds = {};
+    var strandIds = {};
 
     CATEGORIES.forEach(function (c) { catIds[c.id] = true; });
     ERAS.forEach(function (e) { eraIds[e.id] = true; });
     PLACES.forEach(function (p) { placeIds[p.id] = true; });
+    STRANDS.forEach(function (s) { strandIds[s.id] = true; });
+
+    /* The braid only holds together if it has somewhere to converge and the
+       children know when they start. */
+    if (!STRANDS.some(function (s) { return s.role === 'union'; })) {
+      if (STRANDS.some(function (s) { return s.role === 'parent'; })) {
+        out.push('braid: parent strands exist with no union strand to meet at');
+      }
+    }
+    STRANDS.forEach(function (s) {
+      if (s.role === 'child' && typeof s.begins !== 'number') {
+        out.push('strand ' + s.id + ': a child strand needs the year it begins');
+      }
+    });
 
     STORIES.forEach(function (s, i) {
       var at = 'story ' + (s.id || '#' + i);
@@ -314,6 +444,7 @@
       if (s.category && !catIds[s.category]) out.push(at + ': unknown category "' + s.category + '"');
       if (s.era && !eraIds[s.era]) out.push(at + ': unknown era "' + s.era + '"');
       if (s.place && !placeIds[s.place]) out.push(at + ': unknown place "' + s.place + '"');
+      if (s.strand && !strandIds[s.strand]) out.push(at + ': unknown strand "' + s.strand + '"');
       if (s.alternatePath) {
         var taken = (s.alternatePath.choices || []).filter(function (c) { return c.taken; });
         if (taken.length !== 1) {
@@ -341,6 +472,8 @@
 
   global.BUTTERFLY_DATA = {
     categories: CATEGORIES,
+    strands: STRANDS,
+    braid: BRAID,
     eras: ERAS,
     places: PLACES,
     migrations: MIGRATIONS,

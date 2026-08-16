@@ -301,6 +301,31 @@ h1, h2, h3, h4{
   color: var(--ember);
   padding: 0 1.6rem;
 }
+/* The mark in the corner. Not a tagline and not a heading — a phrase the
+   place likes, set down quietly where the room begins. */
+.gate-mark{
+  position: absolute;
+  left: clamp(1rem, 3vw, 2rem);
+  bottom: calc(clamp(1rem, 3vw, 2rem) + env(safe-area-inset-bottom));
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(255,196,107,0.5);
+  pointer-events: none;
+}
+.gate-mark::before{
+  content: "";
+  display: inline-block;
+  width: 14px;
+  height: 1px;
+  background: currentColor;
+  vertical-align: middle;
+  margin-right: 0.7em;
+  opacity: 0.7;
+}
+
 .gate-skip{
   position: absolute;
   right: clamp(1rem, 3vw, 2rem);
@@ -363,6 +388,27 @@ body[data-gate="1"] .beginning{
   color: rgba(156,147,184,0.5);
   margin: 0.6rem 0 0;
 }
+
+/* The one thing in the plate that can be clicked. */
+.what-is{
+  pointer-events: auto;
+  margin-top: 0.85rem;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid rgba(47,224,199,0.35);
+  color: var(--trace);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 0.5rem 0.15rem;
+  min-height: 2.4rem;
+  transition: color .16s ease, border-color .16s ease;
+}
+.what-is:hover{ color: var(--paper); border-bottom-color: var(--paper); }
+.what-is[hidden]{ display: none; }
+
 body[data-panel="1"] .plate,
 body[data-view="constellation"] .plate .sub,
 body[data-view="map"] .plate .sub{
@@ -416,8 +462,7 @@ body[data-panel="1"] .plate{ pointer-events: none; }
   transform: translateX(-50%);
   bottom: calc(9.5rem + env(safe-area-inset-bottom));
   width: min(34rem, calc(100vw - 2.4rem));
-  padding: 1.4rem clamp(1.2rem, 3vw, 1.8rem);
-  background: linear-gradient(rgba(11,8,18,0.72), rgba(11,8,18,0.5));
+  background: linear-gradient(rgba(11,8,18,0.78), rgba(11,8,18,0.58));
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid var(--hairline);
@@ -426,39 +471,62 @@ body[data-panel="1"] .plate{ pointer-events: none; }
   transition: opacity .6s ease;
 }
 .beginning[hidden]{ display: none; }
+.beginning > summary{
+  list-style: none;
+  cursor: pointer;
+  padding: 1rem clamp(1.1rem, 3vw, 1.6rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  min-height: 3rem;
+}
+.beginning > summary::-webkit-details-marker{ display: none; }
 .beginning h2{
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   letter-spacing: 0.03em;
   color: var(--paper);
 }
+.beginning .soon{
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ember);
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+}
+/* the affordance, written rather than drawn */
+.beginning .soon::after{
+  content: "Read";
+  color: rgba(156,147,184,0.7);
+  letter-spacing: 0.14em;
+}
+.beginning[open] .soon::after{ content: "Close"; }
+.beginning .b-body{
+  padding: 0 clamp(1.1rem, 3vw, 1.6rem) 1.2rem;
+}
 .beginning p{
-  margin: 0.8rem 0 0;
+  margin: 0 0 0.8rem;
   font-size: 0.92rem;
   line-height: 1.62;
   color: #DDD5CB;
   max-width: 52ch;
 }
-.beginning p.soon{
-  font-family: var(--font-mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--ember);
-  margin-top: 1.1rem;
-}
 .beginning .dismiss{
-  position: absolute;
-  top: 0.5rem; right: 0.5rem;
   background: none;
   border: 0;
+  border-bottom: 1px solid var(--hairline);
   color: var(--ash);
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   cursor: pointer;
-  min-width: 2.4rem;
+  padding: 0.5rem 0.1rem;
   min-height: 2.4rem;
 }
-.beginning .dismiss:hover{ color: var(--paper); }
+.beginning .dismiss:hover{ color: var(--paper); border-color: var(--paper); }
 
 /* ==========================================================================
    THE DOCK — follow a butterfly
@@ -635,6 +703,27 @@ body[data-panel="1"] .plate{ pointer-events: none; }
   border-top: 0; border-right: 0; border-bottom: 0;
   border-left: 2px solid var(--ember);
 }
+/* The essay is not a memory, so it reads in the Observatory's colour: this
+   is the sourced, checkable kind of writing, not the remembered kind. */
+.essay{
+  right: 0; top: 0; bottom: 0;
+  width: min(38rem, 47vw);
+  border-top: 0; border-right: 0; border-bottom: 0;
+  border-left: 2px solid var(--trace);
+}
+.essay .st-index{ color: var(--trace); }
+.essay .st-section > h3{ color: var(--trace); }
+.essay .panel-close:hover{ color: var(--trace); border-color: var(--trace); }
+.essay .st-body.plain p:first-child::first-letter{
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  float: none;
+  padding: 0;
+  color: inherit;
+}
+.essay .st-body{ margin-top: 0; }
+
 .panel-scroll{
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -1080,6 +1169,27 @@ body[data-panel="1"] .plate{ pointer-events: none; }
 .sealed .bars span:nth-child(2){ width: 86%; }
 .sealed .bars span:nth-child(3){ width: 64%; }
 
+/* ---- citations, for the writing that has sources ---- */
+.sources{ list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.85rem; }
+.sources li{
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  line-height: 1.65;
+  color: var(--ash);
+  padding-left: 0.85rem;
+  border-left: 1px solid var(--hairline);
+}
+.sources a{ color: var(--paper); text-decoration: none; border-bottom: 1px solid var(--hairline-strong); }
+.sources a:hover{ color: var(--trace); border-color: var(--trace); }
+.sources-note{
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  line-height: 1.65;
+  letter-spacing: 0.04em;
+  color: rgba(156,147,184,0.6);
+  margin: 1rem 0 0;
+}
+
 /* ---- related ---- */
 .related{ display: flex; flex-direction: column; gap: 0.5rem; }
 .rel-item{
@@ -1128,6 +1238,7 @@ body[data-panel="1"] .plate{ pointer-events: none; }
   body[data-panel="1"] .dock{
     left: calc((100vw - min(38rem, 47vw)) / 2);
   }
+  body[data-panel="1"] .what-is{ opacity: 0; }
   /* The dock moves into the lane the readout was using, so the readout
      stands down rather than sitting underneath it. */
   body[data-panel="1"] .readout{ opacity: 0; }
@@ -1259,6 +1370,7 @@ body[data-panel="1"] .plate{ pointer-events: none; }
   .plate h1{ font-size: 1.5rem; }
   .plate .sub{ margin-top: 0.5rem; }
   .plate .hint{ margin-top: 0.4rem; }
+  .what-is{ margin-top: 0.35rem; font-size: 0.56rem; min-height: 2.2rem; padding-bottom: 0.3rem; }
 
   /* view switch moves under the title, where a thumb can reach it */
   .views{
@@ -1313,21 +1425,23 @@ body[data-panel="1"] .plate{ pointer-events: none; }
     width: auto;
     transform: none;
     bottom: calc(14rem + env(safe-area-inset-bottom));
-    max-height: 34vh;
+    max-height: 46vh;
     overflow-y: auto;
-    padding: 1rem 1.1rem;
   }
-  .beginning h2{ font-size: 1rem; }
-  .beginning p{ font-size: 0.85rem; margin-top: 0.6rem; }
+  .beginning > summary{ padding: 0.7rem var(--pad); min-height: 2.8rem; }
+  .beginning h2{ font-size: 0.95rem; }
+  .beginning .b-body{ padding: 0 var(--pad) 0.9rem; }
+  .beginning p{ font-size: 0.85rem; }
 
-  /* the memory becomes a bottom sheet */
-  .story{
+  /* the sheets come up from the bottom */
+  .story, .essay{
     left: 0; right: 0; bottom: 0;
     top: var(--sheet-top);
     width: auto;
     border-left: 0; border-right: 0; border-bottom: 0;
     border-top: 2px solid var(--ember);
   }
+  .essay{ border-top-color: var(--trace); }
   .panel-head{ padding-top: 1rem; }
   .story-inner{ padding: 0 var(--pad) 3rem; }
   .st-title{ font-size: 1.8rem; }
@@ -1350,12 +1464,13 @@ body[data-panel="1"] .plate{ pointer-events: none; }
 /* short landscape phones: the sheet takes the side instead of the bottom */
 @media (max-height: 460px) and (orientation: landscape){
   :root{ --sheet-top: 0; }
-  .story{
+  .story, .essay{
     top: 0; left: auto;
     width: min(30rem, 64vw);
     border-top: 0;
     border-left: 2px solid var(--ember);
   }
+  .essay{ border-left-color: var(--trace); }
   .panel-head{ padding-top: calc(var(--bar-h) + 0.3rem); }
   .plate .sub, .plate .hint{ display: none; }
   .navlinks li:not(.nav-exit){ display: none; }

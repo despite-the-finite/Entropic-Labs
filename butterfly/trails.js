@@ -131,6 +131,9 @@
     var motes = [];                 /* lights travelling the ribbon */
     var ghostBranch = null;         /* the life that never happened */
 
+    var braid = null;               /* the strands, if the archive has any */
+    var braidPaths = [];            /* one sampled polyline per strand */
+
     var mode = 'trail';
     var morph = { t: 1, dur: 1, start: 0 };
     var focused = null, hovered = null;
@@ -264,6 +267,89 @@
       return { x: x, y: y * (total > 1 ? 1 : 0) };
     }
 
+    /* ======================================================== THE BRAID
+       The trail is not one line. Two lives run alongside each other, become
+       one, and divide again each time somebody is born.
+
+       Geometry lives in (t, offset) space — t is the time axis the
+       controller computes, offset is distance from the trunk — and is mapped
+       into world coordinates at the end, so portrait can turn the whole
+       braid on its side without any of this changing.
+
+       The rule that makes it read as a braid rather than a flowchart: every
+       strand is measured from the trunk, not from zero. A parent's offset
+       decays to nothing at the union and a child's grows from nothing at its
+       birth, so joins are exact by construction — there is no seam to line
+       up, and the wobble that keeps the lines organic dies away to nothing
+       at exactly the point where two lines have to touch. */
+    var MERGE_W = 1.15;             /* how long a parent takes to converge */
+    var BRANCH_W = 0.95;            /* how long a child takes to pull away */
+
+    function smoothstep(e0, e1, x) {
+      if (e1 === e0) return x < e0 ? 0 : 1;
+      var t = clamp((x - e0) / (e1 - e0), 0, 1);
+      return t * t * (3 - 2 * t);
+    }
+
+    /* Two slow sines, per strand, so no two lines wander the same way. */
+    function wobbleAt(t, phase) {
+      return Math.sin(t * 1.45 + phase) * 0.058 + Math.sin(t * 0.62 + phase * 2.3) * 0.036;
+    }
+
+    function trunkOffset(t) {
+      if (!braid || !braid.trunk) return 0;
+      var u = braid.trunk;
+      /* The trunk is straight where the parents arrive on it, and free to
+         wander once it is on its own. */
+      return wobbleAt(t, u.phase) * smoothstep(u.from, u.from + MERGE_W * 0.9, t);
+    }
+
+    function laneOffset(lane, t) {
+      if (!lane) return trunkOffset(t);
+      var base = trunkOffset(t);
+      if (lane.kind === 'union') return base;
+      var open;
+      if (lane.kind === 'parent') open = 1 - smoothstep(lane.to - MERGE_W, lane.to, t);
+      else open = smoothstep(lane.from, lane.from + BRANCH_W, t);
+      return base + (lane.side * braid.laneW + wobbleAt(t, lane.phase)) * open;
+    }
+
+    function laneById(id) {
+      if (!braid || !id) return null;
+      for (var i = 0; i < braid.lanes.length; i++) {
+        if (braid.lanes[i].id === id) return braid.lanes[i];
+      }
+      return null;
+    }
+
+    /* (time, offset) -> world. Portrait reads the braid as a descent rather
+       than a march, which is what a thumb wants. */
+    function braidToWorld(t, off) {
+      /* Portrait has width to spare and height to save, so the strands sit
+         further apart across the screen than they would on a wide one —
+         otherwise a braid scaled to fit a phone closes up into one line. */
+      return portrait ? { x: off * 1.32, y: t } : { x: t, y: off };
+    }
+
+    function braidPos(strandId, t) {
+      var lane = laneById(strandId) || (braid ? braid.trunk : null);
+      return braidToWorld(t, laneOffset(lane, t));
+    }
+
+    function buildBraidPaths() {
+      braidPaths = [];
+      if (!braid) return;
+      braid.lanes.forEach(function (lane) {
+        var step = 0.11;
+        var pts = [];
+        for (var t = lane.from; t <= lane.to + 0.0001; t += step) {
+          pts.push(braidToWorld(t, laneOffset(lane, t)));
+        }
+        pts.push(braidToWorld(lane.to, laneOffset(lane, lane.to)));
+        braidPaths.push({ lane: lane, pts: pts });
+      });
+    }
+
     /* ---- constellation: era clusters on a golden-angle spiral, each node
        on a ring inside its cluster. Groups fall out of the data — an era if
        the story has one, its decade if not — so the shape is the archive's,
@@ -303,11 +389,28 @@
 
     var clusters = [];
     function computeLayouts() {
-      var story = nodes.filter(function (n) { return n.kind !== 'ghost'; });
+      buildBraidPaths();
+
+      var story = nodes.filter(function (n) { return n.kind === 'story'; });
       var total = story.length;
 
-      story.forEach(function (n, i) { n.ptr = trailPos(n, i, total); });
+      /* With a braid, a memory sits on its own strand at its own year. Without
+         one, the trail falls back to a single meandering line in reading
+         order — an archive that has not said who its strands are still gets a
+         trail. */
+      story.forEach(function (n, i) {
+        n.ptr = (braid && n.t !== null) ? braidPos(n.strand, n.t) : trailPos(n, i, total);
+      });
       clusters = webLayout(story);
+
+      /* Markers are the braid's own furniture — a union, a birth. They belong
+         to the trail and have no place in a constellation of memories or on a
+         map, so they stay where they are and fade out instead. */
+      nodes.filter(function (n) { return n.kind === 'marker'; }).forEach(function (n) {
+        n.ptr = braid ? braidPos(n.strand, n.t) : { x: 0, y: 0 };
+        n.pw = n.ptr;
+        n.pm = null;
+      });
 
       /* Map positions. Several memories in one town would land on the exact
          same point and read as one, so anything sharing a place opens into a
@@ -333,9 +436,9 @@
          They sit past the end of whatever exists, receding into the dark. */
       var ghosts = nodes.filter(function (n) { return n.kind === 'ghost'; });
       ghosts.forEach(function (n, i) {
-        var k = total + i + 1;
-        var p = trailPos(n, k, total + ghosts.length);
-        n.ptr = p;
+        n.ptr = (braid && n.t !== null)
+          ? braidPos(n.strand, n.t)
+          : trailPos(n, total + i + 1, total + ghosts.length);
         n.pw = { x: Math.cos(i * 1.7) * (1.6 + i * 0.25), y: Math.sin(i * 1.7) * (1.2 + i * 0.2) };
         n.pm = null;
       });
@@ -357,6 +460,22 @@
     }
 
     function buildSpine() {
+      if (braid) {
+        /* The braid is the trail. Lights travel each strand rather than one
+           line, so a merge reads as two streams arriving. */
+        spine = [];
+        var count = Math.round(clamp(braidPaths.length * 1.6, 2, 10) * quality);
+        motes = [];
+        for (var m = 0; m < count; m++) {
+          motes.push({
+            t: (m * 0.37) % 1,
+            sp: 0.000035 + hash01('m' + m) * 0.00005,
+            path: m % Math.max(1, braidPaths.length)
+          });
+        }
+        return;
+      }
+
       var pts = nodes
         .filter(function (n) { return n.kind !== 'ghost'; })
         .map(function (n) { return { x: n.ptr.x, y: n.ptr.y }; });
@@ -406,6 +525,19 @@
         if (p.y < minY) minY = p.y;
         if (p.y > maxY) maxY = p.y;
       });
+
+      /* The braid is the thing to frame in the trail view, whether or not
+         any memory has landed on it yet. */
+      if (mode === 'trail' && braidPaths.length) {
+        braidPaths.forEach(function (path) {
+          path.pts.forEach(function (p) {
+            if (p.x < minX) minX = p.x;
+            if (p.x > maxX) maxX = p.x;
+            if (p.y < minY) minY = p.y;
+            if (p.y > maxY) maxY = p.y;
+          });
+        });
+      }
       if (mode === 'map') {
         minX = Math.min(minX, -MAP.w / 2); maxX = Math.max(maxX, MAP.w / 2);
         minY = Math.min(minY, -MAP.h / 2); maxY = Math.max(maxY, MAP.h / 2);
@@ -413,28 +545,35 @@
       if (!isFinite(minX)) { minX = -1; maxX = 1; minY = -0.6; maxY = 0.6; }
       bounds = { minX: minX, maxX: maxX, minY: minY, maxY: maxY };
 
-      var wSpan = Math.max(0.8, maxX - minX);
-      var hSpan = Math.max(0.6, maxY - minY);
-      var fit = Math.min(W / (unit * (wSpan + 1.4)), H / (unit * (hSpan + 1.2)));
-      zoomRange.min = Math.min(0.45, fit * 0.85);
+      /* The floor has to be at or below whatever framing the whole thing
+         needs, or fitView gets clamped before it can fit and a tall braid on
+         a phone stays half off the screen. One calculation, used by both. */
+      zoomRange.min = Math.min(0.4, fitZoom() * 0.8);
       zoomRange.max = 3.4;
+    }
+
+    /* The zoom at which the current layout sits inside the band the page
+       furniture leaves clear. A phone stacks its chrome top and bottom and
+       leaves much less than a wide screen does. */
+    function fitZoom() {
+      var wSpan = Math.max(0.9, bounds.maxX - bounds.minX);
+      var hSpan = Math.max(0.7, bounds.maxY - bounds.minY);
+      var safeW = portrait ? 0.88 : 0.86;
+      var safeH = portrait ? 0.42 : 0.70;
+      return Math.min(
+        (W * safeW) / (unit * (wSpan + 0.9)),
+        (H * safeH) / (unit * (hSpan + 0.7))
+      );
     }
 
     /* Camera that frames the current layout. The page keeps furniture at the
        top and bottom — a title plate and a dock — so the frame is computed
        against the band actually left clear, not the whole window. Otherwise
        the outermost memory always lands under something. */
-    var SAFE_W = 0.86, SAFE_H = 0.70;
     function fitView(ms) {
       var cx = (bounds.minX + bounds.maxX) / 2;
       var cy = (bounds.minY + bounds.maxY) / 2;
-      var wSpan = Math.max(0.9, bounds.maxX - bounds.minX);
-      var hSpan = Math.max(0.7, bounds.maxY - bounds.minY);
-      var z = Math.min(
-        (W * SAFE_W) / (unit * (wSpan + 0.9)),
-        (H * SAFE_H) / (unit * (hSpan + 0.7))
-      );
-      tweenCam(cx, cy, clamp(z, zoomRange.min, mode === 'trail' ? 1.15 : 1.6), ms);
+      tweenCam(cx, cy, clamp(fitZoom(), zoomRange.min, mode === 'trail' ? 1.15 : 1.6), ms);
     }
 
     /* ---------------------------------------------------------- projection */
@@ -762,7 +901,97 @@
     /* The trail itself: three passes over one polyline — a wide soft bloom,
        a body, and a thin bright core. Fades out as the view leaves the
        reading order behind. */
+    /* One strand: the wide bloom in the room's amber so the braid reads as a
+       single warm system, the core in the strand's own light so a life is
+       still traceable through it. */
+    function drawStrand(path, time, strength) {
+      var pts = [];
+      for (var i = 0; i < path.pts.length; i++) {
+        pts.push(project(path.pts[i].x, path.pts[i].y, 1));
+      }
+      if (pts.length < 2) return;
+
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.lineJoin = 'round';
+      ctx.lineCap = 'round';
+
+      var passes = quality > 0.6
+        ? [[9 * cam.z, 0.026, palette.ember], [3.2 * cam.z, 0.05, palette.ember], [1.05, 0.17, path.lane.tone]]
+        : [[3.4 * cam.z, 0.055, palette.ember], [1.05, 0.16, path.lane.tone]];
+
+      for (var k = 0; k < passes.length; k++) {
+        ctx.lineWidth = Math.max(0.7, passes[k][0]);
+        ctx.strokeStyle = passes[k][2];
+        ctx.globalAlpha = passes[k][1] * strength;
+        ctx.beginPath();
+        ctx.moveTo(pts[0].x, pts[0].y);
+        for (var j = 1; j < pts.length; j++) ctx.lineTo(pts[j].x, pts[j].y);
+        ctx.stroke();
+      }
+      ctx.restore();
+      ctx.globalAlpha = 1;
+      return pts;
+    }
+
+    /* The name at the open end of a strand — where it arrives from, or where
+       it is still going. */
+    function drawStrandLabel(path, strength) {
+      var lane = path.lane;
+      if (!lane.label || strength <= 0.12) return;
+      var at = lane.kind === 'parent' ? path.pts[0] : path.pts[path.pts.length - 1];
+      if (!at) return;
+      var p = project(at.x, at.y, 1);
+      if (p.x < -60 || p.x > W + 60 || p.y < -40 || p.y > H + 40) return;
+
+      ctx.save();
+      ctx.globalAlpha = 0.62 * strength;
+      ctx.fillStyle = lane.tone;
+      ctx.font = '10px ' + fontMono();
+      ctx.textBaseline = 'middle';
+      /* Sit the name just off the end of the line, on the side the line is
+         heading, so it never lands on top of the braid. */
+      var pad = 13;
+      if (portrait) {
+        spacedText(ctx, lane.label.toUpperCase(), p.x, p.y + (lane.kind === 'parent' ? -pad : pad), 1.6, 'center');
+      } else {
+        spacedText(ctx, lane.label.toUpperCase(),
+          p.x + (lane.kind === 'parent' ? -pad : pad), p.y, 1.6,
+          lane.kind === 'parent' ? 'right' : 'left');
+      }
+      ctx.restore();
+      ctx.globalAlpha = 1;
+    }
+
+    function drawBraid(time, strength) {
+      if (!braidPaths.length || strength <= 0.01) return;
+      var i;
+      var drawn = [];
+      for (i = 0; i < braidPaths.length; i++) {
+        drawn.push(drawStrand(braidPaths[i], time, strength) || []);
+      }
+
+      /* lights travelling the strands */
+      if (!reduceMotion) {
+        ctx.save();
+        for (i = 0; i < motes.length; i++) {
+          var m = motes[i];
+          m.t += m.sp * 16;
+          if (m.t > 1) m.t -= 1;
+          var lane = drawn[m.path % drawn.length];
+          if (!lane || !lane.length) continue;
+          var mp = lane[Math.floor(m.t * (lane.length - 1))];
+          if (!mp) continue;
+          tintGlow(mp.x, mp.y, 9 * cam.z, 0.2 * Math.sin(m.t * Math.PI) * strength, palette.ember);
+        }
+        ctx.restore();
+      }
+
+      for (i = 0; i < braidPaths.length; i++) drawStrandLabel(braidPaths[i], strength);
+    }
+
     function drawSpine(time, strength) {
+      if (braid) { drawBraid(time, strength); return; }
       if (spine.length < 2 || strength <= 0.01) return;
       var i, p;
       var pts = [];
@@ -988,6 +1217,67 @@
       return (base + n.em * 1.6) * clamp(cam.z, 0.7, 1.6);
     }
 
+    /* A marker is not a memory. It is the shape of the family showing
+       through: the point where two lines became one, or where a new one
+       started. Drawn as a joint rather than a light, so nobody mistakes it
+       for a story that has been written. */
+    function drawMarker(n, time, p, a) {
+      var tone = n.tone || palette.ember;
+      var r = (n.markerKind === 'union' ? 5.2 : 3.8) * clamp(cam.z, 0.7, 1.5);
+      n.screenR = r;
+
+      tintGlow(p.x, p.y, r * 6, 0.16 * a, tone);
+
+      ctx.save();
+      ctx.globalAlpha = 0.5 * a * (0.85 + n.em * 0.15);
+      ctx.strokeStyle = tone;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, r, 0, TAU);
+      ctx.stroke();
+
+      if (n.markerKind === 'union') {
+        /* two rings, overlapping */
+        ctx.globalAlpha = 0.4 * a;
+        ctx.beginPath();
+        ctx.arc(p.x - r * 0.5, p.y, r * 0.78, 0, TAU);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(p.x + r * 0.5, p.y, r * 0.78, 0, TAU);
+        ctx.stroke();
+      } else {
+        /* a small opening: four short rays */
+        ctx.globalAlpha = 0.55 * a;
+        var s = r * 1.9;
+        ctx.beginPath();
+        for (var k = 0; k < 4; k++) {
+          var ang = k * (Math.PI / 2) + Math.PI / 4;
+          ctx.moveTo(p.x + Math.cos(ang) * r * 1.15, p.y + Math.sin(ang) * r * 1.15);
+          ctx.lineTo(p.x + Math.cos(ang) * s, p.y + Math.sin(ang) * s);
+        }
+        ctx.stroke();
+        ctx.globalAlpha = 0.85 * a;
+        ctx.fillStyle = tone;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, r * 0.32, 0, TAU);
+        ctx.fill();
+      }
+
+      /* label: the year above, the name below */
+      ctx.globalAlpha = (0.62 + n.em * 0.38) * a;
+      ctx.fillStyle = palette.ash;
+      ctx.font = '9px ' + fontMono();
+      ctx.textBaseline = 'alphabetic';
+      if (n.yearLabel) spacedText(ctx, n.yearLabel, p.x, p.y - r * 2.6, 1.4, 'center');
+      if (n.title) {
+        ctx.globalAlpha = (0.5 + n.em * 0.5) * a;
+        ctx.fillStyle = n.em > 0.3 ? palette.paper : tone;
+        spacedText(ctx, n.title, p.x, p.y + r * 2.6 + 8, 1.4, 'center');
+      }
+      ctx.restore();
+      ctx.globalAlpha = 1;
+    }
+
     function drawNode(n, time) {
       if (n.alpha <= 0.02) return;
       var p = project(n.pos.x, n.pos.y, 1);
@@ -999,6 +1289,8 @@
       n.screenR = r;
       var tone = n.tone || palette.ember;
       var a = n.alpha;
+
+      if (n.kind === 'marker') { drawMarker(n, time, p, a); return; }
 
       if (n.kind === 'ghost') {
         /* Unidentified. It surfaces, holds for a moment, and goes again —
@@ -1169,6 +1461,7 @@
         var wantAlpha = 1;
         if (mode === 'map' && !n.pm && n.kind !== 'ghost') wantAlpha = 0;
         if (mode === 'map' && n.kind === 'ghost') wantAlpha = 0;
+        if (n.kind === 'marker' && mode !== 'trail') wantAlpha = 0;
         if (n.dimmed) wantAlpha = 0.18;
         n.alpha += (wantAlpha - n.alpha) * (reduceMotion ? 1 : 0.12);
       }
@@ -1391,8 +1684,48 @@
     var api = {
       on: on,
 
-      /* nodes: [{ id, kind:'story'|'ghost', title, hook, yearLabel, year,
-                   era, tone, lat, lon, chaos, classified, featured, ref }] */
+      /* The braid. Lanes are in time-axis units, which the controller owns:
+           { laneW, lanes: [{ id, label, tone, side, kind, from, to }] }
+         kind is 'parent' (converges at `to`), 'union' (the trunk) or 'child'
+         (leaves the trunk at `from`). Pass null for an archive with no
+         strands and the trail falls back to a single line. */
+      setBraid: function (spec) {
+        if (!spec || !spec.lanes || !spec.lanes.length) {
+          braid = null;
+          braidPaths = [];
+        } else {
+          braid = {
+            laneW: spec.laneW || 0.55,
+            lanes: spec.lanes.map(function (l) {
+              return {
+                id: l.id,
+                label: l.label || '',
+                tone: l.tone || palette.ember,
+                side: l.side || 0,
+                kind: l.kind || 'union',
+                from: l.from,
+                to: l.to,
+                phase: hash01(l.id) * TAU
+              };
+            })
+          };
+          braid.trunk = null;
+          for (var i = 0; i < braid.lanes.length; i++) {
+            if (braid.lanes[i].kind === 'union') { braid.trunk = braid.lanes[i]; break; }
+          }
+        }
+        computeLayouts();
+        nodes.forEach(function (n) { n.from = n.pos || n.ptr; n.to = layoutPos(n); });
+        measureBounds();
+        wake();
+        return api;
+      },
+
+      /* nodes: [{ id, kind:'story'|'ghost'|'marker', title, hook, yearLabel,
+                   year, era, tone, strand, t, lat, lon, chaos, classified,
+                   featured, markerKind, ref }]
+         `strand` and `t` place a node on the braid: which line, and where
+         along the time axis. */
       setNodes: function (list) {
         var prev = {};
         nodes.forEach(function (n) { prev[n.id] = n.pos; });
@@ -1406,6 +1739,9 @@
             yearLabel: n.yearLabel || '',
             year: n.year || null,
             era: n.era || null,
+            strand: n.strand || null,
+            t: (n.t === undefined || n.t === null) ? null : n.t,
+            markerKind: n.markerKind || null,
             tone: n.tone || palette.ember,
             lat: n.lat === undefined ? null : n.lat,
             lon: n.lon === undefined ? null : n.lon,
@@ -1526,6 +1862,17 @@
       screenFor: function (id) {
         var n = api.nodeFor(id);
         return n && n.onScreen ? { x: n.screen.x, y: n.screen.y } : null;
+      },
+
+      /* A point some fraction of the way along a strand, in world space. */
+      strandPoint: function (id, at) {
+        for (var i = 0; i < braidPaths.length; i++) {
+          if (braidPaths[i].lane.id !== id) continue;
+          var pts = braidPaths[i].pts;
+          if (!pts.length) return null;
+          return pts[clamp(Math.round((at === undefined ? 0.5 : at) * (pts.length - 1)), 0, pts.length - 1)];
+        }
+        return null;
       },
 
       /* ---- butterflies ---- */

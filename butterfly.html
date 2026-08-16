@@ -39,6 +39,7 @@
       </button>
     </div>
   </div>
+  <p class="gate-mark" id="gate-mark"></p>
   <button class="gate-skip" id="gate-skip" type="button">Skip intro</button>
 </div>
 
@@ -47,6 +48,7 @@
   <h1>Butterfly Trails</h1>
   <p class="sub">Small moments. Different choices. Entirely different lives.</p>
   <p class="hint" id="plate-hint"></p>
+  <button class="what-is" id="what-is" type="button">What is the butterfly effect?</button>
 </div>
 
 <div class="readout" aria-hidden="true">
@@ -56,8 +58,9 @@
 
 <p class="sr-only" id="live" role="status" aria-live="polite"></p>
 
-<!-- the empty state: a plate, not a hole -->
-<aside class="beginning" id="beginning" hidden></aside>
+<!-- the empty state: a plate, not a hole. A disclosure, because on a phone the
+     note and the trail cannot both have the whole screen. -->
+<details class="beginning" id="beginning" hidden></details>
 
 <!-- follow a butterfly -->
 <div class="dock" id="dock">
@@ -80,6 +83,9 @@
 <!-- one memory -->
 <article class="panel story" id="story" role="region" aria-label="A memory" hidden></article>
 
+<!-- the room explaining its own premise -->
+<article class="panel essay" id="essay" role="region" aria-label="The butterfly effect" hidden></article>
+
 <!-- a photograph, held up to the light -->
 <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photograph" hidden></div>
 
@@ -92,8 +98,9 @@
       <p class="st-hook">Small moments. Different choices. Entirely different lives.</p>
       <div class="st-body">
         <p>Butterfly Trails is an interactive archive of family stories, drawn on a canvas, and it needs JavaScript to draw itself. Nothing is loaded from a network — the trail, the memories and the flight paths are all computed in the browser.</p>
-        <p>Every family is the result of thousands of improbable moments. This room follows the small ones: the decisions, coincidences and near-misses that redirected everything after them.</p>
-        <p>The archive is still being collected. Stories coming soon.</p>
+        <p>Every family is the result of thousands of improbable moments. This room follows the small ones: the decisions, coincidences and near-misses that redirected everything after them. Two lives run alongside each other, become one, and divide again each time somebody is born; every story is a point somewhere on that braid.</p>
+        <p>The name comes from Edward Lorenz, who in 1961 typed a weather figure to three decimal places instead of six and watched the forecast turn into a different world — and, for most people, from the 2004 film with Ashton Kutcher.</p>
+        <p>The archive is still being collected. Stories coming soon. Before the finite.</p>
         <p><a href="index.html">Return to the studio →</a></p>
       </div>
     </div>

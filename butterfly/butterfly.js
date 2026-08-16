@@ -80,6 +80,7 @@
       year: typeof s.year === 'number' ? s.year : null,
       approximateDate: s.approximateDate || '',
       era: s.era || null,
+      strand: s.strand || null,
       location: s.location || (s.place && placeById[s.place] ? placeById[s.place].name : ''),
       place: s.place || null,
       coordinates: coords,
@@ -182,6 +183,107 @@
     return [left, s.location].filter(Boolean).join(' · ');
   }
 
+  /* ================================================================ BRAID
+     The trail is not one line: two lives run alongside each other, converge
+     when they marry, and divide again each time somebody is born. Laying
+     that out needs a time axis, because a branch year has to land in the
+     right place relative to the memories around it.
+
+     The axis is compressed: a year is worth a fixed distance, but no gap
+     between two anchors is allowed to collapse to nothing or to run away.
+     Three years between two births reads as a real gap; forty years of
+     nothing does not push everything else off the screen. */
+  var strands = DATA.strands || [];
+  var braidCfg = DATA.braid || {};
+  var strandById = {};
+  strands.forEach(function (s) { strandById[s.id] = s; });
+
+  var PER_YEAR = 0.14, MIN_GAP = 0.9, MAX_GAP = 2.6;
+  var UNION_BACKOFF = 1.9;     /* where an undated union sits before the first branch */
+  var RUN_ON = 2.0;            /* how far the open ends run past the last anchor */
+
+  var axis = (function buildAxis() {
+    var years = {};
+    strands.forEach(function (s) {
+      if (s.role === 'child' && typeof s.begins === 'number') years[s.begins] = true;
+      if (typeof s.ends === 'number') years[s.ends] = true;
+    });
+    if (typeof braidCfg.unionYear === 'number') years[braidCfg.unionYear] = true;
+    ordered.forEach(function (s) { if (s.year !== null) years[s.year] = true; });
+
+    var list = Object.keys(years).map(Number).sort(function (a, b) { return a - b; });
+    var out = [];
+    var t = 0;
+    list.forEach(function (y, i) {
+      if (i > 0) t += clamp((y - list[i - 1]) * PER_YEAR, MIN_GAP, MAX_GAP);
+      out.push({ year: y, t: t });
+    });
+    return out;
+  })();
+
+  function axisT(year) {
+    if (!axis.length || typeof year !== 'number') return 0;
+    var first = axis[0], last = axis[axis.length - 1];
+    if (year <= first.year) return first.t - Math.min(3.2, (first.year - year) * PER_YEAR);
+    if (year >= last.year) return last.t + Math.min(3.2, (year - last.year) * PER_YEAR);
+    for (var i = 1; i < axis.length; i++) {
+      var a = axis[i - 1], b = axis[i];
+      if (year <= b.year) {
+        var span = b.year - a.year;
+        return span ? a.t + (b.t - a.t) * ((year - a.year) / span) : a.t;
+      }
+    }
+    return last.t;
+  }
+
+  var axisEnd = (axis.length ? axis[axis.length - 1].t : 0) + RUN_ON;
+  var children = strands.filter(function (s) { return s.role === 'child'; });
+  var parents = strands.filter(function (s) { return s.role === 'parent'; });
+  var trunk = strands.filter(function (s) { return s.role === 'union'; })[0] || null;
+
+  /* Where the two become one. A supplied year puts it on the axis; without
+     one it sits a little before the first branch, undated — the shape is
+     known even where the date is not. */
+  var firstBranch = children.length
+    ? Math.min.apply(null, children.map(function (c) { return axisT(c.begins); }))
+    : axisEnd;
+  var unionT = typeof braidCfg.unionYear === 'number'
+    ? axisT(braidCfg.unionYear)
+    : firstBranch - UNION_BACKOFF;
+
+  function braidSpec() {
+    if (!trunk || !parents.length) return null;
+    var lanes = [];
+    parents.forEach(function (p) {
+      lanes.push({
+        id: p.id, label: p.label, tone: p.tone, side: p.side,
+        kind: 'parent', from: unionT - 3.4, to: unionT
+      });
+    });
+    lanes.push({
+      id: trunk.id, label: '', tone: trunk.tone, side: 0,
+      kind: 'union', from: unionT, to: axisEnd
+    });
+    children.forEach(function (c) {
+      lanes.push({
+        id: c.id, label: c.label, tone: c.tone, side: c.side,
+        kind: 'child', from: axisT(c.begins),
+        to: typeof c.ends === 'number' ? axisT(c.ends) : axisEnd
+      });
+    });
+    return { laneW: 0.55, lanes: lanes };
+  }
+
+  /* Where a memory sits along the axis. Undated ones gather past the end,
+     which is where an unpinned memory honestly belongs. */
+  function storyT(s) {
+    return s.year === null ? axisEnd - 0.6 : axisT(s.year);
+  }
+  function storyStrand(s) {
+    if (s.strand && strandById[s.strand]) return s.strand;
+    return trunk ? trunk.id : null;
+  }
+
   var warnings = DATA.check ? DATA.check() : [];
   if (warnings.length && global.console) {
     global.console.warn('Butterfly Trails — archive notes:\n  ' + warnings.join('\n  '));
@@ -212,10 +314,14 @@
   var viewsEl = $('#views');
   var erasEl = $('#eras');
   var storyEl = $('#story');
+  var essayEl = $('#essay');
+  var whatIsBtn = $('#what-is');
+  var gateMark = $('#gate-mark');
   var lightboxEl = $('#lightbox');
   var keynavEl = $('#keynav');
 
-  var view = { mode: 'trail', story: null };
+  var ESSAY = ARCHIVE.essay || null;
+  var view = { mode: 'trail', story: null, essay: false };
   var lastFocus = null;
 
   /* ----------------------------------------------------------- the nodes */
@@ -231,6 +337,8 @@
         yearLabel: s.year !== null ? String(s.year) : (eraOf(s) ? eraOf(s).label : ''),
         year: s.year,
         era: eraOf(s) ? eraOf(s).id : null,
+        strand: storyStrand(s),
+        t: storyT(s),
         tone: toneOf(s),
         lat: s.coordinates ? s.coordinates.lat : null,
         lon: s.coordinates ? s.coordinates.lon : null,
@@ -240,10 +348,78 @@
         ref: { id: s.id }
       };
     });
+
+    /* The braid's own joints: where two lines became one, and where each new
+       one started. They are structure, not stories — they carry a year and a
+       word, and say plainly that nothing has been written down here yet. */
+    if (trunk && parents.length) {
+      list.push({
+        id: 'marker-union',
+        kind: 'marker',
+        markerKind: 'union',
+        title: (braidCfg.unionLabel || 'Together').toUpperCase(),
+        yearLabel: typeof braidCfg.unionYear === 'number' ? String(braidCfg.unionYear) : '',
+        strand: trunk.id,
+        t: unionT,
+        tone: trunk.tone,
+        ref: {
+          id: 'marker-union',
+          marker: true,
+          note: braidCfg.unionNote ||
+            'Two trails become one. The year has not been written down yet.'
+        }
+      });
+      children.forEach(function (c) {
+        list.push({
+          id: 'marker-' + c.id,
+          kind: 'marker',
+          markerKind: 'birth',
+          title: (braidCfg.birthLabel || 'Born').toUpperCase(),
+          yearLabel: String(c.begins),
+          strand: c.id,
+          t: axisT(c.begins),
+          tone: c.tone,
+          ref: {
+            id: 'marker-' + c.id,
+            marker: true,
+            note: c.label + ' — born ' + c.begins + '. The trail divides here.'
+          }
+        });
+      });
+    }
+
+    /* Unidentified points, spread across the whole family rather than piled
+       at one end, so an empty archive still shows its shape. */
+    var lanes = strands.length
+      ? strands.map(function (s) {
+          if (s.role === 'parent') return { id: s.id, lo: unionT - 3.0, hi: unionT - 0.5 };
+          if (s.role === 'child') return { id: s.id, lo: axisT(s.begins) + 0.9, hi: axisEnd - 0.3 };
+          return { id: s.id, lo: unionT + 0.8, hi: axisEnd - 0.5 };
+        })
+      : [];
     for (var i = 0; i < GHOSTS; i++) {
-      list.push({ id: 'ghost-' + i, kind: 'ghost', ref: { id: 'ghost-' + i } });
+      var node = { id: 'ghost-' + i, kind: 'ghost', ref: { id: 'ghost-' + i } };
+      if (lanes.length) {
+        var lane = lanes[i % lanes.length];
+        var step = Math.floor(i / lanes.length);
+        var f = ((step + 1) * 0.37 + hash01Local('g' + i) * 0.5) % 1;
+        node.strand = lane.id;
+        node.t = lane.lo + (lane.hi - lane.lo) * f;
+      }
+      list.push(node);
     }
     return list;
+  }
+
+  /* Stable 0..1 from a string — the same ghost surfaces in the same place
+     every visit, which is what stops the empty trail from twitching. */
+  function hash01Local(s) {
+    var h = 2166136261;
+    for (var i = 0; i < s.length; i++) {
+      h ^= s.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return ((h >>> 0) % 100000) / 100000;
   }
 
   function buildLinks() {
@@ -273,6 +449,7 @@
     }).filter(Boolean);
   }
 
+  trails.setBraid(braidSpec());
   trails.setNodes(buildNodes());
   trails.setLinks(buildLinks());
   trails.setMigrations(buildMigrations());
@@ -345,19 +522,30 @@
     if (stories.length || beginningDismissed) { beginningEl.hidden = true; return; }
     if (beginningEl.childNodes.length) { beginningEl.hidden = view.mode !== 'trail'; return; }
 
-    var close = el('button', 'dismiss', '×');
+    var sum = el('summary');
+    sum.appendChild(el('h2', null, ARCHIVE.empty.heading));
+    sum.appendChild(el('span', 'soon', ARCHIVE.empty.note));
+    beginningEl.appendChild(sum);
+
+    var bodyWrap = el('div', 'b-body');
+    ARCHIVE.empty.body.forEach(function (p) { bodyWrap.appendChild(el('p', null, p)); });
+
+    var close = el('button', 'dismiss', 'Hide this note');
     close.type = 'button';
-    close.setAttribute('aria-label', 'Hide this note');
     close.addEventListener('click', function () {
       beginningDismissed = true;
       beginningEl.hidden = true;
       applyInset();
     });
-    beginningEl.appendChild(close);
+    bodyWrap.appendChild(close);
+    beginningEl.appendChild(bodyWrap);
 
-    beginningEl.appendChild(el('h2', null, ARCHIVE.empty.heading));
-    ARCHIVE.empty.body.forEach(function (p) { beginningEl.appendChild(el('p', null, p)); });
-    beginningEl.appendChild(el('p', 'soon', ARCHIVE.empty.note));
+    /* Open where there is room for it, shut where the trail needs the screen
+       more than the note does. */
+    beginningEl.open = !(global.matchMedia && global.matchMedia('(max-width: 900px)').matches);
+    beginningEl.addEventListener('toggle', function () {
+      global.requestAnimationFrame(applyInset);
+    });
     beginningEl.hidden = view.mode !== 'trail';
   }
 
@@ -628,6 +816,16 @@
       });
       erasEl.appendChild(b);
     });
+  }
+
+  function panToStrand(id) {
+    var st = strandById[id];
+    if (!st) return;
+    if (view.mode !== 'trail') { go('#'); }
+    var p = trails.strandPoint(id, st.role === 'parent' ? 0.25 : 0.6);
+    if (!p) return;
+    trails.panTo(p.x, p.y, 1.05, 1100);
+    whisper(st.label + (st.role === 'child' ? ' — this trail starts in ' + st.begins + '.' : ''), 3600);
   }
 
   function panToEra(e) {
@@ -1154,6 +1352,79 @@
     return b;
   }
 
+  /* ================================================================ ESSAY
+     The room explaining its own premise: where the idea comes from, what it
+     actually says, and the film everybody actually knows it from. Content
+     lives in the data module with the rest of the writing. */
+  function renderEssay() {
+    if (!ESSAY || essayEl.childNodes.length) return;
+
+    var head = el('div', 'panel-head');
+    head.appendChild(el('span', 'st-index', 'The idea'));
+    var close = el('button', 'panel-close', 'Close');
+    close.type = 'button';
+    close.setAttribute('aria-label', 'Back to the trail');
+    close.addEventListener('click', function () { go('#'); });
+    head.appendChild(close);
+    essayEl.appendChild(head);
+
+    var scroll = el('div', 'panel-scroll');
+    var inner = el('div', 'story-inner');
+
+    var title = el('h2', 'st-title', ESSAY.title);
+    title.tabIndex = -1;
+    inner.appendChild(title);
+    if (ESSAY.standfirst) inner.appendChild(el('p', 'st-hook', ESSAY.standfirst));
+
+    (ESSAY.sections || []).forEach(function (sec, i) {
+      var s = section(sec.heading);
+      var body = el('div', 'st-body' + (i === 0 ? '' : ' plain'));
+      (sec.paragraphs || []).forEach(function (p) { body.appendChild(el('p', null, p)); });
+      s.appendChild(body);
+      inner.appendChild(s);
+    });
+
+    if (ESSAY.sources && ESSAY.sources.length) {
+      var ss = section('Sources');
+      var ul = el('ul', 'sources');
+      ESSAY.sources.forEach(function (src) {
+        var li = el('li');
+        if (src.url) {
+          var a = el('a', null, src.label);
+          a.href = src.url;
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+          li.appendChild(a);
+        } else {
+          li.textContent = src.label;
+        }
+        ul.appendChild(li);
+      });
+      ss.appendChild(ul);
+      if (ESSAY.footnote) ss.appendChild(el('p', 'sources-note', ESSAY.footnote));
+      inner.appendChild(ss);
+    }
+
+    var foot = el('div', 'st-foot');
+    var back = el('button', 'bt-btn ghost', 'Back to the trail');
+    back.type = 'button';
+    back.addEventListener('click', function () { go('#'); });
+    foot.appendChild(back);
+    inner.appendChild(foot);
+
+    scroll.appendChild(inner);
+    essayEl.appendChild(scroll);
+  }
+
+  if (whatIsBtn) {
+    if (ESSAY && ESSAY.trigger) whatIsBtn.textContent = ESSAY.trigger;
+    whatIsBtn.hidden = !ESSAY;
+    whatIsBtn.addEventListener('click', function () {
+      lastFocus = whatIsBtn;
+      go('#' + ESSAY.id);
+    });
+  }
+
   /* =============================================================== KEYNAV
      A real, focusable route through the archive for anyone not using a
      pointer. Hidden until it takes focus, then it becomes a visible list. */
@@ -1175,7 +1446,15 @@
     add('The trail', function () { go('#'); });
     add('The whole trail', function () { go('#whole-trail'); });
     add('Places', function () { go('#map'); });
+    add('What is the butterfly effect?', function () { go('#' + ESSAY.id); });
     add('Surprise me', surprise);
+
+    /* The braid is most of what there is to navigate while the archive is
+       small, so it belongs in the keyboard route as much as the memories. */
+    strands.forEach(function (st) {
+      var when = st.role === 'child' ? ' — from ' + st.begins : '';
+      add('Strand: ' + st.label + when, function () { panToStrand(st.id); });
+    });
 
     ordered.forEach(function (s) {
       var when = whenOf(s);
@@ -1198,7 +1477,7 @@
      bottom sheet and the landscape side sheet without three special cases. */
   function applyInset() {
     var W = global.innerWidth, H = global.innerHeight;
-    var open = storyEl.hidden ? null : storyEl;
+    var open = !storyEl.hidden ? storyEl : (!essayEl.hidden ? essayEl : null);
 
     if (!open) {
       var top = plate.getBoundingClientRect().bottom;
@@ -1230,15 +1509,16 @@
 
   function resolve(hash) {
     hash = (hash || '').replace(/^#/, '');
-    if (!hash) return { mode: 'trail', story: null };
+    if (!hash) return { mode: 'trail', story: null, essay: false };
     /* A memory always wins the name, so no route can shadow one. */
-    if (byId[hash]) return { mode: view.mode, story: hash };
+    if (byId[hash]) return { mode: view.mode, story: hash, essay: false };
     var lower = hash.toLowerCase();
     for (var id in byId) {
-      if (id.toLowerCase() === lower) return { mode: view.mode, story: id };
+      if (id.toLowerCase() === lower) return { mode: view.mode, story: id, essay: false };
     }
-    if (VIEW_HASH[lower]) return { mode: VIEW_HASH[lower], story: null };
-    return { mode: 'trail', story: null };
+    if (ESSAY && lower === ESSAY.id) return { mode: view.mode, story: null, essay: true };
+    if (VIEW_HASH[lower]) return { mode: VIEW_HASH[lower], story: null, essay: false };
+    return { mode: 'trail', story: null, essay: false };
   }
 
   function go(hash) {
@@ -1269,12 +1549,29 @@
   function apply(next) {
     var hadStory = view.story;
     var hadMode = view.mode;
+    var hadEssay = view.essay;
     view = next;
     body.setAttribute('data-view', next.mode);
 
     trails.setMode(next.mode, { fit: !next.story });
     markViews();
     if (next.mode !== hadMode) noteMode(next.mode);
+
+    if (next.essay && ESSAY) {
+      renderEssay();
+      essayEl.hidden = false;
+      storyEl.hidden = true;
+      body.setAttribute('data-panel', '1');
+      doc.title = ESSAY.title + ' — Butterfly Trails — Entropic Labs';
+      trails.clearFocus();
+      beginningEl.hidden = true;
+      var eh = essayEl.querySelector('.st-title');
+      if (eh && !hadEssay) global.requestAnimationFrame(function () { eh.focus(); });
+      renderKeynav();
+      global.requestAnimationFrame(applyInset);
+      return;
+    }
+    essayEl.hidden = true;
 
     if (next.story && byId[next.story]) {
       var s = byId[next.story];
@@ -1394,10 +1691,16 @@
   });
 
   /* ============================================================== EVENTS */
-  trails.on('select', function (ref) { go('#' + ref.id); });
+  trails.on('select', function (ref) {
+    /* A joint in the braid is not a memory and has no record to open. It
+       says what it is and leaves it at that. */
+    if (ref.marker) { whisper(ref.note, 4600); return; }
+    go('#' + ref.id);
+  });
 
   trails.on('hover', function (ref) {
     if (!ref) return;
+    if (ref.marker) { liveEl.textContent = ref.note; return; }
     var s = byId[ref.id];
     if (!s) return;
     var line = [standfirst(s), s.hook].filter(Boolean).join(' — ');
@@ -1426,7 +1729,7 @@
     if (e.key === 'Escape') {
       if (!lightboxEl.hidden) { closeLightbox(); return; }
       if (!gate.hidden) { enterRoom(); return; }
-      if (view.story) go('#');
+      if (view.story || view.essay) go('#');
       return;
     }
     if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
@@ -1473,9 +1776,11 @@
   var initial = resolve(global.location.hash);
   apply(initial);
 
+  if (gateMark) gateMark.textContent = ARCHIVE.beforeTheFinite || '';
+
   /* Arriving at a memory means skipping the way in — you came for the
      story, not the doorway. */
-  if (initial.story) {
+  if (initial.story || initial.essay) {
     body.removeAttribute('data-gate');
     gate.hidden = true;
     startAmbient();

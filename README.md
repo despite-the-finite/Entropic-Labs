@@ -222,14 +222,37 @@ butterfly/
   butterfly.js              controller: archive, state machine, routing, panels
 ```
 
+**The trail is a braid.** Two lives run alongside each other, converge when
+they marry, and divide again each time somebody is born — so the spine of the
+room is five strands rather than one line, defined in `STRANDS`. A story's
+optional `strand` field says whose line it happened on; leave it out and the
+story sits on the centre line, which is right for anything belonging to the
+family rather than to one person in it.
+
+The geometry is measured from the trunk rather than from zero: a parent's
+offset decays to nothing at the union and a child's grows from nothing at its
+birth year, so the joins are exact by construction and the wobble that keeps
+the lines organic dies away to nothing exactly where two lines have to touch.
+Time is a compressed axis — a year is worth a fixed distance, but no gap can
+collapse to nothing or run away, so three years between two births reads as a
+real gap while forty empty years do not push everything off the screen.
+
+`BRAID.unionYear` is deliberately `null`: nobody has supplied the year of the
+marriage, and putting a number there would be inventing one. Left null the
+strands still converge, with the confluence sitting before the first birth and
+carrying no date — the honest drawing of "this happened, we haven't written
+down when". Fill the year in and the whole braid re-times itself around it.
+Adding a third child means one more entry in `STRANDS` with the year it
+begins; nothing else needs editing.
+
 **Adding a story** means appending one object to `STORIES` in
 `butterfly/data/stories.js`. Nothing else needs touching. The trail places it
-in year order, the constellation clusters it with its era, the map plots it if
-it has coordinates, its category butterfly learns it has somewhere to fly, the
-era rail picks up its era, and every counter updates. Every field except `id`
-is optional and the room degrades quietly: a story with a title and nothing
-else renders, it just renders sparely. The field list at the top of that file
-documents every supported key.
+on its strand at its year, the constellation clusters it with its era, the map
+plots it if it has coordinates, its category butterfly learns it has somewhere
+to fly, the era rail picks up its era, and every counter updates. Every field
+except `id` is optional and the room degrades quietly: a story with a title
+and nothing else renders, it just renders sparely. The field list at the top
+of that file documents every supported key.
 
 **Causality is the point.** `causedBy` and `consequences` state the edges;
 reciprocal links are filled in automatically at load, so each edge is written
@@ -250,6 +273,16 @@ outcome is missing the plate says so rather than inventing one.
 **Flags.** `classified`, `disputed` and `chaosEvent` are optional metadata. A
 classified story shows its title, its seal and no story text at all — the text
 is not rendered rather than hidden, so it is not sitting in the page source.
+
+**The essay.** "What is the butterfly effect?" under the title opens a sourced
+article on where the idea comes from — Lorenz's 1961 rounding error, the 1972
+talk whose title somebody else wrote, what sensitive dependence actually says
+and what it does not — and on the 2004 Eric Bress / J. Mackye Gruber film with
+Ashton Kutcher, which is where most people have the phrase from. It reads in
+the Observatory's teal rather than the room's amber, because it is the
+checkable kind of writing rather than the remembered kind, and it carries
+citations for the same reason. It lives in `ARCHIVE.essay` with the rest of
+the writing and is linkable at `butterfly.html#butterfly-effect`.
 
 **Three layouts, one node list.** Every memory carries a trail position, a
 constellation position and (if it has coordinates) a map position, and eases
@@ -300,3 +333,8 @@ title and sits there before going back to work; one will sometimes set off in
 the wrong direction and correct itself; tapping the same butterfly repeatedly
 gets escalating reactions; and rarely, a pale one that belongs to no category
 drifts through and leaves. None of it is explained anywhere in the interface.
+
+**Before the finite** is set in the corner of the way in — the studio is
+Despite the Finite, and this is the room about everything that came before it.
+It is `ARCHIVE.beforeTheFinite`, so it can be changed or removed without going
+near the interface.
