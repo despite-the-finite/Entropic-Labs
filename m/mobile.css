@@ -526,6 +526,7 @@ figure{ margin: 0; }
 .card p:last-child{ margin-bottom: 0; }
 /* the observatory is the same kind of room, marked in the other colour */
 .card.dark-room{ border-left-color: var(--trace); }
+.card.warm-room{ border-left-color: #FFC46B; }
 
 /* ---------- CONTACT ---------- */
 .patchbay{

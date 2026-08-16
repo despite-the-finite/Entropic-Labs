@@ -14,6 +14,7 @@ Landing page for Entropic Labs, a recording and production studio run by **Despi
 - `hero.js` — the hero banner's live layers, shared by both builds (see below).
 - `games.html` — the games page: video game design as a minor function of the studio.
 - `observatory.html` + `observatory/` — the Observatory: an interactive star chart of things worth wondering about. One responsive page rather than a desktop page plus an `m/` twin; see below.
+- `butterfly.html` + `butterfly/` — Butterfly Trails: an interactive family archive, built around what small moments led to. Same single-responsive-page arrangement as the Observatory; see below.
 - `play/meridian/` — a hosted copy of *Donnell and McBurns: An EPC Epic*, so it's playable straight from the site. Read-only; see `play/meridian/UPSTREAM.md` for the source commit and how to refresh it.
 - `play/wandering-words/` — a hosted copy of *Indra and the Wandering Words*, same arrangement; see `play/wandering-words/UPSTREAM.md`.
 - `entropic-labs-banner.svg` — the banner at the top of this README.
@@ -26,8 +27,9 @@ Open `index.html` in a browser to preview, or in any editor to make changes. The
 Content lives in two places now, so a copy change to a section usually needs the same
 edit in `m/`. Preview the mobile build with a local server (`npx http-server -s .`)
 and your browser's device toolbar, since the redirect below keys off the device.
-The Observatory is the exception — it is a single responsive page, so its content
-is edited once, in `observatory/data/observations.js`.
+The Observatory and Butterfly Trails are the exceptions — each is a single
+responsive page, so their content is edited once, in
+`observatory/data/observations.js` and `butterfly/data/stories.js`.
 
 ## Mobile
 
@@ -90,6 +92,7 @@ where every animation is off.
 - Projects — placeholder catalog for upcoming releases
 - Side room — game design as a minor function, linking out to `games.html`
 - The observatory — curiosity as the third room, linking out to `observatory.html`
+- Butterfly Trails — the family archive, linking out to `butterfly.html`
 - Contact — booking terms and hours only; see the note below
 
 ## Contact details
@@ -199,3 +202,101 @@ background frames.
 opens a deliberately incomplete record pointing at Sublevel −1, which does not
 exist yet. That is the intended state: a doorway, not a room. Its presentation
 is the `special: 'anomaly'` branch in `observatory.js`.
+
+## Butterfly Trails
+
+`butterfly.html` is the fourth room, and the only one that is not about the
+studio. The Studio is what gets made, Games is what gets played, the
+Observatory is what gets wondered about, and Butterfly Trails is what made the
+person doing all of it: a family archive built around consequence rather than
+chronology. The premise is the butterfly effect — that a life turns on moments
+too small to notice at the time — so every story is a point on a longer path,
+and the room exists to show what each point led to.
+
+```
+butterfly.html              the shell
+butterfly/
+  butterfly.css             styles — the site palette, one room warmer
+  data/stories.js           ALL the content: stories, categories, eras, places
+  trails.js                 canvas engine: camera, layouts, butterflies, hit-testing
+  butterfly.js              controller: archive, state machine, routing, panels
+```
+
+**Adding a story** means appending one object to `STORIES` in
+`butterfly/data/stories.js`. Nothing else needs touching. The trail places it
+in year order, the constellation clusters it with its era, the map plots it if
+it has coordinates, its category butterfly learns it has somewhere to fly, the
+era rail picks up its era, and every counter updates. Every field except `id`
+is optional and the room degrades quietly: a story with a title and nothing
+else renders, it just renders sparely. The field list at the top of that file
+documents every supported key.
+
+**Causality is the point.** `causedBy` and `consequences` state the edges;
+reciprocal links are filled in automatically at load, so each edge is written
+once in whichever direction reads better. A story with consequences grows a
+**Because of this…** section that will walk the chain — camera following a
+butterfly from one memory to the next, lighting each edge as it goes. That is
+the mechanic the whole room is built to serve: start at an ordinary moment and
+follow it until it reaches somebody who wasn't born yet.
+
+**Alternate paths.** A story that turned on a decision can carry an
+`alternatePath` with two choices, exactly one marked `taken`. The reader is
+invited to guess; guessing wrong grows a dashed violet branch off the node and
+shows the untaken outcome under the heading *A life that never happened*,
+followed by *But that's not what happened.* Hypothetical text only ever comes
+from the data — nothing about the branch is generated, and if the untaken
+outcome is missing the plate says so rather than inventing one.
+
+**Flags.** `classified`, `disputed` and `chaosEvent` are optional metadata. A
+classified story shows its title, its seal and no story text at all — the text
+is not rendered rather than hidden, so it is not sitting in the page source.
+
+**Three layouts, one node list.** Every memory carries a trail position, a
+constellation position and (if it has coordinates) a map position, and eases
+between them, so changing view is a migration rather than a cut. The map is a
+graticule, not a world map: drawing coastlines from memory would mean inventing
+geography, so it plots latitude and longitude honestly against meridians and
+parallels and lets the migration arcs carry the meaning. It also says out loud
+how many memories have no place yet.
+
+**Routing** is the URL: `#whole-trail` and `#map` are the wide views, and any
+story id opens that memory (`butterfly.html#the-letter`). Story ids are
+resolved before view names, so no route can ever shadow a memory. Following a
+butterfly and jumping to an era are actions rather than destinations and
+deliberately leave no history behind.
+
+**The empty state is a state, not a hole.** With no stories the trail is a
+faint path arriving out of the dark with a handful of unidentified points on
+it that surface and fade. Category butterflies still fly — they look, fail to
+find anything, and say so — and Surprise Me sends several out searching before
+they give up. Nothing is ever populated with invented content to make a feature
+demonstrable.
+
+**No `m/` twin, on purpose** — same reasoning as the Observatory. It branches
+internally instead: portrait turns the trail from a march into a descent,
+panels become bottom sheets, hover-only affordances have tap equivalents, the
+canvas owns pan and pinch, and the panel-clearance maths measures the open
+sheet rather than assuming a breakpoint.
+
+**Performance.** No frameworks and no dependencies. One pre-rendered glow
+sprite, dust as plain fillRects, and a ribbon that is three strokes over one
+polyline. The loop idles at ~30fps, rises to full rate only while something is
+moving, and stops dead when the tab is hidden. A quality governor watches
+frame time and sheds dust, trail length and glow passes on slow devices, and
+seeds itself from `hardwareConcurrency`/`deviceMemory` before it has anything
+to measure. Photographs are lazy-loaded and a recording is only fetched when
+somebody asks to hear it. Under `prefers-reduced-motion` there is no flight,
+no drift and no camera easing — butterflies are simply where they were asked
+to be, and the loop draws on demand only.
+
+**Photographs and voices.** Images are shown as found objects: an aged-paper
+mount, a handwritten caption, a slight tilt on the mount and never on the
+picture, and click-to-inspect. Nothing distresses or filters the photograph
+itself. A story with `audio` shows *Hear them tell it* and takes a transcript,
+which is what makes the recording accessible.
+
+**Easter eggs**, kept subtle: a butterfly occasionally lands on a chip or a
+title and sits there before going back to work; one will sometimes set off in
+the wrong direction and correct itself; tapping the same butterfly repeatedly
+gets escalating reactions; and rarely, a pale one that belongs to no category
+drifts through and leaves. None of it is explained anywhere in the interface.
