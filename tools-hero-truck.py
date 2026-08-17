@@ -31,16 +31,21 @@ def line(p0, p1, width=w):
         d.ellipse([x * S - r, y * S - r, x * S + r, y * S + r], fill=CORE)
 
 
+# The artwork is a pickup: cabin roof stops at x=127, then 45px of open bed.
+# Carrying the roof all the way to the tail turns it into a van — with only a
+# 20px hood, a full-length roof is the cab-forward silhouette. A 4Runner instead
+# has a roof over roughly 60% of its length, a hard-raked hatch, and a tail that
+# carries on past it.
 ROOF_Y = 35.5
-line((124, ROOF_Y), (168, ROOF_Y))              # roof, carried over the rear seats
-line((168, ROOF_Y), (176.5, 59))                # rear hatch, raked back
-line((146, 38), (146, 58), width=int(w * 0.55))  # rear quarter window divider
+line((124, ROOF_Y), (146, ROOF_Y))              # roof, stopping well short of the tail
+line((146, ROOF_Y), (162, 58))                  # hatch, raked hard over the rear overhang
+line((134, 39), (134, 56), width=int(w * 0.5))  # divides the rear side window
 
-# roof rack: two low rails, the giveaway on a 4Runner in silhouette
+# roof rack over the cabin only — overland kit, not roof rails
 rack = int(w * 0.34)
-line((86, 30.8), (152, 30.8), width=rack)
-line((96, 31.2), (96, 34.6), width=rack)
-line((142, 31.2), (142, 34.6), width=rack)
+line((74, 30.6), (140, 30.6), width=rack)
+line((84, 31), (84, 34.6), width=rack)
+line((130, 31), (130, 34.6), width=rack)
 
 add = layer.resize((W, H), Image.LANCZOS)
 glow = add.filter(ImageFilter.GaussianBlur(3.4))
