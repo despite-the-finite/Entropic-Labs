@@ -922,7 +922,7 @@ body[data-panel="1"] .plate{ pointer-events: none; }
   from{ opacity: 0; transform: translateY(3px); }
   to{ opacity: 1; transform: none; }
 }
-.at-strip[data-person="1"] .stop-label{ color: var(--signal); }
+.at-strip[data-arrival="1"] .stop-label{ color: var(--signal); }
 .stop-flag{ font-size: 0.8rem; line-height: 1; opacity: 0.9; }
 .stop-label{ color: var(--paper); letter-spacing: 0.08em; }
 .at-now .stop-note{ color: rgba(156,147,184,0.7); }
@@ -953,7 +953,8 @@ body[data-panel="1"] .plate{ pointer-events: none; }
   width: 1px; height: 1.4rem;
   background: linear-gradient(rgba(255,196,107,0), rgba(255,196,107,0.5));
 }
-/* the stop that is a person rather than a place: the trail leaves the map */
+/* the stop that is not a place at all — a person, a skill: the trail
+   leaves the map */
 .journey li.arrival::before{
   background: var(--signal);
   box-shadow: 0 0 0 3px rgba(255,63,160,0.16);
@@ -1089,6 +1090,24 @@ body[data-panel="1"] .plate{ pointer-events: none; }
   80%  { transform: translate(-1px, 0); }
   100% { transform: translate(0,0); }
 }
+
+/* a noise, written down rather than described. It does not shout and it
+   does not jolt — it just arrives, one syllable after the one before, which
+   is the only way a rhythm survives being set as a paragraph. */
+.sound{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem 1.15rem;
+  font-family: var(--font-mono);
+  font-size: 0.95rem !important;
+  letter-spacing: 0.24em;
+  color: var(--ember) !important;
+  margin: 1.5rem 0 !important;
+  padding-left: 1.1rem;
+  border-left: 1px solid rgba(255,196,107,0.28);
+}
+.sound .syll{ opacity: 0.16; transition: opacity 0.5s ease; }
+.sound.seen .syll{ opacity: 1; }
 
 /* the last line, given room to sit */
 .landing{
@@ -1783,6 +1802,7 @@ body[data-panel="1"] .plate{ pointer-events: none; }
      their spacing and simply stop moving. */
   .shout.seen, .beat.seen{ animation: none; }
   .landing{ transition: none; opacity: 0.92; }
+  .sound .syll{ transition: none; opacity: 1; }
   /* the location indicator still moves — it just does not slide */
   .at-now.moved{ animation: none; }
   .journey li{ transition: none; }

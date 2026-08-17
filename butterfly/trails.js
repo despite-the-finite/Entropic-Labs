@@ -442,23 +442,36 @@
         n.pm = null;
       });
 
-      /* Map positions. Several memories in one town would land on the exact
-         same point and read as one, so anything sharing a place opens into a
-         small ring — the place stays where it is, the memories separate. */
-      var atPlace = {};
+      /* Map positions. Memories close together on a world map read as one
+         dot, so anything that lands within a dot's width of something else
+         opens into a small ring — the place stays where it is, the memories
+         separate.
+
+         The test is distance on the map and not a shared place id: two towns
+         an hour's drive apart are half a pixel apart at this scale, and the
+         reader cannot click what they cannot see. NEAR is a little under the
+         ring radius, so a cluster is exactly the set of points a ring can
+         pull apart. */
+      var NEAR = 0.09;
+      var nearby = [];
       story.forEach(function (n) {
         n.pm = (n.lat === null || n.lat === undefined) ? null : mapPos(n.lat, n.lon);
         if (!n.pm) return;
-        var key = n.lat.toFixed(2) + ',' + n.lon.toFixed(2);
-        (atPlace[key] || (atPlace[key] = [])).push(n);
+        var g = null;
+        for (var i = 0; i < nearby.length; i++) {
+          if (Math.abs(nearby[i].x - n.pm.x) < NEAR &&
+              Math.abs(nearby[i].y - n.pm.y) < NEAR) { g = nearby[i]; break; }
+        }
+        if (!g) { g = { x: n.pm.x, y: n.pm.y, at: [] }; nearby.push(g); }
+        g.at.push(n);
       });
-      Object.keys(atPlace).forEach(function (key) {
-        var group = atPlace[key];
-        if (group.length < 2) return;
-        var r = 0.055 + group.length * 0.012;
-        group.forEach(function (n, i) {
-          var a = (i / group.length) * TAU + hash01(key) * TAU;
-          n.pm = { x: n.pm.x + Math.cos(a) * r, y: n.pm.y + Math.sin(a) * r };
+      nearby.forEach(function (g) {
+        if (g.at.length < 2) return;
+        var r = 0.055 + g.at.length * 0.012;
+        var seed = hash01(g.x.toFixed(3) + ',' + g.y.toFixed(3)) * TAU;
+        g.at.forEach(function (n, i) {
+          var a = (i / g.at.length) * TAU + seed;
+          n.pm = { x: g.x + Math.cos(a) * r, y: g.y + Math.sin(a) * r };
         });
       });
 

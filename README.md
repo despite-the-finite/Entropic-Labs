@@ -352,8 +352,10 @@ string. Where the telling needs one, an entry can instead be an object with a
 `kind`: `plan` (a confidently numbered list, for the idea about to go wrong),
 `shout` (a line said far too loudly), `beat` (the moment it lands — jolts once,
 when read), `landing` (a quiet line, given room), `found` (words read off a
-page — a menu, a sign, a letter) and `heading` (a chapter break inside a long
-story, set as a real `h3` so the outline stays navigable). They fire on scroll
+page — a menu, a sign, a letter), `sound` (a noise, transcribed: set in the
+mono face and split on the spaces, so `Bmm. Tss. Pff.` lands one syllable
+after the one before) and `heading` (a chapter break inside a long story, set
+as a real `h3` so the outline stays navigable). They fire on scroll
 rather than on open, once each, and under `prefers-reduced-motion` they keep
 their weight and spacing and simply stop moving. Use them sparingly; the
 writing carries the rest.
@@ -371,11 +373,17 @@ marked `at: 'nainital'` moves the indicator to India and back again a few
 paragraphs later. It is a scrollspy, not a set of one-shot triggers, precisely
 so a story can return somewhere it has already been.
 
-A stop with `person: true` and no place is a destination that is not a
-location — which is how a trail ends by arriving at somebody rather than
-somewhere. The legs between stops that *do* have places are drawn on the map
-view automatically; the last leg of such a journey simply is not drawn, so the
-trail leaves the map, which is the honest picture of what happened.
+A stop with `arrival: true` and no place is a destination that is not a
+location at all — a person, a habit, a noise you can still make twenty years
+later — which is how a trail ends somewhere that isn't on a map. The legs
+between stops that *do* have places are drawn on the map view automatically;
+the last leg of such a journey simply is not drawn, so the trail leaves the
+map, which is the honest picture of what happened.
+
+On the map view itself, memories that land within a dot's width of each other
+open into a small ring. The test is distance on the map rather than a shared
+place id, because two towns an hour's drive apart are half a pixel apart at
+world scale, and a reader cannot click what they cannot see.
 
 **Where it happened.** A story can carry a `landmark` — the particular house
 or corner inside the wider place — which prints under the title as

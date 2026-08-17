@@ -510,10 +510,10 @@
       return { from: { lat: a.lat, lon: a.lon }, to: { lat: b.lat, lon: b.lon } };
     }).filter(Boolean);
 
-    /* Every leg a memory travelled is a crossing too. A stop that is a
-       person rather than a place simply has no coordinates, so the last leg
-       of such a journey is not drawn — the trail leaves the map, which is
-       the honest picture of what happened. */
+    /* Every leg a memory travelled is a crossing too. A stop that is not a
+       place — a person, a habit, a skill — simply has no coordinates, so the
+       last leg of such a journey is not drawn: the trail leaves the map,
+       which is the honest picture of what happened. */
     ordered.forEach(function (s) {
       var prev = null;
       s.journey.forEach(function (stop) {
@@ -1040,6 +1040,21 @@
         place(el('h3', 'st-heading', p.text || ''));
         return;
       }
+      if (p.kind === 'sound') {
+        /* A noise, written down. Set in the mono face because it is being
+           transcribed rather than said, and split on the spaces so each
+           syllable can land after the one before it — which is the only way
+           to write a rhythm in a paragraph. */
+        var snd = el('p', 'sound');
+        String(p.text || '').split(/\s+/).forEach(function (syl, i) {
+          if (!syl) return;
+          var s = el('span', 'syll', syl);
+          s.style.transitionDelay = (0.12 * i) + 's';
+          snd.appendChild(s);
+        });
+        place(snd);
+        return;
+      }
       if (p.kind === 'shout') { place(el('p', 'shout', p.text || '')); return; }
       if (p.kind === 'beat') { place(el('p', 'beat', p.text || '')); return; }
       if (p.kind === 'landing') { place(el('p', 'landing', p.text || '')); return; }
@@ -1052,7 +1067,7 @@
      opens — and once each. Under reduced motion the classes still land and
      the stylesheet simply declines to move anything. */
   function armProse(scroll, story) {
-    var marks = [].slice.call(scroll.querySelectorAll('.shout, .beat, .landing'));
+    var marks = [].slice.call(scroll.querySelectorAll('.shout, .beat, .landing, .sound'));
     var located = [].slice.call(scroll.querySelectorAll('[data-at]'));
     var strip = scroll.querySelector('.at-strip');
 
@@ -1200,7 +1215,8 @@
 
   /* ================================================================ JOURNEY
      Some memories do not sit in one place. They start somewhere, travel, and
-     arrive — occasionally at a person rather than at a location.
+     arrive — occasionally somewhere that is not a location at all: a person,
+     a habit, a noise you can still make twenty years later.
 
      Two pieces render it. A strip that sticks to the top of the reading and
      says where the telling currently is, and a list at the end that lays the
@@ -1237,7 +1253,7 @@
       if (flag) inner.appendChild(flag);
       inner.appendChild(el('span', 'stop-label', stop.label || ''));
       if (stop.note) inner.appendChild(el('span', 'stop-note', stop.note));
-      strip.setAttribute('data-person', stop.person ? '1' : '0');
+      strip.setAttribute('data-arrival', stop.arrival ? '1' : '0');
       /* retrigger the fade without stacking animations */
       inner.classList.remove('moved');
       void inner.offsetWidth;
@@ -1254,7 +1270,7 @@
 
     s.journey.forEach(function (stop) {
       var li = el('li');
-      if (stop.person) li.className = 'arrival';
+      if (stop.arrival) li.className = 'arrival';
       li.setAttribute('data-stop', stop.id || '');
 
       var head = el('div', 'stop-head');

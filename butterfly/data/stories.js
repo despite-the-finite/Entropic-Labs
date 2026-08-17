@@ -54,14 +54,15 @@
                    one thing and came to mean another.
    journey         for a memory that travels: an ordered list of the places
                    it passed through. Each stop is
-                     { id, place, label, note, flag, url, person }
+                     { id, place, label, note, flag, url, arrival }
                    `place` is a PLACES id and is what puts the leg on the
                    map; `label` and `note` are what the reader sees; `url`
-                   is a checked map link. A stop with `person: true` and no
-                   place is a destination that is not a location at all —
-                   which is how a trail ends by arriving at somebody rather
-                   than somewhere. The legs between stops that do have
-                   places are drawn on the map view automatically.
+                   is a checked map link. A stop with `arrival: true` and no
+                   place is a destination that is not a location at all — a
+                   person, a habit, a noise you can still make — which is how
+                   a trail ends somewhere that isn't on a map. The legs
+                   between stops that do have places are drawn on the map
+                   view automatically.
                    Any paragraph can name the stop it happens at with
                    `at: '<stop id>'`; the indicator at the top of the story
                    follows the reading, so a memory that pulls the telling
@@ -86,6 +87,10 @@
                          the moment it lands. Jolts once, when read
                      { kind: 'landing', text: 'Hi guys.' }
                          a quiet line, given room to sit
+                     { kind: 'sound',   text: 'Bmm. Tss. Pff.' }
+                         a noise, transcribed. Set in the mono face and
+                         split on the spaces, so the syllables land in
+                         order rather than all at once
                      { kind: 'found',   items: ['Momo.', 'Veggie momo.'] }
                          words read off a page — a menu, a sign, a letter
                      { kind: 'heading', text: 'The Plan' }
@@ -394,6 +399,22 @@
       country: 'Mauritius',
       lat: -20.28,
       lon: 57.55
+    },
+    {
+      id: 'pereybere',
+      name: 'Péreybère',
+      region: 'Rivière du Rempart',
+      country: 'Mauritius',
+      lat: -20.03,
+      lon: 57.59
+    },
+    {
+      id: 'chamarel',
+      name: 'Chamarel',
+      region: 'Rivière Noire',
+      country: 'Mauritius',
+      lat: -20.43,
+      lon: 57.37
     }
   ];
   var MIGRATIONS = [];
@@ -559,7 +580,7 @@
         },
         {
           id: 'indra',
-          person: true,
+          arrival: true,
           flag: '❤',
           label: 'Years later',
           note: '“Momo” becomes Indra’s nickname'
@@ -809,6 +830,173 @@
       source: 'Karsh',
       relatedStories: ['hi-guys', 'momo'],
       dateAdded: '2026-08-17'
+    },
+
+    {
+      id: 'beatbox',
+      title: 'The Day My Family Regretted Letting Me Learn to Beatbox',
+      hook: 'You’re welcome, family.',
+      year: 2007,
+      approximateDate: '2007',
+      strand: 'karsh',
+      location: 'Mauritius',
+      place: 'chamarel',
+      landmark: {
+        name: 'Chamarel',
+        query: 'Chamarel Mauritius'
+      },
+      journey: [
+        {
+          id: 'coast',
+          place: 'pereybere',
+          flag: '🏖',
+          label: 'Péreybère, Mauritius',
+          note: 'Beaches, warm water, the Indian Ocean'
+        },
+        {
+          id: 'chamarel',
+          place: 'chamarel',
+          flag: '⛰',
+          label: 'The road to Chamarel',
+          note: 'Sugarcane, winding roads, mountains'
+        },
+        {
+          id: 'coast-again',
+          place: 'pereybere',
+          flag: '🏖',
+          label: 'Back toward Péreybère',
+          note: 'The day trip ended. The noises did not.'
+        },
+        {
+          id: 'today',
+          arrival: true,
+          flag: '♪',
+          label: 'Almost twenty years later',
+          note: 'A skill, rather than a place'
+        }
+      ],
+      category: 'triumphs',
+      chaosEvent: true,
+      tags: [
+        'mauritius', 'family', 'travel', 'road trip', 'beatboxing',
+        'music', 'stubbornness', 'growing up', 'mountains'
+      ],
+      people: [
+        { name: 'Karsh', relation: 'me, aged twenty' },
+        { name: 'Amma' },
+        { name: 'Dad' },
+        { name: 'Kush', relation: 'my brother' }
+      ],
+      story: [
+        { text: 'In 2007, my family took a vacation to Mauritius.', at: 'coast' },
+        'We were staying near Péreybère, surrounded by exactly what we’d come to Mauritius for: beaches, warm water, and the Indian Ocean.',
+        'Then one day, we decided to do something different.',
+        'We rented a car and made a day trip inland to Chamarel.',
+        'The plan was to get away from the coast for a while and see another side of Mauritius — the mountains, sugarcane plantations, winding roads, and the interior of the island.',
+        'At twenty years old, I wasn’t particularly excited about this plan.',
+        'We were in Mauritius.',
+        'There were beaches.',
+        'Why were we driving away from them?',
+        'Which is pretty ironic now.',
+        'These days, give me a choice between mountains and beaches and I’ll probably gravitate toward the mountains.',
+        'Twenty-year-old me had apparently not discovered that part of himself yet.',
+
+        { kind: 'heading', text: 'The Road to Chamarel' },
+        'It was going to be a long day in the car.',
+        {
+          text: 'And somewhere along the drive to Chamarel, I decided I needed something to occupy my time.',
+          at: 'chamarel'
+        },
+        'For reasons I can no longer explain, I chose that particular moment to learn a new skill.',
+        '*Beatboxing.*',
+        'I couldn’t beatbox.',
+        'I had no teacher.',
+        'I had no lesson.',
+        'I just decided I was going to figure it out.',
+        'There was only one problem.',
+        'I was trapped in a car with my family.',
+        'Which meant my family was trapped in a car with me.',
+        'So I started practicing.',
+        { kind: 'sound', text: 'Bmm. Tss. Pff.' },
+        'Again.',
+        { kind: 'sound', text: 'Bmm. Tss. Pff.' },
+        'Again.',
+        'And again.',
+        'And again.',
+        'There is an important distinction between listening to someone beatbox and listening to someone *learn* how to beatbox.',
+        'The first can be impressive.',
+        'The second is essentially being trapped in a moving vehicle with someone making the same collection of terrible mouth noises for hours.',
+        'My family began to lose patience.',
+        'I did not.',
+
+        { kind: 'heading', text: 'The Problem With Determination' },
+        'Once I decide I want to learn something, I can become a little obsessive.',
+        'So as we drove farther into Mauritius, the noises continued.',
+        'Past sugarcane fields.',
+        'Up winding roads.',
+        'Into the mountains.',
+        'Toward Chamarel.',
+        { kind: 'sound', text: 'Bmm. Tss. Pff.' },
+        'Kush had had enough.',
+        'My parents had had enough.',
+        'Probably everyone in that car had had enough.',
+        'Except me.',
+        'Because somewhere inside all those terrible noises, every once in a while —',
+        'one started sounding right.',
+        'So naturally, I practiced more.',
+        {
+          text: 'We explored Chamarel, saw a completely different side of Mauritius, and eventually made our way back toward Péreybère.',
+          at: 'coast-again'
+        },
+        'The day trip ended.',
+        'Unfortunately for my family —',
+        'the beatboxing did not.',
+
+        { kind: 'heading', text: 'It Followed Us Home' },
+        'I kept practicing for the rest of the trip.',
+        { text: 'Then I kept practicing after Mauritius.', at: 'today' },
+        'And practicing.',
+        'And practicing.',
+        'Whatever hope my family had that this was simply an annoying Chamarel road-trip phase was quickly extinguished.',
+        'But eventually something unexpected happened.',
+        'I actually got pretty good at it.',
+
+        { kind: 'heading', text: 'The Long-Term Payoff' },
+        'Today, I’m a decent beatboxer.',
+        'It’s one of those completely random skills people don’t expect me to have.',
+        'Every once in a while, the opportunity presents itself and I’ll start beatboxing. There’s usually a moment when someone looks at me like:',
+        'Wait. You can do that?',
+        'Yep.',
+        'And I can trace the whole thing back to one family day trip to Chamarel in 2007.',
+        'A rental car.',
+        'Sugarcane fields.',
+        'Mauritian mountains.',
+        'A family slowly losing its collective sanity.',
+        'And one extremely determined twenty-year-old making terrible noises with his mouth.',
+        'There’s another part of that day that makes me smile now.',
+        'At twenty, I couldn’t understand why we’d voluntarily leave the beaches to drive around the mountains.',
+        'Today, the mountains are probably exactly where I’d want to go.',
+        'I went to Chamarel thinking we were wasting a perfectly good beach day.',
+        'Instead, I came back with a skill I’ve kept for almost twenty years.',
+        'So to Amma, Dad, and Kush:',
+        'Thank you for enduring the hundreds — probably thousands — of awful noises required for me to eventually become a decent beatboxer.',
+        'Although…',
+        'The more I think about it, you’re welcome.',
+        'You had front-row seats to the origin story.',
+        'And every time I surprise someone by beatboxing today, somewhere deep down I like to think that long, noisy drive to Chamarel was worth it.',
+        { kind: 'landing', text: 'At least for me.' }
+      ],
+      artifact: {
+        label: 'Memory artifact',
+        title: 'Bmm. Tss. Pff.',
+        lines: [
+          { label: 'Learned', text: 'In a rental car, somewhere between Péreybère and Chamarel.' },
+          { label: 'Still works', text: 'Almost twenty years later, and it still surprises people.' }
+        ]
+      },
+      source: 'Karsh',
+      relatedStories: ['dont-haggle'],
+      dateAdded: '2026-08-17'
     }
   ];
 
@@ -1020,13 +1208,15 @@
         if (stop.place && !placeIds[stop.place]) {
           out.push(at + ': journey stop "' + stop.id + '" is at unknown place "' + stop.place + '"');
         }
-        if (!stop.place && !stop.person) {
-          out.push(at + ': journey stop "' + stop.id + '" is neither a place nor a person');
+        if (!stop.place && !stop.arrival) {
+          out.push(at + ': journey stop "' + stop.id +
+            '" has no place and is not marked as an arrival');
         }
       });
 
       var LISTED = ['plan', 'found'];        /* kinds whose content is `items` */
-      var SPOKEN = ['shout', 'beat', 'landing', 'heading'];  /* content is `text` */
+      /* kinds whose content is `text` */
+      var SPOKEN = ['shout', 'beat', 'landing', 'heading', 'sound'];
       (s.story || []).forEach(function (p, pi) {
         if (typeof p === 'string' || !p) return;
         var where = at + ': paragraph ' + pi;
