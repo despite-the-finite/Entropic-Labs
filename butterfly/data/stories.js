@@ -670,7 +670,10 @@
       strand: 'karsh',
       location: 'Mauritius',
       place: 'mauritius',
-      landmark: { name: 'Île aux Cerfs', query: 'Île aux Cerfs Mauritius' },
+      landmark: {
+        name: 'Allan Tattoo',
+        url: 'https://maps.app.goo.gl/VndPLrKmiusVq6MK7'
+      },
       category: 'chaos',
       tags: [
         'mauritius', 'family', 'travel', 'tattoo', 'growing up',
@@ -709,8 +712,8 @@
         'For everyone else, that meant souvenirs they could pack into a suitcase.',
         'I had apparently decided to bring mine home permanently attached to my body.',
 
-        { kind: 'heading', text: 'Jack Tattoo' },
-        'We found a place called Jack Tattoo and walked in.',
+        { kind: 'heading', text: 'Allan Tattoo' },
+        'We found a place called Allan Tattoo and walked in.',
         'No appointment.',
         'No prior consultation.',
         'No careful research into the artist’s portfolio.',
