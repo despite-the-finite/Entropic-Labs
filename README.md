@@ -82,12 +82,16 @@ three were nudged onto an even pitch. They are levelled vertically too, aligned
 on the lowest lit pixel of each sprite (its contact patch) rather than on its
 box, since each box carries a different amount of glow padding.
 
-`tools-hero-truck.py` redrew the off-road vehicle's roofline: the artwork read as
-a pickup, with the roof stopping short and the body running on beneath open air.
-Carrying the roof back with a raked hatch closes the greenhouse, which is what
-separates an SUV from a pickup, and the cabin's existing rear pillar then reads
-as the B-pillar. New strokes are composited with max rather than added, so
-overlapping ends do not double into bright spots.
+`tools-hero-truck.py` redrew the off-road vehicle's roofline. The artwork read as
+a pickup — the cabin roof stopped at x=127 and 45px of open bed ran on behind it.
+The first attempt carried the roof all the way to the tail, which turned it into
+a van: with only a 20px hood, a full-length roof is the cab-forward silhouette.
+What reads as a 4Runner is a roof over roughly 60% of the length, a hard-raked
+hatch, and a tail that carries on past it — so the roof stops at x=146, the hatch
+rakes down to x=162, and the existing body from there to x=175 becomes the rear
+overhang. The cabin's original rear pillar then reads as the B-pillar, and a
+short roof rack over the cabin finishes it. New strokes are composited with max
+rather than added, so overlapping ends do not double into bright spots.
 
 `tools-hero-layers.py` produced the separation: it finds each figure by its glow,
 inpaints it out of the plate, and writes the sprite as the difference between
