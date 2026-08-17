@@ -448,6 +448,15 @@
     background: var(--panel);
     aspect-ratio: 3 / 4;
   }
+  /* the code in the photo's background, carried on live over the top of it */
+  .photo-rain{
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    mix-blend-mode: screen;
+  }
   .producer-photo img{
     display: block;
     width: 100%;
@@ -695,6 +704,7 @@
       <div class="producer-grid reveal">
         <figure class="producer-photo">
           <img src="img/producer.jpg" width="900" height="1200" alt="Portrait of the lead producer and owner of Entropic Labs, composited into a green matrix-code studio scene surrounded by monitors and gear, with a glowing neon &quot;despite the finite&quot; wordmark overhead." loading="lazy">
+          <canvas class="photo-rain" aria-hidden="true"></canvas>
         </figure>
         <div class="producer-text">
           <p>Entropic Labs is run by its lead producer and owner, recording and performing under the name <strong>Despite the Finite</strong>. The alias is the studio's whole philosophy in three words: everything starts as noise — a pedal drifting out of tune, a take that almost works — and gets shaped, patiently, into something that holds together anyway. That instinct runs through every session here, whether it's tracking a full band or programming a single bar of a beat.</p>

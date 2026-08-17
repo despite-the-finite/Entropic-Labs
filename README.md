@@ -11,7 +11,7 @@ Landing page for Entropic Labs, a recording and production studio run by **Despi
 - `index.html` — the desktop site: markup, styles, and scripts in one file, with images loaded from `img/`.
 - `m/` — the mobile build, served automatically to phones (see below).
 - `img/` — the site's photography, at two sizes each: full for desktop, `-mobile` for phones, plus the hero's figure sprites.
-- `hero.js` — the hero banner's live layers, shared by both builds (see below).
+- `hero.js` — the canvas motion: the hero banner's live layers and the falling code over the producer photo. Shared by both builds (see below).
 - `games.html` — the games page: video game design as a minor function of the studio.
 - `observatory.html` + `observatory/` — the Observatory: an interactive star chart of things worth wondering about. One responsive page rather than a desktop page plus an `m/` twin; see below.
 - `butterfly.html` + `butterfly/` — Butterfly Trails: an interactive family archive, built around what small moments led to. Same single-responsive-page arrangement as the Observatory; see below.
@@ -98,6 +98,13 @@ exactly. It is a one-off, kept for the record; re-running it needs the original
 The canvas is capped at 30fps, stops when the tab is hidden or the hero scrolls
 out of view, and draws a single frozen frame under `prefers-reduced-motion`,
 where every animation is off.
+
+**The producer photo** gets the same falling code, in the green of the matrix
+scene already in the shot — sampled from the photo itself, and sized and spaced
+to sit with the baked glyphs rather than on top of them. A soft elliptical mask
+punched out with `destination-out` keeps the code off the subject, so it falls
+through the background and down the sides as it does in the photograph. The
+field and the loop are shared with the hero rather than written twice.
 
 ## Sections
 
