@@ -44,9 +44,28 @@
                    one. Without it a search is built from `query`, or failing
                    that from the name and the location. Nothing is embedded:
                    the map is a link out, not an iframe.
-   artifact        { label, title, line } — one object the memory left
-                   behind. Printed like a museum caption, understated:
-                     { title: 'A scar on my knee', line: 'Still there.' }
+   artifact        one object the memory left behind, printed like a museum
+                   caption — or an array of them where a memory left more
+                   than one:
+                     { label: 'Memory artifact', title: 'A scar on my knee',
+                       line: 'Still there. Still funny.' }
+                   `lines: [{ label, text }]` sets out a couple of labelled
+                   readings of the same object, for an artifact that meant
+                   one thing and came to mean another.
+   journey         for a memory that travels: an ordered list of the places
+                   it passed through. Each stop is
+                     { id, place, label, note, flag, url, person }
+                   `place` is a PLACES id and is what puts the leg on the
+                   map; `label` and `note` are what the reader sees; `url`
+                   is a checked map link. A stop with `person: true` and no
+                   place is a destination that is not a location at all —
+                   which is how a trail ends by arriving at somebody rather
+                   than somewhere. The legs between stops that do have
+                   places are drawn on the map view automatically.
+                   Any paragraph can name the stop it happens at with
+                   `at: '<stop id>'`; the indicator at the top of the story
+                   follows the reading, so a memory that pulls the telling
+                   back across the world shows it doing that.
    coordinates     {lat, lon} — only if this story needs a point of its own
                    that isn't in PLACES. `place` is usually the better call.
    people          array of names or {name, relation} objects.
@@ -66,11 +85,20 @@
                      { kind: 'beat',    text: 'CRASH.' }
                          the moment it lands. Jolts once, when read
                      { kind: 'landing', text: 'Hi guys.' }
-                         the quiet last line, given room to sit
+                         a quiet line, given room to sit
+                     { kind: 'found',   items: ['Momo.', 'Veggie momo.'] }
+                         words read off a page — a menu, a sign, a letter
 
-                   Use them sparingly — one or two in a story. They are
-                   punctuation, not decoration, and the writing carries the
-                   rest.
+                   Any entry can also be an object with just `text`, which
+                   is an ordinary paragraph that wanted one of the extra
+                   fields — `at`, usually.
+
+                   Inside any paragraph, *asterisks* give a word the room's
+                   warm emphasis. Once or twice a story, for a word the
+                   whole thing turns on.
+
+                   Use all of it sparingly. These are punctuation, not
+                   decoration, and the writing carries the rest.
    images          array of {src, alt, caption, year, location}.
                    src is a path like 'img/trails/first-letter.jpg'.
                    alt is required for anything a reader must be able to
@@ -341,6 +369,22 @@
       country: 'Zambia',
       lat: -12.53,
       lon: 27.85
+    },
+    {
+      id: 'nainital',
+      name: 'Nainital',
+      region: 'Uttarakhand',
+      country: 'India',
+      lat: 29.38,
+      lon: 79.45
+    },
+    {
+      id: 'denver',
+      name: 'Denver',
+      region: 'Colorado',
+      country: 'United States',
+      lat: 39.74,
+      lon: -104.99
     }
   ];
   var MIGRATIONS = [];
@@ -451,6 +495,159 @@
         title: 'A scar on my knee',
         line: 'Still there. Still funny.'
       },
+      source: 'Karsh',
+      relatedStories: ['momo'],
+      dateAdded: '2026-08-17'
+    },
+
+    {
+      id: 'momo',
+      title: 'Momo',
+      hook: 'A dumpling found its way from a mountain school to my daughter’s name.',
+      /* "About twelve years old", and born in 1987 — so the first momo is
+         somewhere around 1999. Approximate, and the record says so. */
+      year: 1999,
+      approximateDate: '~1999 onward',
+      strand: 'karsh',
+      location: 'Nainital, India',
+      place: 'nainital',
+      landmark: {
+        name: 'Birla Vidya Mandir',
+        url: 'https://www.google.com/maps/search/?api=1&query=Birla+Vidya+Mandir+Nainital+Uttarakhand+India'
+      },
+      journey: [
+        {
+          id: 'zambia-start',
+          place: 'chingola',
+          flag: '🇿🇲',
+          label: 'Chingola, Zambia',
+          note: 'Where the journey began',
+          url: 'https://www.google.com/maps/search/?api=1&query=Chingola+Zambia'
+        },
+        {
+          id: 'nainital',
+          place: 'nainital',
+          flag: '🇮🇳',
+          label: 'Birla Vidya Mandir · Nainital, India',
+          note: 'Boarding school · First momo',
+          url: 'https://www.google.com/maps/search/?api=1&query=Birla+Vidya+Mandir+Nainital+Uttarakhand+India'
+        },
+        {
+          id: 'zambia-home',
+          place: 'chingola',
+          flag: '🇿🇲',
+          label: 'Chingola, Zambia',
+          note: 'Home again',
+          url: 'https://www.google.com/maps/search/?api=1&query=Chingola+Zambia'
+        },
+        {
+          id: 'denver',
+          place: 'denver',
+          flag: '🇺🇸',
+          label: 'Denver, Colorado · 2011',
+          note: 'Momo rediscovered',
+          url: 'https://www.google.com/maps/search/?api=1&query=Denver+Colorado'
+        },
+        {
+          id: 'indra',
+          person: true,
+          flag: '❤',
+          label: 'Years later',
+          note: '“Momo” becomes Indra’s nickname'
+        }
+      ],
+      category: 'beginnings',
+      chaosEvent: true,
+      tags: [
+        'childhood', 'india', 'zambia', 'boarding school', 'immigration',
+        'food', 'family', 'indra', 'memory', 'serendipity'
+      ],
+      people: [
+        { name: 'Karsh', relation: 'me, aged about twelve' },
+        { name: 'Colleen', relation: 'my wife' },
+        { name: 'Indra', relation: 'my daughter' }
+      ],
+      story: [
+        'There are foods you remember because they tasted good.',
+        'And then there are foods that somehow follow you through your entire life.',
+        'For me, that food is *momo*.',
+        {
+          text: 'I grew up in Chingola, Zambia, and when I was about twelve years old, I was sent thousands of miles away to boarding school in India.',
+          at: 'zambia-start'
+        },
+        {
+          text: 'My school was Birla Vidya Mandir in Nainital, high in the Himalayan foothills of Uttarakhand.',
+          at: 'nainital'
+        },
+        'It was a massive transition.',
+        'I had gone from growing up in Zambia to suddenly living at a boarding school in the mountains of northern India, far away from everything that had been familiar.',
+        'Somewhere during those boarding-school years, I tried momo for the first time.',
+        'I remember eating them at a small, simple restaurant that was almost completely open to the outside. Nothing fancy. Just a little place in the mountains, the outside air, and these strange dumplings I had never really encountered before.',
+        'And I loved them.',
+        'At the time, momo felt like something that belonged entirely to that world.',
+        'Nainital.',
+        'The mountains.',
+        'Birla Vidya Mandir.',
+        'Boarding school.',
+        'Being twelve years old and very far from home.',
+        'Eventually, life moved on.',
+        { text: 'I returned to Zambia.', at: 'zambia-home' },
+        'Later I moved to the United States.',
+        'And for years, momo disappeared from my life.',
+        {
+          text: 'Then, in 2011, after moving to Denver, I went to a restaurant called India Nepal Oven.',
+          at: 'denver'
+        },
+        'I opened the menu.',
+        'And there it was.',
+        { kind: 'found', items: ['Momo.', 'Veggie momo.', 'Meat momo.'] },
+        'Just seeing the word stopped me.',
+        { text: 'Suddenly I wasn’t sitting in Denver anymore.', at: 'nainital' },
+        'I was back in Nainital.',
+        'Back in the mountains.',
+        'Back at that little open restaurant.',
+        'Back at Birla Vidya Mandir.',
+        'Back at twelve years old.',
+        {
+          text: 'It hit me much harder than I expected. I remember getting emotional — actually tearing up a little — because this tiny dumpling had somehow opened a door to an entire part of my childhood that I hadn’t visited in years.',
+          at: 'denver'
+        },
+        'And then, many years later, momo found its way into my life again.',
+        'When Colleen was pregnant, one of the pregnancy apps compared the size of our unborn baby to a dumpling.',
+        'That was all it took.',
+        'Because of the history that word already carried for me, I started calling the baby:',
+        { kind: 'landing', text: 'Momo.', at: 'indra' },
+        'Before she had a name, before we had met her, she was Momo.',
+        'That baby became our daughter, Indra.',
+        'And somehow the story managed to complete one more loop.',
+        'As Indra grew older, momo became one of her favorite foods.',
+        'She had no idea, of course, that decades before she was born, her dad had been a twelve-year-old kid at Birla Vidya Mandir in the mountains of India, discovering a dumpling that would eventually become her nickname.',
+        'That’s what I love about memory.',
+        'You never know which tiny moments are going to matter.',
+        'A boarding school.',
+        'A little restaurant in the mountains.',
+        'A plate of dumplings.',
+        'A word on a menu in Denver.',
+        'A pregnancy app.',
+        'A little girl eating one of her favorite foods.',
+        'Sometimes the trail between the important moments in your life only becomes visible when you look backward.',
+        'For me, one of those trails begins with a dumpling.',
+        { kind: 'landing', text: 'Momo.' }
+      ],
+      artifact: [
+        {
+          label: 'Butterfly effect',
+          title: 'A dumpling discovered at boarding school in Nainital eventually became my unborn daughter’s nickname decades later.'
+        },
+        {
+          label: 'Memory artifact',
+          title: 'Momo',
+          lines: [
+            { label: 'First meaning', text: 'A dumpling discovered in the mountains of India.' },
+            { label: 'Later meaning', text: 'My daughter’s nickname before she was born.' }
+          ]
+        }
+      ],
       source: 'Karsh',
       dateAdded: '2026-08-17'
     }
@@ -655,19 +852,46 @@
           out.push(at + ': alternatePath needs exactly one choice marked taken');
         }
       }
-      (s.story || []).forEach(function (p, pi) {
-        if (typeof p === 'string' || !p) return;
-        if (['plan', 'shout', 'beat', 'landing'].indexOf(p.kind) < 0) {
-          out.push(at + ': paragraph ' + pi + ' has an unknown kind "' + p.kind + '"');
+      var stopIds = {};
+      (s.journey || []).forEach(function (stop, si) {
+        if (!stop.id) out.push(at + ': journey stop ' + si + ' has no id');
+        if (stopIds[stop.id]) out.push(at + ': journey has two stops called "' + stop.id + '"');
+        stopIds[stop.id] = true;
+        if (!stop.label) out.push(at + ': journey stop "' + stop.id + '" has no label');
+        if (stop.place && !placeIds[stop.place]) {
+          out.push(at + ': journey stop "' + stop.id + '" is at unknown place "' + stop.place + '"');
         }
-        if (p.kind === 'plan' && !(p.items && p.items.length)) {
-          out.push(at + ': paragraph ' + pi + ' is a plan with no steps in it');
-        }
-        if (p.kind !== 'plan' && !p.text) {
-          out.push(at + ': paragraph ' + pi + ' is a ' + p.kind + ' with no text');
+        if (!stop.place && !stop.person) {
+          out.push(at + ': journey stop "' + stop.id + '" is neither a place nor a person');
         }
       });
-      if (s.artifact && !s.artifact.title) out.push(at + ': artifact needs a title');
+
+      var LISTED = ['plan', 'found'];        /* kinds whose content is `items` */
+      var SPOKEN = ['shout', 'beat', 'landing'];   /* kinds whose content is `text` */
+      (s.story || []).forEach(function (p, pi) {
+        if (typeof p === 'string' || !p) return;
+        var where = at + ': paragraph ' + pi;
+        if (p.kind && LISTED.indexOf(p.kind) < 0 && SPOKEN.indexOf(p.kind) < 0) {
+          out.push(where + ' has an unknown kind "' + p.kind + '"');
+        }
+        if (LISTED.indexOf(p.kind) >= 0 && !(p.items && p.items.length)) {
+          out.push(where + ' is a ' + p.kind + ' with nothing in it');
+        }
+        if (SPOKEN.indexOf(p.kind) >= 0 && !p.text) {
+          out.push(where + ' is a ' + p.kind + ' with no text');
+        }
+        if (!p.kind && !p.text) out.push(where + ' is an object with no text');
+        if (p.at && !stopIds[p.at]) {
+          out.push(where + ' happens at "' + p.at + '", which is not a stop on this journey');
+        }
+      });
+
+      var artifacts = Array.isArray(s.artifact) ? s.artifact : (s.artifact ? [s.artifact] : []);
+      artifacts.forEach(function (a, ai) {
+        if (!a.title && !a.line && !(a.lines && a.lines.length)) {
+          out.push(at + ': artifact ' + ai + ' has nothing in it');
+        }
+      });
       if (s.landmark && !s.landmark.name) out.push(at + ': landmark needs a name');
     });
 

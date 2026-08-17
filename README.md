@@ -356,6 +356,25 @@ rather than on open, once each, and under `prefers-reduced-motion` they keep
 their weight and spacing and simply stop moving. Use them sparingly; the
 writing carries the rest.
 
+**Memories that travel.** A story whose memory moves around the world carries
+a `journey`: an ordered list of stops, each a PLACES id plus what the reader
+sees. Two things render it — a strip that sticks to the top of the reading and
+says where the telling currently is, and a list after the story that lays the
+whole route out, because a trail becomes visible when you look back at it.
+
+Any paragraph can name the stop it happens at with `at: '<stop id>'`, and the
+indicator follows the reading rather than the scroll position. That is what
+lets a memory drag the telling back across the world: a paragraph in Denver
+marked `at: 'nainital'` moves the indicator to India and back again a few
+paragraphs later. It is a scrollspy, not a set of one-shot triggers, precisely
+so a story can return somewhere it has already been.
+
+A stop with `person: true` and no place is a destination that is not a
+location — which is how a trail ends by arriving at somebody rather than
+somewhere. The legs between stops that *do* have places are drawn on the map
+view automatically; the last leg of such a journey simply is not drawn, so the
+trail leaves the map, which is the honest picture of what happened.
+
 **Where it happened.** A story can carry a `landmark` — the particular house
 or corner inside the wider place — which prints under the title as
 `📍 One Nchanga · Chingola, Zambia · ~2002`, the name linking out to a map

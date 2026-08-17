@@ -84,7 +84,8 @@
       location: s.location || (s.place && placeById[s.place] ? placeById[s.place].name : ''),
       place: s.place || null,
       landmark: s.landmark || null,
-      artifact: s.artifact || null,
+      artifact: arr(s.artifact),
+      journey: arr(s.journey),
       coordinates: coords,
       people: arr(s.people),
       category: s.category || null,
@@ -122,11 +123,16 @@
   }
   reciprocate('consequences', 'causedBy');
   reciprocate('causedBy', 'consequences');
+
+  /* A sideways link goes both ways by definition — if this memory sits near
+     that one, that one sits near this one. State it once, on whichever of
+     the two you happen to be writing. */
   stories.forEach(function (s) {
     s.relatedStories = s.relatedStories.filter(function (id) {
       return byId[id] && id !== s.id;
     });
   });
+  reciprocate('relatedStories', 'relatedStories');
 
   /* Reading order: by year, then by when it was added, then by title. A
      story with no year yet sits at the end rather than at the beginning,
@@ -498,11 +504,27 @@
   }
 
   function buildMigrations() {
-    return (DATA.migrations || []).map(function (m) {
+    var out = (DATA.migrations || []).map(function (m) {
       var a = placeById[m.from], b = placeById[m.to];
       if (!a || !b) return null;
       return { from: { lat: a.lat, lon: a.lon }, to: { lat: b.lat, lon: b.lon } };
     }).filter(Boolean);
+
+    /* Every leg a memory travelled is a crossing too. A stop that is a
+       person rather than a place simply has no coordinates, so the last leg
+       of such a journey is not drawn — the trail leaves the map, which is
+       the honest picture of what happened. */
+    ordered.forEach(function (s) {
+      var prev = null;
+      s.journey.forEach(function (stop) {
+        var pl = stop.place && placeById[stop.place];
+        if (pl && prev && (prev.lat !== pl.lat || prev.lon !== pl.lon)) {
+          out.push({ from: { lat: prev.lat, lon: prev.lon }, to: { lat: pl.lat, lon: pl.lon } });
+        }
+        if (pl) prev = pl;
+      });
+    });
+    return out;
   }
 
   trails.setBraid(braidSpec());
@@ -547,8 +569,18 @@
     }
     var years = ordered.filter(function (s) { return s.year !== null; })
       .map(function (s) { return s.year; });
+    /* Everywhere the archive knows about: where memories happened, and
+       everywhere the travelling ones passed through. */
     var places = {};
-    ordered.forEach(function (s) { if (s.location) places[s.location] = true; });
+    ordered.forEach(function (s) {
+      /* Key on the place where there is one: 'chingola' and
+         'Chingola, Zambia' are the same town written two ways. */
+      if (s.place && placeById[s.place]) places[s.place] = true;
+      else if (s.location) places[s.location] = true;
+      s.journey.forEach(function (stop) {
+        if (stop.place && placeById[stop.place]) places[stop.place] = true;
+      });
+    });
     var linkCount = ordered.reduce(function (n, s) { return n + s.consequences.length; }, 0);
 
     var n = el('b', null, String(stories.length));
@@ -957,54 +989,125 @@
      is set as a plain paragraph; a few are objects, for the places where the
      telling needs a beat the prose cannot carry on its own. Every kind here
      is general — none of them knows which story it is in. */
+  /* A word the story turns on, marked *like this* in the data. Split on the
+     asterisks and set every other piece warm — no parser, no dependency, and
+     the data file still reads as plain sentences. */
+  function setText(node, text) {
+    String(text).split('*').forEach(function (piece, i) {
+      if (!piece) return;
+      if (i % 2) node.appendChild(el('em', 'warm', piece));
+      else node.appendChild(doc.createTextNode(piece));
+    });
+    return node;
+  }
+
   function renderProse(paragraphs, into) {
     paragraphs.forEach(function (p) {
-      if (typeof p === 'string') { into.appendChild(el('p', null, p)); return; }
-      if (!p || !p.kind) return;
+      if (typeof p === 'string') { into.appendChild(setText(el('p'), p)); return; }
+      if (!p) return;
+
+      /* Any paragraph can say which stop of the journey it happens at. */
+      function place(node) {
+        if (p.at) node.setAttribute('data-at', p.at);
+        into.appendChild(node);
+        return node;
+      }
+
+      if (!p.kind) { place(setText(el('p'), p.text || '')); return; }
+
+      if (p.kind === 'found') {
+        /* Words read off a page. Set as they were seen, not as they are
+           described — which is why they are a list and not a sentence. */
+        var box = el('div', 'found');
+        (p.items || []).forEach(function (item) {
+          box.appendChild(el('p', null, item));
+        });
+        place(box);
+        return;
+      }
 
       if (p.kind === 'plan') {
         /* The idea, laid out with more confidence than it deserves. */
         if (p.lead) into.appendChild(el('p', 'plan-lead', p.lead));
         var ol = el('ol', 'plan');
         (p.items || []).forEach(function (item) { ol.appendChild(el('li', null, item)); });
-        into.appendChild(ol);
+        place(ol);
         return;
       }
-      if (p.kind === 'shout') {
-        into.appendChild(el('p', 'shout', p.text || ''));
-        return;
-      }
-      if (p.kind === 'beat') {
-        into.appendChild(el('p', 'beat', p.text || ''));
-        return;
-      }
-      if (p.kind === 'landing') {
-        into.appendChild(el('p', 'landing', p.text || ''));
-        return;
-      }
+      if (p.kind === 'shout') { place(el('p', 'shout', p.text || '')); return; }
+      if (p.kind === 'beat') { place(el('p', 'beat', p.text || '')); return; }
+      if (p.kind === 'landing') { place(el('p', 'landing', p.text || '')); return; }
       /* an unknown kind still has words in it */
-      if (p.text) into.appendChild(el('p', null, p.text));
+      if (p.text) place(setText(el('p'), p.text));
     });
   }
 
   /* The shout and the jolt happen when they are read, not when the panel
      opens — and once each. Under reduced motion the classes still land and
      the stylesheet simply declines to move anything. */
-  function armProse(scroll) {
+  function armProse(scroll, story) {
     var marks = [].slice.call(scroll.querySelectorAll('.shout, .beat, .landing'));
-    if (!marks.length) return;
+    var located = [].slice.call(scroll.querySelectorAll('[data-at]'));
+    var strip = scroll.querySelector('.at-strip');
+
     if (!global.IntersectionObserver) {
       marks.forEach(function (m) { m.classList.add('seen'); });
       return;
     }
-    var io = new global.IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (!entry.isIntersecting) return;
-        entry.target.classList.add('seen');
-        io.unobserve(entry.target);
-      });
-    }, { root: scroll, threshold: 0.85 });
-    marks.forEach(function (m) { io.observe(m); });
+
+    if (marks.length) {
+      var io = new global.IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('seen');
+          io.unobserve(entry.target);
+        });
+      }, { root: scroll, threshold: 0.85 });
+      marks.forEach(function (m) { io.observe(m); });
+    }
+
+    /* Where the telling currently is.
+
+       This is a scrollspy, not a set of one-shot triggers: a memory can go
+       back somewhere it has already been — which in this room is rather the
+       point — so the stop is recomputed from the reading position rather
+       than latched the first time a paragraph appears. Whichever located
+       paragraph most recently passed the reading line is where we are; an
+       observer would instead report whatever crossed its threshold last,
+       which on a fast scroll runs ahead of the words being read. */
+    if (strip && located.length && story) {
+      var stopById = {};
+      story.journey.forEach(function (st) { stopById[st.id] = st; });
+      var current = null;
+      var queued = false;
+
+      function settle() {
+        queued = false;
+        var line = scroll.getBoundingClientRect().top + scroll.clientHeight * 0.6;
+        var at = located[0];
+        for (var i = 0; i < located.length; i++) {
+          if (located[i].getBoundingClientRect().top <= line) at = located[i];
+        }
+        var id = at && at.getAttribute('data-at');
+        if (!id || !stopById[id] || id === current) return;
+        current = id;
+        strip.update(stopById[id]);
+        [].slice.call(scroll.querySelectorAll('.journey li')).forEach(function (li) {
+          li.classList.toggle('here', li.getAttribute('data-stop') === id);
+        });
+      }
+
+      scroll.addEventListener('scroll', function () {
+        if (queued) return;
+        queued = true;
+        global.requestAnimationFrame(settle);
+      }, { passive: true });
+
+      /* The panel is still hidden while it is being built, so every
+         rectangle in it measures zero. Wait for it to be on screen before
+         asking where anything is. */
+      global.requestAnimationFrame(settle);
+    }
   }
 
   /* ---- where it happened ---- */
@@ -1072,12 +1175,104 @@
 
   /* ---- what it left behind ---- */
   function renderArtifact(s, into) {
-    if (!s.artifact || !s.artifact.title) return;
-    var sec = section(s.artifact.label || 'Memory artifact');
-    var box = el('div', 'artifact');
-    box.appendChild(el('p', 'art-title', s.artifact.title));
-    if (s.artifact.line) box.appendChild(el('p', 'art-line', s.artifact.line));
-    sec.appendChild(box);
+    s.artifact.forEach(function (a) {
+      if (!a || (!a.title && !a.line && !a.lines)) return;
+      var sec = section(a.label || 'Memory artifact');
+      var box = el('div', 'artifact');
+      if (a.title) box.appendChild(el('p', 'art-title', a.title));
+      (a.lines || []).forEach(function (l) {
+        var row = el('p', 'art-reading');
+        if (l.label) row.appendChild(el('span', 'art-key', l.label));
+        row.appendChild(doc.createTextNode(l.text || ''));
+        box.appendChild(row);
+      });
+      if (a.line) box.appendChild(el('p', 'art-line', a.line));
+      sec.appendChild(box);
+      into.appendChild(sec);
+    });
+  }
+
+  /* ================================================================ JOURNEY
+     Some memories do not sit in one place. They start somewhere, travel, and
+     arrive — occasionally at a person rather than at a location.
+
+     Two pieces render it. A strip that sticks to the top of the reading and
+     says where the telling currently is, and a list at the end that lays the
+     whole route out: the trail becomes visible when you look back at it,
+     which is the point of the room. */
+  function stopUrl(stop, s) {
+    if (stop.url) return stop.url;
+    var pl = stop.place && placeById[stop.place];
+    if (!pl) return null;
+    var q = [pl.name, pl.country].filter(Boolean).join(' ');
+    return 'https://www.google.com/maps/search/?api=1&query=' +
+      encodeURIComponent(q).replace(/%20/g, '+');
+  }
+
+  function stopFlag(stop) {
+    if (!stop.flag) return null;
+    var f = el('span', 'stop-flag', stop.flag);
+    f.setAttribute('aria-hidden', 'true');
+    return f;
+  }
+
+  /* The strip. One line, and it follows the reading rather than the scroll
+     position, so a paragraph that drags the story back across the world
+     drags this with it. */
+  function renderJourneyStrip(s) {
+    var strip = el('div', 'at-strip');
+    strip.setAttribute('aria-hidden', 'true');
+    var inner = el('div', 'at-now');
+    strip.appendChild(inner);
+    strip.update = function (stop) {
+      inner.textContent = '';
+      if (!stop) return;
+      var flag = stopFlag(stop);
+      if (flag) inner.appendChild(flag);
+      inner.appendChild(el('span', 'stop-label', stop.label || ''));
+      if (stop.note) inner.appendChild(el('span', 'stop-note', stop.note));
+      strip.setAttribute('data-person', stop.person ? '1' : '0');
+      /* retrigger the fade without stacking animations */
+      inner.classList.remove('moved');
+      void inner.offsetWidth;
+      inner.classList.add('moved');
+    };
+    strip.update(s.journey[0]);
+    return strip;
+  }
+
+  function renderJourney(s, into) {
+    if (!s.journey.length) return;
+    var sec = section('The trail, looking back');
+    var ul = el('ol', 'journey');
+
+    s.journey.forEach(function (stop) {
+      var li = el('li');
+      if (stop.person) li.className = 'arrival';
+      li.setAttribute('data-stop', stop.id || '');
+
+      var head = el('div', 'stop-head');
+      var flag = stopFlag(stop);
+      if (flag) head.appendChild(flag);
+
+      var url = stopUrl(stop, s);
+      if (url) {
+        var a = el('a', 'where-link', stop.label || '');
+        a.href = url;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.setAttribute('aria-label',
+          'Find ' + (stop.label || 'this place') + ' on Google Maps, opens in a new tab');
+        head.appendChild(a);
+      } else {
+        head.appendChild(el('span', 'stop-label', stop.label || ''));
+      }
+      li.appendChild(head);
+      if (stop.note) li.appendChild(el('p', 'stop-note', stop.note));
+      ul.appendChild(li);
+    });
+
+    sec.appendChild(ul);
     into.appendChild(sec);
   }
 
@@ -1449,7 +1644,16 @@
     } else if (s.story.length) {
       var bodyWrap = el('div', 'st-body');
       renderProse(s.story, bodyWrap);
-      inner.appendChild(bodyWrap);
+      if (s.journey.length) {
+        /* The strip and the body travel together, so the indicator stays put
+           for exactly as long as there is story to read. */
+        var travelling = el('div', 'travelling');
+        travelling.appendChild(renderJourneyStrip(s));
+        travelling.appendChild(bodyWrap);
+        inner.appendChild(travelling);
+      } else {
+        inner.appendChild(bodyWrap);
+      }
     } else {
       var pending = el('div', 'st-body');
       pending.appendChild(el('p', null,
@@ -1458,6 +1662,7 @@
     }
 
     if (!s.classified) {
+      renderJourney(s, inner);
       renderArtifact(s, inner);
       renderPhotos(s, inner);
       renderAudio(s, inner);
@@ -1537,7 +1742,7 @@
     scroll.appendChild(inner);
     storyEl.appendChild(scroll);
     scroll.scrollTop = 0;
-    armProse(scroll);
+    armProse(scroll, s);
     return title;
   }
 

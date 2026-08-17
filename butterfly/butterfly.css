@@ -714,7 +714,7 @@ body[data-panel="1"] .plate{ pointer-events: none; }
 .essay .st-index{ color: var(--trace); }
 .essay .st-section > h3{ color: var(--trace); }
 .essay .panel-close:hover{ color: var(--trace); border-color: var(--trace); }
-.essay .st-body.plain p:first-child::first-letter{
+.essay .st-body.plain > p:first-child::first-letter{
   font-family: inherit;
   font-size: inherit;
   line-height: inherit;
@@ -883,7 +883,7 @@ body[data-panel="1"] .plate{ pointer-events: none; }
   font-size: 1.02rem;
   line-height: 1.72;
 }
-.st-body p:first-child::first-letter{
+.st-body > p:first-child::first-letter{
   font-family: var(--font-display);
   font-size: 2.9em;
   line-height: 0.82;
@@ -892,6 +892,116 @@ body[data-panel="1"] .plate{ pointer-events: none; }
   color: var(--ember);
 }
 .st-body p:last-child{ margin-bottom: 0; }
+
+/* ---- a memory that travels -----------------------------------------------
+   The strip holds still at the top of the reading and says where the telling
+   currently is. It is a caption, not a dashboard: one line, no chrome. */
+.travelling{ position: relative; }
+.at-strip{
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  margin: 1.9rem 0 0;
+  padding: 0.55rem 0;
+  background: linear-gradient(var(--glass-solid) 88%, rgba(9,7,15,0));
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255,196,107,0.16);
+}
+.at-now{
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.55em;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  color: var(--ash);
+}
+.at-now.moved{ animation: at-move .7s ease; }
+@keyframes at-move{
+  from{ opacity: 0; transform: translateY(3px); }
+  to{ opacity: 1; transform: none; }
+}
+.at-strip[data-person="1"] .stop-label{ color: var(--signal); }
+.stop-flag{ font-size: 0.8rem; line-height: 1; opacity: 0.9; }
+.stop-label{ color: var(--paper); letter-spacing: 0.08em; }
+.at-now .stop-note{ color: rgba(156,147,184,0.7); }
+
+/* The route itself, set out after the telling — because that is when a
+   trail becomes visible. Same luminous stem as the causal chain. */
+.journey{ list-style: none; margin: 0; padding: 0; }
+.journey li{
+  position: relative;
+  padding: 0 0 0 1.6rem;
+  margin: 0 0 1.1rem;
+  transition: opacity .4s ease;
+}
+.journey li:last-child{ margin-bottom: 0; }
+.journey li::before{
+  content: "";
+  position: absolute;
+  left: 4px; top: 0.5em;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--ember);
+  box-shadow: 0 0 0 3px rgba(255,196,107,0.14);
+}
+.journey li + li::after{
+  content: "";
+  position: absolute;
+  left: 6px; top: -0.95rem;
+  width: 1px; height: 1.4rem;
+  background: linear-gradient(rgba(255,196,107,0), rgba(255,196,107,0.5));
+}
+/* the stop that is a person rather than a place: the trail leaves the map */
+.journey li.arrival::before{
+  background: var(--signal);
+  box-shadow: 0 0 0 3px rgba(255,63,160,0.16);
+}
+.journey li.arrival + li::after,
+.journey li.arrival::after{ background: linear-gradient(rgba(255,63,160,0), rgba(255,63,160,0.45)); }
+.journey li.here::before{ box-shadow: 0 0 0 5px rgba(255,196,107,0.2); }
+.journey .stop-head{
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.5em;
+  font-size: 0.96rem;
+}
+.journey .stop-note{
+  margin: 0.2rem 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  color: var(--ash);
+}
+.journey li.arrival .stop-note{ color: rgba(255,63,160,0.75); }
+
+/* a word the story turns on */
+.st-body em.warm{
+  font-style: normal;
+  color: var(--ember);
+  border-bottom: 1px solid rgba(255,196,107,0.3);
+  padding-bottom: 1px;
+}
+
+/* words read off a page, set as they were seen */
+.found{
+  margin: 1.4rem 0;
+  padding: 0.9rem 1.1rem;
+  border: 1px solid var(--hairline);
+  border-left: 2px solid var(--ember);
+  background: rgba(255,196,107,0.04);
+}
+.found p{
+  margin: 0 !important;
+  font-family: var(--font-mono);
+  font-size: 0.86rem !important;
+  letter-spacing: 0.12em;
+  line-height: 2 !important;
+  color: var(--ember) !important;
+}
+.found p + p{ color: var(--ash) !important; letter-spacing: 0.1em; }
 
 /* ---- beats: the few places a paragraph is not enough ----------------------
    All three are set as ordinary type that has been given room, rather than as
@@ -1053,6 +1163,21 @@ body[data-panel="1"] .plate{ pointer-events: none; }
   font-size: 1.05rem !important;
   line-height: 1.4 !important;
   color: var(--paper) !important;
+}
+.artifact .art-reading{
+  margin: 0.7rem 0 0 !important;
+  font-size: 0.94rem !important;
+  line-height: 1.6 !important;
+  color: #DDD5CB !important;
+}
+.artifact .art-key{
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ash);
+  margin-bottom: 0.2rem;
 }
 .artifact .art-line{
   margin: 0.5rem 0 0 !important;
@@ -1646,5 +1771,8 @@ body[data-panel="1"] .plate{ pointer-events: none; }
      their spacing and simply stop moving. */
   .shout.seen, .beat.seen{ animation: none; }
   .landing{ transition: none; opacity: 0.92; }
+  /* the location indicator still moves — it just does not slide */
+  .at-now.moved{ animation: none; }
+  .journey li{ transition: none; }
   *{ scroll-behavior: auto; }
 }
