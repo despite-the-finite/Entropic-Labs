@@ -1034,6 +1034,12 @@
         place(ol);
         return;
       }
+      if (p.kind === 'heading') {
+        /* A chapter break inside a long story. A real heading, so the
+           outline of a long memory is navigable and not just visual. */
+        place(el('h3', 'st-heading', p.text || ''));
+        return;
+      }
       if (p.kind === 'shout') { place(el('p', 'shout', p.text || '')); return; }
       if (p.kind === 'beat') { place(el('p', 'beat', p.text || '')); return; }
       if (p.kind === 'landing') { place(el('p', 'landing', p.text || '')); return; }

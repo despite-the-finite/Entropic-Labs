@@ -351,7 +351,9 @@ deliberately leave no history behind.
 string. Where the telling needs one, an entry can instead be an object with a
 `kind`: `plan` (a confidently numbered list, for the idea about to go wrong),
 `shout` (a line said far too loudly), `beat` (the moment it lands — jolts once,
-when read) and `landing` (the quiet last line, given room). They fire on scroll
+when read), `landing` (a quiet line, given room), `found` (words read off a
+page — a menu, a sign, a letter) and `heading` (a chapter break inside a long
+story, set as a real `h3` so the outline stays navigable). They fire on scroll
 rather than on open, once each, and under `prefers-reduced-motion` they keep
 their weight and spacing and simply stop moving. Use them sparingly; the
 writing carries the rest.

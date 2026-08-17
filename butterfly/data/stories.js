@@ -88,6 +88,8 @@
                          a quiet line, given room to sit
                      { kind: 'found',   items: ['Momo.', 'Veggie momo.'] }
                          words read off a page — a menu, a sign, a letter
+                     { kind: 'heading', text: 'The Plan' }
+                         a chapter break inside a long story
 
                    Any entry can also be an object with just `text`, which
                    is an ordinary paragraph that wanted one of the extra
@@ -385,6 +387,13 @@
       country: 'United States',
       lat: 39.74,
       lon: -104.99
+    },
+    {
+      id: 'mauritius',
+      name: 'Mauritius',
+      country: 'Mauritius',
+      lat: -20.28,
+      lon: 57.55
     }
   ];
   var MIGRATIONS = [];
@@ -650,6 +659,153 @@
       ],
       source: 'Karsh',
       dateAdded: '2026-08-17'
+    },
+
+    {
+      id: 'dont-haggle',
+      title: 'Don’t Haggle With a Tattoo Artist',
+      hook: 'Twenty years old, the last day of the holiday, and no appointment.',
+      year: 2007,
+      approximateDate: '2007',
+      strand: 'karsh',
+      location: 'Mauritius',
+      place: 'mauritius',
+      landmark: { name: 'Île aux Cerfs', query: 'Île aux Cerfs Mauritius' },
+      category: 'chaos',
+      tags: [
+        'mauritius', 'family', 'travel', 'tattoo', 'growing up',
+        'india', 'zambia', 'souvenirs', 'funny memories'
+      ],
+      people: [
+        { name: 'Karsh', relation: 'me, aged exactly twenty' },
+        { name: 'Amma', relation: 'the negotiator' },
+        { name: 'Dad' },
+        { name: 'Kush', relation: 'my brother' }
+      ],
+      story: [
+        'In 2007, when I had just turned twenty, my family took a vacation to Mauritius.',
+        'I was twenty years old, in some of the best shape of my life, on a tropical island, and apparently operating with exactly the amount of confidence and foresight you’d expect from a twenty-year-old.',
+        'I wanted a tattoo.',
+        'The trip itself was incredible. Mauritius was beautiful, and we made memories all over the island — my parents, my brother Kush, and me.',
+        'Then we went to Île aux Cerfs.',
+        'Somewhere there, I saw a guy with a tattoo.',
+        'That was it.',
+        'I became obsessed.',
+        'I was getting a tattoo in Mauritius.',
+
+        { kind: 'heading', text: 'The Plan' },
+        'I did, however, have enough sense to know that a fresh tattoo and days of swimming in the ocean weren’t particularly compatible.',
+        {
+          kind: 'plan',
+          lead: 'So I developed what I considered a very sophisticated strategy:',
+          items: [
+            'Wait until the last day.',
+            'Maximum Mauritius beach time.',
+            'Minimum post-tattoo vacation restrictions.'
+          ]
+        },
+        'Perfect.',
+        'On our final day, we planned to spend our time shopping for souvenirs.',
+        'For everyone else, that meant souvenirs they could pack into a suitcase.',
+        'I had apparently decided to bring mine home permanently attached to my body.',
+
+        { kind: 'heading', text: 'Jack Tattoo' },
+        'We found a place called Jack Tattoo and walked in.',
+        'No appointment.',
+        'No prior consultation.',
+        'No careful research into the artist’s portfolio.',
+        'Just a twenty-year-old walking into a tattoo shop on a foreign island and saying, essentially:',
+        'I’d like something *permanent*, please.',
+        'There was also one minor scheduling requirement.',
+        'It needed to be finished that day.',
+        'Because we were flying home the next day.',
+        'Again: excellent planning.',
+        'I looked through the catalogue and found what I wanted — a graffiti-style, interweaving tribal band.',
+        'And despite the spontaneity of everything surrounding it, the tattoo itself actually meant something to me.',
+        'The intertwining design represented the two cultures that had shaped my life up to that point: India and Zambia.',
+        'India was where I was born.',
+        'Zambia was where I grew up.',
+        'Two places. Two cultures. Woven together.',
+        'At twenty, that felt like the right thing to permanently put on my body.',
+        'There was just one problem.',
+        'I wasn’t exactly financially self-sufficient yet.',
+        'My parents were paying.',
+        'Which meant my mother was involved.',
+        'Which meant —',
+
+        { kind: 'heading', text: 'Amma Negotiated the Tattoo' },
+        'If you know anything about Indian mothers, you probably know where this is going.',
+        'Amma looked at the price of this permanent piece of artwork that was about to be injected into her son’s skin…',
+        '…and started haggling with the tattoo artist.',
+        'The artist named his price.',
+        'Amma countered.',
+        'There was negotiation.',
+        'And somehow, incredibly —',
+        'he agreed.',
+        'In retrospect, there are many things in life worth negotiating.',
+        'Cars.',
+        'Furniture.',
+        'Souvenirs.',
+        'Hotel rooms.',
+        'Perhaps even coconuts.',
+        'But I have since developed one fairly firm rule:',
+        'Don’t haggle with the person who is about to permanently draw on your body with needles.',
+
+        { kind: 'heading', text: 'The Curtains' },
+        'At some point while I was getting tattooed, the artist asked me a question.',
+        'Would I mind if he opened the curtains so people outside could watch?',
+        'I don’t remember exactly why I agreed.',
+        'Maybe I was trying to be cool.',
+        'Maybe twenty-year-old me didn’t know how to say no.',
+        'Maybe I was already committed to the entire questionable chain of decisions that had brought me here.',
+        'But the curtains went up.',
+        'And suddenly my tattoo session became a public performance.',
+        'People could see me sitting there getting tattooed.',
+        'I was embarrassed.',
+        'And somewhere in the back of my mind I couldn’t help wondering:',
+        'Was this because Amma negotiated the price?',
+        'I’ll never know.',
+
+        { kind: 'heading', text: 'The Permanent Souvenir' },
+        'The tattoo was finished.',
+        'And, well…',
+        'It wasn’t exactly a masterpiece.',
+        'Looking at it now, I’d describe the execution as mediocre.',
+        'I’ve thought about eventually adding more artwork around it or incorporating it into something larger.',
+        'But I’ve never regretted it.',
+        'In fact, over time, I’ve learned to love it.',
+        'Not because it’s a perfect tattoo.',
+        'Because it’s a perfect memory.',
+        'I can look at it today and instantly travel back to being twenty years old in Mauritius.',
+        'I remember the beaches.',
+        'Île aux Cerfs.',
+        'Exploring a beautiful country with Kush and my parents.',
+        'Being young, fit, confident and wonderfully naive.',
+        'Walking into a tattoo shop without an appointment.',
+        'Picking permanent artwork from a catalogue.',
+        'Telling the artist we had a flight the next day.',
+        'And, of course, watching Amma negotiate the price of something that was about to become part of my body forever.',
+        'Maybe someday I’ll add to the tattoo.',
+        'But I don’t think I’d ever want to erase the original.',
+        'The imperfections are part of the story.',
+        'It’s funny how souvenirs work.',
+        'Most of the things we bought that day are probably long gone.',
+        'Mine is still here.',
+        'And every time I look at it, Mauritius comes back with it.',
+        'Although the trip also left me with one piece of wisdom I’ve carried ever since:',
+        { kind: 'landing', text: 'Don’t haggle with a tattoo artist.' }
+      ],
+      artifact: {
+        label: 'Memory artifact',
+        title: 'A graffiti-style tribal band',
+        lines: [
+          { label: 'What it means', text: 'India and Zambia — where I was born and where I grew up, woven together.' },
+          { label: 'Execution', text: 'Mediocre. Never regretted. Still there.' }
+        ]
+      },
+      source: 'Karsh',
+      relatedStories: ['hi-guys', 'momo'],
+      dateAdded: '2026-08-17'
     }
   ];
 
@@ -867,7 +1023,7 @@
       });
 
       var LISTED = ['plan', 'found'];        /* kinds whose content is `items` */
-      var SPOKEN = ['shout', 'beat', 'landing'];   /* kinds whose content is `text` */
+      var SPOKEN = ['shout', 'beat', 'landing', 'heading'];  /* content is `text` */
       (s.story || []).forEach(function (p, pi) {
         if (typeof p === 'string' || !p) return;
         var where = at + ': paragraph ' + pi;

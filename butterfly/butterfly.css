@@ -977,6 +977,18 @@ body[data-panel="1"] .plate{ pointer-events: none; }
 }
 .journey li.arrival .stop-note{ color: rgba(255,63,160,0.75); }
 
+/* a chapter break inside a long story — the display face, so it reads as
+   part of the telling rather than as one of the record's own labels */
+.st-heading{
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-size: 1.02rem;
+  letter-spacing: 0.08em;
+  color: var(--ember);
+  margin: 2.7rem 0 1.15rem;
+}
+.st-body > .st-heading:first-child{ margin-top: 0; }
+
 /* a word the story turns on */
 .st-body em.warm{
   font-style: normal;
