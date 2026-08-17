@@ -244,11 +244,12 @@ body.menu-open{ overflow: hidden; }
   background-repeat: no-repeat;
   background-size: 100% 100%;
   mix-blend-mode: screen;
+  transition: transform 0.45s cubic-bezier(.3,.8,.4,1);
 }
 .hero-fig--bike{  left: 5.990%;  top: 64.630%; width: 8.906%;  height: 15.556%; background-image: url(../img/hero-fig-bike.png);  transform-origin: 50% 97%; }
-.hero-fig--cycle{ left: 20.677%; top: 66.157%; width: 8.203%;  height: 14.352%; background-image: url(../img/hero-fig-cycle.png); transform-origin: 50% 96%; }
-.hero-fig--skate{ left: 40.885%; top: 63.426%; width: 10.130%; height: 15.648%; background-image: url(../img/hero-fig-skate.png); transform-origin: 42% 96%; }
-.hero-fig--board{ left: 62.500%; top: 64.074%; width: 10.599%; height: 17.685%; background-image: url(../img/hero-fig-board.png); transform-origin: 50% 88%; }
+.hero-fig--cycle{ left: 25.163%; top: 66.157%; width: 8.203%;  height: 14.352%; background-image: url(../img/hero-fig-cycle.png); transform-origin: 50% 96%; }
+.hero-fig--skate{ left: 43.021%; top: 63.426%; width: 10.130%; height: 15.648%; background-image: url(../img/hero-fig-skate.png); transform-origin: 42% 96%; }
+.hero-fig--board{ left: 61.608%; top: 64.074%; width: 10.599%; height: 17.685%; background-image: url(../img/hero-fig-board.png); transform-origin: 50% 88%; }
 .hero-fig--truck{ left: 81.172%; top: 70.787%; width: 9.115%;  height: 11.759%; background-image: url(../img/hero-fig-truck.png); transform-origin: 50% 98%; }
 
 
@@ -265,8 +266,8 @@ body.menu-open{ overflow: hidden; }
   opacity: 0;
   pointer-events: none;
 }
-.hero-fig--cycle::before{ top: 44%; left: -34%; width: 46%; }
-.hero-fig--cycle::after{  top: 63%; left: -26%; width: 34%; }
+.hero-fig--cycle::before{ top: 44%; left: -17%; width: 32%; }
+.hero-fig--cycle::after{  top: 63%; left: -11%; width: 24%; }
 
   .hero-fig--bike.is-playing{ animation: fig-bike 1.8s cubic-bezier(.33,.9,.36,1) infinite; }
 .hero-fig--cycle.is-playing{ animation: fig-cycle 0.62s linear infinite; }
@@ -296,9 +297,9 @@ body.menu-open{ overflow: hidden; }
   75%{ transform: translateY(-0.5%) rotate(0.25deg); }
 }
 @keyframes speed-line{
-  0%{ opacity: 0; transform: translateX(26%) scaleX(0.5); }
+  0%{ opacity: 0; transform: translateX(20%) scaleX(0.55); }
   30%{ opacity: 0.9; }
-  100%{ opacity: 0; transform: translateX(-64%) scaleX(1.2); }
+  100%{ opacity: 0; transform: translateX(-34%) scaleX(1.15); }
 }
 /* Skateboarder — a real ollie: crouch, snap the tail so the nose comes up,
    drag the front foot to level it out, float, then land and absorb. */

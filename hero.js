@@ -190,22 +190,47 @@
   var figures = [].slice.call(document.querySelectorAll('.hero-fig'));
   var cycleTimer = null;
 
-  function startCycle() {
-    if (cycleTimer || reduce.matches || !figures.length) return;
-    var i = -1;
-    var step = function () {
-      figures.forEach(function (f) { f.classList.remove('is-playing'); });
-      i = (i + 1) % figures.length;
-      figures[i].classList.add('is-playing');
-      cycleTimer = setTimeout(step, 2600);
+  var cycleIndex = -1;
+  var current = null;
+
+  function clearFigure(f) {
+    if (!f) return;
+    f.classList.remove('is-playing');
+    f.style.animationIterationCount = '';
+  }
+
+  // Each figure plays a whole number of loops and hands over on animationend,
+  // so a turn never stops part-way through a jump or a compression. Short
+  // animations repeat so every turn lasts roughly the same time.
+  function playNext() {
+    clearFigure(current);
+    cycleIndex = (cycleIndex + 1) % figures.length;
+    var f = figures[cycleIndex];
+    current = f;
+    f.classList.add('is-playing');
+    var dur = parseFloat(getComputedStyle(f).animationDuration) || 2;
+    var loops = Math.max(1, Math.round(2.4 / dur));
+    f.style.animationIterationCount = String(loops);
+    var done = function (e) {
+      if (e.target !== f || e.pseudoElement) return;   // ignore the speed lines
+      f.removeEventListener('animationend', done);
+      if (current !== f) return;
+      clearFigure(f);
+      cycleTimer = setTimeout(playNext, 700);          // a beat between figures
     };
-    cycleTimer = setTimeout(step, 900);
+    f.addEventListener('animationend', done);
+  }
+
+  function startCycle() {
+    if (cycleTimer || current || reduce.matches || !figures.length) return;
+    cycleTimer = setTimeout(function () { cycleTimer = null; playNext(); }, 900);
   }
 
   function stopCycle() {
     clearTimeout(cycleTimer);
     cycleTimer = null;
-    figures.forEach(function (f) { f.classList.remove('is-playing'); });
+    figures.forEach(clearFigure);
+    current = null;
   }
 
   var noHover = window.matchMedia('(hover: none)');

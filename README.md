@@ -69,9 +69,16 @@ over it as live elements:
 | The five figures | Cut out of the artwork as sprites in `img/hero-fig-*.png` and screen-blended back at their exact positions, each animated as its own activity: the mountain biker's fork compresses and rebounds over a hit, the road cyclist holds an aero tuck while speed lines stream off the back, the skateboarder ollies (crouch, tail snap, level out, land and absorb), the snowboarder pops a 360 on the vertical axis, and the truck works both axles over trail chatter. Transform origins sit at each one's contact patch so compression loads onto the ground. |
 
 Figures animate **on hover** where there's a pointer, and **take turns
-automatically** on touch, since a phone has no hover. Positions are in percent of
-the banner, so every layer stays registered at any width, and the slow push
-scales the whole scene rather than the backdrop alone.
+automatically** on touch, since a phone has no hover. On touch each one plays a
+whole number of loops and hands over on `animationend`, so a turn never stops
+part-way through a jump; short animations repeat so every turn runs about the
+same length. Letting go of a hover eases back to rest rather than snapping.
+
+Positions are in percent of the banner, so every layer stays registered at any
+width, and the slow push scales the whole scene rather than the backdrop alone.
+The five are spaced evenly across the frame rather than where the artwork
+happened to put them — the outer two keep their original spots and the middle
+three were nudged onto an even pitch.
 
 `tools-hero-layers.py` produced the separation: it finds each figure by its glow,
 inpaints it out of the plate, and writes the sprite as the difference between
