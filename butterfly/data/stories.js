@@ -28,20 +28,22 @@
    era             an ERAS id. Optional — leave it out and the story still
                    sorts by year. Eras are labels, not facts; see ERAS below.
    strand          a STRANDS id — whose line this happened on. 'amma', 'dad',
-                   'together', 'me', 'kush', 'colleen', 'carole', 'us',
+                   'together', 'karsh', 'kush', 'colleen', 'carole', 'us',
                    'kush-carole', 'indra'. Leave it out and the story sits on
                    the centre line at its year, which is right for anything
                    belonging to the family rather than to one person in it.
    location        free text: 'Bombay', 'The train to Lusaka'.
    place           a PLACES id, if this happened somewhere already listed.
                    Gives the story map coordinates without repeating them.
-   landmark        { name, query } — the particular house, school or corner
-                   this happened at, inside the wider place. Shown as a line
-                   under the title, with the name linking out to a map:
+   landmark        { name, url, query } — the particular house, school or
+                   corner this happened at, inside the wider place. Shown as
+                   a line under the title, with the name linking out to a map:
                      📍 One Nchanga · Chingola, Zambia · ~2002
-                   `query` is what to search for; leave it out and the name
-                   and the location are used. Nothing is embedded — the map
-                   is a link out, not an iframe.
+                   `url` is a map link you have already found and checked, and
+                   is used as given — always the better option where you have
+                   one. Without it a search is built from `query`, or failing
+                   that from the name and the location. Nothing is embedded:
+                   the map is a link out, not an iframe.
    artifact        { label, title, line } — one object the memory left
                    behind. Printed like a museum caption, understated:
                      { title: 'A scar on my knee', line: 'Still there.' }
@@ -247,7 +249,7 @@
 
     /* --- the second --- */
     {
-      id: 'me', label: 'Me', tone: '#FFC46B',
+      id: 'karsh', label: 'Karsh', tone: '#FFC46B',
       base: 'together', side: -1,
       start: { kind: 'born', year: 1987 }, end: { kind: 'joins', year: 2016, into: 'us' }
     },
@@ -267,7 +269,7 @@
       start: { kind: 'begins', year: 1990 }, end: { kind: 'joins', year: 2017, into: 'kush-carole' }
     },
     {
-      id: 'us', label: 'Colleen & me', tone: '#FFC46B',
+      id: 'us', label: 'Colleen & Karsh', tone: '#FFC46B',
       base: 'together', side: -1.45,
       start: { kind: 'union', year: 2016 }, end: { kind: 'open' }
     },
@@ -389,10 +391,13 @@
       hook: 'The bike went one way. I went another.',
       year: 2002,
       approximateDate: '~2002',
-      strand: 'me',
+      strand: 'karsh',
       location: 'Chingola, Zambia',
       place: 'chingola',
-      landmark: { name: 'One Nchanga', query: 'One Nchanga Chingola Zambia' },
+      landmark: {
+        name: 'One Nchanga',
+        url: 'https://maps.app.goo.gl/Q4QPpb8x3roUPrM86'
+      },
       category: 'family-lore',
       tags: ['childhood', 'zambia', 'family', 'growing up', 'funny memories'],
       people: [

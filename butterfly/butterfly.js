@@ -1009,10 +1009,14 @@
 
   /* ---- where it happened ---- */
   /* A link out, never an embed: the map is somewhere else, and the memory
-     stays here. Google takes `+` for spaces in this query. */
+     stays here. A link the archive has already found and checked is used as
+     given; without one a search is built, which is a guess and says so by
+     being a search. Google takes `+` for spaces in that query. */
   function mapUrl(s) {
-    var q = (s.landmark && s.landmark.query) ||
-      [s.landmark && s.landmark.name, s.location].filter(Boolean).join(' ');
+    if (!s.landmark) return null;
+    if (s.landmark.url) return s.landmark.url;
+    var q = s.landmark.query ||
+      [s.landmark.name, s.location].filter(Boolean).join(' ');
     if (!q) return null;
     return 'https://www.google.com/maps/search/?api=1&query=' +
       encodeURIComponent(q).replace(/%20/g, '+');
