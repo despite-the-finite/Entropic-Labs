@@ -347,12 +347,38 @@ resolved before view names, so no route can ever shadow a memory. Following a
 butterfly and jumping to an era are actions rather than destinations and
 deliberately leave no history behind.
 
+**Beats in the writing.** Almost every paragraph in a story is a plain
+string. Where the telling needs one, an entry can instead be an object with a
+`kind`: `plan` (a confidently numbered list, for the idea about to go wrong),
+`shout` (a line said far too loudly), `beat` (the moment it lands — jolts once,
+when read) and `landing` (the quiet last line, given room). They fire on scroll
+rather than on open, once each, and under `prefers-reduced-motion` they keep
+their weight and spacing and simply stop moving. Use them sparingly; the
+writing carries the rest.
+
+**Where it happened.** A story can carry a `landmark` — the particular house
+or corner inside the wider place — which prints under the title as
+`📍 One Nchanga · Chingola, Zambia · ~2002`, the name linking out to a map
+search, plus a small *See where this happened ↗* control. Both are keyboard
+reachable and say in their `aria-label` that they open a new tab. Nothing is
+embedded: the map is a link out, never an iframe.
+
+**What it left behind.** An optional `artifact` prints one object the memory
+left behind, set like a museum caption:
+
+```
+Memory artifact
+A scar on my knee
+Still there. Still funny.
+```
+
 **The empty state is a state, not a hole.** With no stories the trail is a
 faint path arriving out of the dark with a handful of unidentified points on
 it that surface and fade. Category butterflies still fly — they look, fail to
 find anything, and say so — and Surprise Me sends several out searching before
 they give up. Nothing is ever populated with invented content to make a feature
-demonstrable.
+demonstrable. That state is still live: empty a category, or `STORIES` itself,
+and it comes back.
 
 **No `m/` twin, on purpose** — same reasoning as the Observatory. It branches
 internally instead: portrait turns the trail from a march into a descent,

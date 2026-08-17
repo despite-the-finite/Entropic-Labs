@@ -35,13 +35,40 @@
    location        free text: 'Bombay', 'The train to Lusaka'.
    place           a PLACES id, if this happened somewhere already listed.
                    Gives the story map coordinates without repeating them.
+   landmark        { name, query } — the particular house, school or corner
+                   this happened at, inside the wider place. Shown as a line
+                   under the title, with the name linking out to a map:
+                     📍 One Nchanga · Chingola, Zambia · ~2002
+                   `query` is what to search for; leave it out and the name
+                   and the location are used. Nothing is embedded — the map
+                   is a link out, not an iframe.
+   artifact        { label, title, line } — one object the memory left
+                   behind. Printed like a museum caption, understated:
+                     { title: 'A scar on my knee', line: 'Still there.' }
    coordinates     {lat, lon} — only if this story needs a point of its own
                    that isn't in PLACES. `place` is usually the better call.
    people          array of names or {name, relation} objects.
                    [{ name: 'Ba', relation: 'grandmother' }, 'Amma']
    category        a CATEGORIES id — which butterfly carries this one.
    tags            array of free-text tags. Cheap, searchable, no schema.
-   story           array of paragraphs (strings). The story itself.
+   story           array of paragraphs. A string is an ordinary paragraph,
+                   which is what almost every line should be. Where the
+                   telling needs a beat, an entry can instead be an object:
+
+                     { kind: 'plan',    lead: 'The plan was simple:',
+                       items: ['One.', 'Two.', 'Three.'] }
+                         a confidently numbered list, for the idea that is
+                         about to go wrong
+                     { kind: 'shout',   text: 'Hiiii guyyyyys!' }
+                         a line said far too loudly
+                     { kind: 'beat',    text: 'CRASH.' }
+                         the moment it lands. Jolts once, when read
+                     { kind: 'landing', text: 'Hi guys.' }
+                         the quiet last line, given room to sit
+
+                   Use them sparingly — one or two in a story. They are
+                   punctuation, not decoration, and the writing carries the
+                   rest.
    images          array of {src, alt, caption, year, location}.
                    src is a path like 'img/trails/first-letter.jpg'.
                    alt is required for anything a reader must be able to
@@ -100,10 +127,9 @@
    hypothetical choice, the reader shows a blank plate that says so.
 
    ==========================================================================
-   THE ARCHIVE IS CURRENTLY EMPTY. That is a state, not a bug — the room is
-   built for it, and it is meant to look like a beginning rather than a hole.
-   The moment the first object lands in STORIES, the empty state stands down
-   on its own.
+   The first memory has landed. The room still knows how to be empty — take
+   everything out of STORIES and the beginning-state comes back on its own —
+   but from here on it is a matter of appending.
    ========================================================================== */
 
 (function (global) {
@@ -298,10 +324,23 @@
        { id: 'lusaka', name: 'Lusaka', country: 'Zambia',
          lat: -15.39, lon: 28.32 }
 
+     `region` is optional and is for the record rather than the map. Keep the
+     coordinates at town level — the map here says "these things happened far
+     apart", not "here is the house".
+
      MIGRATIONS draws the long arcs between places — the crossings, not the
      trips. Each is { from: <place id>, to: <place id>, year, label }.
      ------------------------------------------------------------------------ */
-  var PLACES = [];
+  var PLACES = [
+    {
+      id: 'chingola',
+      name: 'Chingola',
+      region: 'Copperbelt Province',
+      country: 'Zambia',
+      lat: -12.53,
+      lon: 27.85
+    }
+  ];
   var MIGRATIONS = [];
 
   /* ------------------------------------------------------------------------
@@ -343,7 +382,74 @@
 
      Copy it, fill in what is known, delete the rest.
      ------------------------------------------------------------------------ */
-  var STORIES = [];
+  var STORIES = [
+    {
+      id: 'hi-guys',
+      title: 'Hi Guys',
+      hook: 'The bike went one way. I went another.',
+      year: 2002,
+      approximateDate: '~2002',
+      strand: 'me',
+      location: 'Chingola, Zambia',
+      place: 'chingola',
+      landmark: { name: 'One Nchanga', query: 'One Nchanga Chingola Zambia' },
+      category: 'family-lore',
+      tags: ['childhood', 'zambia', 'family', 'growing up', 'funny memories'],
+      people: [
+        { name: 'Karsh', relation: 'me, on the bicycle' },
+        { name: 'Kush', relation: 'my brother' },
+        { name: 'Stefan', relation: 'Kush’s friend' },
+        { name: 'Amma' },
+        { name: 'Penny', relation: 'Amma’s friend' }
+      ],
+      story: [
+        'There are some childhood memories that survive because something important happened.',
+        'And then there are the ones that survive because you fell off a bicycle while yelling “Hi guys!”',
+        'This is one of those.',
+        'Back when we lived in Chingola, Amma was close friends with Penny, whose family lived at One Nchanga, the KCM CEO’s residence at the time.',
+        'To us kids, One Nchanga was less of a house and more of a kingdom.',
+        'The property was enormous, with sprawling grounds that seemed designed for wandering around and getting into harmless trouble. Inside was one of our favorite places: a billiards suite reached by taking a passageway that actually crossed over the entrance carport. Naturally, this made getting there feel like we were accessing some secret wing of a mansion.',
+        'While Amma and Penny disappeared into their world of arts and crafts, we disappeared into ours.',
+        'One afternoon, my brother Kush, his friend Stefan, and I were roaming around the property. Kush and Stefan were walking. I was on my bike.',
+        'And I was feeling pretty cool.',
+        'I came riding toward them and decided that simply riding a bicycle normally wasn’t going to cut it. So, as kids with questionable risk-assessment skills tend to do, I took my hands off the handlebars.',
+        {
+          kind: 'plan',
+          lead: 'The plan was simple:',
+          items: [
+            'Cruise effortlessly past them.',
+            'Casually say: “Hi guys.”',
+            'Continue riding into the distance looking incredibly cool.'
+          ]
+        },
+        'Instead, just as I reached them, my front wheel hit a bump.',
+        'The bike went one way.',
+        'I went another.',
+        'But apparently, my brain was already fully committed to the greeting.',
+        'So somewhere between being upright and hitting the ground, instead of screaming or yelling—',
+        'I said:',
+        { kind: 'shout', text: 'Hiiii guyyyyys!' },
+        { kind: 'beat', text: 'CRASH.' },
+        'I absolutely destroyed my knee.',
+        'Kush and Stefan absolutely lost it.',
+        'The knee took quite a while to heal, and it left me with a scar that I still have today. But somehow the pain has disappeared from the memory entirely.',
+        'What survived was “Hi Guys.”',
+        'Kush and I still talk about it all these years later. And every once in a while, I’ll notice that scar on my knee and laugh.',
+        'It’s funny how something so small can become a doorway to an entire time in your life.',
+        'For a moment I’m back at One Nchanga. Amma is somewhere inside doing arts and crafts with Penny. Kush and Stefan are walking down the road. I’m a kid on a bicycle, hands off the handlebars, convinced I’m much cooler than I actually am.',
+        'And around us is Chingola—the place where we got to grow up, explore, get hurt, laugh about it, and live with the kind of freedom you don’t realize is special until many years later.',
+        'All it takes to bring it back is one little scar.',
+        'And two words.',
+        { kind: 'landing', text: 'Hi guys.' }
+      ],
+      artifact: {
+        title: 'A scar on my knee',
+        line: 'Still there. Still funny.'
+      },
+      source: 'Karsh',
+      dateAdded: '2026-08-17'
+    }
+  ];
 
   /* ------------------------------------------------------------------------
      ARCHIVE — the room's own words. Copy lives here so it can be edited
@@ -544,6 +650,20 @@
           out.push(at + ': alternatePath needs exactly one choice marked taken');
         }
       }
+      (s.story || []).forEach(function (p, pi) {
+        if (typeof p === 'string' || !p) return;
+        if (['plan', 'shout', 'beat', 'landing'].indexOf(p.kind) < 0) {
+          out.push(at + ': paragraph ' + pi + ' has an unknown kind "' + p.kind + '"');
+        }
+        if (p.kind === 'plan' && !(p.items && p.items.length)) {
+          out.push(at + ': paragraph ' + pi + ' is a plan with no steps in it');
+        }
+        if (p.kind !== 'plan' && !p.text) {
+          out.push(at + ': paragraph ' + pi + ' is a ' + p.kind + ' with no text');
+        }
+      });
+      if (s.artifact && !s.artifact.title) out.push(at + ': artifact needs a title');
+      if (s.landmark && !s.landmark.name) out.push(at + ': landmark needs a name');
     });
 
     ['causedBy', 'consequences', 'relatedStories'].forEach(function (key) {

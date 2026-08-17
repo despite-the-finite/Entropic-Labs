@@ -83,6 +83,8 @@
       strand: s.strand || null,
       location: s.location || (s.place && placeById[s.place] ? placeById[s.place].name : ''),
       place: s.place || null,
+      landmark: s.landmark || null,
+      artifact: s.artifact || null,
       coordinates: coords,
       people: arr(s.people),
       category: s.category || null,
@@ -950,6 +952,131 @@
     return box;
   }
 
+  /* ================================================================ PROSE
+     A story is a list of paragraphs. Almost every one is a plain string and
+     is set as a plain paragraph; a few are objects, for the places where the
+     telling needs a beat the prose cannot carry on its own. Every kind here
+     is general — none of them knows which story it is in. */
+  function renderProse(paragraphs, into) {
+    paragraphs.forEach(function (p) {
+      if (typeof p === 'string') { into.appendChild(el('p', null, p)); return; }
+      if (!p || !p.kind) return;
+
+      if (p.kind === 'plan') {
+        /* The idea, laid out with more confidence than it deserves. */
+        if (p.lead) into.appendChild(el('p', 'plan-lead', p.lead));
+        var ol = el('ol', 'plan');
+        (p.items || []).forEach(function (item) { ol.appendChild(el('li', null, item)); });
+        into.appendChild(ol);
+        return;
+      }
+      if (p.kind === 'shout') {
+        into.appendChild(el('p', 'shout', p.text || ''));
+        return;
+      }
+      if (p.kind === 'beat') {
+        into.appendChild(el('p', 'beat', p.text || ''));
+        return;
+      }
+      if (p.kind === 'landing') {
+        into.appendChild(el('p', 'landing', p.text || ''));
+        return;
+      }
+      /* an unknown kind still has words in it */
+      if (p.text) into.appendChild(el('p', null, p.text));
+    });
+  }
+
+  /* The shout and the jolt happen when they are read, not when the panel
+     opens — and once each. Under reduced motion the classes still land and
+     the stylesheet simply declines to move anything. */
+  function armProse(scroll) {
+    var marks = [].slice.call(scroll.querySelectorAll('.shout, .beat, .landing'));
+    if (!marks.length) return;
+    if (!global.IntersectionObserver) {
+      marks.forEach(function (m) { m.classList.add('seen'); });
+      return;
+    }
+    var io = new global.IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('seen');
+        io.unobserve(entry.target);
+      });
+    }, { root: scroll, threshold: 0.85 });
+    marks.forEach(function (m) { io.observe(m); });
+  }
+
+  /* ---- where it happened ---- */
+  /* A link out, never an embed: the map is somewhere else, and the memory
+     stays here. Google takes `+` for spaces in this query. */
+  function mapUrl(s) {
+    var q = (s.landmark && s.landmark.query) ||
+      [s.landmark && s.landmark.name, s.location].filter(Boolean).join(' ');
+    if (!q) return null;
+    return 'https://www.google.com/maps/search/?api=1&query=' +
+      encodeURIComponent(q).replace(/%20/g, '+');
+  }
+
+  function renderWhere(s, into) {
+    if (!s.landmark && !s.location) return;
+    var url = mapUrl(s);
+    var bits = [];
+
+    var line = el('p', 'st-where');
+    var pin = el('span', 'pin', '📍');
+    pin.setAttribute('aria-hidden', 'true');
+    line.appendChild(pin);
+
+    if (s.landmark && s.landmark.name) {
+      if (url) {
+        var a = el('a', 'where-link', s.landmark.name);
+        a.href = url;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.setAttribute('aria-label',
+          'Find ' + s.landmark.name + (s.location ? ', ' + s.location : '') + ' on Google Maps, opens in a new tab');
+        line.appendChild(a);
+      } else {
+        line.appendChild(el('span', null, s.landmark.name));
+      }
+      bits.push(true);
+    }
+    if (s.location) bits.push(s.location);
+    var when = s.approximateDate || (s.year !== null ? String(s.year) : '');
+    if (when) bits.push(when);
+
+    /* whatever is left after the landmark, joined with the room's separator */
+    var tail = bits.filter(function (b) { return b !== true; });
+    if (tail.length) {
+      line.appendChild(doc.createTextNode(
+        (s.landmark && s.landmark.name ? ' · ' : '') + tail.join(' · ')));
+    }
+    into.appendChild(line);
+
+    if (url) {
+      var go = el('a', 'where-out');
+      go.href = url;
+      go.target = '_blank';
+      go.rel = 'noopener noreferrer';
+      go.textContent = 'See where this happened ↗';
+      go.setAttribute('aria-label',
+        'See where this happened on Google Maps, opens in a new tab');
+      into.appendChild(go);
+    }
+  }
+
+  /* ---- what it left behind ---- */
+  function renderArtifact(s, into) {
+    if (!s.artifact || !s.artifact.title) return;
+    var sec = section(s.artifact.label || 'Memory artifact');
+    var box = el('div', 'artifact');
+    box.appendChild(el('p', 'art-title', s.artifact.title));
+    if (s.artifact.line) box.appendChild(el('p', 'art-line', s.artifact.line));
+    sec.appendChild(box);
+    into.appendChild(sec);
+  }
+
   /* ---- photographs ---- */
   function renderPhotos(s, into) {
     if (!s.images.length) return;
@@ -1273,6 +1400,7 @@
     title.tabIndex = -1;
     inner.appendChild(title);
     if (s.hook) inner.appendChild(el('p', 'st-hook', s.hook));
+    renderWhere(s, inner);
 
     /* flags */
     var flags = el('div', 'flags');
@@ -1316,7 +1444,7 @@
       inner.appendChild(sealed);
     } else if (s.story.length) {
       var bodyWrap = el('div', 'st-body');
-      s.story.forEach(function (p) { bodyWrap.appendChild(el('p', null, p)); });
+      renderProse(s.story, bodyWrap);
       inner.appendChild(bodyWrap);
     } else {
       var pending = el('div', 'st-body');
@@ -1326,6 +1454,7 @@
     }
 
     if (!s.classified) {
+      renderArtifact(s, inner);
       renderPhotos(s, inner);
       renderAudio(s, inner);
       renderFork(s, inner);
@@ -1404,6 +1533,7 @@
     scroll.appendChild(inner);
     storyEl.appendChild(scroll);
     scroll.scrollTop = 0;
+    armProse(scroll);
     return title;
   }
 
@@ -1663,6 +1793,14 @@
         global.requestAnimationFrame(function () { heading.focus(); });
       }
       liveEl.textContent = s.title + '. ' + (s.hook || '');
+
+      /* Arriving somewhere. The camera has already flown to the memory; this
+         is the room quietly naming the place it has landed in. */
+      if (hadStory !== next.story) {
+        var arriving = [s.location, s.approximateDate || (s.year !== null ? s.year : '')]
+          .filter(Boolean).join(' · ');
+        if (arriving) whisper(arriving, 4200);
+      }
     } else {
       storyEl.hidden = true;
       storyEl.textContent = '';

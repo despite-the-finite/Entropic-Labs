@@ -787,6 +787,46 @@ body[data-panel="1"] .plate{ pointer-events: none; }
   max-width: 46ch;
 }
 
+/* ---- where it happened: a small artifact pinned to the memory ---- */
+.st-where{
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  line-height: 1.6;
+  color: var(--ash);
+  margin: 1.1rem 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4em;
+}
+.st-where .pin{ font-size: 0.8rem; filter: grayscale(1) brightness(1.5); opacity: 0.7; }
+.where-link{
+  color: var(--paper);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255,196,107,0.45);
+  padding-bottom: 1px;
+  transition: color .16s ease, border-color .16s ease;
+}
+.where-link:hover{ color: var(--ember); border-bottom-color: var(--ember); }
+.where-out{
+  display: inline-flex;
+  align-items: center;
+  margin-top: 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ember);
+  text-decoration: none;
+  border: 1px solid rgba(255,196,107,0.3);
+  border-radius: 2px;
+  padding: 0 0.8rem;
+  min-height: 2.5rem;
+  transition: border-color .16s ease, background .16s ease;
+}
+.where-out:hover{ border-color: var(--ember); background: rgba(255,196,107,0.07); }
+
 /* ---- flags: the archive's own marginalia ---- */
 .flags{ display: flex; flex-direction: column; gap: 0.55rem; margin: 1.6rem 0 0; }
 .flag{
@@ -853,6 +893,94 @@ body[data-panel="1"] .plate{ pointer-events: none; }
 }
 .st-body p:last-child{ margin-bottom: 0; }
 
+/* ---- beats: the few places a paragraph is not enough ----------------------
+   All three are set as ordinary type that has been given room, rather than as
+   effects laid over the writing. Nothing moves until it is read, nothing
+   moves twice, and under reduced motion nothing moves at all. */
+
+/* the idea, numbered with more confidence than it turned out to deserve */
+.plan-lead{ margin-bottom: 0.8rem !important; }
+.plan{
+  list-style: none;
+  counter-reset: step;
+  margin: 0 0 1.4rem;
+  padding: 0 0 0 0.2rem;
+  border-left: 1px solid rgba(255,196,107,0.3);
+}
+.plan li{
+  counter-increment: step;
+  position: relative;
+  padding: 0.1rem 0 0 2.6rem;
+  margin: 0 0 0.85rem;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #E6DFD6;
+}
+.plan li:last-child{ margin-bottom: 0; }
+.plan li::before{
+  content: counter(step);
+  position: absolute;
+  left: 0.9rem;
+  top: 0.05rem;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  color: var(--ember);
+  opacity: 0.85;
+}
+
+/* said far too loudly, and already committed to */
+.shout{
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-size: clamp(1.5rem, 4.5vw, 2.1rem) !important;
+  line-height: 1.05 !important;
+  letter-spacing: 0.01em;
+  color: var(--ember) !important;
+  margin: 1.6rem 0 1.2rem !important;
+  transform-origin: left center;
+}
+.shout.seen{ animation: shout-wobble 1.1s cubic-bezier(.34,1.4,.5,1) 1; }
+@keyframes shout-wobble{
+  0%   { transform: rotate(-1.6deg) scale(0.97); opacity: 0.6; }
+  35%  { transform: rotate(1.1deg)  scale(1.03); opacity: 1; }
+  70%  { transform: rotate(-0.5deg) scale(1); }
+  100% { transform: none; }
+}
+
+/* the moment it lands */
+.beat{
+  font-family: var(--font-mono);
+  font-size: 0.86rem !important;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--signal) !important;
+  margin: 1.4rem 0 1.6rem !important;
+}
+.beat.seen{ animation: beat-jolt 0.42s ease-out 1; }
+@keyframes beat-jolt{
+  0%   { transform: translate(0,0); }
+  15%  { transform: translate(-5px, 2px); }
+  30%  { transform: translate(4px, -2px); }
+  45%  { transform: translate(-3px, 1px); }
+  60%  { transform: translate(2px, 1px); }
+  80%  { transform: translate(-1px, 0); }
+  100% { transform: translate(0,0); }
+}
+
+/* the last line, given room to sit */
+.landing{
+  font-family: var(--font-display);
+  text-transform: none;
+  font-size: clamp(1.3rem, 3vw, 1.7rem) !important;
+  line-height: 1.3 !important;
+  color: var(--paper-warm) !important;
+  margin: 2.4rem 0 0.6rem !important;
+  opacity: 0;
+  transition: opacity 1.6s ease;
+}
+.landing.seen{ opacity: 0.92; }
+
 .st-section{ margin-top: 2.3rem; }
 .st-section > h3{
   font-family: var(--font-mono);
@@ -911,6 +1039,28 @@ body[data-panel="1"] .plate{ pointer-events: none; }
   padding: 0;
   width: 100%;
   cursor: zoom-in;
+}
+
+/* ---- what the memory left behind: a museum caption, not a trophy ---- */
+.artifact{
+  border: 1px solid var(--hairline);
+  border-left: 2px solid var(--ash);
+  padding: 1.1rem 1.2rem;
+  background: rgba(241,238,251,0.02);
+}
+.artifact .art-title{
+  margin: 0 !important;
+  font-size: 1.05rem !important;
+  line-height: 1.4 !important;
+  color: var(--paper) !important;
+}
+.artifact .art-line{
+  margin: 0.5rem 0 0 !important;
+  font-family: var(--font-mono);
+  font-size: 0.66rem !important;
+  letter-spacing: 0.1em;
+  line-height: 1.7 !important;
+  color: var(--ash) !important;
 }
 
 /* ---- the voice ---- */
@@ -1492,5 +1642,9 @@ body[data-panel="1"] .plate{ pointer-events: none; }
   .beginning, .dock, .views, .eras{ transition: none; }
   .gate-line, .gate-actions{ opacity: 1; transform: none; }
   .photo{ transform: none; }
+  /* The beats in a story are punctuation, so they keep their weight and
+     their spacing and simply stop moving. */
+  .shout.seen, .beat.seen{ animation: none; }
+  .landing{ transition: none; opacity: 0.92; }
   *{ scroll-behavior: auto; }
 }
