@@ -244,12 +244,13 @@ body.menu-open{ overflow: hidden; }
   background-repeat: no-repeat;
   background-size: 100% 100%;
   mix-blend-mode: screen;
+  transition: transform 0.45s cubic-bezier(.3,.8,.4,1);
 }
-.hero-fig--bike{  left: 5.990%;  top: 64.630%; width: 8.906%;  height: 15.556%; background-image: url(../img/hero-fig-bike.png);  transform-origin: 50% 97%; }
-.hero-fig--cycle{ left: 20.677%; top: 66.157%; width: 8.203%;  height: 14.352%; background-image: url(../img/hero-fig-cycle.png); transform-origin: 50% 96%; }
-.hero-fig--skate{ left: 40.885%; top: 63.426%; width: 10.130%; height: 15.648%; background-image: url(../img/hero-fig-skate.png); transform-origin: 42% 96%; }
-.hero-fig--board{ left: 62.500%; top: 64.074%; width: 10.599%; height: 17.685%; background-image: url(../img/hero-fig-board.png); transform-origin: 50% 88%; }
-.hero-fig--truck{ left: 81.172%; top: 70.787%; width: 9.115%;  height: 11.759%; background-image: url(../img/hero-fig-truck.png); transform-origin: 50% 98%; }
+.hero-fig--bike{  left: 5.990%;  top: 64.484%; width: 8.906%;  height: 15.556%; background-image: url(../img/hero-fig-bike.png);  transform-origin: 50% 97%; }
+.hero-fig--cycle{ left: 25.163%; top: 65.687%; width: 8.203%;  height: 14.352%; background-image: url(../img/hero-fig-cycle.png); transform-origin: 50% 96%; }
+.hero-fig--skate{ left: 43.021%; top: 65.429%; width: 10.130%; height: 15.648%; background-image: url(../img/hero-fig-skate.png); transform-origin: 42% 96%; }
+.hero-fig--board{ left: 61.608%; top: 64.664%; width: 10.599%; height: 17.685%; background-image: url(../img/hero-fig-board.png); transform-origin: 50% 88%; }
+.hero-fig--truck{ left: 81.172%; top: 68.808%; width: 9.115%;  height: 11.759%; background-image: url(../img/hero-fig-truck.png); transform-origin: 50% 98%; }
 
 
 
@@ -265,8 +266,8 @@ body.menu-open{ overflow: hidden; }
   opacity: 0;
   pointer-events: none;
 }
-.hero-fig--cycle::before{ top: 44%; left: -34%; width: 46%; }
-.hero-fig--cycle::after{  top: 63%; left: -26%; width: 34%; }
+.hero-fig--cycle::before{ top: 44%; left: -17%; width: 32%; }
+.hero-fig--cycle::after{  top: 63%; left: -11%; width: 24%; }
 
   .hero-fig--bike.is-playing{ animation: fig-bike 1.8s cubic-bezier(.33,.9,.36,1) infinite; }
 .hero-fig--cycle.is-playing{ animation: fig-cycle 0.62s linear infinite; }
@@ -296,9 +297,9 @@ body.menu-open{ overflow: hidden; }
   75%{ transform: translateY(-0.5%) rotate(0.25deg); }
 }
 @keyframes speed-line{
-  0%{ opacity: 0; transform: translateX(26%) scaleX(0.5); }
+  0%{ opacity: 0; transform: translateX(20%) scaleX(0.55); }
   30%{ opacity: 0.9; }
-  100%{ opacity: 0; transform: translateX(-64%) scaleX(1.2); }
+  100%{ opacity: 0; transform: translateX(-34%) scaleX(1.15); }
 }
 /* Skateboarder — a real ollie: crouch, snap the tail so the nose comes up,
    drag the front foot to level it out, float, then land and absorb. */
@@ -312,17 +313,18 @@ body.menu-open{ overflow: hidden; }
   74%{ transform: translateY(0) rotate(0deg) scaleY(0.92); }
   86%{ transform: translateY(0) rotate(0deg) scaleY(1.02); }
 }
-/* Snowboarder — load the board, pop, and carry a full 360 round the vertical
-   axis before landing on it and absorbing. */
+/* Snowboarder — load the board, pop, and carry a 300-degree spin round the
+   vertical axis, unwinding it on the way down to land straight. */
 @keyframes fig-board{
   0%,100%{ transform: perspective(700px) translateY(0) rotateY(0deg) scaleY(1); }
-  12%{ transform: perspective(700px) translateY(2%) rotateY(0deg) scaleY(0.93); }
-  26%{ transform: perspective(700px) translateY(-7%) rotateY(70deg) scaleY(1.04); }
-  42%{ transform: perspective(700px) translateY(-10.5%) rotateY(170deg) scaleY(1); }
-  58%{ transform: perspective(700px) translateY(-10%) rotateY(250deg) scaleY(1); }
-  74%{ transform: perspective(700px) translateY(-5%) rotateY(330deg) scaleY(1); }
-  88%{ transform: perspective(700px) translateY(0) rotateY(360deg) scaleY(0.94); }
-  95%{ transform: perspective(700px) translateY(0) rotateY(360deg) scaleY(1.02); }
+  10%{ transform: perspective(700px) translateY(2%) rotateY(0deg) scaleY(0.93); }
+  24%{ transform: perspective(700px) translateY(-6.5%) rotateY(105deg) scaleY(1.04); }
+  40%{ transform: perspective(700px) translateY(-10.5%) rotateY(230deg) scaleY(1); }
+  52%{ transform: perspective(700px) translateY(-10.5%) rotateY(300deg) scaleY(1); }
+  68%{ transform: perspective(700px) translateY(-7%) rotateY(215deg) scaleY(1); }
+  82%{ transform: perspective(700px) translateY(-2%) rotateY(90deg) scaleY(1); }
+  90%{ transform: perspective(700px) translateY(0) rotateY(0deg) scaleY(0.94); }
+  96%{ transform: perspective(700px) translateY(0) rotateY(0deg) scaleY(1.02); }
 }
 /* Off-road truck — trail chatter under both axles, then a bigger hit: nose
    lifts, springs pack down, rebound, settle. */
@@ -486,11 +488,21 @@ section:last-of-type{ border-bottom: 0; }
 /* ---------- FIGURES ---------- */
 figure{ margin: 0; }
 .photo{
+  position: relative;
   border-top: 1px solid var(--hairline);
   border-bottom: 1px solid var(--hairline);
   background: var(--panel);
 }
 .photo img{ display: block; width: 100%; height: auto; }
+/* the code in the photo's background, carried on live over the top of it */
+.photo-rain{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
 .photo figcaption{
   font-family: var(--font-mono);
   font-size: 0.72rem;

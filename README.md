@@ -11,7 +11,7 @@ Landing page for Entropic Labs, a recording and production studio run by **Despi
 - `index.html` — the desktop site: markup, styles, and scripts in one file, with images loaded from `img/`.
 - `m/` — the mobile build, served automatically to phones (see below).
 - `img/` — the site's photography, at two sizes each: full for desktop, `-mobile` for phones, plus the hero's figure sprites.
-- `hero.js` — the hero banner's live layers, shared by both builds (see below).
+- `hero.js` — the canvas motion: the hero banner's live layers and the falling code over the producer photo. Shared by both builds (see below).
 - `games.html` — the games page: video game design as a minor function of the studio.
 - `observatory.html` + `observatory/` — the Observatory: an interactive star chart of things worth wondering about. One responsive page rather than a desktop page plus an `m/` twin; see below.
 - `butterfly.html` + `butterfly/` — Butterfly Trails: an interactive family archive, built around what small moments led to. Same single-responsive-page arrangement as the Observatory; see below.
@@ -66,12 +66,28 @@ over it as live elements:
 | Spectrum bars | Drawn into `.hero-fx` canvas, three detuned oscillators per bar so it reads as music rather than a wave. Colour ramp sampled from the original. |
 | Falling code | Same canvas. Extra glyph columns fall through the static ones already in the artwork. |
 | Strapline | Live SVG text over the erased band, turning slowly on its own axis. |
-| The five figures | Cut out of the artwork as sprites in `img/hero-fig-*.png` and screen-blended back at their exact positions, each animated as its own activity: the mountain biker's fork compresses and rebounds over a hit, the road cyclist holds an aero tuck while speed lines stream off the back, the skateboarder ollies (crouch, tail snap, level out, land and absorb), the snowboarder pops a 360 on the vertical axis, and the truck works both axles over trail chatter. Transform origins sit at each one's contact patch so compression loads onto the ground. |
+| The five figures | Cut out of the artwork as sprites in `img/hero-fig-*.png` and screen-blended back at their exact positions, each animated as its own activity: the mountain biker's fork compresses and rebounds over a hit, the road cyclist holds an aero tuck while speed lines stream off the back, the skateboarder ollies (crouch, tail snap, level out, land and absorb), the snowboarder pops a 300-degree spin on the vertical axis and unwinds it to land straight, and the truck works both axles over trail chatter. Transform origins sit at each one's contact patch so compression loads onto the ground. |
 
 Figures animate **on hover** where there's a pointer, and **take turns
-automatically** on touch, since a phone has no hover. Positions are in percent of
-the banner, so every layer stays registered at any width, and the slow push
-scales the whole scene rather than the backdrop alone.
+automatically** on touch, since a phone has no hover. On touch each one plays a
+whole number of loops and hands over on `animationend`, so a turn never stops
+part-way through a jump; short animations repeat so every turn runs about the
+same length. Letting go of a hover eases back to rest rather than snapping.
+
+Positions are in percent of the banner, so every layer stays registered at any
+width, and the slow push scales the whole scene rather than the backdrop alone.
+The five are spaced evenly across the frame rather than where the artwork
+happened to put them — the outer two keep their original spots and the middle
+three were nudged onto an even pitch. They are levelled vertically too, aligned
+on the lowest lit pixel of each sprite (its contact patch) rather than on its
+box, since each box carries a different amount of glow padding.
+
+`tools-hero-truck.py` redrew the off-road vehicle's roofline: the artwork read as
+a pickup, with the roof stopping short and the body running on beneath open air.
+Carrying the roof back with a raked hatch closes the greenhouse, which is what
+separates an SUV from a pickup, and the cabin's existing rear pillar then reads
+as the B-pillar. New strokes are composited with max rather than added, so
+overlapping ends do not double into bright spots.
 
 `tools-hero-layers.py` produced the separation: it finds each figure by its glow,
 inpaints it out of the plate, and writes the sprite as the difference between
@@ -82,6 +98,13 @@ exactly. It is a one-off, kept for the record; re-running it needs the original
 The canvas is capped at 30fps, stops when the tab is hidden or the hero scrolls
 out of view, and draws a single frozen frame under `prefers-reduced-motion`,
 where every animation is off.
+
+**The producer photo** gets the same falling code, in the green of the matrix
+scene already in the shot — sampled from the photo itself, and sized and spaced
+to sit with the baked glyphs rather than on top of them. A soft elliptical mask
+punched out with `destination-out` keeps the code off the subject, so it falls
+through the background and down the sides as it does in the photograph. The
+field and the loop are shared with the hero rather than written twice.
 
 ## Sections
 
