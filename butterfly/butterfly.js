@@ -198,17 +198,21 @@
   var strandById = {};
   strands.forEach(function (s) { strandById[s.id] = s; });
 
-  var PER_YEAR = 0.14, MIN_GAP = 0.9, MAX_GAP = 2.6;
-  var UNION_BACKOFF = 1.9;     /* where an undated union sits before the first branch */
-  var RUN_ON = 2.0;            /* how far the open ends run past the last anchor */
+  var PER_YEAR = 0.14, MIN_GAP = 0.78, MAX_GAP = 2.3;
+  var UNDATED_BACKOFF = 1.7;   /* where an undated confluence sits before the first branch */
+  var ORIGIN_LEAD = 2.8;       /* how far a line runs in from before the record */
+  var RUN_ON = 1.7;            /* how far the open ends run past the last anchor */
+
+  function startYear(s) { return s.start && typeof s.start.year === 'number' ? s.start.year : null; }
+  function endYear(s) { return s.end && typeof s.end.year === 'number' ? s.end.year : null; }
 
   var axis = (function buildAxis() {
     var years = {};
     strands.forEach(function (s) {
-      if (s.role === 'child' && typeof s.begins === 'number') years[s.begins] = true;
-      if (typeof s.ends === 'number') years[s.ends] = true;
+      var a = startYear(s), b = endYear(s);
+      if (a !== null) years[a] = true;
+      if (b !== null) years[b] = true;
     });
-    if (typeof braidCfg.unionYear === 'number') years[braidCfg.unionYear] = true;
     ordered.forEach(function (s) { if (s.year !== null) years[s.year] = true; });
 
     var list = Object.keys(years).map(Number).sort(function (a, b) { return a - b; });
@@ -236,42 +240,70 @@
     return last.t;
   }
 
+  var axisStart = axis.length ? axis[0].t : 0;
   var axisEnd = (axis.length ? axis[axis.length - 1].t : 0) + RUN_ON;
-  var children = strands.filter(function (s) { return s.role === 'child'; });
-  var parents = strands.filter(function (s) { return s.role === 'parent'; });
-  var trunk = strands.filter(function (s) { return s.role === 'union'; })[0] || null;
 
-  /* Where the two become one. A supplied year puts it on the axis; without
-     one it sits a little before the first branch, undated — the shape is
-     known even where the date is not. */
-  var firstBranch = children.length
-    ? Math.min.apply(null, children.map(function (c) { return axisT(c.begins); }))
-    : axisEnd;
-  var unionT = typeof braidCfg.unionYear === 'number'
-    ? axisT(braidCfg.unionYear)
-    : firstBranch - UNION_BACKOFF;
+  /* The earliest branch anybody takes — where an undated confluence has to
+     sit before, since a marriage precedes the children that come out of it. */
+  var firstDated = axis.length ? axis[0].t : 0;
+  var undatedT = firstDated - UNDATED_BACKOFF;
+
+  /* A year on the axis, where null means "nobody wrote it down". */
+  function momentT(year) { return year === null ? undatedT : axisT(year); }
+
+  var trunk = strands.filter(function (s) { return !s.base; })[0] || null;
+
+  /* One resolved description of every strand, in axis units. The braid, the
+     markers and the placeholder points all read from this, so they cannot
+     disagree about where a line runs. */
+  var lanes = strands.map(function (s) {
+    var kind = (s.start && s.start.kind) || 'union';
+    var ends = (s.end && s.end.kind) || 'open';
+    var to = ends === 'joins' ? momentT(endYear(s)) : axisEnd;
+    /* A line that runs in from before the record starts off-stage, a set
+       distance before whatever it is running towards. */
+    var from = kind === 'origin' ? to - ORIGIN_LEAD : momentT(startYear(s));
+
+    /* Where the name goes: at whichever end stays open. A line that both
+       starts and ends inside the braid is named by its markers instead, so
+       no name is ever drawn twice. */
+    var labelAt = null;
+    if (kind === 'origin') labelAt = 'start';
+    else if (ends === 'open') labelAt = 'end';
+
+    return {
+      id: s.id,
+      label: s.label,
+      labelAt: labelAt,
+      tone: s.tone,
+      side: s.side || 0,
+      base: s.base || null,
+      startKind: kind,
+      endKind: ends,
+      joinTarget: ends === 'joins' ? s.end.into : null,
+      fadeIn: kind === 'begins',
+      from: from,
+      to: to,
+      startsAt: startYear(s),
+      endsAt: endYear(s)
+    };
+  });
 
   function braidSpec() {
-    if (!trunk || !parents.length) return null;
-    var lanes = [];
-    parents.forEach(function (p) {
-      lanes.push({
-        id: p.id, label: p.label, tone: p.tone, side: p.side,
-        kind: 'parent', from: unionT - 3.4, to: unionT
-      });
-    });
-    lanes.push({
-      id: trunk.id, label: '', tone: trunk.tone, side: 0,
-      kind: 'union', from: unionT, to: axisEnd
-    });
-    children.forEach(function (c) {
-      lanes.push({
-        id: c.id, label: c.label, tone: c.tone, side: c.side,
-        kind: 'child', from: axisT(c.begins),
-        to: typeof c.ends === 'number' ? axisT(c.ends) : axisEnd
-      });
-    });
-    return { laneW: 0.55, lanes: lanes };
+    return strands.length < 2 ? null : { laneW: 0.55, lanes: lanes };
+  }
+
+  /* How a strand is described in a list: when it starts, and where it goes. */
+  function strandWhen(s) {
+    var a = startYear(s), b = endYear(s);
+    var kind = (s.start && s.start.kind) || 'union';
+    if (kind === 'origin') return ' — runs in from before the record';
+    if (kind === 'union') return a === null ? ' — from an unrecorded year' : ' — from ' + a;
+    var line = a === null ? '' : ' — from ' + a;
+    if (b !== null && s.end && s.end.into && strandById[s.end.into]) {
+      line += ', joining ' + strandById[s.end.into].label + ' in ' + b;
+    }
+    return line;
   }
 
   /* Where a memory sits along the axis. Undated ones gather past the end,
@@ -349,62 +381,84 @@
       };
     });
 
-    /* The braid's own joints: where two lines became one, and where each new
-       one started. They are structure, not stories — they carry a year and a
-       word, and say plainly that nothing has been written down here yet. */
-    if (trunk && parents.length) {
+    /* The braid's own joints: where a life started, and where two lines
+       became one. They are structure, not stories — they carry a year and a
+       name, and say plainly that nothing has been written down there yet. */
+    var married = (braidCfg.marriedLabel || 'Married').toUpperCase();
+    var undatedNote = braidCfg.undatedNote ||
+      'Two trails become one. The year has not been written down yet.';
+
+    lanes.forEach(function (lane) {
+      if (lane.startKind !== 'born' && lane.startKind !== 'begins') return;
+      var year = lane.startsAt;
       list.push({
-        id: 'marker-union',
+        id: 'marker-' + lane.id,
         kind: 'marker',
-        markerKind: 'union',
-        title: (braidCfg.unionLabel || 'Together').toUpperCase(),
-        yearLabel: typeof braidCfg.unionYear === 'number' ? String(braidCfg.unionYear) : '',
-        strand: trunk.id,
-        t: unionT,
-        tone: trunk.tone,
+        markerKind: 'birth',
+        title: lane.label.toUpperCase(),
+        yearLabel: year === null ? '' : String(year),
+        strand: lane.id,
+        t: lane.from,
+        tone: lane.tone,
+        lean: lane.side === 0 ? 0 : (lane.side < 0 ? -1 : 1) * (lane.startKind === 'born' ? 0.7 : 1.2),
         ref: {
-          id: 'marker-union',
+          id: 'marker-' + lane.id,
           marker: true,
-          note: braidCfg.unionNote ||
-            'Two trails become one. The year has not been written down yet.'
+          note: lane.startKind === 'born'
+            ? lane.label + (year === null ? '' : ' — born ' + year) + '. The trail divides here.'
+            : lane.label + (year === null ? '' : ' — born ' + year) + '. This trail joins the family later.'
         }
       });
-      children.forEach(function (c) {
-        list.push({
-          id: 'marker-' + c.id,
-          kind: 'marker',
-          markerKind: 'birth',
-          title: (braidCfg.birthLabel || 'Born').toUpperCase(),
-          yearLabel: String(c.begins),
-          strand: c.id,
-          t: axisT(c.begins),
-          tone: c.tone,
-          ref: {
-            id: 'marker-' + c.id,
-            marker: true,
-            note: c.label + ' — born ' + c.begins + '. The trail divides here.'
-          }
-        });
+    });
+
+    /* One marker per wedding, however many lines arrive at it. */
+    var weddings = {};
+    lanes.forEach(function (lane) {
+      if (lane.endKind !== 'joins' || !lane.joinTarget) return;
+      var key = lane.joinTarget + '@' + lane.to.toFixed(3);
+      if (weddings[key]) { weddings[key].who.push(lane.label); return; }
+      weddings[key] = { lane: lane, who: [lane.label] };
+    });
+    Object.keys(weddings).forEach(function (key) {
+      var w = weddings[key];
+      var year = w.lane.endsAt;
+      var target = w.lane.joinTarget;
+      list.push({
+        id: 'marker-wed-' + target,
+        kind: 'marker',
+        markerKind: 'union',
+        title: married,
+        yearLabel: year === null ? '' : String(year),
+        strand: target,
+        t: w.lane.to,
+        tone: (strandById[target] && strandById[target].tone) || '#FFC46B',
+        lean: (function () {
+          var side = strandById[target] ? (strandById[target].side || 0) : 0;
+          return side === 0 ? 0 : (side < 0 ? -1 : 1) * 1.1;
+        })(),
+        ref: {
+          id: 'marker-wed-' + target,
+          marker: true,
+          note: year === null
+            ? undatedNote
+            : w.who.join(' and ') + ' — married ' + year + '. Two trails become one.'
+        }
       });
-    }
+    });
 
     /* Unidentified points, spread across the whole family rather than piled
        at one end, so an empty archive still shows its shape. */
-    var lanes = strands.length
-      ? strands.map(function (s) {
-          if (s.role === 'parent') return { id: s.id, lo: unionT - 3.0, hi: unionT - 0.5 };
-          if (s.role === 'child') return { id: s.id, lo: axisT(s.begins) + 0.9, hi: axisEnd - 0.3 };
-          return { id: s.id, lo: unionT + 0.8, hi: axisEnd - 0.5 };
-        })
-      : [];
     for (var i = 0; i < GHOSTS; i++) {
       var node = { id: 'ghost-' + i, kind: 'ghost', ref: { id: 'ghost-' + i } };
       if (lanes.length) {
         var lane = lanes[i % lanes.length];
         var step = Math.floor(i / lanes.length);
-        var f = ((step + 1) * 0.37 + hash01Local('g' + i) * 0.5) % 1;
-        node.strand = lane.id;
-        node.t = lane.lo + (lane.hi - lane.lo) * f;
+        var lo = lane.from + 0.6, hi = lane.to - 0.4;
+        if (hi > lo) {
+          var f = ((step + 1) * 0.37 + hash01Local('g' + i) * 0.5) % 1;
+          node.strand = lane.id;
+          node.t = lo + (hi - lo) * f;
+        }
       }
       list.push(node);
     }
@@ -563,6 +617,16 @@
     return trails.worldPoint(px, py);
   }
 
+  /* How fast a butterfly on an errand should fly. A trail that spans four
+     world units and one that spans forty should both take a few seconds to
+     cross, so the speed comes from the size of the world rather than being a
+     constant that quietly becomes a crawl as the archive grows. */
+  function travelSpeed() {
+    var b = trails.bounds();
+    var span = Math.max(b.maxX - b.minX, b.maxY - b.minY, 1);
+    return clamp(span / 3200, 0.0016, 0.009);
+  }
+
   function spawnFly(opts) {
     opts = opts || {};
     var at = opts.at || offstage();
@@ -570,7 +634,7 @@
       x: at.x, y: at.y,
       tone: opts.tone || '#FFC46B',
       size: opts.size || 1,
-      speed: opts.speed || 0.0017,
+      speed: opts.speed || travelSpeed(),
       arriveAt: 0.12,
       trailCap: opts.trailCap || 90,
       state: opts.state || 'idle',
@@ -590,7 +654,7 @@
     if (trails.isReduced()) return;
     var want = trails.quality() > 0.7 ? 2 : 1;
     while (ambient.length < want) {
-      var f = spawnFly({ tone: '#FFC46B', size: 0.85, speed: 0.0011, trailCap: 60 });
+      var f = spawnFly({ tone: '#FFC46B', size: 0.85, speed: travelSpeed() * 0.6, trailCap: 60 });
       f.alpha = 0.75;
       ambient.push(f);
       wander(f);
@@ -627,7 +691,7 @@
     var f = ambient[0];
     trails.perchAt(f, { x: r.left + r.width * (0.25 + Math.random() * 0.5), y: r.top - 5 }, 3600 + Math.random() * 3200);
     global.setTimeout(function () {
-      trails.toWorld(f, { speed: 0.0011 });
+      trails.toWorld(f, { speed: travelSpeed() * 0.6 });
       wander(f);
     }, 9000);
   }
@@ -650,7 +714,7 @@
     if (line) whisper(line, 2600);
     if (f.taps === 5) {
       var mate = spawnFly({
-        at: { x: f.x, y: f.y }, tone: f.tone, size: 0.7, speed: 0.0013, trailCap: 50
+        at: { x: f.x, y: f.y }, tone: f.tone, size: 0.7, speed: travelSpeed() * 0.7, trailCap: 50
       });
       ambient.push(mate);
       wander(mate);
@@ -662,7 +726,7 @@
   function maybeRareVisitor() {
     if (trails.isReduced() || Math.random() > 0.025) return;
     global.setTimeout(function () {
-      var f = spawnFly({ tone: '#F1EEFB', size: 0.75, speed: 0.0013, trailCap: 120 });
+      var f = spawnFly({ tone: '#F1EEFB', size: 0.75, speed: travelSpeed() * 0.7, trailCap: 120 });
       f.alpha = 0.55;
       var b = trails.bounds();
       f.aim({ x: b.maxX + 2.4, y: b.minY - 0.6 });
@@ -734,7 +798,7 @@
       var b = trails.bounds();
       for (var i = 0; i < n; i++) {
         var f = spawnFly({
-          tone: pick(categories).tone, size: 0.9, speed: 0.0019, trailCap: 70, state: 'searching'
+          tone: pick(categories).tone, size: 0.9, speed: travelSpeed(), trailCap: 70, state: 'searching'
         });
         (function (fly) {
           function look() {
@@ -822,10 +886,11 @@
     var st = strandById[id];
     if (!st) return;
     if (view.mode !== 'trail') { go('#'); }
-    var p = trails.strandPoint(id, st.role === 'parent' ? 0.25 : 0.6);
+    var kind = (st.start && st.start.kind) || 'union';
+    var p = trails.strandPoint(id, kind === 'origin' ? 0.25 : 0.6);
     if (!p) return;
     trails.panTo(p.x, p.y, 1.05, 1100);
-    whisper(st.label + (st.role === 'child' ? ' — this trail starts in ' + st.begins + '.' : ''), 3600);
+    whisper(st.label + strandWhen(st), 3600);
   }
 
   function panToEra(e) {
@@ -1059,7 +1124,7 @@
     var start = trails.nodeFor(chain[0]);
     var f = spawnFly({
       at: start ? { x: start.pos.x, y: start.pos.y } : undefined,
-      tone: '#FFC46B', size: 1.1, speed: 0.0019, trailCap: 170, state: 'seeking'
+      tone: '#FFC46B', size: 1.1, speed: travelSpeed() * 0.9, trailCap: 170, state: 'seeking'
     });
     escort = f;
 
@@ -1452,8 +1517,7 @@
     /* The braid is most of what there is to navigate while the archive is
        small, so it belongs in the keyboard route as much as the memories. */
     strands.forEach(function (st) {
-      var when = st.role === 'child' ? ' — from ' + st.begins : '';
-      add('Strand: ' + st.label + when, function () { panToStrand(st.id); });
+      add('Strand: ' + st.label + strandWhen(st), function () { panToStrand(st.id); });
     });
 
     ordered.forEach(function (s) {
@@ -1487,7 +1551,17 @@
         var br = beginningEl.getBoundingClientRect();
         if (br.top < lower) lower = br.top;
       }
-      trails.setInset(0, (top + lower) / 2 - H / 2);
+
+      /* On a wide screen the era rail floats over the right edge, which is
+         also where the strands write their names. Treat its edge as the
+         boundary so the two never land on each other. */
+      var right = W;
+      if (!erasEl.hidden) {
+        var er = erasEl.getBoundingClientRect();
+        if (er.width && er.width < W * 0.5 && er.right > W * 0.6) right = er.left - 8;
+      }
+
+      trails.setInset(right / 2 - W / 2, (top + lower) / 2 - H / 2);
       return;
     }
 

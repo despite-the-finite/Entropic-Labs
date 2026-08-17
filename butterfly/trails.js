@@ -296,30 +296,44 @@
       return Math.sin(t * 1.45 + phase) * 0.058 + Math.sin(t * 0.62 + phase * 2.3) * 0.036;
     }
 
-    function trunkOffset(t) {
-      if (!braid || !braid.trunk) return 0;
-      var u = braid.trunk;
-      /* The trunk is straight where the parents arrive on it, and free to
-         wander once it is on its own. */
-      return wobbleAt(t, u.phase) * smoothstep(u.from, u.from + MERGE_W * 0.9, t);
-    }
-
-    function laneOffset(lane, t) {
-      if (!lane) return trunkOffset(t);
-      var base = trunkOffset(t);
-      if (lane.kind === 'union') return base;
-      var open;
-      if (lane.kind === 'parent') open = 1 - smoothstep(lane.to - MERGE_W, lane.to, t);
-      else open = smoothstep(lane.from, lane.from + BRANCH_W, t);
-      return base + (lane.side * braid.laneW + wobbleAt(t, lane.phase)) * open;
-    }
-
     function laneById(id) {
       if (!braid || !id) return null;
-      for (var i = 0; i < braid.lanes.length; i++) {
-        if (braid.lanes[i].id === id) return braid.lanes[i];
+      return braid.byId[id] || null;
+    }
+
+    /* Where a strand sits, across the trail, at a given moment.
+
+       Three rules, applied in that order:
+         it sits `side` lanes off whatever it is measured from;
+         if it was born out of that line, it starts on it and pulls away;
+         if it joins another line, it gives up its own position for that
+         line's as the year arrives.
+
+       Because both of those are interpolations towards another strand's
+       actual position — wobble included — a birth leaves its parent exactly,
+       and a marriage arrives exactly, with no seam to line up by hand. It is
+       also what lets the second generation hang off the first and the third
+       off the second without a single absolute position being written down. */
+    function laneOffset(lane, t, depth) {
+      if (!lane) return 0;
+      depth = depth || 0;
+      if (depth > 8) return 0;                       /* malformed data guard */
+
+      var base = lane.base ? laneOffset(laneById(lane.base), t, depth + 1) : 0;
+      var own = base + lane.side * braid.laneW + wobbleAt(t, lane.phase);
+
+      if (lane.startKind === 'born') {
+        var b = smoothstep(lane.from, lane.from + BRANCH_W, t);
+        if (b < 1) own = lerp(base, own, b);
       }
-      return null;
+      if (lane.endKind === 'joins') {
+        var target = laneById(lane.joinTarget);
+        if (target) {
+          var j = smoothstep(lane.to - MERGE_W, lane.to, t);
+          if (j > 0) own = lerp(own, laneOffset(target, t, depth + 1), j);
+        }
+      }
+      return own;
     }
 
     /* (time, offset) -> world. Portrait reads the braid as a descent rather
@@ -328,7 +342,7 @@
       /* Portrait has width to spare and height to save, so the strands sit
          further apart across the screen than they would on a wide one —
          otherwise a braid scaled to fit a phone closes up into one line. */
-      return portrait ? { x: off * 1.32, y: t } : { x: t, y: off };
+      return portrait ? { x: off * 2.6, y: t } : { x: t, y: off };
     }
 
     function braidPos(strandId, t) {
@@ -346,8 +360,24 @@
           pts.push(braidToWorld(t, laneOffset(lane, t)));
         }
         pts.push(braidToWorld(lane.to, laneOffset(lane, lane.to)));
-        braidPaths.push({ lane: lane, pts: pts });
+        braidPaths.push({ lane: lane, pts: pts, stagger: 0 });
       });
+
+      /* Portrait runs time down the screen, so every line still going ends
+         at the same moment — and every one of their names would be written
+         across the same row. Give each a row of its own, ordered across the
+         screen so neighbours are never on the same line. */
+      if (portrait) {
+        ['start', 'end'].forEach(function (which) {
+          var group = braidPaths.filter(function (p) { return p.lane.labelAt === which; });
+          group.sort(function (a, b) {
+            var pa = which === 'start' ? a.pts[0] : a.pts[a.pts.length - 1];
+            var pb = which === 'start' ? b.pts[0] : b.pts[b.pts.length - 1];
+            return pa.x - pb.x;
+          });
+          group.forEach(function (p, i) { p.stagger = i * 15; });
+        });
+      }
     }
 
     /* ---- constellation: era clusters on a golden-angle spiral, each node
@@ -537,6 +567,11 @@
             if (p.y > maxY) maxY = p.y;
           });
         });
+        /* The names sit past the open ends of the lines, along the time
+           axis, so the frame has to allow for them or they land under the
+           title. */
+        if (portrait) { minY -= 1.1; maxY += 2.3; }
+        else { minX -= 0.5; maxX += 0.6; }
       }
       if (mode === 'map') {
         minX = Math.min(minX, -MAP.w / 2); maxX = Math.max(maxX, MAP.w / 2);
@@ -920,14 +955,31 @@
         ? [[9 * cam.z, 0.026, palette.ember], [3.2 * cam.z, 0.05, palette.ember], [1.05, 0.17, path.lane.tone]]
         : [[3.4 * cam.z, 0.055, palette.ember], [1.05, 0.16, path.lane.tone]];
 
-      for (var k = 0; k < passes.length; k++) {
-        ctx.lineWidth = Math.max(0.7, passes[k][0]);
-        ctx.strokeStyle = passes[k][2];
-        ctx.globalAlpha = passes[k][1] * strength;
-        ctx.beginPath();
-        ctx.moveTo(pts[0].x, pts[0].y);
-        for (var j = 1; j < pts.length; j++) ctx.lineTo(pts[j].x, pts[j].y);
-        ctx.stroke();
+      /* A line that simply begins — somebody whose own parents are not in
+         this archive — comes up out of nothing rather than switching on. */
+      var cut = path.lane.fadeIn ? Math.max(2, Math.round(pts.length * 0.16)) : 0;
+
+      function strokeFrom(i0, alphaMul) {
+        for (var k = 0; k < passes.length; k++) {
+          ctx.lineWidth = Math.max(0.7, passes[k][0]);
+          ctx.strokeStyle = passes[k][2];
+          ctx.globalAlpha = passes[k][1] * strength * alphaMul;
+          ctx.beginPath();
+          ctx.moveTo(pts[i0].x, pts[i0].y);
+          for (var j = i0 + 1; j < pts.length; j++) ctx.lineTo(pts[j].x, pts[j].y);
+          ctx.stroke();
+        }
+      }
+
+      if (cut) {
+        /* stacked partial strokes: each starts later and adds a little more,
+           so the head of the line is faint and it reaches full weight by the
+           time it is properly under way */
+        strokeFrom(Math.round(cut * 0.55), 0.34);
+        strokeFrom(Math.round(cut * 0.8), 0.33);
+        strokeFrom(cut, 0.33);
+      } else {
+        strokeFrom(0, 1);
       }
       ctx.restore();
       ctx.globalAlpha = 1;
@@ -936,28 +988,30 @@
 
     /* The name at the open end of a strand — where it arrives from, or where
        it is still going. */
+    /* A name goes at whichever end of a line is open — where it arrives
+       from, or where it is still going. A line that starts and ends inside
+       the braid is named by its markers instead, so no name is drawn twice. */
     function drawStrandLabel(path, strength) {
       var lane = path.lane;
-      if (!lane.label || strength <= 0.12) return;
-      var at = lane.kind === 'parent' ? path.pts[0] : path.pts[path.pts.length - 1];
+      if (!lane.label || !lane.labelAt || strength <= 0.12) return;
+      var atStart = lane.labelAt === 'start';
+      var at = atStart ? path.pts[0] : path.pts[path.pts.length - 1];
       if (!at) return;
       var p = project(at.x, at.y, 1);
-      if (p.x < -60 || p.x > W + 60 || p.y < -40 || p.y > H + 40) return;
+      if (p.x < -90 || p.x > W + 90 || p.y < -50 || p.y > H + 50) return;
 
       ctx.save();
-      ctx.globalAlpha = 0.62 * strength;
+      ctx.globalAlpha = 0.66 * strength;
       ctx.fillStyle = lane.tone;
       ctx.font = '10px ' + fontMono();
       ctx.textBaseline = 'middle';
-      /* Sit the name just off the end of the line, on the side the line is
-         heading, so it never lands on top of the braid. */
       var pad = 13;
       if (portrait) {
-        spacedText(ctx, lane.label.toUpperCase(), p.x, p.y + (lane.kind === 'parent' ? -pad : pad), 1.6, 'center');
+        var row = pad + (path.stagger || 0);
+        spacedText(ctx, lane.label.toUpperCase(), p.x, p.y + (atStart ? -row : row), 1.6, 'center');
       } else {
         spacedText(ctx, lane.label.toUpperCase(),
-          p.x + (lane.kind === 'parent' ? -pad : pad), p.y, 1.6,
-          lane.kind === 'parent' ? 'right' : 'left');
+          p.x + (atStart ? -pad : pad), p.y, 1.6, atStart ? 'right' : 'left');
       }
       ctx.restore();
       ctx.globalAlpha = 1;
@@ -1263,16 +1317,27 @@
         ctx.fill();
       }
 
-      /* label: the year above, the name below */
+      /* Label: the year above, the name below. A birth sits on the line it
+         branches off, so in portrait two children of the same parents land
+         on the same spot on screen a few years apart — each one's name
+         therefore leans the way its own line is about to go. */
+      var lx = p.x;
+      if (portrait && n.lean) lx += n.lean * 46;   /* lean is signed, and carries its own size */
       ctx.globalAlpha = (0.62 + n.em * 0.38) * a;
       ctx.fillStyle = palette.ash;
       ctx.font = '9px ' + fontMono();
       ctx.textBaseline = 'alphabetic';
-      if (n.yearLabel) spacedText(ctx, n.yearLabel, p.x, p.y - r * 2.6, 1.4, 'center');
-      if (n.title) {
-        ctx.globalAlpha = (0.5 + n.em * 0.5) * a;
+      if (n.yearLabel) spacedText(ctx, n.yearLabel, lx, p.y - r * 2.6, 1.4, 'center');
+
+      /* Framed to fit on a phone, the whole braid puts its lanes about a
+         thumb's width apart — enough for a year, not for a name. The years
+         hold the shape together at that size; the names arrive as soon as
+         there is room for them, or on the way past. */
+      var roomForName = !portrait || cam.z > 0.42;
+      if (n.title && (roomForName || n.em > 0.35 || n.selected)) {
+        ctx.globalAlpha = (0.5 + n.em * 0.5) * a * (roomForName ? 1 : Math.max(n.em, 0.5));
         ctx.fillStyle = n.em > 0.3 ? palette.paper : tone;
-        spacedText(ctx, n.title, p.x, p.y + r * 2.6 + 8, 1.4, 'center');
+        spacedText(ctx, n.title, lx, p.y + r * 2.6 + 8, 1.4, 'center');
       }
       ctx.restore();
       ctx.globalAlpha = 1;
@@ -1696,23 +1761,26 @@
         } else {
           braid = {
             laneW: spec.laneW || 0.55,
+            byId: {},
             lanes: spec.lanes.map(function (l) {
               return {
                 id: l.id,
                 label: l.label || '',
+                labelAt: l.labelAt || null,      /* 'start' | 'end' | null */
                 tone: l.tone || palette.ember,
                 side: l.side || 0,
-                kind: l.kind || 'union',
+                base: l.base || null,
+                startKind: l.startKind || 'union',
+                endKind: l.endKind || 'open',
+                joinTarget: l.joinTarget || null,
+                fadeIn: !!l.fadeIn,
                 from: l.from,
                 to: l.to,
                 phase: hash01(l.id) * TAU
               };
             })
           };
-          braid.trunk = null;
-          for (var i = 0; i < braid.lanes.length; i++) {
-            if (braid.lanes[i].kind === 'union') { braid.trunk = braid.lanes[i]; break; }
-          }
+          braid.lanes.forEach(function (l) { braid.byId[l.id] = l; });
         }
         computeLayouts();
         nodes.forEach(function (n) { n.from = n.pos || n.ptr; n.to = layoutPos(n); });
@@ -1742,6 +1810,7 @@
             strand: n.strand || null,
             t: (n.t === undefined || n.t === null) ? null : n.t,
             markerKind: n.markerKind || null,
+            lean: n.lean || 0,
             tone: n.tone || palette.ember,
             lat: n.lat === undefined ? null : n.lat,
             lon: n.lon === undefined ? null : n.lon,

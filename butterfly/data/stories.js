@@ -28,10 +28,10 @@
    era             an ERAS id. Optional — leave it out and the story still
                    sorts by year. Eras are labels, not facts; see ERAS below.
    strand          a STRANDS id — whose line this happened on. 'amma', 'dad',
-                   'together', 'me', 'brother'. Leave it out and the story
-                   sits on the centre line at its year, which is right for
-                   anything that belongs to the family rather than to one
-                   person in it.
+                   'together', 'me', 'kush', 'colleen', 'carole', 'us',
+                   'kush-carole', 'indra'. Leave it out and the story sits on
+                   the centre line at its year, which is right for anything
+                   belonging to the family rather than to one person in it.
    location        free text: 'Bombay', 'The train to Lusaka'.
    place           a PLACES id, if this happened somewhere already listed.
                    Gives the story map coordinates without repeating them.
@@ -166,44 +166,110 @@
   /* ------------------------------------------------------------------------
      STRANDS — the braid.
 
-     The trail is not one line. Two lives run alongside each other before they
-     meet, become one when they marry, and divide again each time somebody is
-     born. That shape is the archive's spine, and it is drawn from here.
+     The trail is not one line. Lives run alongside each other, become one
+     when they marry, and divide again each time somebody is born — and then
+     the new lines do it all over again. That shape is the archive's spine,
+     and it is drawn entirely from here.
+
+     Every strand is described by three things: where it sits, how it starts,
+     and how it ends.
 
      id       slug. A story's `strand` field points at one of these.
-     label    drawn at the open end of the strand.
+     label    the name. Drawn once, at whichever end of the line is open.
      tone     hex. The strand's own light.
-     side     which way it sits off the centre line: -1, 0 or +1.
-     role     'parent'  runs in from before the record and converges at the union
-              'union'   the single line the parents become
-              'child'   branches off the union in the year it begins
-     begins   for a child, the year the strand starts. This is the branch point.
-     ends     optional year a strand stops. Leave it out and it runs on.
+     base     the strand this one measures its distance from, or null for the
+              centre line. Offsets are relative, which is what lets a whole
+              second generation hang off the first without any absolute
+              positions being worked out by hand.
+     side     how many lanes off the base it sits. Fractions are fine and are
+              how two lines make room for the one they become.
 
-     Add a third child and it gets its own branch; the sides just need
-     spreading (-1, 0, +1 and so on outward). Nothing else needs editing.
+     start    { kind: 'origin' }             runs in from before the record
+              { kind: 'born',   year: 1987 } branches out of its base that year
+              { kind: 'begins', year: 1991 } a life that starts here, whose own
+                                             parents are not in this archive
+              { kind: 'union',  year: 2016 } the line two others become
+     end      { kind: 'open' }               runs on
+              { kind: 'joins', year: 2016, into: 'us' }
+                                             converges into another strand
+
+     A year of `null` anywhere means "this happened, nobody has written down
+     when" — the geometry still holds, the confluence simply carries no date.
+
+     To add somebody: one more object. A new child is a `born` strand off
+     whichever line it comes from; a new partner is a `begins` strand that
+     `joins` at the wedding year, plus the strand they become. Nothing else
+     in the room needs editing.
      ------------------------------------------------------------------------ */
   var STRANDS = [
-    { id: 'amma',     label: 'Amma',        tone: '#FF6B9A', side: -1, role: 'parent' },
-    { id: 'dad',      label: 'Dad',         tone: '#6FE3B8', side:  1, role: 'parent' },
-    { id: 'together', label: 'Together',    tone: '#FFC46B', side:  0, role: 'union' },
-    { id: 'me',       label: 'Me',          tone: '#FFC46B', side: -1, role: 'child', begins: 1987 },
-    { id: 'brother',  label: 'My brother',  tone: '#FF9D5C', side:  1, role: 'child', begins: 1990 }
+    /* --- the first generation --- */
+    {
+      id: 'together', label: 'Amma & Dad', tone: '#FFC46B',
+      base: null, side: 0,
+      start: { kind: 'union', year: null }, end: { kind: 'open' }
+    },
+    {
+      id: 'amma', label: 'Amma', tone: '#FF6B9A',
+      base: 'together', side: -1,
+      start: { kind: 'origin' }, end: { kind: 'joins', year: null, into: 'together' }
+    },
+    {
+      id: 'dad', label: 'Dad', tone: '#6FE3B8',
+      base: 'together', side: 1,
+      start: { kind: 'origin' }, end: { kind: 'joins', year: null, into: 'together' }
+    },
+
+    /* --- the second --- */
+    {
+      id: 'me', label: 'Me', tone: '#FFC46B',
+      base: 'together', side: -1,
+      start: { kind: 'born', year: 1987 }, end: { kind: 'joins', year: 2016, into: 'us' }
+    },
+    {
+      id: 'kush', label: 'Kush', tone: '#FF9D5C',
+      base: 'together', side: 1,
+      start: { kind: 'born', year: 1990 }, end: { kind: 'joins', year: 2017, into: 'kush-carole' }
+    },
+    {
+      id: 'colleen', label: 'Colleen', tone: '#A78BFF',
+      base: 'together', side: -1.9,
+      start: { kind: 'begins', year: 1991 }, end: { kind: 'joins', year: 2016, into: 'us' }
+    },
+    {
+      id: 'carole', label: 'Carole', tone: '#2FE0C7',
+      base: 'together', side: 1.9,
+      start: { kind: 'begins', year: 1990 }, end: { kind: 'joins', year: 2017, into: 'kush-carole' }
+    },
+    {
+      id: 'us', label: 'Colleen & me', tone: '#FFC46B',
+      base: 'together', side: -1.45,
+      start: { kind: 'union', year: 2016 }, end: { kind: 'open' }
+    },
+    {
+      id: 'kush-carole', label: 'Kush & Carole', tone: '#FF9D5C',
+      base: 'together', side: 1.45,
+      start: { kind: 'union', year: 2017 }, end: { kind: 'open' }
+    },
+
+    /* --- the third --- */
+    {
+      id: 'indra', label: 'Indra', tone: '#FFE9B8',
+      base: 'us', side: -0.75,
+      start: { kind: 'born', year: 2021 }, end: { kind: 'open' }
+    }
   ];
 
-  /* Where the two parent strands become one.
+  /* The braid's own words, and the one date nobody has supplied.
 
-     `unionYear` is deliberately null: nobody has supplied the year yet, and
-     putting a number here would be inventing one. Left null, the strands
-     still converge — the confluence simply sits before the first birth with
-     no date on it, which is the honest drawing of "this happened, we haven't
-     written down when". Fill the year in and the whole braid re-times itself
-     around it. */
+     Amma and Dad's wedding year is deliberately absent: putting a number
+     there would be inventing one. Left out, their strands still converge —
+     the confluence simply sits before the first birth carrying no date,
+     which is the honest drawing of "this happened, we haven't written down
+     when". Give the `together` strand a start year and the whole braid
+     re-times itself around it. */
   var BRAID = {
-    unionYear: null,
-    unionLabel: 'Married',
-    unionNote: 'Two trails become one. The year has not been written down yet.',
-    birthLabel: 'Born'
+    marriedLabel: 'Married',
+    undatedNote: 'Two trails become one. The year has not been written down yet.'
   };
 
   /* ------------------------------------------------------------------------
@@ -423,16 +489,43 @@
     PLACES.forEach(function (p) { placeIds[p.id] = true; });
     STRANDS.forEach(function (s) { strandIds[s.id] = true; });
 
-    /* The braid only holds together if it has somewhere to converge and the
-       children know when they start. */
-    if (!STRANDS.some(function (s) { return s.role === 'union'; })) {
-      if (STRANDS.some(function (s) { return s.role === 'parent'; })) {
-        out.push('braid: parent strands exist with no union strand to meet at');
-      }
-    }
+    /* The braid only holds together if every reference resolves and every
+       line knows when it starts. A year of null is allowed and means the
+       date is unknown; a missing year is a mistake. */
     STRANDS.forEach(function (s) {
-      if (s.role === 'child' && typeof s.begins !== 'number') {
-        out.push('strand ' + s.id + ': a child strand needs the year it begins');
+      var at = 'strand ' + s.id;
+      if (s.base && !strandIds[s.base]) out.push(at + ': unknown base "' + s.base + '"');
+      if (s.base === s.id) out.push(at + ': is its own base');
+
+      var start = s.start || {};
+      if (['origin', 'born', 'begins', 'union'].indexOf(start.kind) < 0) {
+        out.push(at + ': start.kind must be origin, born, begins or union');
+      }
+      if (start.kind !== 'origin' && !('year' in start)) {
+        out.push(at + ': a ' + start.kind + ' strand needs a start year (null if unknown)');
+      }
+      if (start.kind === 'born' && !s.base) {
+        out.push(at + ': a born strand needs a base to branch out of');
+      }
+
+      var end = s.end || {};
+      if (['open', 'joins'].indexOf(end.kind) < 0) {
+        out.push(at + ': end.kind must be open or joins');
+      }
+      if (end.kind === 'joins') {
+        if (!strandIds[end.into]) out.push(at + ': joins unknown strand "' + end.into + '"');
+        if (end.into === s.id) out.push(at + ': joins itself');
+        if (!('year' in end)) out.push(at + ': a joining strand needs a year (null if unknown)');
+      }
+    });
+
+    /* A base chain that loops would send the geometry round for ever. */
+    STRANDS.forEach(function (s) {
+      var seen = {}, cur = s, hops = 0;
+      while (cur && cur.base && hops++ < 24) {
+        if (seen[cur.id]) { out.push('strand ' + s.id + ': base chain loops'); break; }
+        seen[cur.id] = true;
+        cur = STRANDS.filter(function (x) { return x.id === cur.base; })[0];
       }
     });
 

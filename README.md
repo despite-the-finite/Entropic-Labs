@@ -223,28 +223,49 @@ butterfly/
   butterfly.js              controller: archive, state machine, routing, panels
 ```
 
-**The trail is a braid.** Two lives run alongside each other, converge when
-they marry, and divide again each time somebody is born — so the spine of the
-room is five strands rather than one line, defined in `STRANDS`. A story's
-optional `strand` field says whose line it happened on; leave it out and the
-story sits on the centre line, which is right for anything belonging to the
+**The trail is a braid.** Lives run alongside each other, converge when they
+marry, and divide again each time somebody is born — and then the new lines do
+it all over again. The spine of the room is therefore a set of strands rather
+than one line, defined in `STRANDS`, currently three generations of them. A
+story's optional `strand` field says whose line it happened on; leave it out
+and it sits on the centre line, which is right for anything belonging to the
 family rather than to one person in it.
 
-The geometry is measured from the trunk rather than from zero: a parent's
-offset decays to nothing at the union and a child's grows from nothing at its
-birth year, so the joins are exact by construction and the wobble that keeps
-the lines organic dies away to nothing exactly where two lines have to touch.
-Time is a compressed axis — a year is worth a fixed distance, but no gap can
-collapse to nothing or run away, so three years between two births reads as a
-real gap while forty empty years do not push everything off the screen.
+Each strand says only where it sits and how it starts and ends:
 
-`BRAID.unionYear` is deliberately `null`: nobody has supplied the year of the
-marriage, and putting a number there would be inventing one. Left null the
-strands still converge, with the confluence sitting before the first birth and
-carrying no date — the honest drawing of "this happened, we haven't written
-down when". Fill the year in and the whole braid re-times itself around it.
-Adding a third child means one more entry in `STRANDS` with the year it
-begins; nothing else needs editing.
+| | |
+|---|---|
+| `base` + `side` | which line it is measured from, and how many lanes off it |
+| `start` | `origin` (runs in from before the record), `born` (branches out of its base that year), `begins` (a life whose own parents are not in this archive), `union` (the line two others become) |
+| `end` | `open`, or `joins` another strand in a given year |
+
+Everything else falls out of that. Offsets are **relative**, so a second
+generation hangs off the first and a third off the second without a single
+absolute position being worked out by hand — and both the birth and the
+marriage are interpolations towards another strand's actual position, wobble
+included. That is what makes the joins exact by construction: a line leaves
+its parent exactly, arrives at a marriage exactly, and the wobble that keeps
+the lines organic dies away to nothing precisely where two lines have to
+touch. Time is a compressed axis — a year is worth a fixed distance, but no
+gap can collapse to nothing or run away, so three years between two births
+reads as a real gap while decades of nothing do not push everything off
+screen.
+
+A year of `null` anywhere means "this happened, nobody has written down when".
+Amma and Dad's wedding year is exactly that: the strands still converge, with
+the confluence sitting before the first birth and carrying no date. Give the
+`together` strand a start year and the whole braid re-times itself around it.
+
+Adding somebody is one more object: a child is a `born` strand off whichever
+line it comes from, a partner is a `begins` strand that `joins` at the wedding
+year, plus the strand the two become. Nothing else in the room needs editing.
+
+Names are drawn once each, at whichever end of a line stays open — so the
+lines that run in are named on the left, the lines still going are named on
+the right, and a line that both starts and ends inside the braid is named by
+its markers instead. On a phone, where the whole braid is framed to fit and
+the lanes end up about a thumb's width apart, the markers show years only and
+the names arrive as you zoom in or pass over them.
 
 **Adding a story** means appending one object to `STORIES` in
 `butterfly/data/stories.js`. Nothing else needs touching. The trail places it
