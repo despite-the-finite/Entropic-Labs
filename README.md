@@ -351,8 +351,11 @@ deliberately leave no history behind.
 string. Where the telling needs one, an entry can instead be an object with a
 `kind`: `plan` (a confidently numbered list, for the idea about to go wrong),
 `shout` (a line said far too loudly), `beat` (the moment it lands — jolts once,
-when read), `landing` (a quiet line, given room), `found` (words read off a
-page — a menu, a sign, a letter), `sound` (a noise, transcribed: set in the
+when read), `reveal` (the line a story turns on: it arrives out of focus and
+resolves as it is reached — the words are in the document from the start, so
+only the focus is withheld and nothing is hidden from a screen reader),
+`landing` (a quiet line, given room), `found` (words as they were seen — a
+menu, a sign, a letter, a line everybody knows), `sound` (a noise, transcribed: set in the
 mono face and split on the spaces, so `Bmm. Tss. Pff.` lands one syllable
 after the one before) and `heading` (a chapter break inside a long story, set
 as a real `h3` so the outline stays navigable). They fire on scroll

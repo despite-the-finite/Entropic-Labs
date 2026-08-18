@@ -1109,6 +1109,20 @@ body[data-panel="1"] .plate{ pointer-events: none; }
 .sound .syll{ opacity: 0.16; transition: opacity 0.5s ease; }
 .sound.seen .syll{ opacity: 1; }
 
+/* the line a story turns on. Out of focus until it is reached, then
+   resolved — the thing was already true, you just could not see it yet. */
+.reveal{
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 3vw, 1.65rem) !important;
+  line-height: 1.28 !important;
+  color: var(--paper-warm) !important;
+  margin: 1.9rem 0 !important;
+  opacity: 0.3;
+  filter: blur(10px);
+  transition: filter 1.2s cubic-bezier(.2,.7,.2,1), opacity 1.2s ease;
+}
+.reveal.seen{ opacity: 1; filter: blur(0); }
+
 /* the last line, given room to sit */
 .landing{
   font-family: var(--font-display);
@@ -1803,6 +1817,7 @@ body[data-panel="1"] .plate{ pointer-events: none; }
   .shout.seen, .beat.seen{ animation: none; }
   .landing{ transition: none; opacity: 0.92; }
   .sound .syll{ transition: none; opacity: 1; }
+  .reveal{ transition: none; opacity: 1; filter: none; }
   /* the location indicator still moves — it just does not slide */
   .at-now.moved{ animation: none; }
   .journey li{ transition: none; }

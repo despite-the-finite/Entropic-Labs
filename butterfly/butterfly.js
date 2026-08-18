@@ -1055,6 +1055,15 @@
         place(snd);
         return;
       }
+      if (p.kind === 'reveal') {
+        /* The line a story turns on. It arrives out of focus and resolves
+           as it is reached, because that is what the moment felt like from
+           the inside: the thing was already true, and then you could see
+           it. The words are in the document from the start — only the
+           focus is withheld — so nothing is hidden from a screen reader. */
+        place(setText(el('p', 'reveal'), p.text || ''));
+        return;
+      }
       if (p.kind === 'shout') { place(el('p', 'shout', p.text || '')); return; }
       if (p.kind === 'beat') { place(el('p', 'beat', p.text || '')); return; }
       if (p.kind === 'landing') { place(el('p', 'landing', p.text || '')); return; }
@@ -1067,7 +1076,8 @@
      opens — and once each. Under reduced motion the classes still land and
      the stylesheet simply declines to move anything. */
   function armProse(scroll, story) {
-    var marks = [].slice.call(scroll.querySelectorAll('.shout, .beat, .landing, .sound'));
+    var marks = [].slice.call(
+      scroll.querySelectorAll('.shout, .beat, .landing, .sound, .reveal'));
     var located = [].slice.call(scroll.querySelectorAll('[data-at]'));
     var strip = scroll.querySelector('.at-strip');
 
@@ -1226,7 +1236,10 @@
     if (stop.url) return stop.url;
     var pl = stop.place && placeById[stop.place];
     if (!pl) return null;
-    var q = [pl.name, pl.country].filter(Boolean).join(' ');
+    /* Region as well as country: 'Denver United States' is a worse search
+       than 'Denver Colorado United States', and a place that carries a
+       region carries it precisely because the name alone is ambiguous. */
+    var q = [pl.name, pl.region, pl.country].filter(Boolean).join(' ');
     return 'https://www.google.com/maps/search/?api=1&query=' +
       encodeURIComponent(q).replace(/%20/g, '+');
   }

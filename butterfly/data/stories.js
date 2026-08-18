@@ -91,8 +91,12 @@
                          a noise, transcribed. Set in the mono face and
                          split on the spaces, so the syllables land in
                          order rather than all at once
+                     { kind: 'reveal',  text: 'That guy was Amr.' }
+                         the line the story turns on. Arrives out of
+                         focus and resolves as it is reached
                      { kind: 'found',   items: ['Momo.', 'Veggie momo.'] }
-                         words read off a page — a menu, a sign, a letter
+                         words as they were seen — a menu, a sign, a
+                         letter, a line everybody knows
                      { kind: 'heading', text: 'The Plan' }
                          a chapter break inside a long story
 
@@ -401,9 +405,17 @@
       lon: 57.55
     },
     {
+      /* The state, and no finer: the story says Illinois and does not say
+         where in it, so neither does the archive. */
+      id: 'illinois',
+      name: 'Illinois',
+      country: 'United States',
+      lat: 40.0,
+      lon: -89.2
+    },
+    {
       id: 'pereybere',
       name: 'Péreybère',
-      region: 'Rivière du Rempart',
       country: 'Mauritius',
       lat: -20.03,
       lon: 57.59
@@ -411,7 +423,6 @@
     {
       id: 'chamarel',
       name: 'Chamarel',
-      region: 'Rivière Noire',
       country: 'Mauritius',
       lat: -20.43,
       lon: 57.37
@@ -997,6 +1008,138 @@
       source: 'Karsh',
       relatedStories: ['dont-haggle'],
       dateAdded: '2026-08-17'
+    },
+
+    {
+      id: 'gin-joints',
+      title: 'Of All the Gin Joints',
+      hook: 'Some people you meet once. Some you meet twice, years apart, without noticing.',
+      year: 2012,
+      approximateDate: 'Circa 2012',
+      strand: 'karsh',
+      location: 'Denver, Colorado',
+      place: 'denver',
+      landmark: {
+        name: 'Williams Tavern',
+        query: 'Williams Tavern Denver Colorado'
+      },
+      journey: [
+        {
+          id: 'wedding',
+          place: 'illinois',
+          flag: '✦',
+          label: 'Ryan’s wedding, Illinois',
+          note: 'Ten minutes with a stranger. Years earlier.',
+          url: 'https://share.google/45S83cvUTrV48ePO0'
+        },
+        {
+          id: 'denver',
+          place: 'denver',
+          flag: '🏔',
+          label: 'Denver, Colorado',
+          note: 'A building called 300. Two floors apart.'
+        },
+        {
+          id: 'tavern',
+          place: 'denver',
+          flag: '🍺',
+          label: 'Williams Tavern',
+          note: 'The seat next to mine',
+          url: 'https://www.google.com/maps/search/?api=1&query=Williams+Tavern+Denver+Colorado'
+        },
+        {
+          id: 'together',
+          arrival: true,
+          flag: '❤',
+          label: 'More than a decade later',
+          note: 'Two families, rather than two strangers'
+        }
+      ],
+      category: 'beginnings',
+      chaosEvent: true,
+      tags: [
+        'denver', 'colorado', 'illinois', 'friendship', 'coincidence',
+        'music', 'hiking', 'chance', 'families'
+      ],
+      people: [
+        { name: 'Karsh', relation: 'me, on the 14th floor' },
+        { name: 'Amr', relation: 'the guy at the bar, on the 12th' },
+        { name: 'Ashley', relation: 'Amr’s friend from Illinois' },
+        { name: 'Ryan', relation: 'a friend from university' },
+        { name: 'Lindsey', relation: 'a friend from university' }
+      ],
+      story: [
+        'There are some people you meet once and never see again. There are others you meet twice, years apart, without realizing until much later that somehow you’ve already crossed paths.',
+        'Amr was one of those people.',
+        {
+          text: 'I was living in downtown Denver at the time, in an apartment building called 300. Not far away was Williams Tavern, our neighborhood drinking hole — the kind of place you could wander into for a drink without making any plans.',
+          at: 'denver'
+        },
+        { text: 'One night, that’s exactly what I did.', at: 'tavern' },
+        'I was sitting at the bar and struck up a conversation with the guy next to me. His name was Amr, an Egyptian-American guy who had recently moved to Colorado from Illinois.',
+        'As we talked, we discovered something funny: he lived in my building.',
+        'Then it got even stranger.',
+        'He lived on the 12th floor. I lived on the 14th floor.',
+        'And we lived in essentially the same apartment, just two floors apart.',
+        'We kept talking and realized we had a lot more in common than our floor plans. We both loved music. We both loved getting outside and exploring Colorado. We had similar interests and just got along easily.',
+        'So we exchanged information and decided we’d hang out again.',
+        'And unlike a lot of random bar conversations, we actually did.',
+        'Over the next few months, Amr and I became good friends. We went hiking, played music together, explored Colorado and did all the things two relatively new Denverites do when they’re discovering the city and the mountains around it.',
+        'Then one of Amr’s friends from Illinois came to visit.',
+        'Her name was Ashley.',
+        'Naturally, we took her to Williams Tavern.',
+        'We had a fun night, and afterward Ashley and I added each other on Facebook. Amr wasn’t really a Facebook person, so until then we’d never had that weird moment where social media suddenly reveals that two completely separate parts of your life are connected.',
+        'Ashley and I did.',
+        'I noticed that we had mutual friends: Ryan and Lindsey, friends of mine from university.',
+        'So Ashley and I started figuring out how everyone knew everyone.',
+        'Eventually I mentioned Ryan to Amr.',
+        'And Amr casually told me that, years earlier, he had dated Ryan’s sister.',
+        { kind: 'beat', text: 'Something clicked.' },
+        { text: 'I remembered Ryan’s wedding.', at: 'wedding' },
+        'I remembered meeting an Egyptian guy there who was dating Ryan’s sister.',
+        'And then I realized:',
+        { kind: 'reveal', text: 'That guy was Amr.' },
+        'We started comparing memories and confirmed it. Amr and I had actually met before. We’d hung out, briefly, at Ryan’s wedding in Illinois years earlier.',
+        'Neither of us remembered the other well enough to recognize each other when we met again.',
+        'Which isn’t surprising. Weddings are full of people you meet for ten minutes, have a conversation with, maybe share a drink with, and then assume you’ll probably never see again.',
+        'And apparently, that’s what both of us thought.',
+        {
+          text: 'Except several years later, hundreds of miles away, we both somehow ended up in Colorado.',
+          at: 'denver'
+        },
+        'In the same city.',
+        'In the same apartment building.',
+        'In practically the same apartment.',
+        {
+          text: 'And then, out of all the bars in Denver, we happened to sit next to each other at Williams Tavern.',
+          at: 'tavern'
+        },
+        'There’s a little bit of *Casablanca* in that:',
+        { kind: 'found', items: ['Of all the gin joints in all the towns in all the world…'] },
+        'Except in our version, neither of us had any idea we’d already met.',
+        'We didn’t become friends because of Ryan. Or because of the wedding. Or because somebody introduced us again.',
+        'We independently became friends — and only afterward discovered that life had already introduced us once before.',
+        { text: 'That was more than a decade ago.', at: 'together' },
+        'Today, Amr is married and has a daughter. I’m married and have a daughter too. Our wives became great friends — arguably even better at it than Amr and I were — and our daughters adore each other.',
+        'What started as two strangers talking over drinks has turned into two families sharing their lives.',
+        'And that’s probably my favorite part of the story.',
+        'That first meeting at the wedding seemed completely insignificant at the time. The second meeting at Williams Tavern seemed completely random.',
+        'Neither was.',
+        'Because sometimes a person crosses your trail once and disappears.',
+        'And then, years later, somehow the trail loops back around.',
+        { kind: 'landing', text: 'This time, you keep walking it together.' }
+      ],
+      artifact: {
+        label: 'Memory artifact',
+        title: 'The seat next to mine',
+        lines: [
+          { label: 'The first time', text: 'A wedding in Illinois. Ten minutes. Neither of us remembered it.' },
+          { label: 'The second time', text: 'Williams Tavern, Denver. This one stuck.' }
+        ]
+      },
+      source: 'Karsh',
+      relatedStories: ['momo'],
+      dateAdded: '2026-08-18'
     }
   ];
 
@@ -1216,7 +1359,7 @@
 
       var LISTED = ['plan', 'found'];        /* kinds whose content is `items` */
       /* kinds whose content is `text` */
-      var SPOKEN = ['shout', 'beat', 'landing', 'heading', 'sound'];
+      var SPOKEN = ['shout', 'beat', 'landing', 'heading', 'sound', 'reveal'];
       (s.story || []).forEach(function (p, pi) {
         if (typeof p === 'string' || !p) return;
         var where = at + ': paragraph ' + pi;
