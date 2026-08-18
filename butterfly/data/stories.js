@@ -91,6 +91,10 @@
                          a noise, transcribed. Set in the mono face and
                          split on the spaces, so the syllables land in
                          order rather than all at once
+                     { kind: 'dedication', text: 'For Helen.',
+                       line: 'One of the finest minds I ever knew.' }
+                         who the telling was for. Set apart under a
+                         rule at the end of a story. `line` is optional
                      { kind: 'reveal',  text: 'That guy was Amr.' }
                          the line the story turns on. Arrives out of
                          focus and resolves as it is reached
@@ -403,6 +407,38 @@
       country: 'Mauritius',
       lat: -20.28,
       lon: 57.55
+    },
+    {
+      id: 'kitwe',
+      name: 'Kitwe',
+      country: 'Zambia',
+      lat: -12.80,
+      lon: 28.21
+    },
+    {
+      id: 'haverford',
+      name: 'Haverford',
+      region: 'Pennsylvania',
+      country: 'United States',
+      lat: 40.01,
+      lon: -75.31
+    },
+    {
+      /* The country, and no finer: the story says China and does not say
+         where in it. */
+      id: 'china',
+      name: 'China',
+      country: 'China',
+      lat: 35.0,
+      lon: 104.0
+    },
+    {
+      id: 'centennial',
+      name: 'Centennial',
+      region: 'Colorado',
+      country: 'United States',
+      lat: 39.58,
+      lon: -104.88
     },
     {
       /* The state, and no finer: the story says Illinois and does not say
@@ -1140,6 +1176,286 @@
       source: 'Karsh',
       relatedStories: ['momo'],
       dateAdded: '2026-08-18'
+    },
+
+    {
+      id: 'helen',
+      title: 'Helen — The Friend Who Understood',
+      hook: 'She could finish the mental arithmetic before anyone else. Then she helped me catch up.',
+      year: 1997,
+      approximateDate: '1997, and all the years after',
+      strand: 'karsh',
+      location: 'Kitwe, Zambia',
+      place: 'kitwe',
+      landmark: {
+        name: 'Lechwe School',
+        query: 'Lechwe School Kitwe Zambia'
+      },
+      journey: [
+        {
+          id: 'lechwe',
+          place: 'kitwe',
+          flag: '🇿🇲',
+          label: 'Lechwe School, Kitwe',
+          note: 'A harder math class. 1997.'
+        },
+        {
+          id: 'india',
+          place: 'nainital',
+          flag: '🇮🇳',
+          label: 'Boarding school, India',
+          note: 'We lost contact.',
+          url: 'https://www.google.com/maps/search/?api=1&query=Birla+Vidya+Mandir+Nainital+Uttarakhand+India'
+        },
+        {
+          id: 'lechwe-again',
+          place: 'kitwe',
+          flag: '🇿🇲',
+          label: 'Back at Lechwe',
+          note: 'And Helen was there.'
+        },
+        {
+          id: 'bradley',
+          place: 'illinois',
+          flag: '🇺🇸',
+          label: 'Bradley University, Illinois',
+          note: 'An ocean away, and it did not matter',
+          url: 'https://www.google.com/maps/search/?api=1&query=Bradley+University+Illinois'
+        },
+        {
+          id: 'haverford',
+          place: 'haverford',
+          flag: '🇺🇸',
+          label: 'Haverford College, Pennsylvania',
+          note: 'Fall break. South Park. Nothing grand.',
+          url: 'https://www.google.com/maps/search/?api=1&query=Haverford+College+Pennsylvania'
+        },
+        {
+          id: 'china',
+          place: 'china',
+          flag: '🇨🇳',
+          label: 'China',
+          note: 'Russian, Chinese, and a part of herself'
+        },
+        {
+          id: 'denver',
+          place: 'denver',
+          flag: '🇺🇸',
+          label: 'Denver, Colorado',
+          note: 'Garden of the Gods. She met the life I had built.'
+        },
+        {
+          id: 'peakview',
+          place: 'centennial',
+          flag: '🇺🇸',
+          label: 'Centennial, Colorado',
+          note: 'Peakview Place. A post on a screen.'
+        },
+        {
+          id: 'remains',
+          arrival: true,
+          flag: '✦',
+          label: 'Wherever the traces are kept',
+          note: 'I hope some trace of her remains'
+        }
+      ],
+      category: 'beginnings',
+      chaosEvent: true,
+      tags: [
+        'zambia', 'kitwe', 'school', 'friendship', 'mathematics',
+        'india', 'china', 'college', 'grief', 'mental health', 'loss'
+      ],
+      people: [
+        { name: 'Helen Xiao Yi Huang', relation: 'my friend' },
+        { name: 'Karsh', relation: 'me' }
+      ],
+      story: [
+        { text: 'I first met Helen Xiao Yi Huang because I got moved up in math.', at: 'lechwe' },
+        'It was around 1997. I had just transferred from Nchanga Upper Trust School in Chingola to Lechwe School in Kitwe. At Lechwe, the math classes were divided roughly by ability, and new students generally started in the lower group until the teachers figured out where they belonged.',
+        'After a little while, I was moved into the higher class.',
+        'That was where I met Helen.',
+        'And one of the first things I learned about her was that she was ridiculously intelligent.',
+        'We started math class with mental arithmetic. The teacher would give us problems to work through quickly, and everyone would race to finish.',
+        'I was completely unfamiliar with it.',
+        'Coming from the other class and a different school, I didn’t have the practice everyone else had. For the first few weeks, I struggled.',
+        'Helen didn’t.',
+        'She would finish before everyone else. Not just before me — before almost everybody, and often by a ridiculous margin.',
+        'I remember being immediately impressed by her.',
+        'But what mattered much more was what happened after she finished.',
+        'She helped me.',
+        'There was never any arrogance about how intelligent she was. She didn’t make me feel stupid because I was struggling with something that came easily to her. She would simply help me understand it.',
+        'Looking back, that was Helen in miniature.',
+        'Brilliant, yes.',
+        'But *kind*.',
+
+        { kind: 'heading', text: 'Losing Touch' },
+        'Not long afterward, my life changed again.',
+        {
+          text: 'I left Zambia for boarding school in India, and Helen and I lost contact. Those were the years when the mines in Zambia were being privatized and there was uncertainty around my family’s life there. Eventually, when things stabilized, my parents brought me back to Zambia to finish high school.',
+          at: 'india'
+        },
+        { text: 'And Helen was there.', at: 'lechwe-again' },
+        'This time, our friendship became something entirely different.',
+        'We instantly connected again, but now we were old enough to really talk — to question things, argue about things, joke about things and try to make sense of the world.',
+        'We passed notes.',
+        'We made up rhymes.',
+        'We had long, strange, intelligent conversations about whatever happened to be occupying our minds.',
+        'And somewhere along the way, Helen became one of my closest friends.',
+        'There was never really a romantic story hiding underneath it. That is actually one of the things that made our friendship so special.',
+        'Helen and I were genuinely, completely platonic.',
+        'Our friendship wasn’t built on attraction or the possibility that someday it might become something else. We simply liked each other’s minds.',
+        'Through high school, other relationships came and went, but somehow we never allowed those relationships to interfere with ours.',
+        'Helen was just Helen.',
+        'And I was just me.',
+        'There was an unusual freedom in that.',
+        'I could tell her things.',
+        'Really tell her things.',
+        'And she could listen without making the conversation about herself, without judging me, and without simply telling me what she thought I wanted to hear.',
+        'She was pragmatic.',
+        'Sometimes brutally pragmatic.',
+        'But she cared.',
+
+        { kind: 'heading', text: 'An Ocean Away' },
+        'Eventually, high school ended.',
+        {
+          text: 'I finished my A-levels and left Zambia for Bradley University in Illinois. Helen eventually went to Haverford College in Pennsylvania.',
+          at: 'bradley'
+        },
+        'Once again, geography put thousands of miles between us.',
+        'Once again, it didn’t really matter.',
+        {
+          text: 'During my first year at Bradley, I went to visit her at Haverford over fall break. I stayed with her, met the new friends she had made there, and we spent an absurd amount of time binge-watching South Park.',
+          at: 'haverford'
+        },
+        'It wasn’t some grand adventure.',
+        'And maybe that’s why I remember it so fondly.',
+        'It was just two old friends from Zambia, now somehow sitting together at a college in Pennsylvania, laughing at something stupid on television as if all the enormous changes in our lives were perfectly normal.',
+        'Our friendship became even stronger.',
+        'Helen became something like a spiritual guide for me — not in a religious sense, but as one of those rare people whose perspective you trust when your own becomes cloudy.',
+        'And yet, beneath that extraordinary mind, Helen was carrying things of her own.',
+        'She struggled.',
+        'There were parts of her internal world that even the people who loved her didn’t fully understand.',
+        { text: 'At one point she stepped away from Haverford and went to China.', at: 'china' },
+        'This was Helen, though, so taking time away from college apparently meant doing things like learning Russian.',
+        'She improved her Chinese.',
+        'She explored another part of herself and the world.',
+        'And we kept talking.',
+        'She was one of the smartest people I had ever known. The kind of person who could earn a perfect SAT score seemingly without trying and then casually decide to learn another language.',
+        'But intelligence doesn’t protect a person from pain.',
+        'I understand that much better now than I did then.',
+
+        { kind: 'heading', text: 'Denver' },
+        { text: 'Years later, I moved to Denver.', at: 'denver' },
+        'By then Helen had returned to Haverford to finish what she had started.',
+        'During that period, she came out to visit me.',
+        'I got to show her my new life.',
+        'We drove down to Garden of the Gods. We explored Colorado. We talked.',
+        'Mostly, I just remember being happy that she was there.',
+        'There is something strange about friendships that survive different countries and different versions of yourself. Someone who knew you as a kid in Zambia suddenly appears in the life you’ve constructed as an adult in Colorado.',
+        'They connect the pieces.',
+        'Helen knew versions of me that almost nobody in my current life knew.',
+        'And after that visit, I felt closer to her than ever.',
+        { text: 'Eventually she graduated and returned to China.', at: 'china' },
+        'We continued talking, but gradually something changed.',
+        'Her messages became shorter.',
+        'Sometimes there was no response at all.',
+        'I knew she had struggled with seasonal depression and other mental-health issues. I could tell that something wasn’t right, even though I didn’t know exactly what was happening.',
+        'So I kept reaching out.',
+        'I tried to stay positive.',
+        'I tried to remind her that I was there.',
+        'Sometimes I received a little back.',
+        'Sometimes almost nothing.',
+
+        { kind: 'heading', text: 'The Notification' },
+        'By then, my own life had moved forward again.',
+        {
+          text: 'I was engaged and living at Peakview Place in Centennial, Colorado.',
+          at: 'peakview'
+        },
+        'One day, I opened Facebook.',
+        'There were posts from mutual friends.',
+        { kind: 'found', items: ['Rest in peace, Helen Xiao Yi.'] },
+        'I stared at the screen.',
+        'It didn’t make sense.',
+        'I called friends.',
+        'I hoped I had misunderstood something.',
+        'I hadn’t.',
+        'Helen was gone.',
+        'I never received a clear explanation of exactly what happened. Her mother told us that there had been no autopsy, and the circumstances of her death were never fully explained to me.',
+        'Over the years, I have had my own thoughts about what might have happened.',
+        'But they are only thoughts.',
+        'I don’t know.',
+        'And I don’t want the mystery of how Helen died to become more important than the truth of how she lived.',
+
+        { kind: 'heading', text: 'The Friend I Still Miss' },
+        'Helen genuinely cared about people.',
+        'That is what I want to remember.',
+        'She was extraordinarily intelligent, but that isn’t really what I miss most.',
+        'I miss having someone who understood me.',
+        'There are people in my life today whom I love more deeply than I could have understood when Helen and I were kids. I can share my struggles with my wife in a way I share them with no one else.',
+        'But friendship occupies a different place.',
+        'Sometimes you need someone standing slightly outside your life.',
+        'Someone who knows you intimately but isn’t entangled in the consequences of your decisions.',
+        'Helen could do that.',
+        'She could listen to whatever mess I had created, examine it from every direction and give me an answer that was thoughtful, pragmatic and completely Helen.',
+        'I don’t think I will ever have that exact kind of friendship again.',
+        'For a long time, that realization made her absence feel even larger.',
+        'It still does sometimes.',
+        'I wish I could message her.',
+        'I wish I could tell her about the strange directions my life has gone.',
+        'I wish I could hear what she would make of the person I became.',
+        'I wish she could meet the people who are now the center of my world.',
+        'And sometimes I simply wish I could ask:',
+        { kind: 'found', items: ['“Helen, what do you think?”'] },
+        'Because I know she would have thought about it.',
+        'Really thought about it.',
+        'And then she would have told me.',
+
+        { kind: 'heading', text: 'What We Don’t See' },
+        'There is something else I want Helen’s story to say.',
+        'Some of the strongest, funniest, kindest and most intelligent people we know are fighting battles that are almost completely invisible to us.',
+        'Being brilliant doesn’t make you immune.',
+        'Being loved doesn’t make you immune.',
+        'Being the person everyone else comes to for advice doesn’t mean you aren’t struggling yourself.',
+        'We are often embarrassed to admit when our own minds are hurting. We convince ourselves that we should be able to reason our way out of it, endure it quietly, or avoid burdening the people around us.',
+        'But asking for help is not an intellectual failure or a personal weakness.',
+        'If something inside you is becoming too heavy to carry alone, tell someone.',
+        'And if someone you care about begins disappearing behind shorter messages, cancelled plans, silence or distance, keep reaching toward them.',
+        'You may not understand what they are carrying.',
+        'You don’t have to.',
+        'Just remind them that they don’t have to carry it entirely alone.',
+        'I don’t know whether anything could have changed what happened to Helen.',
+        'I won’t pretend that I do.',
+        'What I do know is that I am grateful that, for a portion of my life, our paths crossed.',
+        'A boy transferred schools in Zambia and got moved into a harder math class.',
+        'There was a girl sitting there who could finish the mental arithmetic before everyone else.',
+        'She helped him catch up.',
+        'And somehow, from that tiny moment came a friendship that crossed Zambia, India, America, China and decades of change.',
+        'Helen helped me through much more than math.',
+        'She understood me.',
+        'I miss her.',
+        'I still think about her.',
+        {
+          text: 'And wherever this strange universe keeps the traces of the people who have passed through our lives, I hope some trace of her remains.',
+          at: 'remains'
+        },
+        {
+          kind: 'dedication',
+          text: 'For Helen Xiao Yi Huang.',
+          line: 'My friend, my guide, and one of the finest minds I ever knew.'
+        }
+      ],
+      artifact: {
+        label: 'Memory artifact',
+        title: 'A mental arithmetic problem',
+        lines: [
+          { label: '1997', text: 'She finished first. Then she helped me catch up.' },
+          { label: 'Since', text: 'She helped me through much more than math.' }
+        ]
+      },
+      source: 'Karsh',
+      relatedStories: ['momo', 'hi-guys'],
+      dateAdded: '2026-08-18'
     }
   ];
 
@@ -1359,7 +1675,8 @@
 
       var LISTED = ['plan', 'found'];        /* kinds whose content is `items` */
       /* kinds whose content is `text` */
-      var SPOKEN = ['shout', 'beat', 'landing', 'heading', 'sound', 'reveal'];
+      var SPOKEN = ['shout', 'beat', 'landing', 'heading', 'sound', 'reveal',
+                    'dedication'];
       (s.story || []).forEach(function (p, pi) {
         if (typeof p === 'string' || !p) return;
         var where = at + ': paragraph ' + pi;

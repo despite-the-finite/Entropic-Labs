@@ -1055,6 +1055,18 @@
         place(snd);
         return;
       }
+      if (p.kind === 'dedication') {
+        /* Who the telling was for. Set apart under a rule and given the
+           end of the page to itself, because a memory written down for
+           somebody who is gone is doing something the rest of the story
+           is not. No movement beyond a fade: this is the one block in the
+           room that should never perform. */
+        var ded = el('div', 'dedication');
+        ded.appendChild(setText(el('p', 'ded-for'), p.text || ''));
+        if (p.line) ded.appendChild(setText(el('p', 'ded-line'), p.line));
+        place(ded);
+        return;
+      }
       if (p.kind === 'reveal') {
         /* The line a story turns on. It arrives out of focus and resolves
            as it is reached, because that is what the moment felt like from
@@ -1077,7 +1089,8 @@
      the stylesheet simply declines to move anything. */
   function armProse(scroll, story) {
     var marks = [].slice.call(
-      scroll.querySelectorAll('.shout, .beat, .landing, .sound, .reveal'));
+      scroll.querySelectorAll(
+        '.shout, .beat, .landing, .sound, .reveal, .dedication'));
     var located = [].slice.call(scroll.querySelectorAll('[data-at]'));
     var strip = scroll.querySelector('.at-strip');
 
@@ -1239,7 +1252,9 @@
     /* Region as well as country: 'Denver United States' is a worse search
        than 'Denver Colorado United States', and a place that carries a
        region carries it precisely because the name alone is ambiguous. */
-    var q = [pl.name, pl.region, pl.country].filter(Boolean).join(' ');
+    var q = [pl.name, pl.region, pl.country].filter(function (part, i, all) {
+      return part && all.indexOf(part) === i;   /* China, China */
+    }).join(' ');
     return 'https://www.google.com/maps/search/?api=1&query=' +
       encodeURIComponent(q).replace(/%20/g, '+');
   }
