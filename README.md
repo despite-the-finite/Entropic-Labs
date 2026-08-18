@@ -2,14 +2,18 @@
 
 # Entropic Labs
 
-Landing page for Entropic Labs, a recording and production studio run by **Despite the Finite**.
+Entropic Labs: four rooms in one building, run by **Despite the Finite** — a
+recording and production studio, an observatory of things worth wondering
+about, a game room, and a family archive. `index.html` is the foyer you come
+in through; everything else is a room off it.
 
 **Live site:** https://despite-the-finite.github.io/Entropic-Labs/
 
 ## Contents
 
-- `index.html` — the desktop site: markup, styles, and scripts in one file, with images loaded from `img/`.
-- `m/` — the mobile build, served automatically to phones (see below).
+- `index.html` + `foyer/` — the foyer: the entry point, and the map of the four rooms. One responsive page with no `m/` twin; see below.
+- `studio.html` — the studio site: markup, styles, and scripts in one file, with images loaded from `img/`. This is what `index.html` used to be.
+- `m/` — the mobile build of the studio and games pages, served automatically to phones (see below).
 - `img/` — the site's photography, at two sizes each: full for desktop, `-mobile` for phones, plus the hero's figure sprites.
 - `hero.js` — the canvas motion: the hero banner's live layers and the falling code over the producer photo. Shared by both builds (see below).
 - `games.html` — the games page: video game design as a minor function of the studio.
@@ -24,23 +28,28 @@ Landing page for Entropic Labs, a recording and production studio run by **Despi
 
 Open `index.html` in a browser to preview, or in any editor to make changes. There's no build step — commit and push to `main`, and GitHub Pages picks up the change automatically within a minute or two.
 
-Content lives in two places now, so a copy change to a section usually needs the same
-edit in `m/`. Preview the mobile build with a local server (`npx http-server -s .`)
-and your browser's device toolbar, since the redirect below keys off the device.
-The Observatory and Butterfly Trails are the exceptions — each is a single
-responsive page, so their content is edited once, in
-`observatory/data/observations.js` and `butterfly/data/stories.js`.
+Studio and games copy lives in two places, so a change to a section usually needs
+the same edit in `m/`. Preview the mobile build with a local server
+(`npx http-server -s .`) and your browser's device toolbar, since the redirect
+below keys off the device. The foyer, the Observatory and Butterfly Trails are the
+exceptions — each is a single responsive page, so the foyer is edited once in
+`index.html`, and the other two once in `observatory/data/observations.js` and
+`butterfly/data/stories.js`.
 
 ## Mobile
 
 Phones get `m/` instead of the desktop pages, decided by a short script in the
-`<head>` of `index.html` and `games.html`. It treats a visitor as mobile on any of
+`<head>` of `studio.html` and `games.html`. The foyer has no such script: it is
+one responsive page and phones stay on it. It treats a visitor as mobile on any of
 three signals: `navigator.userAgentData.mobile`, a phone user-agent string, or a
 viewport of 820px or less with a coarse pointer. Small tablets match that last one
 too, which is intended — the mobile layout suits them. A desktop with a touchscreen
 does not, because its viewport is wider than 820px.
 
-- Deep links survive: `index.html#gear` lands on `m/#gear`.
+- Deep links survive: `studio.html#gear` lands on `m/#gear`.
+- Anchors people already have — `index.html#gear`, `#producer`, `#contact` and the
+  rest — are forwarded to `studio.html` by a short script in the foyer's `<head>`,
+  so nothing that was ever linked breaks.
 - **Opting out:** the mobile pages link to `?full=1`, which pins the full site in
   `localStorage` for that browser and follows you across pages.
 - **Opting back in:** loading anything under `m/` clears the pin. The desktop footer
@@ -53,6 +62,56 @@ and it loads the `-mobile` images (191KB for all three, against 640KB).
 
 `m/mobile.css` is shared by both mobile pages rather than inlined, so it's cached
 once across them.
+
+## The foyer
+
+`index.html` is the door, not a homepage. It carries no studio copy of its own:
+the wordmark, one line under it, and four rooms hung around it in a dark field —
+the Observatory, the Studio, the Game Room, Butterfly Trails. Everything the
+landing page used to hold now lives at `studio.html`, unchanged.
+
+**Layout is CSS; the drawing follows it.** `foyer/foyer.css` places the rooms —
+asymmetrically around the wordmark on a desktop, unrolled into a meandering
+trail you scroll on a phone. `foyer/foyer.js` never decides where anything is:
+it measures where CSS put each room's mark and draws to that. One code path
+serves both compositions, and on a phone the trail follows the scroll for free.
+
+**One responsive page, no `m/` twin**, for the same reason the Observatory and
+Butterfly Trails have none — the layout is a composition computed from the
+viewport rather than prose, and a second copy would only drift.
+
+**Each room has a colour**, and it is the colour that room already uses: teal
+for the Observatory, the studio's pink for the Studio, violet for the Game
+Room, Butterfly Trails' amber. A `--glow` custom property on each link drives
+the mark, the halo, the focus ring, the trace running out to it and the
+transition that plays on the way out, so nothing is stated twice.
+
+**The way out.** Choosing a room plays 540ms of that room before the page
+changes: the field stretches for the Observatory, a trace opens across the
+screen for the Studio, the picture comes apart into pixels for the Game Room,
+and everything lifts and drifts for Butterfly Trails. Navigation fires at
+430ms so the next page is already loading underneath it.
+
+**Accessibility.** The rooms are four ordinary links in a `<nav>`: tab reaches
+them in order, focus draws the same ring the pointer does and reveals the same
+line of description, and Enter navigates with the transition intact. With
+JavaScript off, CSS still places all four and they still work — the field is
+simply not drawn. Under `prefers-reduced-motion` the canvas draws one static
+frame and stops, every animation and transition is off, the descriptions are
+shown rather than revealed, and links navigate straight through with no
+transition at all.
+
+**Performance.** No dependencies. One pre-rendered glow sprite per colour
+instead of a gradient per particle per frame, a star count scaled to the
+viewport (46–170), device pixel ratio capped at 2, a 30fps cap, layout
+re-measured on a 400ms tick rather than every frame, and the loop stopped
+entirely while the tab is hidden.
+
+**Things most people will not find.** `S = k · log W` sits in the footer at
+twelve percent opacity and says what it means when you hover it. There is one
+point in the field that is not a star — it answers a click. A butterfly crosses
+the whole field every minute or two and does not stay. The console has four
+lines in it.
 
 ## The hero banner
 
@@ -111,6 +170,8 @@ through the background and down the sides as it does in the photograph. The
 field and the loop are shared with the hero rather than written twice.
 
 ## Sections
+
+These are the sections of `studio.html`, the studio page:
 
 - Hero — the `ENTROPIC LABS / MUSIC ENGINEERING / STUDIO` backdrop, plus the booking CTA
 - Manifesto — studio philosophy
@@ -202,7 +263,7 @@ drift out of sync. Instead it branches internally: portrait squeezes the chart
 horizontally and stretches it vertically rather than scaling it down, panels
 become bottom sheets, observation labels are always drawn on touch instead of
 on hover, and the panel-clearance maths measures the open panel rather than
-assuming a breakpoint. Both `index.html` and `m/index.html` link straight here;
+assuming a breakpoint. Both the foyer and `m/index.html` link straight here;
 because this page carries no redirect script, it is safe to enter from either.
 
 **Telemetry** is computed in the browser with no network calls. The moon phase

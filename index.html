@@ -1,901 +1,164 @@
-<title>Entropic Labs — Recording &amp; Production Studio</title>
+<title>Entropic Labs</title>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Entropic Labs — a recording and production studio run by Despite the Finite. Sessions by appointment.">
-<link rel="alternate" media="only screen and (max-width: 820px)" href="m/">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#05040D">
+<meta name="description" content="Entropic Labs — a collection of things made, wondered about, remembered and played with. Four rooms: the Observatory, the Studio, the Game Room and Butterfly Trails.">
+<link rel="stylesheet" href="foyer/foyer.css">
+<!--
+  The foyer. Not a homepage — the door.
+
+  This page is one responsive page with no m/ twin, for the same reason the
+  Observatory and Butterfly Trails have none: the layout is a composition
+  computed from the viewport, not prose, and a hand-tuned second copy would
+  only ever drift. Because it carries no redirect script it is safe to enter
+  from anywhere, including from the mobile build under m/.
+
+  Everything the studio site used to be still lives at studio.html, which
+  keeps its own m/ twin. The two anchors people already have — index.html#gear
+  and the rest — are forwarded below rather than broken.
+-->
 <script>
-  /* Phones open the mobile build at m/ instead. Adding ?full=1 to the URL pins
-     the full site for this browser (that is what the mobile pages link back
-     to); loading any page under m/ clears the pin again. */
+  /* Deep links into the old landing page (index.html#gear, #producer, …)
+     pointed at studio content that now lives at studio.html. Forward them
+     instead of dropping the visitor in a foyer with a hash that means
+     nothing here. Anything else — no hash, or a hash this page owns — stays. */
   (function(){
-    var TARGET = 'm/';
+    var STUDIO = {
+      top: 1, manifesto: 1, producer: 1, studio: 1, gear: 1,
+      sessions: 1, games: 1, observatory: 1, trails: 1, contact: 1
+    };
     try{
-      if(/[?&]full=1(&|$)/.test(location.search)){
-        try{ localStorage.setItem('el-view', 'full'); }catch(e){}
-        return;
-      }
-      try{ if(localStorage.getItem('el-view') === 'full') return; }catch(e){}
-      var ua = navigator.userAgent || '';
-      var uaMobile = navigator.userAgentData ? navigator.userAgentData.mobile === true : false;
-      var isPhone = /iPhone|iPod|Android.*Mobile|Windows Phone|IEMobile|BlackBerry|BB10|Opera Mini|Mobile.*Firefox/i.test(ua);
-      var smallTouch = window.matchMedia
-        ? window.matchMedia('(max-width: 820px) and (pointer: coarse)').matches
-        : false;
-      if(uaMobile || isPhone || smallTouch) location.replace(TARGET + location.hash);
+      var h = (location.hash || '').replace(/^#/, '');
+      if(h && STUDIO[h]) location.replace('studio.html#' + h);
     }catch(e){}
   })();
 </script>
-<style>
-  :root{
-    --ink: #07050F;
-    --panel: #130E22;
-    --panel-raised: #1C1433;
-    --ash: #9C93B8;
-    --paper: #F1EEFB;
-    --signal: #FF3FA0;
-    --trace: #2FE0C7;
-    --violet: #7C4DFF;
-    --hairline: rgba(241,238,251,0.12);
-    --hairline-strong: rgba(241,238,251,0.22);
 
-    --font-display: "Arial Narrow", "Helvetica Neue Condensed", "Roboto Condensed", Arial, sans-serif;
-    --font-body: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
-    --font-mono: ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-  }
+<canvas id="field" aria-hidden="true"></canvas>
+<div class="vignette" aria-hidden="true"></div>
 
-  *{ box-sizing: border-box; }
-  html{ background: var(--ink); }
-  body{
-    margin: 0;
-    background: var(--ink);
-    color: var(--paper);
-    font-family: var(--font-body);
-    font-size: 16px;
-    line-height: 1.65;
-    -webkit-font-smoothing: antialiased;
-  }
-  ::selection{ background: var(--signal); color: var(--ink); }
+<main class="foyer">
+  <div class="core" id="core">
+    <h1 class="wordmark">Entropic<span class="dot">·</span>Labs</h1>
+    <p class="creed">Curiosity has no filing system.</p>
+    <p class="invite">Choose somewhere to wander<span class="caret" aria-hidden="true"></span></p>
+  </div>
 
-  a{ color: inherit; }
-  a:focus-visible, button:focus-visible{
-    outline: 2px solid var(--trace);
-    outline-offset: 3px;
-  }
+  <nav class="realms" aria-label="The four rooms of Entropic Labs">
+    <ul>
+      <!-- 01 — the room that looks outward -->
+      <li>
+        <a class="realm realm--observatory" href="observatory.html" data-realm="observatory">
+          <span class="realm-mark" aria-hidden="true">
+            <svg viewBox="0 0 48 48" fill="none">
+              <g transform="rotate(-24 24 24)">
+                <ellipse cx="24" cy="24" rx="20" ry="8.5" stroke="currentColor" stroke-opacity="0.34" stroke-width="1"/>
+                <g transform="translate(24 24) scale(1 0.425) translate(-24 -24)">
+                  <g class="mark-orbit"><circle cx="44" cy="24" r="2.2" fill="currentColor" fill-opacity="0.8"/></g>
+                </g>
+              </g>
+              <g class="mark-twinkle">
+                <path d="M24 12 L25.7 22.3 L36 24 L25.7 25.7 L24 36 L22.3 25.7 L12 24 L22.3 22.3 Z" fill="currentColor"/>
+              </g>
+            </svg>
+          </span>
+          <span class="realm-body">
+            <span class="realm-index">01</span>
+            <span class="realm-name">The Observatory</span>
+            <span class="realm-line">Questions are more interesting than answers.</span>
+          </span>
+        </a>
+      </li>
 
-  h1, h2, h3{
-    font-family: var(--font-display);
-    text-transform: uppercase;
-    font-weight: 700;
-    letter-spacing: 0.01em;
-    text-wrap: balance;
-    margin: 0;
-  }
+      <!-- 02 — the room the noise comes out of -->
+      <li>
+        <a class="realm realm--studio" href="studio.html" data-realm="studio">
+          <span class="realm-mark" aria-hidden="true">
+            <svg viewBox="0 0 48 48" fill="none">
+              <rect x="5" y="36.6" width="38" height="1" fill="currentColor" fill-opacity="0.28"/>
+              <g>
+                <rect class="mark-bar" x="6"    y="14" width="3.6" height="22" rx="1.4" fill="currentColor"/>
+                <rect class="mark-bar" x="11.6" y="14" width="3.6" height="22" rx="1.4" fill="currentColor"/>
+                <rect class="mark-bar" x="17.2" y="14" width="3.6" height="22" rx="1.4" fill="currentColor"/>
+                <rect class="mark-bar" x="22.8" y="14" width="3.6" height="22" rx="1.4" fill="currentColor"/>
+                <rect class="mark-bar" x="28.4" y="14" width="3.6" height="22" rx="1.4" fill="currentColor"/>
+                <rect class="mark-bar" x="34"   y="14" width="3.6" height="22" rx="1.4" fill="currentColor"/>
+                <rect class="mark-bar" x="39.6" y="14" width="3.6" height="22" rx="1.4" fill="currentColor"/>
+              </g>
+            </svg>
+          </span>
+          <span class="realm-body">
+            <span class="realm-index">02</span>
+            <span class="realm-name">The Studio</span>
+            <span class="realm-line">Where noise becomes something else.</span>
+          </span>
+        </a>
+      </li>
 
-  .eyebrow{
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--trace);
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5em;
-  }
+      <!-- 03 — the room things get played in -->
+      <li>
+        <a class="realm realm--game" href="games.html" data-realm="game">
+          <span class="realm-mark" aria-hidden="true">
+            <svg viewBox="0 0 48 48" fill="none">
+              <g>
+                <rect class="mark-px" x="20.5" y="5.5"  width="7" height="7" fill="currentColor" fill-opacity="0.55"/>
+                <rect class="mark-px" x="13"   y="13"   width="7" height="7" fill="currentColor" fill-opacity="0.75"/>
+                <rect class="mark-px" x="28"   y="13"   width="7" height="7" fill="currentColor" fill-opacity="0.75"/>
+                <rect class="mark-px" x="5.5"  y="20.5" width="7" height="7" fill="currentColor" fill-opacity="0.55"/>
+                <rect class="mark-px" x="20.5" y="20.5" width="7" height="7" fill="currentColor"/>
+                <rect class="mark-px" x="35.5" y="20.5" width="7" height="7" fill="currentColor" fill-opacity="0.55"/>
+                <rect class="mark-px" x="13"   y="28"   width="7" height="7" fill="currentColor" fill-opacity="0.75"/>
+                <rect class="mark-px" x="28"   y="28"   width="7" height="7" fill="currentColor" fill-opacity="0.75"/>
+                <rect class="mark-px" x="20.5" y="35.5" width="7" height="7" fill="currentColor" fill-opacity="0.55"/>
+              </g>
+            </svg>
+          </span>
+          <span class="realm-body">
+            <span class="realm-index">03</span>
+            <span class="realm-name">The Game Room</span>
+            <span class="realm-line">Experiments disguised as games.</span>
+          </span>
+        </a>
+      </li>
 
-  .wrap{
-    max-width: 74rem;
-    margin: 0 auto;
-    padding: 0 clamp(1.25rem, 4vw, 3rem);
-  }
-
-  /* ---------- NAV ---------- */
-  .topnav{
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 50;
-    background: linear-gradient(var(--ink) 60%, rgba(7,5,15,0));
-    padding: 1.1rem 0 2rem;
-  }
-  .topnav .wrap{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-  }
-  .brand{
-    font-family: var(--font-display);
-    text-transform: uppercase;
-    font-weight: 700;
-    font-size: 1.05rem;
-    letter-spacing: 0.03em;
-  }
-  .brand span{ color: var(--signal); }
-  .navlinks{
-    display: flex;
-    gap: clamp(0.9rem, 2vw, 1.8rem);
-    list-style: none;
-    margin: 0; padding: 0;
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-  .navlinks a{ text-decoration: none; color: var(--ash); transition: color .15s ease; }
-  .navlinks a:hover{ color: var(--paper); }
-  .navlinks li:first-child a{ color: var(--paper); }
-  @media (max-width: 640px){ .navlinks{ display: none; } }
-
-  /* ---------- HERO ---------- */
-  .sr-only{
-    position: absolute;
-    width: 1px; height: 1px;
-    padding: 0; margin: -1px;
-    overflow: hidden;
-    clip: rect(0,0,0,0);
-    white-space: nowrap;
-    border: 0;
-  }
-  .hero{
-    position: relative;
-    background: var(--ink);
-    border-bottom: 1px solid var(--hairline);
-  }
-  /* The banner is a flat JPEG, so the motion is layered over it: a very slow
-     push on the image, an aurora that breathes across the nebula, and a sheen
-     that crosses every so often. Transform/opacity only, so it stays on the
-     compositor. All of it stops under prefers-reduced-motion. */
-  .hero-media{
-    position: relative;
-    overflow: hidden;
-    background: var(--ink);
-    animation: hero-fade 900ms ease-out both;
-  }
-  /* The scene carries the slow push so every layer — backdrop, canvas,
-     figures, subtitle — scales together and stays registered. */
-  .hero-scene{
-    position: relative;
-    transform-origin: 50% 42%;
-    animation: hero-push 52s ease-in-out infinite alternate;
-  }
-  .hero-banner{
-    display: block;
-    width: 100%;
-    height: auto;
-  }
-  .hero-fx{
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-  }
-
-  /* Figures cut out of the artwork, screen-blended back over the plate they
-     were removed from. Each animates on hover; on touch hero.js takes turns. */
-  .hero-fig{
-    position: absolute;
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    mix-blend-mode: screen;
-    will-change: transform;
-    transition: transform 0.45s cubic-bezier(.3,.8,.4,1);
-  }
-  .hero-fig--bike{  left: 5.990%;  top: 64.484%; width: 8.906%;  height: 15.556%; background-image: url(img/hero-fig-bike.png);  transform-origin: 50% 97%; }
-  .hero-fig--cycle{ left: 25.163%; top: 65.687%; width: 8.203%;  height: 14.352%; background-image: url(img/hero-fig-cycle.png); transform-origin: 50% 96%; }
-  .hero-fig--skate{ left: 43.021%; top: 65.429%; width: 10.130%; height: 15.648%; background-image: url(img/hero-fig-skate.png); transform-origin: 42% 96%; }
-  .hero-fig--board{ left: 61.608%; top: 64.664%; width: 10.599%; height: 17.685%; background-image: url(img/hero-fig-board.png); transform-origin: 50% 88%; }
-  .hero-fig--truck{ left: 81.172%; top: 68.808%; width: 9.115%;  height: 11.759%; background-image: url(img/hero-fig-truck.png); transform-origin: 50% 98%; }
-
-
-
-
-  /* Speed lines for the road bike, trailing off the back — it faces right. */
-  .hero-fig--cycle::before,
-  .hero-fig--cycle::after{
-    content: "";
-    position: absolute;
-    height: 2.4%;
-    border-radius: 999px;
-    background: linear-gradient(90deg, rgba(47,224,199,0), rgba(47,224,199,0.85));
-    opacity: 0;
-    pointer-events: none;
-  }
-  .hero-fig--cycle::before{ top: 44%; left: -17%; width: 32%; }
-  .hero-fig--cycle::after{  top: 63%; left: -11%; width: 24%; }
-
-  @media (hover: hover){
-    .hero-fig{ pointer-events: auto; }
-    .hero-fig--bike:hover, .hero-fig--bike.is-playing{ animation: fig-bike 1.8s cubic-bezier(.33,.9,.36,1) infinite; }
-    .hero-fig--cycle:hover, .hero-fig--cycle.is-playing{ animation: fig-cycle 0.62s linear infinite; }
-    .hero-fig--skate:hover, .hero-fig--skate.is-playing{ animation: fig-skate 1.9s cubic-bezier(.4,.75,.4,1) infinite; }
-    .hero-fig--board:hover, .hero-fig--board.is-playing{ animation: fig-board 2.6s cubic-bezier(.36,.7,.4,1) infinite; }
-    .hero-fig--truck:hover, .hero-fig--truck.is-playing{ animation: fig-truck 2.4s cubic-bezier(.4,.85,.4,1) infinite; }
-    .hero-fig--cycle:hover::before, .hero-fig--cycle.is-playing::before{ animation: speed-line 0.62s linear infinite; }
-    .hero-fig--cycle:hover::after,  .hero-fig--cycle.is-playing::after{ animation: speed-line 0.62s linear infinite 0.31s; }
-  }
-  .hero-fig--bike.is-playing{ animation: fig-bike 1.8s cubic-bezier(.33,.9,.36,1) infinite; }
-  .hero-fig--cycle.is-playing{ animation: fig-cycle 0.62s linear infinite; }
-  .hero-fig--skate.is-playing{ animation: fig-skate 1.9s cubic-bezier(.4,.75,.4,1) infinite; }
-  .hero-fig--board.is-playing{ animation: fig-board 2.6s cubic-bezier(.36,.7,.4,1) infinite; }
-  .hero-fig--truck.is-playing{ animation: fig-truck 2.4s cubic-bezier(.4,.85,.4,1) infinite; }
-  .hero-fig--cycle.is-playing::before{ animation: speed-line 0.62s linear infinite; }
-  .hero-fig--cycle.is-playing::after{ animation: speed-line 0.62s linear infinite 0.31s; }
-
-  /* Mountain biker — the fork soaks up a hit: wheel lifts, suspension packs
-     down under load, rebounds past neutral, then a smaller second cycle. */
-  @keyframes fig-bike{
-    0%,100%{ transform: translateY(0) scaleY(1) rotate(0deg); }
-    8%{  transform: translateY(-2.4%) scaleY(1.015) rotate(-1.4deg); }
-    18%{ transform: translateY(1.8%) scaleY(0.930) rotate(0.6deg); }
-    30%{ transform: translateY(-1.2%) scaleY(1.030) rotate(-0.5deg); }
-    42%{ transform: translateY(0.6%) scaleY(0.975) rotate(0.2deg); }
-    55%{ transform: translateY(-0.3%) scaleY(1.008) rotate(0deg); }
-    70%{ transform: translateY(0.2%) scaleY(0.995) rotate(0deg); }
-  }
-  /* Road cyclist — held low in the aero tuck, quick cadence, road speed shown
-     by the lines streaming off the back rather than by moving the rider. */
-  @keyframes fig-cycle{
-    0%,100%{ transform: translateY(0) rotate(0deg); }
-    25%{ transform: translateY(-0.7%) rotate(-0.35deg); }
-    50%{ transform: translateY(0.2%) rotate(0deg); }
-    75%{ transform: translateY(-0.5%) rotate(0.25deg); }
-  }
-  @keyframes speed-line{
-    0%{ opacity: 0; transform: translateX(20%) scaleX(0.55); }
-    30%{ opacity: 0.9; }
-    100%{ opacity: 0; transform: translateX(-34%) scaleX(1.15); }
-  }
-  /* Skateboarder — a real ollie: crouch, snap the tail so the nose comes up,
-     drag the front foot to level it out, float, then land and absorb. */
-  @keyframes fig-skate{
-    0%,100%{ transform: translateY(0) rotate(0deg) scaleY(1); }
-    14%{ transform: translateY(1.6%) rotate(0.5deg) scaleY(0.94); }
-    26%{ transform: translateY(-3.5%) rotate(-13deg) scaleY(1.02); }
-    38%{ transform: translateY(-8.5%) rotate(-4deg) scaleY(1); }
-    50%{ transform: translateY(-7.5%) rotate(1.5deg) scaleY(1); }
-    64%{ transform: translateY(-2%) rotate(2.5deg) scaleY(1); }
-    74%{ transform: translateY(0) rotate(0deg) scaleY(0.92); }
-    86%{ transform: translateY(0) rotate(0deg) scaleY(1.02); }
-  }
-  /* Snowboarder — load the board, pop, and carry a 300-degree spin round the
-     vertical axis, unwinding it on the way down to land straight. */
-  @keyframes fig-board{
-    0%,100%{ transform: perspective(700px) translateY(0) rotateY(0deg) scaleY(1); }
-    10%{ transform: perspective(700px) translateY(2%) rotateY(0deg) scaleY(0.93); }
-    24%{ transform: perspective(700px) translateY(-6.5%) rotateY(105deg) scaleY(1.04); }
-    40%{ transform: perspective(700px) translateY(-10.5%) rotateY(230deg) scaleY(1); }
-    52%{ transform: perspective(700px) translateY(-10.5%) rotateY(300deg) scaleY(1); }
-    68%{ transform: perspective(700px) translateY(-7%) rotateY(215deg) scaleY(1); }
-    82%{ transform: perspective(700px) translateY(-2%) rotateY(90deg) scaleY(1); }
-    90%{ transform: perspective(700px) translateY(0) rotateY(0deg) scaleY(0.94); }
-    96%{ transform: perspective(700px) translateY(0) rotateY(0deg) scaleY(1.02); }
-  }
-  /* Off-road truck — trail chatter under both axles, then a bigger hit: nose
-     lifts, springs pack down, rebound, settle. */
-  @keyframes fig-truck{
-    0%,100%{ transform: translateY(0) rotate(0deg) scaleY(1); }
-    9%{  transform: translateY(-0.8%) rotate(-1.2deg) scaleY(1.010); }
-    17%{ transform: translateY(0.9%) rotate(-0.4deg) scaleY(0.965); }
-    26%{ transform: translateY(-1.4%) rotate(1.4deg) scaleY(1.020); }
-    36%{ transform: translateY(0.6%) rotate(0.5deg) scaleY(0.980); }
-    46%{ transform: translateY(-0.4%) rotate(-0.3deg) scaleY(1.005); }
-    58%{ transform: translateY(-2.4%) rotate(-2deg) scaleY(1.015); }
-    68%{ transform: translateY(1.4%) rotate(-0.6deg) scaleY(0.945); }
-    78%{ transform: translateY(-1%) rotate(1.2deg) scaleY(1.025); }
-    88%{ transform: translateY(0.4%) rotate(0.3deg) scaleY(0.990); }
-  }
-
-  /* the strapline, re-set as live text so it can turn on its own axis */
-  .hero-subtitle{
-    position: absolute;
-    left: 30.729%; top: 43.889%;
-    width: 38.542%; height: 2.870%;
-    perspective: 600px;
-    pointer-events: none;
-  }
-  .hero-subtitle svg{
-    display: block;
-    width: 100%;
-    height: 100%;
-    overflow: visible;
-    animation: sub-turn 9s ease-in-out infinite;
-  }
-  .hero-subtitle text{
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 52px;
-    letter-spacing: 20px;
-    fill: #EAF6FF;
-  }
-  @keyframes sub-turn{
-    0%,100%{ transform: rotateY(-11deg) rotateX(2deg); }
-    50%{ transform: rotateY(11deg) rotateX(-2deg); }
-  }
-  .hero-aurora,
-  .hero-sweep{
-    position: absolute;
-    pointer-events: none;
-  }
-  .hero-aurora{
-    inset: -12%;
-    mix-blend-mode: screen;
-    background:
-      radial-gradient(38% 44% at 33% 33%, rgba(124,77,255,0.30), transparent 70%),
-      radial-gradient(30% 38% at 67% 27%, rgba(255,63,160,0.20), transparent 72%);
-    animation: hero-aurora 26s ease-in-out infinite alternate;
-  }
-  .hero-sweep{
-    top: 0; bottom: 0; left: 0;
-    width: 38%;
-    background: linear-gradient(100deg,
-      transparent,
-      rgba(241,238,251,0.05) 42%,
-      rgba(47,224,199,0.045) 58%,
-      transparent);
-    transform: translate3d(-160%,0,0) skewX(-12deg);
-    animation: hero-sweep 17s ease-in-out infinite;
-  }
-  @keyframes hero-fade{ from{ opacity: 0; } to{ opacity: 1; } }
-  @keyframes hero-push{
-    from{ transform: scale(1.004); }
-    to{ transform: scale(1.05); }
-  }
-  @keyframes hero-aurora{
-    from{ transform: translate3d(-1.5%,-1%,0) scale(1); opacity: 0.5; }
-    to{ transform: translate3d(2%,1.5%,0) scale(1.09); opacity: 0.95; }
-  }
-  @keyframes hero-sweep{
-    0%, 64%{ transform: translate3d(-160%,0,0) skewX(-12deg); }
-    100%{ transform: translate3d(330%,0,0) skewX(-12deg); }
-  }
-  .hero-content > *{ animation: hero-rise 700ms cubic-bezier(.16,.84,.44,1) both; }
-  .hero-content .eyebrow{ animation-delay: 260ms; }
-  .hero-content .hero-sub{ animation-delay: 400ms; }
-  .hero-content .cta-row{ animation-delay: 540ms; }
-  @keyframes hero-rise{
-    from{ opacity: 0; transform: translateY(10px); }
-    to{ opacity: 1; transform: none; }
-  }
-  @media (prefers-reduced-motion: reduce){
-    .hero-media, .hero-scene, .hero-aurora, .hero-content > *,
-    .hero-fig, .hero-subtitle svg{ animation: none; }
-    .hero-sweep{ display: none; }
-    .hero-aurora{ opacity: 0.6; }
-    .hero-subtitle svg{ transform: none; }
-  }
-  .hero-content{
-    position: relative;
-    padding-top: clamp(2rem, 5vw, 3.2rem);
-    padding-bottom: clamp(2.5rem, 6vw, 4rem);
-  }
-  .rec-dot{
-    width: 7px; height: 7px; border-radius: 50%;
-    background: var(--signal);
-    box-shadow: 0 0 0 3px rgba(255,63,160,0.18);
-    animation: pulse 1.8s ease-in-out infinite;
-  }
-  @media (prefers-reduced-motion: reduce){ .rec-dot{ animation: none; } }
-  @keyframes pulse{ 0%,100%{ opacity: 1; } 50%{ opacity: 0.35; } }
-
-  .hero-sub{
-    max-width: 42ch;
-    color: var(--ash);
-    margin-top: 1.4rem;
-    font-size: 1.05rem;
-  }
-  .cta-row{
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.9rem;
-    margin-top: 2.2rem;
-  }
-  .btn{
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    text-decoration: none;
-    padding: 0.95rem 1.5rem;
-    border-radius: 2px;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6em;
-    transition: transform .15s ease, background .15s ease, border-color .15s ease;
-  }
-  .btn-solid{ background: var(--signal); color: var(--ink); }
-  .btn-solid:hover{ transform: translateY(-1px); background: #ff5fb3; }
-  .btn-line{ border: 1px solid var(--hairline-strong); color: var(--paper); }
-  .btn-line:hover{ border-color: var(--trace); color: var(--trace); }
-
-  /* ---------- SECTION SCAFFOLDING ---------- */
-  section{ padding: clamp(4rem, 9vw, 7rem) 0; }
-  .section-head{
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 1.5rem;
-    margin-bottom: clamp(2rem, 5vw, 3.2rem);
-    border-bottom: 1px solid var(--hairline);
-    padding-bottom: 1.4rem;
-  }
-  .section-head h2{ font-size: clamp(1.7rem, 2.4vw + 1rem, 2.6rem); }
-  .section-index{ font-family: var(--font-mono); font-size: 0.75rem; color: var(--ash); white-space: nowrap; }
-
-  .reveal{ opacity: 0; transform: translateY(14px); transition: opacity .6s ease, transform .6s ease; }
-  .reveal.in{ opacity: 1; transform: none; }
-  @media (prefers-reduced-motion: reduce){ .reveal{ opacity: 1; transform: none; transition: none; } }
-
-  /* ---------- MANIFESTO ---------- */
-  .manifesto{ display: grid; grid-template-columns: 1.1fr 1.4fr; gap: clamp(2rem, 5vw, 4rem); align-items: start; }
-  .manifesto p{ font-size: clamp(1.05rem, 1vw + 0.9rem, 1.3rem); color: #E4DFF2; }
-  .manifesto .fact-list, .producer-text .fact-list{ list-style: none; margin: 0; padding: 0; font-family: var(--font-mono); font-size: 0.82rem; color: var(--ash); display: flex; flex-direction: column; gap: 0.7rem; }
-  .manifesto .fact-list li, .producer-text .fact-list li{ display: flex; justify-content: space-between; gap: 1rem; border-bottom: 1px dashed var(--hairline); padding-bottom: 0.7rem; }
-  .manifesto .fact-list span:last-child, .producer-text .fact-list span:last-child{ color: var(--paper); font-variant-numeric: tabular-nums; }
-  @media (max-width: 780px){ .manifesto{ grid-template-columns: 1fr; } }
-
-  /* ---------- PRODUCER ---------- */
-  .producer-grid{
-    display: grid;
-    grid-template-columns: 15rem 1fr;
-    gap: clamp(1.5rem, 4vw, 3rem);
-    align-items: start;
-  }
-  .producer-photo{
-    margin: 0;
-    position: relative;
-    overflow: hidden;
-    border: 1px solid var(--hairline);
-    background: var(--panel);
-    aspect-ratio: 3 / 4;
-  }
-  /* the code in the photo's background, carried on live over the top of it */
-  .photo-rain{
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    mix-blend-mode: screen;
-  }
-  .producer-photo img{
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: 50% 22%;
-  }
-  .producer-text p{ font-size: clamp(1.05rem, 1vw + 0.9rem, 1.3rem); color: #E4DFF2; }
-  @media (max-width: 780px){
-    .producer-grid{ grid-template-columns: 1fr; }
-    .producer-photo{ max-width: 14rem; }
-  }
-
-  /* ---------- STUDIO PHOTO ---------- */
-  .studio-photo{
-    margin: 0;
-    border: 1px solid var(--hairline);
-    background: var(--panel);
-  }
-  .studio-photo img{
-    display: block;
-    width: 100%;
-    height: auto;
-  }
-  .studio-photo figcaption{
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.02em;
-    color: var(--ash);
-    padding: 0.9rem clamp(1rem, 2vw, 1.5rem);
-    border-top: 1px solid var(--hairline);
-  }
-
-  /* ---------- GEAR ---------- */
-  .gear-scroll{ overflow-x: auto; border: 1px solid var(--hairline); }
-  table.gear{ width: 100%; border-collapse: collapse; min-width: 640px; font-size: 0.92rem; }
-  table.gear th{
-    text-align: left;
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--ash);
-    padding: 0.9rem 1.2rem;
-    border-bottom: 1px solid var(--hairline-strong);
-    background: var(--panel);
-  }
-  table.gear td{
-    padding: 0.95rem 1.2rem;
-    border-bottom: 1px solid var(--hairline);
-    vertical-align: top;
-  }
-  table.gear tr:last-child td{ border-bottom: none; }
-  table.gear td.unit{ font-weight: 600; white-space: nowrap; }
-  table.gear td.type{ color: var(--trace); font-family: var(--font-mono); font-size: 0.82rem; white-space: nowrap; }
-  table.gear td.note{ color: var(--ash); }
-  table.gear td.note a{ color: var(--paper); text-decoration: none; border-bottom: 1px solid var(--hairline-strong); }
-  table.gear td.note a:hover{ color: var(--trace); border-color: var(--trace); }
-
-  /* ---------- SESSIONS ---------- */
-  .sessions{ display: flex; flex-direction: column; }
-  .session-row{
-    display: grid;
-    grid-template-columns: 6rem 1fr auto;
-    gap: 1.2rem;
-    align-items: baseline;
-    padding: 1.3rem 0;
-    border-bottom: 1px solid var(--hairline);
-  }
-  .session-row:first-child{ border-top: 1px solid var(--hairline); }
-  .session-year{ font-family: var(--font-mono); color: var(--ash); font-variant-numeric: tabular-nums; }
-  .session-title{ font-size: 1.15rem; }
-  .session-title small{ display: block; margin-top: 0.25rem; color: var(--ash); font-size: 0.85rem; font-weight: 400; }
-  .session-tag{
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--trace);
-    text-align: right;
-    white-space: nowrap;
-  }
-  @media (max-width: 640px){
-    .session-row{ grid-template-columns: 1fr; gap: 0.3rem; }
-    .session-tag{ text-align: left; }
-  }
-
-  /* ---------- CONTACT / PATCHBAY ---------- */
-  .patchbay{
-    background: var(--panel);
-    border: 1px solid var(--hairline);
-    background-image: radial-gradient(circle, rgba(241,238,251,0.06) 1px, transparent 1.3px);
-    background-size: 18px 18px;
-    padding: clamp(2rem, 5vw, 3.5rem);
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 2rem 1.5rem;
-  }
-  @media (max-width: 780px){ .patchbay{ grid-template-columns: repeat(2, 1fr); } }
-  .jack{ display: flex; flex-direction: column; align-items: flex-start; gap: 0.7rem; }
-  .jack-ring{
-    width: 34px; height: 34px;
-    border-radius: 50%;
-    border: 2px solid var(--hairline-strong);
-    position: relative;
-    flex-shrink: 0;
-  }
-  .jack-ring::after{
-    content: "";
-    position: absolute; inset: 9px;
-    border-radius: 50%;
-    background: var(--trace);
-  }
-  .jack-label{ font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ash); }
-  .jack-value{ font-size: 1rem; }
-  .jack-value a{ text-decoration: none; border-bottom: 1px solid var(--hairline-strong); }
-  .jack-value a:hover{ border-color: var(--trace); color: var(--trace); }
-  .contact-note{
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    line-height: 1.7;
-    color: var(--ash);
-    max-width: 46ch;
-    margin: 1rem 0 0;
-    padding-left: 0.9rem;
-    border-left: 2px solid var(--hairline-strong);
-  }
-
-  .contact-cta{
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0;
-    margin-top: 2rem;
-  }
-  .contact-cta p{ color: #E4DFF2; max-width: 58ch; margin: 0; }
-
-  /* ---------- SIDE ROOM / GAMES ---------- */
-  .sideroom{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: clamp(1.5rem, 4vw, 3rem);
-    flex-wrap: wrap;
-    border: 1px solid var(--hairline);
-    border-left: 2px solid var(--signal);
-    background: var(--panel);
-    padding: clamp(1.5rem, 4vw, 2.4rem);
-  }
-  .sideroom p{ color: #E4DFF2; max-width: 62ch; margin: 0; }
-  /* the observatory is the same kind of room, marked in the other colour */
-  .sideroom.dark-room{ border-left-color: var(--trace); }
-  /* the family archive is the warm one */
-  .sideroom.warm-room{ border-left-color: #FFC46B; }
-
-  footer .view-switch{ color: var(--ash); text-decoration: none; border-bottom: 1px solid var(--hairline-strong); }
-  footer .view-switch:hover{ color: var(--trace); border-color: var(--trace); }
-  footer{
-    border-top: 1px solid var(--hairline);
-    padding: 2.2rem 0 3rem;
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.06em;
-    color: var(--ash);
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 0.8rem;
-  }
-</style>
-
-<nav class="topnav">
-  <div class="wrap">
-    <div class="brand">ENTROPIC<span>·</span>LABS</div>
-    <ul class="navlinks">
-      <li><a href="#manifesto">Manifesto</a></li>
-      <li><a href="#producer">Producer</a></li>
-      <li><a href="#studio">Studio</a></li>
-      <li><a href="#gear">Gear</a></li>
-      <li><a href="#sessions">Projects</a></li>
-      <li><a href="games.html">Games</a></li>
-      <li><a href="observatory.html">Observatory</a></li>
-      <li><a href="butterfly.html">Butterfly Trails</a></li>
-      <li><a href="#contact">Contact</a></li>
+      <!-- 04 — the room that isn't about this place at all -->
+      <li>
+        <a class="realm realm--butterfly" href="butterfly.html" data-realm="butterfly">
+          <span class="realm-mark" aria-hidden="true">
+            <svg viewBox="0 0 48 48" fill="none">
+              <g class="mark-wing">
+                <path d="M24 24 C 16 9, 4 8, 3.5 18 C 3 26, 15 28, 24 24 Z" fill="currentColor" fill-opacity="0.82"/>
+                <path d="M24 24 C 32 9, 44 8, 44.5 18 C 45 26, 33 28, 24 24 Z" fill="currentColor" fill-opacity="0.82"/>
+                <path d="M24 24 C 18 29, 9 32, 9.5 38 C 10 43, 20 39, 24 24 Z" fill="currentColor" fill-opacity="0.5"/>
+                <path d="M24 24 C 30 29, 39 32, 38.5 38 C 38 43, 28 39, 24 24 Z" fill="currentColor" fill-opacity="0.5"/>
+              </g>
+              <path d="M24 13.5 L24 33" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <path d="M24 14 C 22.5 10, 20.5 8.5, 18.5 8" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-opacity="0.7"/>
+              <path d="M24 14 C 25.5 10, 27.5 8.5, 29.5 8" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-opacity="0.7"/>
+            </svg>
+          </span>
+          <span class="realm-body">
+            <span class="realm-index">04</span>
+            <span class="realm-name">Butterfly Trails</span>
+            <span class="realm-line">Small moments. Long echoes.</span>
+          </span>
+        </a>
+      </li>
     </ul>
-  </div>
-</nav>
-
-<header class="hero">
-  <h1 class="sr-only">Entropic Labs — Music Engineering / Studio</h1>
-  <div class="hero-media">
-    <div class="hero-scene">
-      <img class="hero-banner" src="img/hero.jpg" alt="Entropic Labs, Music Engineering / Studio — wordmark glowing over a violet nebula sky, with cascading code, neon figures in motion, and a spectrum analyser along the bottom" width="2400" height="1350" fetchpriority="high">
-      <canvas class="hero-fx" aria-hidden="true"></canvas>
-      <span class="hero-fig hero-fig--bike"  aria-hidden="true"></span>
-      <span class="hero-fig hero-fig--cycle" aria-hidden="true"></span>
-      <span class="hero-fig hero-fig--skate" aria-hidden="true"></span>
-      <span class="hero-fig hero-fig--board" aria-hidden="true"></span>
-      <span class="hero-fig hero-fig--truck" aria-hidden="true"></span>
-      <span class="hero-subtitle" aria-hidden="true">
-        <svg viewBox="1180 946 1480 62" preserveAspectRatio="xMidYMid meet">
-          <text x="1920" y="994" text-anchor="middle">MUSIC ENGINEERING / STUDIO</text>
-        </svg>
-      </span>
-      <span class="hero-aurora" aria-hidden="true"></span>
-      <span class="hero-sweep" aria-hidden="true"></span>
-    </div>
-  </div>
-  <div class="hero-content wrap">
-    <span class="eyebrow"><span class="rec-dot"></span> Session live · By appointment</span>
-    <p class="hero-sub">Entropic Labs is a recording and production studio built on one idea: order emerges from noise if you listen long enough. Real amps, a pedalboard built over years, and a room tuned for patience and for accidents.</p>
-    <div class="cta-row">
-      <a class="btn btn-solid" href="#contact">Book a session</a>
-      <a class="btn btn-line" href="#gear">View the gear</a>
-    </div>
-  </div>
-</header>
-
-<main>
-  <section id="manifesto">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <h2>The room</h2>
-        <span class="section-index">01 / MANIFESTO</span>
-      </div>
-      <div class="manifesto reveal">
-        <p>Entropy is what happens to a signal left alone — pedals drift, amps breathe, a room has its own opinion whether you ask for one or not. We don't fight it, we mix with it. Guitars come straight off the wall, the pedalboard's been built up over years, and it all runs into a treated room and a proper monitoring setup — nothing simulated unless we choose to. We work across recording, mixing, and production, for songwriters, bands, and anyone building something track by track.</p>
-        <ul class="fact-list">
-          <li><span>Est.</span><span>2026</span></li>
-          <li><span>Location</span><span>Shared on request</span></li>
-          <li><span>Room</span><span>Converted home studio</span></li>
-          <li><span>Rig</span><span>Guitars, amps, pedalboard, DAW</span></li>
-          <li><span>Booking</span><span>By appointment</span></li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <section id="producer">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <h2>Behind the board</h2>
-        <span class="section-index">02 / LEAD PRODUCER</span>
-      </div>
-      <div class="producer-grid reveal">
-        <figure class="producer-photo">
-          <img src="img/producer.jpg" width="900" height="1200" alt="Portrait of the lead producer and owner of Entropic Labs, composited into a green matrix-code studio scene surrounded by monitors and gear, with a glowing neon &quot;despite the finite&quot; wordmark overhead." loading="lazy">
-          <canvas class="photo-rain" aria-hidden="true"></canvas>
-        </figure>
-        <div class="producer-text">
-          <p>Entropic Labs is run by its lead producer and owner, recording and performing under the name <strong>Despite the Finite</strong>. The alias is the studio's whole philosophy in three words: everything starts as noise — a pedal drifting out of tune, a take that almost works — and gets shaped, patiently, into something that holds together anyway. That instinct runs through every session here, whether it's tracking a full band or programming a single bar of a beat.</p>
-          <ul class="fact-list">
-            <li><span>Role</span><span>Lead producer / owner</span></li>
-            <li><span>Recording as</span><span>Despite the Finite</span></li>
-            <li><span>Focus</span><span>Recording, mixing, production</span></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="studio">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <h2>Inside the room</h2>
-        <span class="section-index">03 / THE STUDIO</span>
-      </div>
-      <figure class="studio-photo reveal">
-        <img src="img/studio.jpg" width="2400" height="729" alt="Panoramic view of the Entropic Labs studio room: an orange leather couch beneath a shuttered window, two electric guitars mounted on the left wall above an amp stack and pedalboard, and to the right a desk with dual monitors, acoustic foam panels, and a ukulele and acoustic guitar on the wall, all lit with blue and green LED lighting." loading="lazy">
-        <figcaption>The room as it stands today — guitars off the wall, pedalboard on the floor, desk running the sessions.</figcaption>
-      </figure>
-    </div>
-  </section>
-
-  <section id="gear">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <h2>Gear list</h2>
-        <span class="section-index">04 / PATCH SHEET</span>
-      </div>
-      <div class="gear-scroll reveal">
-        <table class="gear">
-          <thead>
-            <tr><th>Unit</th><th>Type</th><th>Notes</th></tr>
-          </thead>
-          <tbody>
-            <tr><td class="unit">PRS Hollow Body II</td><td class="type">Guitar</td><td class="note">Semi-hollow, wall-mounted and ready to grab mid-session.</td></tr>
-            <tr><td class="unit">Ibanez RG300 series</td><td class="type">Guitar</td><td class="note">Fast neck, the go-to whenever a take needs speed.</td></tr>
-            <tr><td class="unit">Kala ukulele</td><td class="type">Strings</td><td class="note">Wall-mounted on the right, in reach for a quick overdub.</td></tr>
-            <tr><td class="unit">Hand drums</td><td class="type">Percussion</td><td class="note">Djembe-style hand drums for texture and rhythm parts.</td></tr>
-            <tr><td class="unit">Tube amp + cabinet</td><td class="type">Amplification</td><td class="note">Floor stack, mic'd or run direct depending on the take.</td></tr>
-            <tr><td class="unit">Pedalboard</td><td class="type">Effects</td><td class="note">Full multi-pedal board, built up over years of sessions.</td></tr>
-            <tr><td class="unit">KRK Rokit 5</td><td class="type">Monitors</td><td class="note">Matched nearfield pair, wall-mounted either side of the desk.</td></tr>
-            <tr><td class="unit">NI Komplete Kontrol</td><td class="type">MIDI controller</td><td class="note">Keyboard controller with deep Komplete integration.</td></tr>
-            <tr><td class="unit">Custom MIDI controller</td><td class="type">MIDI controller</td><td class="note">Built in-house for one-off performance control.</td></tr>
-            <tr><td class="unit">NI audio interface</td><td class="type">Interface</td><td class="note">Native Instruments interface running the whole signal chain in and out.</td></tr>
-            <tr><td class="unit">AKG mic + compressor</td><td class="type">Mic / Outboard</td><td class="note">AKG microphone run through outboard compression.</td></tr>
-            <tr><td class="unit">Lenovo ThinkPad</td><td class="type">Production PC</td><td class="note">Runs every session, start to mixdown.</td></tr>
-            <tr><td class="unit">FL Studio</td><td class="type">DAW</td><td class="note">Primary recording and production software.</td></tr>
-            <tr><td class="unit">Dirty Bass</td><td class="type">Plugin / in-house</td><td class="note">VST3 synth built here with JUCE, for gritty saturated bass — sawtooth and sub oscillator through a tanh waveshaper into a state-variable filter, eight voices. <a href="https://github.com/despite-the-finite/dirty-bass" target="_blank" rel="noopener">Source on GitHub</a>.</td></tr>
-            <tr><td class="unit">Acoustic panels</td><td class="type">Treatment</td><td class="note">Broadband absorption across the front wall.</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </section>
-
-  <section id="sessions">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <h2>Projects</h2>
-        <span class="section-index">05 / CATALOG</span>
-      </div>
-      <div class="sessions reveal">
-        <div class="session-row">
-          <span class="session-year">P.01</span>
-          <span class="session-title">Can You Rap?<small>Awaiting upload</small></span>
-          <span class="session-tag">Coming soon</span>
-        </div>
-        <div class="session-row">
-          <span class="session-year">P.02</span>
-          <span class="session-title">Restructured Phoenix<small>Awaiting upload</small></span>
-          <span class="session-tag">Coming soon</span>
-        </div>
-        <div class="session-row">
-          <span class="session-year">P.03</span>
-          <span class="session-title">MM Studio<small>Awaiting upload</small></span>
-          <span class="session-tag">Coming soon</span>
-        </div>
-        <div class="session-row">
-          <span class="session-year">P.04</span>
-          <span class="session-title">Silver Lining<small>Awaiting upload</small></span>
-          <span class="session-tag">Coming soon</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="games">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <h2>Side room</h2>
-        <span class="section-index">06 / GAME DESIGN</span>
-      </div>
-      <div class="sideroom reveal">
-        <p>Alongside the sessions, the studio doubles as a small game design desk — a minor function next to recording and production, but the same working method: start from noise, keep whatever holds together. The projects are browser games — an office RPG, a reading adventure, a live trivia platform — two of them playable right here.</p>
-        <a class="btn btn-solid" href="games.html">Click here to see video games</a>
-      </div>
-    </div>
-  </section>
-
-  <section id="observatory">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <h2>The observatory</h2>
-        <span class="section-index">07 / CURIOSITY</span>
-      </div>
-      <div class="sideroom dark-room reveal">
-        <p>The studio is what gets made here and the side room is what gets played. The Observatory is the third one — a darker room with a chart on the ceiling, catalogued with whatever this place finds worth wondering about: cities found under the Amazon, what a tardigrade survives, why the galaxy is so quiet. It runs on the same principle as a session. Start from noise, keep whatever holds together, and be honest about how much is still unresolved.</p>
-        <a class="btn btn-solid" href="observatory.html">Enter the Observatory</a>
-      </div>
-    </div>
-  </section>
-
-  <section id="trails">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <h2>Butterfly Trails</h2>
-        <span class="section-index">08 / CONSEQUENCE</span>
-      </div>
-      <div class="sideroom warm-room reveal">
-        <p>The studio is what gets made here, the side room is what gets played, and the Observatory is what gets wondered about. Butterfly Trails is the room that isn&rsquo;t about this place at all &mdash; a family archive built on one idea: that a life turns on moments too small to notice while they are happening. A decision, a coincidence, a letter that arrives on the wrong day. Every story in it is a point on a much longer path, and the room is built to show what each one led to, decades later, to people who were not born yet. The archive is still being collected, so for now most of the trail is dark. That is the honest state of it.</p>
-        <a class="btn btn-solid" href="butterfly.html">Follow the trail</a>
-      </div>
-    </div>
-  </section>
-
-  <section id="contact">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <h2>Book time</h2>
-        <span class="section-index">09 / CONTACT</span>
-      </div>
-      <!-- No contact details live in this page. Anything a browser can show, a
-           visitor (or a scraper) can read — encoding it only hides it from the
-           reader, not from anyone looking. Booking runs through an enquiry that
-           the studio answers privately. -->
-      <div class="patchbay reveal">
-        <div class="jack">
-          <div class="jack-ring"></div>
-          <span class="jack-label">Booking</span>
-          <span class="jack-value">By enquiry</span>
-        </div>
-        <div class="jack">
-          <div class="jack-ring"></div>
-          <span class="jack-label">Location</span>
-          <span class="jack-value">Shared once a session is confirmed</span>
-        </div>
-        <div class="jack">
-          <div class="jack-ring"></div>
-          <span class="jack-label">Hours</span>
-          <span class="jack-value">Tue–Sat, 11:00–23:00</span>
-        </div>
-        <div class="jack">
-          <div class="jack-ring"></div>
-          <span class="jack-label">Response</span>
-          <span class="jack-value">Within a day or two</span>
-        </div>
-      </div>
-      <div class="contact-cta reveal">
-        <p>Sessions run by appointment only. Send a rough date, what you're working on, and a link to a reference track if you've got one — the studio replies with everything you need, including where it is.</p>
-        <p class="contact-note">An enquiry form is going up here shortly. Until then the studio isn't publishing a contact address — nothing on this page can be scraped.</p>
-      </div>
-    </div>
-  </section>
+  </nav>
 </main>
 
-<footer>
-  <span>ENTROPIC LABS — EST. 2026</span>
-  <span><a class="view-switch" href="m/">Mobile site</a></span>
-  <span>© 2026 ENTROPIC LABS</span>
+<p class="whisper" id="whisper" role="status" aria-live="polite"></p>
+
+<footer class="sill">
+  <span class="est">Entropic Labs — est. 2026</span>
+  <span class="entropy-note">
+    <button class="entropy" type="button" aria-describedby="entropy-gloss">S = k · log W</button>
+    <span class="gloss" id="entropy-gloss" role="note">Boltzmann, 1877. The entropy of a state is the number of ways it could have happened. This place is named after the counting, not the mess.</span>
+  </span>
+  <span class="readout" id="readout" aria-hidden="true">—</span>
 </footer>
 
-<script src="hero.js" defer></script>
-<script>
-  (function(){
-    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+<div class="curtain" id="curtain" aria-hidden="true"><canvas id="curtain-fx"></canvas></div>
 
-    // scroll reveal
-    var revealEls = document.querySelectorAll('.reveal');
-    if('IntersectionObserver' in window && !reduceMotion){
-      var io = new IntersectionObserver(function(entries){
-        entries.forEach(function(entry){
-          if(entry.isIntersecting){ entry.target.classList.add('in'); io.unobserve(entry.target); }
-        });
-      }, { threshold: 0.15 });
-      revealEls.forEach(function(el){ io.observe(el); });
-    } else {
-      revealEls.forEach(function(el){ el.classList.add('in'); });
-    }
-  })();
-</script>
+<script src="foyer/foyer.js" defer></script>
