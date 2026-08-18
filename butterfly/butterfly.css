@@ -1657,6 +1657,7 @@ body[data-panel="1"] .plate{ pointer-events: none; }
   width: 1px; height: 1px;
   overflow: hidden;
 }
+.keynav.open,
 .keynav:focus-within{
   width: auto; height: auto;
   max-width: min(26rem, calc(100vw - 2rem));
@@ -1667,6 +1668,37 @@ body[data-panel="1"] .plate{ pointer-events: none; }
   background: var(--glass-solid);
   border: 1px solid var(--ember);
 }
+/* Opened deliberately rather than by focus, it sits above the dock instead of
+   in the corner — that is where the hand already is. */
+.keynav.open{
+  /* opaque, unlike the rest of the glass in here: this one is read rather
+     than looked through, and the dock behind it was showing in the type */
+  background: rgb(9,7,15);
+  left: auto; top: auto;
+  right: 0.6rem;
+  bottom: calc(var(--pad) + 4.4rem);
+  max-height: min(60vh, 30rem);
+}
+@media (max-width: 760px){
+  .keynav.open{
+    left: 0.6rem; right: 0.6rem;
+    max-width: none;
+    bottom: calc(var(--pad) + 7.6rem);
+  }
+}
+.keynav .keynav-group{
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ash);
+  font-weight: 400;
+  margin: 1rem 0 0.4rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--hairline);
+}
+.keynav ul:first-of-type:empty + .keynav-group,
+.keynav h2 + .keynav-group{ margin-top: 0.2rem; padding-top: 0; border-top: 0; }
 .keynav h2{
   font-family: var(--font-mono);
   font-size: 0.62rem;

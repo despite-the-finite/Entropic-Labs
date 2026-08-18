@@ -351,6 +351,7 @@
   var dockEl = $('#dock');
   var dockCats = $('#dock-cats');
   var surpriseBtn = $('#surprise');
+  var indexBtn = $('#index-btn');
   var viewsEl = $('#views');
   var erasEl = $('#eras');
   var storyEl = $('#story');
@@ -1885,36 +1886,50 @@
   function renderKeynav() {
     keynavEl.textContent = '';
     keynavEl.appendChild(el('h2', null, 'Butterfly Trails index'));
-    var ul = el('ul');
 
-    function add(label, fn) {
+    var ul = el('ul');
+    function into(list, label, fn) {
       var li = el('li');
       var b = el('button', null, label);
       b.type = 'button';
       b.addEventListener('click', fn);
       li.appendChild(b);
-      ul.appendChild(li);
+      list.appendChild(li);
+    }
+    function add(label, fn) { into(ul, label, fn); }
+    function group(title) {
+      keynavEl.appendChild(el('h3', 'keynav-group', title));
+      var list = el('ul');
+      keynavEl.appendChild(list);
+      return list;
     }
 
     if (view.story) add('← Back to the trail', function () { go('#'); });
-    add('The trail', function () { go('#'); });
-    add('The whole trail', function () { go('#whole-trail'); });
-    add('Places', function () { go('#map'); });
-    add('What is the butterfly effect?', function () { go('#' + ESSAY.id); });
-    add('Surprise me', surprise);
+    keynavEl.appendChild(ul);
+
+    /* The memories come first. Somebody who opened this list opened it to
+       find one of them, and the rest of the room is one tap away anyway. */
+    if (ordered.length) {
+      var mem = group('Memories');
+      ordered.forEach(function (s) {
+        var when = whenOf(s);
+        into(mem, (when ? when + ' — ' : '') + s.title, function () { go('#' + s.id); });
+      });
+    }
+
+    var room = group('The room');
+    into(room, 'The trail', function () { go('#'); });
+    into(room, 'The whole trail', function () { go('#whole-trail'); });
+    into(room, 'Places', function () { go('#map'); });
+    into(room, 'What is the butterfly effect?', function () { go('#' + ESSAY.id); });
+    into(room, 'Surprise me', surprise);
 
     /* The braid is most of what there is to navigate while the archive is
-       small, so it belongs in the keyboard route as much as the memories. */
+       small, so it belongs in the route as much as the memories. */
+    var braidList = group('The braid');
     strands.forEach(function (st) {
-      add('Strand: ' + st.label + strandWhen(st), function () { panToStrand(st.id); });
+      into(braidList, st.label + strandWhen(st), function () { panToStrand(st.id); });
     });
-
-    ordered.forEach(function (s) {
-      var when = whenOf(s);
-      add((when ? when + ' — ' : '') + s.title, function () { go('#' + s.id); });
-    });
-
-    keynavEl.appendChild(ul);
     if (!ordered.length) {
       keynavEl.appendChild(el('p', 'keynav-note',
         ARCHIVE.empty.heading + ' ' + ARCHIVE.empty.note));
@@ -2194,10 +2209,43 @@
     surprise();
   });
 
+  /* ---- the index, opened on purpose -------------------------------------
+     Every memory on the trail is an anonymous dot until it is hovered or
+     opened, which is right for wandering and wrong for looking something
+     up — and on a touch screen there is no hover at all. The keyboard list
+     was already the answer; it just had no visible way in. */
+  function setIndex(open) {
+    keynavEl.classList.toggle('open', open);
+    indexBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open) {
+      var first = keynavEl.querySelector('button');
+      if (first) first.focus();
+    }
+  }
+  function indexOpen() { return keynavEl.classList.contains('open'); }
+
+  indexBtn.addEventListener('click', function () {
+    lastFocus = indexBtn;
+    setIndex(!indexOpen());
+  });
+
+  /* Choosing a memory from the list has done the list's job. */
+  keynavEl.addEventListener('click', function (e) {
+    if (e.target && e.target.tagName === 'BUTTON') setIndex(false);
+  });
+
+  /* Anywhere else, and it gets out of the way. */
+  doc.addEventListener('pointerdown', function (e) {
+    if (!indexOpen()) return;
+    if (keynavEl.contains(e.target) || indexBtn.contains(e.target)) return;
+    setIndex(false);
+  }, true);
+
   doc.addEventListener('keydown', function (e) {
     if (e.defaultPrevented) return;
     var tag = (e.target && e.target.tagName) || '';
     if (e.key === 'Escape') {
+      if (indexOpen()) { setIndex(false); indexBtn.focus(); return; }
       if (!lightboxEl.hidden) { closeLightbox(); return; }
       if (!gate.hidden) { enterRoom(); return; }
       if (view.story || view.essay) go('#');

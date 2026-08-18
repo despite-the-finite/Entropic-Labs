@@ -66,6 +66,10 @@
 <div class="dock" id="dock">
   <div class="dock-cats" id="dock-cats" role="group" aria-label="Follow a butterfly"></div>
   <div class="dock-tools">
+    <button class="bt-btn" id="index-btn" type="button"
+            aria-expanded="false" aria-controls="keynav">
+      All memories
+    </button>
     <button class="bt-btn surprise" id="surprise" type="button">
       <span class="mark" aria-hidden="true"></span> Surprise me
     </button>
@@ -89,6 +93,10 @@
 <!-- a photograph, held up to the light -->
 <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photograph" hidden></div>
 
+<!-- The index. A memory on the trail is a dot until you touch it, which is
+     the right way round for exploring and the wrong way round for finding
+     something specific — so the same list that serves the keyboard is also
+     openable by anybody. -->
 <nav class="keynav" id="keynav" aria-label="Butterfly Trails index"></nav>
 
 <noscript>
