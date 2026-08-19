@@ -409,6 +409,22 @@
       lon: 57.55
     },
     {
+      id: 'lookout-mountain',
+      name: 'Lookout Mountain',
+      region: 'Golden, Colorado',
+      country: 'United States',
+      lat: 39.73,
+      lon: -105.24
+    },
+    {
+      id: 'lakewood',
+      name: 'Lakewood',
+      region: 'Colorado',
+      country: 'United States',
+      lat: 39.70,
+      lon: -105.08
+    },
+    {
       id: 'kitwe',
       name: 'Kitwe',
       country: 'Zambia',
@@ -1456,6 +1472,179 @@
       source: 'Karsh',
       relatedStories: ['momo', 'hi-guys'],
       dateAdded: '2026-08-18'
+    },
+
+    {
+      id: 'someone-dumped-my-bike',
+      title: 'Someone Dumped My Bike',
+      hook: 'My first motorcycle, my first mountain road, and a trade that seemed fair at the time.',
+      year: 2011,
+      approximateDate: '2011',
+      strand: 'karsh',
+      location: 'Colorado',
+      place: 'lookout-mountain',
+      landmark: {
+        name: 'Lookout Mountain',
+        query: 'Lookout Mountain Golden Colorado'
+      },
+      journey: [
+        {
+          id: 'denver',
+          place: 'denver',
+          flag: '🏍',
+          label: 'Denver, Colorado',
+          note: 'A 2007 Kawasaki ZZR600, red and black'
+        },
+        {
+          id: 'lookout',
+          place: 'lookout-mountain',
+          flag: '⛰',
+          label: 'Lookout Mountain',
+          note: 'The first real ride'
+        },
+        {
+          id: 'waterfront',
+          place: 'lakewood',
+          flag: '🏠',
+          label: 'Waterfront Apartments, Lakewood',
+          note: 'Jewell and Kipling. Thirty minutes of pacing.'
+        },
+        {
+          id: 'remembered',
+          arrival: true,
+          flag: '✦',
+          label: 'Fifteen years later',
+          note: 'The scratches turn out to be the best part'
+        }
+      ],
+      category: 'chaos',
+      tags: [
+        'colorado', 'denver', 'lakewood', 'motorcycle', 'friends',
+        'mountains', 'first job', 'growing up', 'funny memories'
+      ],
+      people: [
+        { name: 'Karsh', relation: 'me, newly licensed' },
+        { name: 'Josh', relation: 'gearhead, and the reason for all this' },
+        { name: 'Dane', relation: 'a rider, and a prankster' },
+        { name: 'Mike' }
+      ],
+      story: [
+        {
+          text: 'When I moved to Colorado in 2011, I had just started my first real job. For the first time, I was earning a paycheck, building up some savings, and getting a little taste of independence.',
+          at: 'denver'
+        },
+        'And naturally, I decided to spend some of those first few paychecks on something extremely practical.',
+        '*A motorcycle.*',
+        'I’d wanted one for years.',
+        'This wasn’t completely impulsive, though. Before buying anything, I’d done my homework. I researched motorcycles obsessively, learned the basics of riding, took a motorcycle riding course, practiced whenever I could, and eventually earned my motorcycle endorsement.',
+        'Still, “licensed to ride a motorcycle” and “actually knows what he’s doing on a motorcycle” are two slightly different things.',
+        'I was definitely still in the learning phase.',
+        'After searching around Denver for quite a while, I finally found the bike.',
+        'A 2007 Kawasaki ZZR600, red and black.',
+        'It was beautiful.',
+        'For me, it hit the perfect balance — affordable enough for someone spending his first real savings, but fast enough to be genuinely exciting. It was a proper sport bike, but comfortable enough that I could actually imagine riding it regularly.',
+        'My buddy Dane helped me through the buying process. Dane was already a motorcycle rider and knew considerably more about bikes than I did, so having him there gave me some confidence.',
+        'Then came the day I had been waiting for.',
+        'My first real ride.',
+        'Until then, most of my riding had been confined to parking lots and practice areas. I had only ridden a handful of times, so I was extremely cautious. But eventually, you have to leave the parking lot.',
+        { text: 'A few of us decided to head up toward Lookout Mountain.', at: 'lookout' },
+        'There was Dane, Mike, my buddy Josh, and me.',
+        'Josh deserves his own Butterfly Trail someday because the story of how we met and became such good friends is another adventure entirely. But for this story, the important thing to know is that Josh was a gearhead.',
+        'He had a Subaru WRX STI that he absolutely loved. He was particular about that car, protective of it, and very much into anything involving engines and speed.',
+        'So we headed into the mountains.',
+        'For me, it was incredible.',
+        'I was finally riding my motorcycle on an actual Colorado mountain road. Every mile made me a little more comfortable. The nervousness started fading, the movements became more natural, and I began experiencing exactly what I’d imagined when I’d dreamed about owning a bike.',
+        'On the way back, Josh mentioned that he’d grown up riding dirt bikes.',
+        'Naturally, he wanted to try mine.',
+        'And then he made me an offer.',
+        'He would ride my motorcycle back to the apartments, and I could drive his STI.',
+        'Considering how protective Josh was of that car — and considering how much I loved it — that seemed like a pretty good trade.',
+        'So we swapped.',
+        {
+          text: 'At the time, we lived at the Waterfront Apartments in Lakewood, near Jewell and Kipling. That apartment complex was where I’d met my first real group of friends after moving to Colorado, and it became the center of a lot of memories from those early years.',
+          at: 'waterfront'
+        },
+        'I drove Josh’s STI back.',
+        'Dane rode his motorcycle.',
+        'Mike rode his.',
+        'And Josh rode my beautiful, newly purchased, red-and-black ZZR600.',
+        'Somewhere along the way, traffic separated us.',
+        'We got back to the apartments.',
+        'Josh didn’t.',
+        'At first, nobody thought much of it.',
+        'A few minutes passed.',
+        'Then a few more.',
+        'Then ten.',
+        'Then twenty.',
+        'Eventually, I started pacing.',
+        'Where the hell is this guy?',
+        'The excitement of the day was slowly being replaced by a much worse feeling.',
+        'I started imagining possibilities.',
+        'Had he crashed?',
+        'Was he hurt?',
+        'Was my bike destroyed?',
+        'And honestly, probably in exactly that order.',
+        'Mostly.',
+        'After what felt like forever — probably around thirty minutes — I finally saw the last two members of our group coming toward the apartments.',
+        'Dane was in front.',
+        'Josh was behind him.',
+        'Relief.',
+        'Then Dane pulled up.',
+        'Now, Dane has always been a prankster, so when he looked at me and casually said,',
+        '“Well… someone dumped your bike.”',
+        'I laughed.',
+        'Very funny.',
+        'Then Josh rolled in behind him.',
+        'Slowly.',
+        'And I noticed blood on his elbow.',
+        'Oh.',
+        { kind: 'beat', text: 'Dane wasn’t joking.' },
+        'Josh had actually crashed my motorcycle.',
+        'The motorcycle I had just bought.',
+        'The motorcycle I had spent my first savings on.',
+        'The motorcycle that, until that day, had barely even experienced the outside world.',
+        'My bike had been dumped before I had even gotten the opportunity to dump it *myself*.',
+        'Fortunately, the most important thing was immediately obvious: Josh was okay. He’d gotten scraped up, but there were no serious injuries.',
+        'The bike was okay too.',
+        'Mostly.',
+        'The damage was cosmetic.',
+        'But something about seeing my brand-new-to-me motorcycle scratched up on its very first adventure made one lesson extremely clear:',
+        'Motorcycles are no joke.',
+        'You can take the classes. You can get the endorsement. You can research everything. You can be confident. You can have experience.',
+        'And things can still go wrong very quickly.',
+        'It gave me a new respect for riding — and probably made me a more cautious rider afterward.',
+        'As for Josh?',
+        'He’s still one of my great friends.',
+        'I forgave him.',
+        'Eventually.',
+        'Mostly.',
+        'And yes, over the years that followed, I dropped the bike myself a few times. I eventually sold the ZZR600, and that chapter of my life came to an end.',
+        'But there is still one tiny injustice that remains unresolved.',
+        'I really wish I’d gotten to dump my own motorcycle before Josh did.',
+        'At the time, seeing those scratches made me furious.',
+        {
+          text: 'Fifteen years later, they are part of what makes the memory so good.',
+          at: 'remembered'
+        },
+        'The first motorcycle I ever owned.',
+        'My first real ride into the Colorado mountains.',
+        'One of my first groups of friends in my new home.',
+        'And the day I learned that sometimes the things that go wrong become the parts of the story you remember best.',
+        'These days, I can tell it with a big smile instead of an angry face.',
+        'Although, Josh…',
+        { kind: 'landing', text: 'I’m still counting that one.' }
+      ],
+      artifact: {
+        label: 'Memory artifact',
+        title: 'Scratches on a red-and-black ZZR600',
+        lines: [
+          { label: 'At the time', text: 'Furious.' },
+          { label: 'Fifteen years later', text: 'Part of what makes the memory good.' }
+        ]
+      },
+      source: 'Karsh',
+      relatedStories: ['momo', 'gin-joints'],
+      dateAdded: '2026-08-19'
     }
   ];
 
