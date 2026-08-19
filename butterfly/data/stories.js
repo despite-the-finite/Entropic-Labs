@@ -2157,6 +2157,198 @@
       consequences: ['my-dearest-sons'],
       relatedStories: ['helen'],
       dateAdded: '2026-08-19'
+    },
+
+    {
+      id: 'no-futon',
+      title: 'No Futon, No Microwave',
+      hook: 'Money for a futon and a microwave, and a decision I did not tell my parents about.',
+      year: 2005,
+      approximateDate: '2005',
+      strand: 'karsh',
+      location: 'Illinois',
+      place: 'illinois',
+      landmark: {
+        name: 'Bradley University',
+        query: 'Bradley University Illinois'
+      },
+      journey: [
+        {
+          id: 'zambia',
+          place: 'zambia',
+          flag: '🇿🇲',
+          label: 'Zambia',
+          note: 'Larry’s CD. A guitar that existed only in my imagination.'
+        },
+        {
+          id: 'india',
+          place: 'india',
+          flag: '🇮🇳',
+          label: 'India · 2003',
+          note: 'A guitar store we never got to'
+        },
+        {
+          id: 'illinois',
+          place: 'illinois',
+          flag: '🇺🇸',
+          label: 'Bradley University, Illinois',
+          note: 'The futon money, spent',
+          url: 'https://www.google.com/maps/search/?api=1&query=Bradley+University+Illinois'
+        },
+        {
+          id: 'zambia-again',
+          place: 'zambia',
+          flag: '🇿🇲',
+          label: 'Home again, that summer',
+          note: 'Carrying the guitar. No hiding it anymore.'
+        },
+        {
+          id: 'indra',
+          arrival: true,
+          flag: '❤',
+          label: 'Twenty-one years later',
+          note: 'Indra reaches for the guitars'
+        }
+      ],
+      category: 'beginnings',
+      chaosEvent: true,
+      tags: [
+        'zambia', 'india', 'illinois', 'guitar', 'music', 'nu metal',
+        'parents', 'growing up', 'grief', 'indra', 'colleen'
+      ],
+      people: [
+        { name: 'Karsh', relation: 'me, eighteen' },
+        { name: 'Amma' },
+        { name: 'Dad' },
+        { name: 'Kush', relation: 'my brother' },
+        { name: 'Neelabh', relation: 'my cousin' },
+        { name: 'Larry', relation: 'our American friend, who brought the CD' },
+        { name: 'Colleen' },
+        { name: 'Indra', relation: 'my daughter' }
+      ],
+      story: [
+        { text: 'Before I ever owned a guitar, I was obsessed with them.', at: 'zambia' },
+        'Growing up in Zambia, getting my hands on an electric guitar wasn’t exactly easy. But somewhere along the way, Western music had started finding its way into my life. Tony Hawk’s Pro Skater introduced me to one corner of it. Hollywood movies and the radio introduced me to others. Zambia had a big R&B scene at the time, so I knew plenty of that too.',
+        'Then our American friend Larry brought us a CD.',
+        {
+          kind: 'found',
+          items: ['Chocolate Starfish and the Hot Dog Flavored Water.', 'Limp Bizkit.']
+        },
+        'It sounds ridiculous now, but that album genuinely changed the trajectory of my life.',
+        'Suddenly there was this entire world I hadn’t known existed. Limp Bizkit led to Linkin Park, P.O.D., Korn, System of a Down, and everything surrounding alternative rock and nu metal. I became obsessed with the musicians — the clothes, the attitude, the whole “Jatayu” aesthetic we associated with that era — but especially the guitars.',
+        'Those huge, heavy guitars hanging absurdly low.',
+        'I wanted one.',
+        'Badly.',
+        'The problem was that wanting an electric guitar in Zambia and actually getting one were two very different things.',
+        'So for a while, the guitar existed mostly in my imagination.',
+        { text: 'Then, in 2003, music became tangled up with something much heavier.', at: 'india' },
+        'My grandfather was very sick. He had suffered a heart attack followed by organ failure, and my family traveled to India to see him.',
+        'During that trip, my brother and I reconnected with our cousin Neelabh. Music became one of the things that bonded us. He was into Dr. Dre, Eminem and Black Sabbath, along with some of the nu metal my brother and I loved.',
+        'And somewhere in that strange intersection of family, music, adolescence and grief, the three of us discovered Evanescence together.',
+        'My obsession with guitars went into overdrive.',
+        'Near the end of the trip, there was finally a plan.',
+        'We were going to a guitar store.',
+        'I was going to buy my first guitar.',
+        'The day we were supposed to go was the day my grandfather died.',
+        'Naturally, we never went.',
+        'And suddenly this little dream of mine didn’t seem very important anymore.',
+        'The guitar would have to wait.',
+
+        {
+          text: 'Two years later, in 2005, I was eighteen years old and a freshman at Bradley University.',
+          at: 'illinois'
+        },
+        {
+          kind: 'plan',
+          lead: 'During winter break, my parents had me come home to Zambia. Before I returned to the United States for my second semester, they gave me some money for a couple of things I needed for my dorm life:',
+          items: ['A futon.', 'A microwave.']
+        },
+        'Very sensible purchases.',
+        'I returned to America and promptly bought neither.',
+        'Instead, I took the money my parents had given me, walked into a guitar store, and bought an Epiphone Les Paul starter guitar and a tiny little practice amp.',
+        'No futon.',
+        'No microwave.',
+        'I could sit on the floor.',
+        'I could eat cold food.',
+        'But now I had a guitar.',
+        'And it remains one of the best financial decisions I have ever made.',
+        'I practiced constantly.',
+        'At first, of course, I was terrible. There is no graceful way to learn guitar. Your fingers hurt. Chords buzz. Notes die halfway through. Your hands seem physically incapable of doing what your brain is asking them to do.',
+        'But I kept playing.',
+        'And playing.',
+        'And playing.',
+        'Eventually, I became pretty good.',
+        'That cheap Epiphone became one of my treasures.',
+        'There was just one problem.',
+        'I hadn’t told my parents.',
+        'For some reason, eighteen-year-old me had convinced himself that they would be furious. They had given me money for useful things, and I had blown it on a guitar and amplifier.',
+        'So I hid my great act of financial rebellion from them for an entire semester.',
+        'Then summer came.',
+        'It was time to go home.',
+        'Normally, I traveled with my skateboard. But this time there was something more important coming with me.',
+        'The guitar took the skateboard’s place as my carry-on priority, and through some feat of teenage engineering, I managed to creatively pack the double-kick skateboard into my large checked bag.',
+        { text: 'I arrived home in Zambia carrying my guitar.', at: 'zambia-again' },
+        'There wasn’t really any hiding it anymore.',
+        'So I finally confessed.',
+        'I didn’t have a futon.',
+        'I didn’t have a microwave.',
+        'I had an Epiphone Les Paul.',
+        'I waited for the reaction I had spent months imagining.',
+        'And my parents surprised me.',
+        'They weren’t angry.',
+        { kind: 'reveal', text: 'They were proud.' },
+        'If anything, they seemed more concerned that I had thought I needed to hide it from them.',
+        'That summer, I played constantly. I was still mediocre, stumbling my way through songs and techniques I hadn’t mastered yet.',
+        'But I remember my parents listening.',
+        'And I remember the pride on their faces.',
+        'Something clicked for me then.',
+        'I had spent months believing that becoming my own person meant hiding parts of myself from my parents. Maybe that is something a lot of eighteen-year-olds believe. Independence feels like secrecy. You think adulthood means making decisions without anyone knowing.',
+        'But watching them listen to me play, I realized I had misunderstood them.',
+        'They weren’t disappointed that I had chosen something different.',
+        'They were happy that I had chosen something I loved.',
+        'That guitar became an inflection point in my life.',
+        'Not just because it taught me how to play music.',
+        'It taught me something about my parents.',
+        'And it taught me something about myself.',
+        'From then on, I became a little more willing to let them see who I actually was.',
+
+        'That cheap Epiphone ended up having an absurdly large impact on my life.',
+        'The guitar became part of my identity. It gave me countless memories, friendships, jam sessions and creative outlets.',
+        'I would even argue that knowing how to play guitar played a nontrivial role in convincing Colleen that dating me might be a good idea.',
+        'So, really, that futon money turned out to be an excellent investment.',
+        'Today, things are a little different.',
+        'I own several beautiful guitars, including a PRS Hollowbody II — a spectacular instrument that costs about as much as an entry-level car.',
+        'Eighteen-year-old me would lose his mind if he saw it.',
+        'I love that guitar. I’ve worked hard, and I feel like I’ve earned the privilege of owning something like it.',
+        'But these days the challenge isn’t finding a guitar.',
+        'It’s finding the time to play one.',
+        'And lately I’ve been reminded that I should.',
+        { text: 'Because when I pick up a guitar, Indra watches.', at: 'indra' },
+        'She loves hearing me play. She gravitates toward the guitars and the ukulele. She wants to touch them, strum them, make noise with them and figure out what these strange wooden things can do.',
+        'And when I watch her, I recognize something.',
+        'That fascination.',
+        'That pull toward an instrument before you have any idea what you’re doing with it.',
+        'I know that feeling.',
+        'I was that kid once.',
+        'And now I find myself watching her with the same quiet pride I once saw on my parents’ faces while their eighteen-year-old son played his secretly purchased guitar for them in Zambia.',
+        'I thought buying that Epiphone was an act of defiance.',
+        'It wasn’t.',
+        'It was one of the first decisions I made entirely because something inside me said, *This matters to you.*',
+        'Twenty-one years later, I finally understand why my parents smiled.',
+        'And if Indra someday spends the money I give her for something sensible on a guitar instead?',
+        { kind: 'landing', text: 'I suppose I’ll have absolutely no right to complain.' }
+      ],
+      artifact: {
+        label: 'Memory artifact',
+        title: 'An Epiphone Les Paul and a tiny practice amp',
+        lines: [
+          { label: 'What it cost', text: 'A futon and a microwave.' },
+          { label: 'What it bought', text: 'Twenty-one years of playing, and one conversation with my parents.' }
+        ]
+      },
+      source: 'Karsh',
+      relatedStories: ['beatbox', 'my-dearest-sons'],
+      dateAdded: '2026-08-19'
     }
   ];
 
