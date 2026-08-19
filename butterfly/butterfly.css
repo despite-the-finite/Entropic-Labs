@@ -563,10 +563,14 @@ body[data-panel="1"] .plate{ pointer-events: none; }
   letter-spacing: 0.13em;
   text-transform: uppercase;
   color: var(--ash);
-  background: rgba(11,8,18,0.72);
+  /* Colour-coded at rest, not only on hover: six butterflies that have to
+     be told apart at a glance. The tone carries it in the wings, the edge
+     and a wash of the ground — never in the label, because three of the six
+     tones are too dark to set 0.62rem uppercase mono on. */
+  background: color-mix(in srgb, var(--tone, var(--ember)) 7%, rgba(11,8,18,0.72));
   backdrop-filter: blur(9px);
   -webkit-backdrop-filter: blur(9px);
-  border: 1px solid var(--hairline);
+  border: 1px solid color-mix(in srgb, var(--tone, var(--ember)) 30%, transparent);
   border-radius: 2px;
   min-height: 2.9rem;
   padding: 0 0.85rem;
@@ -574,13 +578,30 @@ body[data-panel="1"] .plate{ pointer-events: none; }
   white-space: nowrap;
   transition: color .16s ease, border-color .16s ease, background .16s ease;
 }
+/* The chip's mark is the butterfly itself, in that butterfly's colour —
+   same two wings the buttons use, drawn in CSS and costing nothing. */
 .cat-chip .wing{
-  width: 8px; height: 8px;
-  border-radius: 55% 45% 50% 50%;
-  background: var(--tone, var(--ember));
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--tone, var(--ember)) 16%, transparent);
+  position: relative;
+  width: 12px; height: 11px;
   flex: none;
+  display: inline-block;
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--tone, var(--ember)) 50%, transparent));
 }
+.cat-chip .wing::before,
+.cat-chip .wing::after{
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 5.5px; height: 11px;
+  background: var(--tone, var(--ember));
+  border-radius: 60% 40% 45% 55%;
+}
+.cat-chip .wing::before{ left: 0; transform: rotate(-16deg); transform-origin: right center; }
+.cat-chip .wing::after{ right: 0; transform: rotate(16deg); transform-origin: left center; }
+.cat-chip:hover .wing::before,
+.cat-chip:focus-visible .wing::before{ animation: flap-l 1.1s ease-in-out infinite; }
+.cat-chip:hover .wing::after,
+.cat-chip:focus-visible .wing::after{ animation: flap-r 1.1s ease-in-out infinite; }
 .cat-chip:hover, .cat-chip:focus-visible{
   color: var(--paper);
   border-color: color-mix(in srgb, var(--tone, var(--ember)) 55%, transparent);
@@ -590,9 +611,14 @@ body[data-panel="1"] .plate{ pointer-events: none; }
   background: color-mix(in srgb, var(--tone, var(--ember)) 12%, rgba(11,8,18,0.8));
   border-color: color-mix(in srgb, var(--tone, var(--ember)) 60%, transparent);
 }
-/* An empty category is not broken, only waiting — it says so on the chip. */
-.cat-chip[data-empty="1"] .wing{ opacity: 0.4; box-shadow: none; }
-.cat-chip[data-empty="1"]{ color: rgba(156,147,184,0.6); }
+/* An empty category is not broken, only waiting — it says so on the chip.
+   Its butterfly keeps its colour and loses its light. */
+.cat-chip[data-empty="1"] .wing{ opacity: 0.42; filter: none; }
+.cat-chip[data-empty="1"]{
+  color: rgba(156,147,184,0.6);
+  background: rgba(11,8,18,0.72);
+  border-color: var(--hairline);
+}
 .cat-chip .count{
   font-size: 0.56rem;
   color: rgba(156,147,184,0.65);
@@ -1896,7 +1922,11 @@ body[data-panel="1"] .plate{ pointer-events: none; }
 @media (prefers-reduced-motion: reduce){
   .haze::before{ animation: none; }
   .bt-btn:hover .mark::before,
-  .bt-btn:hover .mark::after{ animation: none; }
+  .bt-btn:hover .mark::after,
+  .cat-chip:hover .wing::before,
+  .cat-chip:hover .wing::after,
+  .cat-chip:focus-visible .wing::before,
+  .cat-chip:focus-visible .wing::after{ animation: none; }
   .gate, .gate-line, .gate-actions, .plate, .whisper, .photo,
   .beginning, .dock, .views, .eras{ transition: none; }
   .gate-line, .gate-actions{ opacity: 1; transform: none; }

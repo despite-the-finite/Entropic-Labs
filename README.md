@@ -364,6 +364,17 @@ except `id` is optional and the room degrades quietly: a story with a title
 and nothing else renders, it just renders sparely. The field list at the top
 of that file documents every supported key.
 
+**The butterflies are colour-coded**, and the code runs the whole way through:
+each category carries a `tone`, and that one value paints its chip in the dock,
+the butterfly that flies when you follow it, and the memory's own light on the
+trail. So the violet butterfly that leaves the Chaos chip arrives at a violet
+node. In the dock each chip is a butterfly drawn in CSS — the same two wings
+the buttons use — in its own colour, over a wash of that colour and inside an
+edge of it. The label itself stays ash: three of the six tones are too dark to
+set 0.62rem uppercase mono on, and colour-coding is not worth a contrast
+failure. A category with nothing in it keeps its colour and loses its light,
+because an empty category is waiting rather than broken.
+
 **Causality is the point.** `causedBy` and `consequences` state the edges;
 reciprocal links are filled in automatically at load, so each edge is written
 once in whichever direction reads better. A story with consequences grows a
