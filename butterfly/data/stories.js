@@ -1836,6 +1836,71 @@
       source: 'Dad',
       relatedStories: ['helen'],
       dateAdded: '2026-08-19'
+    },
+
+    {
+      id: 'the-big-secret',
+      title: 'The Big Secret Under the Pool',
+      hook: 'Three in the morning, and they had found something that could not wait.',
+      year: 2013,
+      approximateDate: '2013',
+      strand: 'karsh',
+      location: 'Denver, Colorado',
+      place: 'denver',
+      category: 'family-lore',
+      tags: [
+        'denver', 'colorado', 'brothers', 'roommates', 'friends',
+        'funny memories', 'the 300 building'
+      ],
+      people: [
+        { name: 'Karsh', relation: 'me, asleep' },
+        { name: 'Kush', relation: 'my brother, visiting' },
+        { name: 'Josh', relation: 'my roommate' }
+      ],
+      story: [
+        'In 2013, I was living in downtown Denver with my roommate Josh at the 300 building.',
+        'That year, my brother Kush came to visit me in Colorado. We had a great time while he was there, and one weekend the three of us decided to go out and party.',
+        'It had been a stressful week for me, though, and at some point my body decided it was done.',
+        'I went home and went to bed.',
+        'Kush and Josh, apparently, were nowhere near done.',
+        'Sometime around 3:00 in the morning, I was abruptly woken up by the two of them.',
+        'They were extremely excited.',
+        'They had discovered something.',
+        'Something important.',
+        'A big secret.',
+        'I was half asleep, completely disoriented, and had absolutely no idea what they were talking about. But they insisted that I get up because I had to see what they had found.',
+        'So, against my better judgment, I followed them.',
+        'They led me down toward the apartment’s swimming pool.',
+        'At this point I’m probably imagining that they’ve found some hidden rooftop access, a secret room, an underground tunnel — something that might remotely justify waking a sleeping person at three in the morning.',
+        'No.',
+        'Their incredible discovery was…',
+        { kind: 'reveal', text: 'the pool equipment room.' },
+        'Somehow, Kush and Josh had discovered the chlorine and chemical storage and pump area underneath the apartment swimming pool.',
+        'And they were absolutely fascinated by it.',
+        'Pumps.',
+        'Pipes.',
+        'Pool chemicals.',
+        'This was the big secret that apparently could not wait until morning.',
+        'I stood there, barely conscious, trying to understand why two grown men had dragged me out of bed at 3:00 a.m. to proudly show me the *mechanical infrastructure* of our apartment swimming pool.',
+        'They thought it was hilarious.',
+        'I did not.',
+        'At the time, I hated them for waking me up. I thought the entire thing was one of the stupidest things I’d ever experienced.',
+        'Which, of course, is exactly why I remember it.',
+        'More than a decade later, we still laugh about the night Kush and Josh made the archaeological discovery of the century beneath a downtown Denver swimming pool.',
+        'To this day, I have no idea how long those two were hanging around down there — or how many chemical fumes they inhaled.',
+        { kind: 'landing', text: 'But considering the people they became, I can’t completely rule out a connection.' }
+      ],
+      artifact: {
+        label: 'Memory artifact',
+        title: 'A pool equipment room, 300 building',
+        lines: [
+          { label: 'At 3:00 a.m.', text: 'The archaeological discovery of the century.' },
+          { label: 'In daylight', text: 'Pumps. Pipes. Pool chemicals.' }
+        ]
+      },
+      source: 'Karsh',
+      relatedStories: ['gin-joints', 'someone-dumped-my-bike'],
+      dateAdded: '2026-08-19'
     }
   ];
 
