@@ -1056,6 +1056,21 @@
         place(snd);
         return;
       }
+      if (p.kind === 'verse') {
+        /* A line in another language, with what it means underneath rather
+           than instead of it. The original is the bigger of the two on
+           purpose: a translation is a gloss, not a replacement, and in this
+           family the line and its meaning are not the same object. `lang`
+           is set on the line itself so a screen reader stops reading Hindi
+           as though it were English. */
+        var v = el('div', 'verse');
+        var vline = setText(el('p', 'verse-line'), p.text || '');
+        if (p.lang) vline.setAttribute('lang', p.lang);
+        v.appendChild(vline);
+        if (p.meaning) v.appendChild(setText(el('p', 'verse-meaning'), p.meaning));
+        place(v);
+        return;
+      }
       if (p.kind === 'dedication') {
         /* Who the telling was for. Set apart under a rule and given the
            end of the page to itself, because a memory written down for

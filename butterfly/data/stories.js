@@ -91,10 +91,19 @@
                          a noise, transcribed. Set in the mono face and
                          split on the spaces, so the syllables land in
                          order rather than all at once
+                     { kind: 'verse', lang: 'hi-Latn',
+                       text: 'Dost bhi peeche chhoot jaate hain.',
+                       meaning: 'Friends, too, get left behind.' }
+                         a line in another language, with what it means
+                         underneath rather than instead of it. `lang`
+                         is set on the line so a screen reader does not
+                         read it as English. `meaning` is optional
                      { kind: 'dedication', text: 'For Helen.',
                        line: 'One of the finest minds I ever knew.' }
-                         who the telling was for. Set apart under a
-                         rule at the end of a story. `line` is optional
+                         the closing line that stands outside the
+                         telling — a dedication, or the sign-off of a
+                         letter. Set apart under a rule at the end.
+                         `line` is optional
                      { kind: 'reveal',  text: 'That guy was Amr.' }
                          the line the story turns on. Arrives out of
                          focus and resolves as it is reached
@@ -407,6 +416,30 @@
       country: 'Mauritius',
       lat: -20.28,
       lon: 57.55
+    },
+    {
+      /* Three countries, at country level. A letter that says India,
+         Zambia and America and does not say where in them gets exactly
+         that much precision and no more. */
+      id: 'india',
+      name: 'India',
+      country: 'India',
+      lat: 22.0,
+      lon: 79.0
+    },
+    {
+      id: 'zambia',
+      name: 'Zambia',
+      country: 'Zambia',
+      lat: -13.1,
+      lon: 27.9
+    },
+    {
+      id: 'america',
+      name: 'United States',
+      country: 'United States',
+      lat: 39.0,
+      lon: -98.0
     },
     {
       id: 'lookout-mountain',
@@ -1645,6 +1678,164 @@
       source: 'Karsh',
       relatedStories: ['momo', 'gin-joints'],
       dateAdded: '2026-08-19'
+    },
+
+    {
+      id: 'my-dearest-sons',
+      title: 'My Dearest Sons',
+      hook: 'A letter from your father, with a brave face but without hiding the truth.',
+      year: 2026,
+      approximateDate: 'The morning of 15th August',
+      strand: 'dad',
+      location: 'A foreign land',
+      place: 'america',
+      journey: [
+        {
+          id: 'india',
+          place: 'india',
+          flag: '🇮🇳',
+          label: 'India',
+          note: 'A village, a medical college, a Tiranga going up'
+        },
+        {
+          id: 'zambia',
+          place: 'zambia',
+          flag: '🇿🇲',
+          label: 'Zambia',
+          note: 'Where you actually grew up'
+        },
+        {
+          id: 'america',
+          place: 'america',
+          flag: '🇺🇸',
+          label: 'America',
+          note: 'A foreign land. Where the letter is written from.'
+        },
+        {
+          id: 'moved',
+          arrival: true,
+          flag: '✦',
+          label: 'It has moved into you',
+          note: 'Not a place. Two pillars standing tall.'
+        }
+      ],
+      category: 'love',
+      tags: [
+        'india', 'zambia', 'america', 'family', 'fathers', 'friendship',
+        'grief', 'independence day', 'medical school', 'poetry', 'ageing',
+        'immigration', 'hindi'
+      ],
+      people: [
+        { name: 'Dad', relation: 'the writer' },
+        { name: 'Sunil Saxena', relation: 'his best friend' },
+        { name: 'Karsh' },
+        { name: 'Kush' }
+      ],
+      story: [
+        {
+          text: 'My Dearest Sons,',
+          at: 'india'
+        },
+        'You were so small when you lived in India that you hardly remember it. You grew up mostly in Zambia, and now you are building your own lives in America. You have lived in three countries, but you have known your father in only one form. Strong. A pillar. That is why I am writing you this one long letter today, with all the facts of my life put together, tenderly and truly, with a brave face but without hiding the truth.',
+        'At 70, I can say one thing with absolute certainty, you both are extremely loving, sensitive and very, very intelligent, and you love me and respect me genuinely. At my age, I cannot be wrong about this. That knowledge is my final gold medal.',
+        'I want to start this letter from where this whole storm started in my heart this morning.',
+        'I was writing in Hindi to myself, a line that has been haunting me for days:',
+        {
+          kind: 'verse',
+          lang: 'hi-Latn',
+          text: 'Jaise jaise hum zindagi ki raah mein aage jaate hain, kuch na kuch peeche chhoot jaata hai. Kuch nahi, hamari aatma ke tukde peeche chhoot jaate hain.',
+          meaning: 'As we move forward on the road of life, we leave behind chunks of our own soul.'
+        },
+        'First the house is left behind, then the family, then the neighborhood, then childhood, then the city. Then rozi roti, our work, or call it prarabdha, our destiny, drags many of us out of our own country. We become immigrants in a foreign land. And now, at this age, even memories are slowly leaving me. Slowly, quietly, they are saying goodbye.',
+        'Today that pain is sharper because today is 15th August, India’s Independence Day. I am an Indian by birth. That is why this storm is so strong today. For you it may be just a date on the American calendar, because you were too small to remember it. For me it is the day my chest used to swell. I remember the white shirt ironed by my mother the night before, the dusty school ground, the PT teacher shouting, and the Tiranga going up slowly while we all sang Jana Gana Mana with all our strength. I wrote about all this yesterday for my old batchmates group, and they said it touched their hearts. Because we all left that same ground and got scattered.',
+        'But today there is not one storm in my heart, there are two storms colliding. The second storm came two days ago.',
+        'Two days ago, I lost my best friend, Sunil Saxena. With him, a part of my life and a part of my soul has been cut off. I am crying a very silent cry.',
+        'I have never told you fully how much I owe to Sunil. I want you to know him, because you carry his gift inside you.',
+        'I entered medical school as a village bum. A scared, shy, timid, unpolished boy from a village who did not know how to speak in a city college.',
+        'I failed my very first stage viva in MBBS, in Anatomy.',
+        'I thought I was finished. I thought I did not belong there.',
+        'That is when Sunil took me under his wings. He was intellectually generous in a way very few people are. He did not give me sympathy, he gave me confidence. He helped me realize who I was, and who I could become.',
+        'He helped me discover myself.',
+        'Whenever I shook, he would give that big, unforgettable smile of his and say,',
+        {
+          kind: 'verse',
+          lang: 'hi-Latn',
+          text: 'Arre yaar, ye toh tumhare liye kuch nahi hai.',
+          meaning: 'This is nothing for you.'
+        },
+        {
+          text: 'My sons, you have heard me say that exact line to you your whole life, in Zambia when you fell from your cycle, in America when you were struggling for a job. Now you know where your father got it from. I got it from Sunil.',
+          at: 'zambia'
+        },
+        'My entire journey, from failing my first examination — Anatomy viva — to winning the Gold Medal in Pediatrics, that journey is his.',
+        'My journey from hiding my poems to winning the Gold Medal in Hindi Poetry at Medifest, that journey is also his.',
+        'He is the one who told me my inner poet should be allowed to bloom. He shaped a village bum into a gold medalist.',
+        'And now he is gone. And I have learned the most painful line of my original reflection:',
+        {
+          kind: 'verse',
+          lang: 'hi-Latn',
+          text: 'Dost bhi peeche chhoot jaate hain.',
+          meaning: 'Friends, too, get left behind.'
+        },
+        'I told you I have two storms. One is the joy of Independence Day, the memory of my Tiranga.',
+        'The other is the grief of losing Sunil, a loss of a part of my soul.',
+        {
+          text: 'Between these two storms, I am standing on a foreign land, remembering a country you hardly remember, remembering a friend you never met but who made your father.',
+          at: 'america'
+        },
+        'And that brings me to my third and deepest fear, which is about you both.',
+        'I love you both so much that I am scared. Really, really scared.',
+        'I feel my power declining. I feel my steps becoming slower. I feel I am nearing my final station, where one day I will have to leave the train.',
+        'My fear is not about leaving the train. My fear is about how you will see your father leaving it. You have always seen me as a strong pillar in your life. How will you see that pillar gradually eroding? How will you see your father, who you always saw as strong, getting older, repeating a story, searching for a name, holding your hand a little tighter for balance?',
+        'I can go on and on, but you get the idea. I have spent my life protecting you from every storm. I want to keep a brave face. I do not want my fear to become your burden.',
+        'But please always remember a brave face is not a false face.',
+        'A brave face is a face that tells the truth *tenderly*.',
+        'So here is the tender and real truth:',
+        'Yes, I am getting older. That is real. I will not hide it.',
+        'But no, my love for you is not eroding. My pride in you is not eroding.',
+        'You lived in India when you were too small to remember, you lived in Zambia where you actually grew up, and now you live in America where you are becoming men I am so proud of.',
+        'You too have left behind so much yourselves, just like me. You know what leaving means.',
+        'And still, you carry your father with love and respect.',
+        'That is why I know my strength has not disappeared.',
+        { text: 'It has just moved. It has moved into you.', at: 'moved' },
+        'So when you see my steps slow down, do not see a pillar eroding.',
+        'See a pillar that has successfully transferred its strength into two other pillars, which are now standing tall in America.',
+        'My heart today is full of three songs that I have been humming since morning. Let me give them to you with their meaning, so you remember them even if you hardly remember India:',
+        {
+          kind: 'verse',
+          lang: 'hi-Latn',
+          text: 'Koi lauta de mere beete hue din.',
+          meaning: 'Someone, please bring back my bygone days.'
+        },
+        {
+          kind: 'verse',
+          lang: 'hi-Latn',
+          text: 'Zindagi ke safar mein guzar jaate hain jo mukaam, woh phir nahi aate.',
+          meaning: 'The milestones we pass on the journey of life never come again.'
+        },
+        {
+          kind: 'verse',
+          lang: 'hi-Latn',
+          text: 'Main jahan rahun, main kahin bhi hun, teri yaad saath hai.',
+          meaning: 'Wherever I am, wherever I live, your memory is with me.'
+        },
+        'That memory is my house, my village, my India, my Zambia, my batchmates, and Sunil Saxena. And that memory is you both.',
+        'My body is in a foreign land, yours is in America, but my soul today is in India, hoisting the flag, and right next to Sunil, who is still smiling and saying, “Arre yaar, ye toh tumhare liye kuch nahi hai.”',
+        'Take this letter as my whole life combined. The boy who left his home, the student who failed and then won gold medals because of a friend, the Indian who still cries on 15th August, the friend who lost a part of his soul two days ago, and the father who is scared because he loves his sons so much, but who is keeping a brave face because he loves you even more.',
+        { kind: 'landing', text: 'If you ever see tears in my eyes, do not think the pillar has fallen. Think that your father loves you so much that his eyes could not hold it anymore.' },
+        { kind: 'dedication', text: 'Always yours,', line: 'Dad' }
+      ],
+      artifact: {
+        label: 'Memory artifact',
+        title: '“Arre yaar, ye toh tumhare liye kuch nahi hai.”',
+        lines: [
+          { label: 'Sunil said it to Dad', text: 'A village boy who had just failed his first viva.' },
+          { label: 'Dad said it to us', text: 'In Zambia, off a bicycle. In America, out of work.' }
+        ]
+      },
+      source: 'Dad',
+      relatedStories: ['helen'],
+      dateAdded: '2026-08-19'
     }
   ];
 
@@ -1865,7 +2056,7 @@
       var LISTED = ['plan', 'found'];        /* kinds whose content is `items` */
       /* kinds whose content is `text` */
       var SPOKEN = ['shout', 'beat', 'landing', 'heading', 'sound', 'reveal',
-                    'dedication'];
+                    'dedication', 'verse'];
       (s.story || []).forEach(function (p, pi) {
         if (typeof p === 'string' || !p) return;
         var where = at + ': paragraph ' + pi;

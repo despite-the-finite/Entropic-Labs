@@ -415,10 +415,13 @@ string. Where the telling needs one, an entry can instead be an object with a
 when read), `reveal` (the line a story turns on: it arrives out of focus and
 resolves as it is reached — the words are in the document from the start, so
 only the focus is withheld and nothing is hidden from a screen reader),
-`landing` (a quiet line, given room), `dedication` (who the telling was for,
-set apart under a rule at the end of a story — the one block in the room that
-never performs, since a memory written down for somebody who is gone is doing
-something the rest of the story is not), `found` (words as they were seen — a
+`landing` (a quiet line, given room), `verse` (a line in another language with
+what it means underneath rather than instead of it — the original stays the
+larger of the two, because a translation is a gloss and not a replacement, and
+`lang` goes on the line so a screen reader stops reading Hindi as English),
+`dedication` (the closing line that stands outside the telling — a dedication,
+or the sign-off of a letter — set apart under a rule at the end; the one block
+in the room that never performs), `found` (words as they were seen — a
 menu, a sign, a letter, a line everybody knows), `sound` (a noise, transcribed: set in the
 mono face and split on the spaces, so `Bmm. Tss. Pff.` lands one syllable
 after the one before) and `heading` (a chapter break inside a long story, set

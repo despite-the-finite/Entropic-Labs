@@ -1109,6 +1109,32 @@ body[data-panel="1"] .plate{ pointer-events: none; }
 .sound .syll{ opacity: 0.16; transition: opacity 0.5s ease; }
 .sound.seen .syll{ opacity: 1; }
 
+/* A line in another language, and what it means. Same left rule as a
+   transcribed noise, because both are lines lifted out of the telling and
+   set down as they were — but this one is spoken, so it keeps the display
+   face and the original stays the larger of the two. */
+.verse{
+  margin: 1.7rem 0;
+  padding-left: 1.15rem;
+  border-left: 1px solid rgba(255,196,107,0.28);
+}
+.verse-line{
+  font-family: var(--font-display);
+  text-transform: none;
+  font-size: clamp(1.02rem, 2.4vw, 1.26rem) !important;
+  line-height: 1.5 !important;
+  color: var(--ember) !important;
+  margin: 0 !important;
+}
+.verse-meaning{
+  font-family: var(--font-mono);
+  font-size: 0.66rem !important;
+  letter-spacing: 0.12em;
+  line-height: 1.95 !important;
+  color: var(--ash) !important;
+  margin: 0.55rem 0 0 !important;
+}
+
 /* Who the telling was for. A rule, a lot of air, and two quiet lines.
    The only motion is a fade, and under reduced motion not even that. */
 .dedication{
