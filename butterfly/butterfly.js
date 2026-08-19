@@ -252,8 +252,21 @@
   var axisEnd = (axis.length ? axis[axis.length - 1].t : 0) + RUN_ON;
 
   /* The earliest branch anybody takes — where an undated confluence has to
-     sit before, since a marriage precedes the children that come out of it. */
-  var firstDated = axis.length ? axis[0].t : 0;
+     sit before, since a marriage precedes the children that come out of it.
+
+     A branch, specifically, and not the earliest dated anything: a memory
+     can be older than every birth on the braid — somebody's parents had a
+     life before the children — and anchoring to the axis start would slide
+     the marriage back behind that memory, silently claiming a wedding that
+     nobody recorded happened earlier than it did. */
+  var branchYears = [];
+  strands.forEach(function (s) {
+    var y = startYear(s);
+    if (y !== null) branchYears.push(y);
+  });
+  var firstDated = branchYears.length
+    ? axisT(Math.min.apply(null, branchYears))
+    : (axis.length ? axis[0].t : 0);
   var undatedT = firstDated - UNDATED_BACKOFF;
 
   /* A year on the axis, where null means "nobody wrote it down". */

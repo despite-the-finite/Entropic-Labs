@@ -418,6 +418,14 @@
       lon: 57.55
     },
     {
+      id: 'lucknow',
+      name: 'Lucknow',
+      region: 'Uttar Pradesh',
+      country: 'India',
+      lat: 26.85,
+      lon: 80.95
+    },
+    {
       /* Three countries, at country level. A letter that says India,
          Zambia and America and does not say where in them gets exactly
          that much precision and no more. */
@@ -2021,6 +2029,133 @@
       },
       source: 'Karsh',
       relatedStories: ['dont-haggle', 'gin-joints'],
+      dateAdded: '2026-08-19'
+    },
+
+    {
+      id: 'sunil',
+      title: 'Sunil — The Friend Who Made Me',
+      hook: 'A village boy who had just failed Anatomy, and the classmate who decided that was nothing.',
+      year: 1973,
+      approximateDate: '1973, and everything after',
+      strand: 'dad',
+      location: 'Lucknow, India',
+      place: 'lucknow',
+      landmark: {
+        name: 'King George’s Medical University',
+        query: "King George's Medical University Lucknow"
+      },
+      journey: [
+        {
+          id: 'kgmu',
+          place: 'lucknow',
+          flag: '🇮🇳',
+          label: 'King George’s Medical University, Lucknow',
+          note: '1973. A failed Anatomy viva.',
+          url: 'https://www.google.com/maps/search/?api=1&query=King+George%27s+Medical+University+Lucknow'
+        },
+        {
+          id: 'zambia',
+          place: 'zambia',
+          flag: '🇿🇲',
+          label: 'Zambia',
+          note: 'The same sentence, to a boy off his bicycle'
+        },
+        {
+          id: 'america',
+          place: 'america',
+          flag: '🇺🇸',
+          label: 'America',
+          note: 'The same sentence, to a young man out of work'
+        },
+        {
+          id: 'still-saying-it',
+          arrival: true,
+          flag: '✦',
+          label: 'Fifty years of saying it',
+          note: 'They think the sentence is mine'
+        }
+      ],
+      category: 'triumphs',
+      chaosEvent: true,
+      tags: [
+        'india', 'lucknow', 'medical school', 'friendship', 'poetry',
+        'zambia', 'america', 'immigration', 'grief', 'hindi', 'fathers'
+      ],
+      people: [
+        { name: 'Dad', relation: 'the writer, then a first-year student' },
+        { name: 'Sunil Saxena', relation: 'his friend, from 1973' }
+      ],
+      story: [
+        {
+          text: 'I met Sunil Saxena in 1973, and I have been living inside the consequences ever since.',
+          at: 'kgmu'
+        },
+        'I came to medical college as a village bum. That is the only honest way to say it. A scared, shy, timid, unpolished boy from a village, who did not know how to speak in a city college.',
+        'Then I failed my very first stage viva in MBBS. Anatomy.',
+        'I thought I was finished. I thought I did not belong there.',
+        'That is when Sunil took me under his wings.',
+        'He was intellectually generous in a way very few people are. He did not give me sympathy. He gave me confidence. He helped me realize who I was, and who I could become.',
+        'He helped me discover myself.',
+        'Whenever I shook, he would give that big, unforgettable smile of his and say:',
+        {
+          kind: 'verse',
+          lang: 'hi-Latn',
+          text: 'Arre yaar, ye toh tumhare liye kuch nahi hai.',
+          meaning: 'This is nothing for you.'
+        },
+        'He said it so often that it stopped being encouragement and became a fact about the world.',
+        'My entire journey, from failing that first Anatomy viva to winning the Gold Medal in Pediatrics, is his.',
+        'And there was a second thing, which I had told nobody. I wrote poems, and I hid them. Sunil is the one who told me my inner poet should be allowed to bloom. I let it bloom, and at Medifest I won the Gold Medal in Hindi Poetry.',
+        'He shaped a village bum into a gold medalist.',
+
+        { kind: 'heading', text: 'Everything After Was Leaving' },
+        {
+          text: 'First the house is left behind, then the family, then the neighborhood, then childhood, then the city. Then rozi roti, our work, or call it prarabdha, our destiny, drags many of us out of our own country altogether.',
+          at: 'zambia'
+        },
+        {
+          kind: 'verse',
+          lang: 'hi-Latn',
+          text: 'Jaise jaise hum zindagi ki raah mein aage jaate hain, kuch na kuch peeche chhoot jaata hai. Kuch nahi, hamari aatma ke tukde peeche chhoot jaate hain.',
+          meaning: 'As we move forward on the road of life, we leave behind chunks of our own soul.'
+        },
+        'I became an immigrant. My sons were too small in India to remember it, grew up in Zambia, and are men in America now.',
+        'And every 15th August I am still a boy in a white shirt my mother ironed the night before, standing on a dusty school ground while the PT teacher shouts and the Tiranga goes up and all of us sing Jana Gana Mana with everything we have.',
+        'We all left that same ground and got scattered.',
+
+        { kind: 'heading', text: 'Two Days Ago' },
+        'Sunil died this year. I am 70.',
+        'With him, a part of my life and a part of my soul has been cut off. I am crying a very silent cry.',
+        'And I have learned the most painful line of my own reflection:',
+        {
+          kind: 'verse',
+          lang: 'hi-Latn',
+          text: 'Dost bhi peeche chhoot jaate hain.',
+          meaning: 'Friends, too, get left behind.'
+        },
+
+        { kind: 'heading', text: 'What He Actually Gave Me' },
+        'For more than fifty years I have been handing out his sentence without telling anyone whose it was.',
+        {
+          text: 'In Zambia, to a boy who had come off his bicycle. In America, to a young man who could not find work. Arre yaar, ye toh tumhare liye kuch nahi hai.',
+          at: 'america'
+        },
+        { text: 'My sons think it is *mine*.', at: 'still-saying-it' },
+        'It is not. It is Sunil’s. It has crossed three countries and two generations on its way to people he never met, and it started in 1973, with a village bum who had just failed Anatomy and a boy who decided that was nothing.',
+        { kind: 'landing', text: 'He shaped a village bum into a gold medalist. I have been giving his sentence away ever since.' }
+      ],
+      artifact: {
+        label: 'Memory artifact',
+        title: 'Two gold medals',
+        lines: [
+          { label: 'Pediatrics', text: 'Won by a boy who failed his first Anatomy viva.' },
+          { label: 'Hindi Poetry, Medifest', text: 'Won by a boy who used to hide his poems.' }
+        ]
+      },
+      source: 'Dad — drawn from his letter of 15th August',
+      consequences: ['my-dearest-sons'],
+      relatedStories: ['helen'],
       dateAdded: '2026-08-19'
     }
   ];

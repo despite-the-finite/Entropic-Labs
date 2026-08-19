@@ -375,6 +375,13 @@ set 0.62rem uppercase mono on, and colour-coding is not worth a contrast
 failure. A category with nothing in it keeps its colour and loses its light,
 because an empty category is waiting rather than broken.
 
+**An undated confluence sits before the earliest branch**, not before the
+earliest dated anything. A marriage precedes the children that come out of it,
+so that is what it is anchored to — and the distinction is not academic: a
+memory can be older than every birth on the braid, because people had lives
+before their children, and anchoring to the axis start would slide an
+unrecorded wedding back behind it and silently claim a date nobody wrote down.
+
 **Causality is the point.** `causedBy` and `consequences` state the edges;
 reciprocal links are filled in automatically at load, so each edge is written
 once in whichever direction reads better. A story with consequences grows a
