@@ -1906,6 +1906,122 @@
       source: 'Karsh',
       relatedStories: ['gin-joints', 'someone-dumped-my-bike'],
       dateAdded: '2026-08-19'
+    },
+
+    {
+      id: 'the-storm',
+      title: 'The Storm Is What Calms Me',
+      hook: 'Some decisions take weeks of planning. This one was made at a bar.',
+      year: 2014,
+      approximateDate: '2014',
+      strand: 'karsh',
+      location: 'Denver, Colorado',
+      place: 'denver',
+      landmark: {
+        name: 'Colfax Avenue',
+        query: 'Colfax Avenue Denver Colorado'
+      },
+      journey: [
+        {
+          id: 'williams',
+          place: 'denver',
+          flag: '🍺',
+          label: 'Williams Tavern',
+          note: 'Where the idea was had',
+          url: 'https://www.google.com/maps/search/?api=1&query=Williams+Tavern+Denver+Colorado'
+        },
+        {
+          id: 'colfax',
+          place: 'denver',
+          flag: '🛹',
+          label: 'Colfax Avenue',
+          note: 'Late, and somebody was still open',
+          url: 'https://www.google.com/maps/search/?api=1&query=Colfax+Avenue+Denver+Colorado'
+        },
+        {
+          id: 'still-true',
+          arrival: true,
+          flag: '✦',
+          label: 'More than a decade later',
+          note: 'The storm keeps changing. The words do not.'
+        }
+      ],
+      category: 'adventure',
+      tags: [
+        'denver', 'colorado', 'tattoo', 'colfax', 'skateboarding',
+        'friends', 'structural engineering', 'nights out', 'the 300 building'
+      ],
+      people: [
+        { name: 'Karsh', relation: 'me, three tattoos in' },
+        { name: 'Kyle Stookey', relation: 'bartender at Williams, and a good friend' }
+      ],
+      story: [
+        'There are some decisions you make after weeks of careful planning.',
+        'And then there are decisions you make late at night with a friend, after hanging out at a bar, before grabbing your skateboard and heading toward Colfax Avenue.',
+        'This is one of those stories.',
+        {
+          text: 'In 2014, I was living downtown Denver at the 300 building. By then, Williams Tavern had become one of my regular spots. It was close to home, unpretentious, and filled with characters who gradually became friends.',
+          at: 'williams'
+        },
+        'One of them was Kyle Stookey.',
+        'Kyle was a bartender at Williams, but he was also a good friend of mine at the time. We had a lot in common — similar interests, similar views on things, and, perhaps most importantly for this particular story, a shared appreciation for having a very good time.',
+        'One night, while Kyle was working and I was hanging out at Williams, we came up with an idea.',
+        'We were getting tattoos tonight.',
+        'Not tomorrow.',
+        'Not after making appointments.',
+        'Tonight.',
+        'Of course, Kyle still had a shift to finish, so our brilliant plan had to wait until he got off work.',
+        'By then it was late.',
+        'And we’d been having fun.',
+        'The kind of fun that does not traditionally improve a person’s decision-making abilities.',
+        'But the plan had been made.',
+        { text: 'So we grabbed our skateboards and headed out into downtown Denver.', at: 'colfax' },
+        'Our destination was Colfax Avenue.',
+        'Anyone who has spent enough time in Denver knows that Colfax has always had a certain reputation. It’s a street where something is always happening. And late at night, when most respectable tattoo shops had long since closed, Colfax seemed like exactly the sort of place where two guys might still find someone willing to permanently alter their bodies.',
+        'Eventually, we found one.',
+        'Kyle apparently had already reached deep into his soul and determined what permanent symbol best represented his existence on Earth.',
+        { kind: 'reveal', text: 'The Miller High Life logo.' },
+        'Why?',
+        'I genuinely have no idea.',
+        'But while Kyle’s inspiration apparently came from the Champagne of Beers, mine had been sitting in my head for quite a while.',
+        'Because underneath the ridiculous circumstances of that night, I actually knew exactly what I wanted.',
+        'At that point in my life, I was working toward my SE — my Structural Engineering license. It was a serious goal and a difficult one. There was studying ahead of me, pressure ahead of me, and a challenge that I knew wasn’t going to be easy.',
+        'People sometimes talk about preparing for difficult things by appreciating the calm before the storm.',
+        'I’ve never really understood that.',
+        'Waiting makes me restless.',
+        'Knowing that something difficult is coming doesn’t make me want to sit peacefully and enjoy the quiet. I’d rather *begin*. I’d rather be moving. I’d rather be solving the problem, climbing the mountain, taking the test — whatever the challenge happens to be.',
+        'The anticipation is often worse than the thing itself.',
+        'Once I’m actually in it, something changes.',
+        'The noise disappears.',
+        'There is only the problem in front of me.',
+        'And strangely, that’s where I tend to find my calm.',
+        'That idea had been circling around in my head long before that night at Williams. The SE was simply the storm immediately in front of me.',
+        'So somewhere on Colfax Avenue, ridiculously late at night, after skateboarding across downtown Denver with a bartender who had just permanently pledged allegiance to Miller High Life, I finally put the thought into words.',
+        'And then I put those words permanently on myself:',
+        {
+          kind: 'found',
+          items: ['“How can I enjoy the calm before the storm, when the storm is what calms me?”']
+        },
+        'That became my third tattoo.',
+        { text: 'More than a decade later, I still wear it proudly.', at: 'still-true' },
+        'Not because of the ridiculous night that produced it.',
+        'Not because of Williams Tavern, the skateboards, Colfax, or even the SE.',
+        'Because the storm keeps changing.',
+        'There is always another difficult thing somewhere ahead.',
+        'And all these years later, the words are still true.',
+        { kind: 'landing', text: 'The storm is what calms me.' }
+      ],
+      artifact: {
+        label: 'Memory artifact',
+        title: 'A third tattoo, somewhere on Colfax',
+        lines: [
+          { label: 'What it says', text: '“How can I enjoy the calm before the storm, when the storm is what calms me?”' },
+          { label: 'Why it is still there', text: 'The storm keeps changing. The words do not.' }
+        ]
+      },
+      source: 'Karsh',
+      relatedStories: ['dont-haggle', 'gin-joints'],
+      dateAdded: '2026-08-19'
     }
   ];
 
