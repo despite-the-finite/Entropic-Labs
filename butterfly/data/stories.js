@@ -1121,8 +1121,9 @@
           id: 'denver',
           place: 'denver',
           flag: '🏔',
-          label: 'Denver, Colorado',
-          note: 'A building called 300. Two floors apart.'
+          label: 'The 300 building, Denver',
+          note: 'His floor was the 12th. Mine was the 14th.',
+          url: 'https://www.google.com/maps/search/?api=1&query=300+E+17th+Ave+Denver+CO'
         },
         {
           id: 'tavern',
@@ -1847,6 +1848,10 @@
       strand: 'karsh',
       location: 'Denver, Colorado',
       place: 'denver',
+      landmark: {
+        name: 'The 300 building',
+        query: '300 E 17th Ave Denver CO'
+      },
       category: 'family-lore',
       tags: [
         'denver', 'colorado', 'brothers', 'roommates', 'friends',
