@@ -101,6 +101,7 @@
       alternatePath: s.alternatePath || null,
       disputed: s.disputed || false,
       classified: s.classified || false,
+      warning: arr(s.warning),
       chaosEvent: !!s.chaosEvent,
       featured: !!s.featured,
       dateAdded: s.dateAdded || ''
@@ -1006,11 +1007,41 @@
   /* A word the story turns on, marked *like this* in the data. Split on the
      asterisks and set every other piece warm — no parser, no dependency, and
      the data file still reads as plain sentences. */
+  /* Inline marks, in one pass:
+
+       *asterisks*        the room's warm emphasis
+       [[story-id]]       a link to another memory, titled from the archive
+       [[story-id|words]] the same, said in your own words
+
+     A memory that refers to another one in the middle of a sentence should
+     be able to go there, rather than making the reader find it in a list at
+     the bottom. Emphasis is split per chunk, so a link between two emphasised
+     words never inverts the ones after it. An id that is not in the archive
+     is printed as plain text rather than as a dead control. */
   function setText(node, text) {
-    String(text).split('*').forEach(function (piece, i) {
-      if (!piece) return;
-      if (i % 2) node.appendChild(el('em', 'warm', piece));
-      else node.appendChild(doc.createTextNode(piece));
+    String(text).split(/(\[\[[^\]]+\]\])/).forEach(function (chunk) {
+      if (!chunk) return;
+      var m = /^\[\[([^\]|]+)(?:\|([^\]]+))?\]\]$/.exec(chunk);
+      if (m) {
+        var id = m[1].trim();
+        var said = (m[2] || '').trim();
+        var target = byId[id];
+        if (!target) {
+          node.appendChild(doc.createTextNode(said || id));
+          return;
+        }
+        var link = el('button', 'st-jump', said || target.title);
+        link.type = 'button';
+        link.setAttribute('aria-label', 'Read ' + target.title);
+        link.addEventListener('click', function () { go('#' + id); });
+        node.appendChild(link);
+        return;
+      }
+      chunk.split('*').forEach(function (piece, i) {
+        if (!piece) return;
+        if (i % 2) node.appendChild(el('em', 'warm', piece));
+        else node.appendChild(doc.createTextNode(piece));
+      });
     });
     return node;
   }
@@ -1067,6 +1098,22 @@
           snd.appendChild(s);
         });
         place(snd);
+        return;
+      }
+      if (p.kind === 'figure') {
+        /* A drawing the story needs and the room cannot compute — a chart,
+           a diagram, a joke with axes. The SVG lives in the data file with
+           the words, because it is content and not machinery. It is given
+           role="img" and the `alt` text so it says the same thing to a
+           reader who cannot see it. */
+        var fig = el('figure', 'st-figure');
+        var art = el('div', 'fig-art');
+        art.innerHTML = p.svg || '';
+        art.setAttribute('role', 'img');
+        art.setAttribute('aria-label', p.alt || '');
+        fig.appendChild(art);
+        if (p.caption) fig.appendChild(setText(el('figcaption'), p.caption));
+        place(fig);
         return;
       }
       if (p.kind === 'verse') {
@@ -1679,6 +1726,22 @@
     inner.appendChild(title);
     if (s.hook) inner.appendChild(el('p', 'st-hook', s.hook));
     renderWhere(s, inner);
+
+    /* What the reader is walking into. Above the telling rather than
+       buried in it, because a warning that arrives late is not one. */
+    if (s.warning && s.warning.length) {
+      var warn = el('aside', 'st-warning');
+      warn.setAttribute('role', 'note');
+      var wmark = el('span', 'warn-mark', '⚠');
+      wmark.setAttribute('aria-hidden', 'true');
+      warn.appendChild(wmark);
+      var wbody = el('div', 'warn-body');
+      s.warning.forEach(function (line) {
+        wbody.appendChild(setText(el('p'), line));
+      });
+      warn.appendChild(wbody);
+      inner.appendChild(warn);
+    }
 
     /* flags */
     var flags = el('div', 'flags');

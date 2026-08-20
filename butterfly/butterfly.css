@@ -1135,6 +1135,69 @@ body[data-panel="1"] .plate{ pointer-events: none; }
 .sound .syll{ opacity: 0.16; transition: opacity 0.5s ease; }
 .sound.seen .syll{ opacity: 1; }
 
+/* What the reader is walking into. Stated plainly and got out of the way —
+   a warning that performs is a warning nobody believes. */
+.st-warning{
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  margin: 1.4rem 0 0;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(255,196,107,0.28);
+  border-left-width: 2px;
+  background: rgba(255,196,107,0.05);
+  border-radius: 2px;
+}
+.st-warning .warn-mark{ font-size: 0.9rem; line-height: 1.5; flex: none; }
+.st-warning .warn-body{ min-width: 0; }
+.st-warning p{
+  font-family: var(--font-mono);
+  font-size: 0.68rem !important;
+  letter-spacing: 0.06em;
+  line-height: 1.85 !important;
+  color: var(--ash) !important;
+  margin: 0 !important;
+}
+.st-warning p + p{ margin-top: 0.5rem !important; }
+
+/* A memory naming another one mid-sentence, and going there. Set as the
+   surrounding prose with the room's underline, so it reads as a word and
+   not as a button that wandered into a paragraph. */
+.st-jump{
+  font: inherit;
+  color: var(--ember);
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: rgba(255,196,107,0.4);
+  text-underline-offset: 3px;
+  transition: text-decoration-color .16s ease;
+}
+.st-jump:hover{ text-decoration-color: var(--ember); }
+
+/* A drawing the room cannot compute, supplied by the story itself. */
+.st-figure{
+  margin: 1.9rem 0;
+  padding: 0;
+}
+.st-figure .fig-art{
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  background: rgba(255,196,107,0.03);
+  padding: 0.9rem 0.7rem 0.6rem;
+}
+.st-figure .fig-art svg{ display: block; width: 100%; height: auto; }
+.st-figure figcaption{
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  line-height: 1.9;
+  color: var(--ash);
+  margin-top: 0.7rem;
+}
+
 /* A line in another language, and what it means. Same left rule as a
    transcribed noise, because both are lines lifted out of the telling and
    set down as they were — but this one is spoken, so it keeps the display

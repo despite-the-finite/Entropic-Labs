@@ -448,6 +448,18 @@ rather than on open, once each, and under `prefers-reduced-motion` they keep
 their weight and spacing and simply stop moving. Use them sparingly; the
 writing carries the rest.
 
+**Three things a story can carry besides prose.** A `warning` — a line or a
+few — prints above the telling rather than inside it, because a warning that
+arrives late is not one. A `figure` carries a drawing the room cannot compute:
+a chart, a diagram, a joke with axes, written as SVG in the data file beside
+the words, because it is content and not machinery; `alt` is required and it
+is what the figure says to somebody who cannot see it. And inside any
+paragraph, `[[story-id]]` links to another memory and titles itself from the
+archive, while `[[story-id|in my own words]]` says it your way — for a story
+that refers to another one mid-sentence instead of making the reader find it in
+a list at the bottom. An id the archive does not have prints as plain text
+rather than as a dead control.
+
 **Memories that travel.** A story whose memory moves around the world carries
 a `journey`: an ordered list of stops, each a PLACES id plus what the reader
 sees. Two things render it — a strip that sticks to the top of the reading and

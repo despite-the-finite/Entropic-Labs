@@ -67,6 +67,10 @@
                    `at: '<stop id>'`; the indicator at the top of the story
                    follows the reading, so a memory that pulls the telling
                    back across the world shows it doing that.
+   warning         a line, or an array of lines, telling the reader what
+                   they are walking into: blood, grief, an argument still
+                   running. Printed above the telling, because a warning
+                   that arrives late is not one.
    coordinates     {lat, lon} — only if this story needs a point of its own
                    that isn't in PLACES. `place` is usually the better call.
    people          array of names or {name, relation} objects.
@@ -91,6 +95,12 @@
                          a noise, transcribed. Set in the mono face and
                          split on the spaces, so the syllables land in
                          order rather than all at once
+                     { kind: 'figure', alt: 'What the chart shows.',
+                       caption: 'What it is called.',
+                       svg: '<svg viewBox="0 0 320 190">…</svg>' }
+                         a drawing the room cannot compute — a chart, a
+                         diagram, a joke with axes. `alt` is what it says
+                         to somebody who cannot see it, and is required
                      { kind: 'verse', lang: 'hi-Latn',
                        text: 'Dost bhi peeche chhoot jaate hain.',
                        meaning: 'Friends, too, get left behind.' }
@@ -120,6 +130,12 @@
                    Inside any paragraph, *asterisks* give a word the room's
                    warm emphasis. Once or twice a story, for a word the
                    whole thing turns on.
+
+                   Also inside any paragraph, [[story-id]] links to another
+                   memory and titles itself from the archive, and
+                   [[story-id|in my own words]] does the same while saying
+                   it your way. For a memory that refers to another one
+                   mid-sentence; an unknown id prints as plain text.
 
                    Use all of it sparingly. These are punctuation, not
                    decoration, and the writing carries the rest.
@@ -416,6 +432,38 @@
       country: 'Mauritius',
       lat: -20.28,
       lon: 57.55
+    },
+    {
+      id: 'trestle',
+      name: 'Trestle Bike Park',
+      region: 'Winter Park, Colorado',
+      country: 'United States',
+      lat: 39.87,
+      lon: -105.77
+    },
+    {
+      id: 'emerald-mountain',
+      name: 'Emerald Mountain',
+      region: 'Steamboat Springs, Colorado',
+      country: 'United States',
+      lat: 40.48,
+      lon: -106.85
+    },
+    {
+      id: 'ken-caryl',
+      name: 'Ken-Caryl',
+      region: 'Colorado',
+      country: 'United States',
+      lat: 39.57,
+      lon: -105.13
+    },
+    {
+      id: 'chatfield',
+      name: 'Chatfield State Park',
+      region: 'Littleton, Colorado',
+      country: 'United States',
+      lat: 39.54,
+      lon: -105.07
     },
     {
       id: 'lusaka',
@@ -2721,6 +2769,392 @@
       source: 'Karsh',
       relatedStories: ['dont-haggle', 'hi-guys'],
       dateAdded: '2026-08-20'
+    },
+
+    {
+      id: 'confidence-curve',
+      title: 'The Confidence Curve',
+      hook: 'A brief history of gravity repeatedly reminding me who is in charge.',
+      warning: [
+        'This story contains descriptions of blood, broken bones, dislocations, surgery, and other assorted consequences of poor decision-making on two wheels. Some of it may be a little graphic.',
+        'Pun intended.'
+      ],
+      year: 2017,
+      approximateDate: '2017 onward',
+      strand: 'karsh',
+      location: 'Colorado',
+      place: 'trestle',
+      landmark: {
+        name: 'Trestle Bike Park',
+        query: 'Trestle Bike Park Winter Park Colorado'
+      },
+      journey: [
+        {
+          id: 'chingola',
+          place: 'chingola',
+          flag: '🇿🇲',
+          label: 'Chingola, Zambia',
+          note: 'The first blood. A bicycle.',
+          url: 'https://maps.app.goo.gl/Q4QPpb8x3roUPrM86'
+        },
+        {
+          id: 'trestle',
+          place: 'trestle',
+          flag: '🦃',
+          label: 'Trestle Bike Park · 2017',
+          note: 'Rainmaker. Two fingers.',
+          url: 'https://www.google.com/maps/search/?api=1&query=Trestle+Bike+Park+Winter+Park+Colorado'
+        },
+        {
+          id: 'steamboat',
+          place: 'emerald-mountain',
+          flag: '🏔',
+          label: 'Emerald Mountain, Steamboat Springs · 2021',
+          note: 'The Epic. Beat my own expectations.',
+          url: 'https://www.google.com/maps/search/?api=1&query=Emerald+Mountain+Steamboat+Springs+Colorado'
+        },
+        {
+          id: 'ken-caryl',
+          place: 'ken-caryl',
+          flag: '🚲',
+          label: 'Columbine and Cathy Johnson, Ken-Caryl · 2021',
+          note: 'A blind corner. A rotator cuff.',
+          url: 'https://www.google.com/maps/search/?api=1&query=Columbine+Trail+Ken+Caryl+Colorado'
+        },
+        {
+          id: 'chatfield',
+          place: 'chatfield',
+          flag: '🦵',
+          label: 'Chatfield State Park · 2023',
+          note: 'A new bike. A wheelie. A pop.',
+          url: 'https://www.google.com/maps/search/?api=1&query=Chatfield+State+Park+Littleton+Colorado'
+        },
+        {
+          id: 'still-riding',
+          arrival: true,
+          flag: '✦',
+          label: 'Still riding',
+          note: 'Maybe slower. Definitely smarter.'
+        }
+      ],
+      category: 'triumphs',
+      tags: [
+        'colorado', 'mountain biking', 'crashes', 'surgery', 'recovery',
+        'perseverance', 'colleen', 'friends', 'bicycles'
+      ],
+      people: [
+        { name: 'Karsh', relation: 'me, repeatedly airborne' },
+        { name: 'Colleen', relation: 'sympathy: historically zero' },
+        { name: 'Adam Bradley', relation: 'witness to the turkey' },
+        { name: 'Dr. James Genuario', relation: 'Steadman Hawkins, twice' },
+        { name: 'Carole', relation: 'who set the precedent in a sling' },
+        { name: 'Indra' }
+      ],
+      story: [
+        'I have crashed a lot of bicycles in my life.',
+        'Before anyone draws the obvious conclusion, I would like to clarify something:',
+        'It is not because I suck at riding.',
+        'At least, that’s my official position.',
+        'The real reason is that I have ridden a lot in my life, and I have always had a tendency to push my own physical boundaries. Faster. Steeper. Harder. One more run. One more jump. One more mile.',
+        'There is probably a personality trait buried somewhere in there.',
+        'This is the story of what happens when perseverance occasionally collides with gravity.',
+        'Repeatedly.',
+
+        { kind: 'heading', text: 'The First Blood' },
+        {
+          text: 'My first truly serious bicycle injury has already earned its own Butterfly Trail: [[hi-guys|“Hi Guys.”]]',
+          at: 'chingola'
+        },
+        'You can read the full story there, but the abbreviated version is that a childhood bicycle crash in Zambia left me with a wound so large that it couldn’t be stitched or stapled. It required a hospital visit, special wound care, and a long healing process.',
+        'It was also the most blood I had ever seen leave my own body.',
+        'At least while I was conscious.',
+        'Apparently this experience did absolutely nothing to discourage me from bicycles.',
+        'Which brings us to adulthood.',
+
+        { kind: 'heading', text: 'The Turkey Incident' },
+        { text: 'Trestle Bike Park — Winter Park, Colorado · 2017', at: 'trestle' },
+        'There was a period of my life when downhill mountain biking became part of my identity.',
+        'I rode black diamonds.',
+        'I rode double black diamonds.',
+        'Was I a professional?',
+        'No.',
+        'Semi-professional?',
+        'Absolutely not.',
+        'Quarter-professional?',
+        'Still probably no.',
+        'But I was good. I could ride technical downhill trails better than most normal Colorado mountain bikers, and I was confident enough to know it.',
+        'Unfortunately, confidence has a complicated relationship with fatigue.',
+        'There is a point during any long day of riding where those two lines cross.',
+        {
+          kind: 'figure',
+          alt: 'A chart against time riding. Confidence rises steadily from low to high. Actual physical ability starts high and declines with fatigue. The two cross partway through the day, and everything after that crossing is marked THE DANGER ZONE — confidence stays high while ability keeps falling.',
+          caption: 'The Confidence Curve. The dangerous part is not the low point. It is everything after the crossing.',
+          svg: '<svg viewBox="0 0 320 196" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="cc-zone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF3FA0" stop-opacity="0.18"/><stop offset="1" stop-color="#FF3FA0" stop-opacity="0"/></linearGradient></defs><rect x="167" y="26" width="129" height="136" fill="url(#cc-zone)"/><line x1="30" y1="162" x2="300" y2="162" stroke="#9C93B8" stroke-opacity="0.45" stroke-width="1"/><line x1="30" y1="26" x2="30" y2="162" stroke="#9C93B8" stroke-opacity="0.45" stroke-width="1"/><path d="M30 144 C 100 136, 150 100, 292 30" fill="none" stroke="#FFC46B" stroke-width="2"/><path d="M30 44 C 110 52, 180 104, 292 156" fill="none" stroke="#9C93B8" stroke-width="2" stroke-dasharray="5 4"/><line x1="167" y1="26" x2="167" y2="162" stroke="#FF3FA0" stroke-opacity="0.55" stroke-dasharray="3 3"/><circle cx="167" cy="89" r="4.5" fill="#FF3FA0"/><circle cx="167" cy="89" r="9" fill="none" stroke="#FF3FA0" stroke-opacity="0.4"/><g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="8.5" letter-spacing="1.1"><text x="232" y="22" fill="#FF3FA0" text-anchor="middle">THE DANGER ZONE</text><text x="292" y="44" fill="#FFC46B" text-anchor="end">CONFIDENCE</text><text x="292" y="172" fill="#9C93B8" text-anchor="end">ACTUAL ABILITY</text><text x="34" y="182" fill="#9C93B8">TIME RIDING \u2192</text></g></svg>'
+        },
+        'I crossed directly into the Danger Zone one day at Trestle while riding with my friend Adam Bradley.',
+        'We’d had a fantastic, long day of downhill riding. Toward the end of Rainmaker, we approached one of the final wooden features before the big descent toward the end of the trail.',
+        'I hit the jump.',
+        'And undershot it.',
+        'Badly.',
+        'I plowed into the landing and started tumbling across the wooden structure. Somewhere during the chaos, two fingers on my left hand — my ring finger and little finger — got caught.',
+        'They snapped.',
+        'And dislocated.',
+        'Thankfully, I was wearing basically every piece of protective equipment available. Full-face helmet. Body armor. Pads. I looked less like a cyclist and more like a medieval knight who had somehow acquired a mountain bike.',
+        'So somehow, after a violent crash on a downhill trail, the major casualties were two fingers.',
+        'Bike Patrol happened to be immediately behind me. They rushed over, got my wedding band off before the swelling trapped it there, immobilized my arm, walked me to an emergency access road, and eventually got me into a truck headed for medical care.',
+        'But Adam remembers something else.',
+        'The noise.',
+        'Apparently, while crashing, I emitted a very specific high-pitched sound.',
+        'Something resembling:',
+        { kind: 'sound', text: 'GOBBLEGOBBLEGOBBLE.' },
+        'A turkey.',
+        'To this day, Adam and I still laugh about the fact that when confronted with imminent bodily destruction, my nervous system apparently chose Thanksgiving poultry as its distress signal.',
+        'At the hospital, my fingers were reset and immobilized in an absolutely ridiculous-looking splint.',
+        'Meanwhile, Colleen was in San Francisco visiting a friend.',
+        'Her sympathy level was approximately:',
+        '0%.',
+        'Her position was essentially that I had voluntarily spent the day launching myself down a mountain on a bicycle, and therefore the universe had rendered a fair verdict.',
+        'Thanks for the reminder, Colleen.',
+        'The injury lingered longer than I expected. My ring finger joint remained swollen enough that my wedding band wouldn’t fit properly for more than a year. Eventually, I had to have the ring resized.',
+        'I even attended my brother’s wedding with my hand still immobilized, so the cast is permanently documented in the wedding photographs.',
+        'Which felt strangely appropriate.',
+        'Because Carole had attended our wedding in a sling after breaking her elbow.',
+        'Revenge.',
+        'Balance had been restored.',
+        'Then came finger physical therapy, which is every bit as ridiculous as it sounds.',
+        'Tiny weights.',
+        'For fingers.',
+        'Imagine going to the gym and watching someone intensely train their pinky.',
+        'That was me.',
+        'I eventually recovered, although that crash marked the beginning of the end of my dedicated downhill mountain biking days.',
+        'Notice that I said dedicated downhill.',
+        'I did not say mountain biking.',
+        'I hadn’t learned that much.',
+
+        { kind: 'heading', text: 'Sendsday' },
+        { text: 'Steamboat Springs, Colorado · 2021', at: 'steamboat' },
+        'By 2021, I was probably in some of the best mountain biking shape of my life.',
+        'I had endurance.',
+        'I had experience.',
+        'And, most importantly, I had a group of riding friends called Sendsday.',
+        'Which is exactly the kind of group name that should have warned everyone involved about future orthopedic expenses.',
+        'We convinced each other to enter the Emerald Mountain Epic in Steamboat Springs.',
+        'I trained hard.',
+        'This was life before kids. Colleen was pregnant with Indra, but we still possessed that mythical resource that parents eventually discover has vanished from the Earth:',
+        'free time.',
+        'I used mine to ride.',
+        'A lot.',
+        'When race day came, I finished successfully and beat my own expectations. I was proud of myself.',
+        'We even saw brown bears near our Airbnb during the trip.',
+        'Great race.',
+        'Great adventure.',
+        'Great memories.',
+        'And then, approximately one week later, I injured myself practically in my own backyard.',
+
+        { kind: 'heading', text: 'Complacency' },
+        {
+          text: 'I went riding on the Columbine and Cathy Johnson trails around Ken-Caryl — trails so familiar to me that I could ride to them directly from my doorstep.',
+          at: 'ken-caryl'
+        },
+        'And familiarity creates its own version of the Confidence Curve.',
+        'Complacency.',
+        'I was flying downhill toward a blind corner.',
+        'I came around it and suddenly saw an elderly couple standing in the shade of a tree.',
+        'In the middle of the trail.',
+        'WHAT ARE YOU DOING?!',
+        'There was no time.',
+        'At the speed I was traveling, I wasn’t just going to hit them.',
+        'I was going to disintegrate them.',
+        'I slammed on the brakes.',
+        'It wasn’t enough.',
+        'So I made the only decision available to me:',
+        'I pointed the bike off the mountain.',
+        'You’re welcome, random elderly couple.',
+        'My front wheel caught in the uneven ground and I Superman’d over the handlebars.',
+        { kind: 'sound', text: 'WHOOSH.' },
+        'I hit hard.',
+        'But I had protective equipment on, and when I stood up, everything appeared surprisingly intact.',
+        'Dusty.',
+        'Bruised.',
+        'Embarrassed.',
+        'Mostly I thought my ego had sustained the worst injury.',
+        'So naturally, I rode home.',
+        'It wasn’t until I tried taking my shirt off that I noticed something strange.',
+        'My right arm wouldn’t go above my head.',
+        'Hmm.',
+        'I gave it a few weeks.',
+        'Because apparently my personal medical philosophy at the time was:',
+        'Maybe ignore it and see what happens.',
+        'Nothing happened.',
+        'My arm still didn’t work.',
+        'Eventually, I went to see sports medicine physician Dr. James Genuario at Steadman Hawkins.',
+        'It was our first meeting.',
+        'Neither of us knew yet that we were beginning a long-term professional relationship.',
+        'An MRI revealed that I had torn my rotator cuff badly enough to require surgery.',
+        'Excellent timing.',
+        'We were about to have a baby.',
+        'I eventually had the surgery and started the long process of rebuilding my shoulder.',
+        'I am eternally grateful to Colleen for her patience during the recovery.',
+        'Her sympathy?',
+        'Again, somewhat limited.',
+        'Because once again, the evidence suggested that I had done this entirely to myself.',
+        'Fair.',
+
+        { kind: 'heading', text: 'The Big One' },
+        { text: 'Chatfield State Park · Summer 2023', at: 'chatfield' },
+        'In 2023, we bought a kayak.',
+        'And I bought a new mountain bike.',
+        'A Canyon Neuron.',
+        'A beautiful machine.',
+        'It cost approximately the same amount as an entry-level car, which is a completely reasonable amount of money to spend on something whose primary function is transporting you toward increasingly creative injuries.',
+        'We met Colleen’s parents at Chatfield Reservoir for a family kayaking day.',
+        'There weren’t enough kayak spots for everyone, so while Colleen, Indra, and her parents were out on the water, I decided to take my brand-new bike for a ride.',
+        'It was incredible.',
+        'Smooth.',
+        'Responsive.',
+        'Fast.',
+        'And somewhere during this ride, a man in his mid-thirties made the rational decision to start practicing wheelies like he was twenty-two.',
+        'I pulled up.',
+        'Higher.',
+        'Higher.',
+        'Too high.',
+        'I overshot the wheelie.',
+        'The bike came down onto uneven ground.',
+        'My knee twisted.',
+        'And then I heard it.',
+        { kind: 'beat', text: 'POP.' },
+        'There are noises your body makes that you immediately understand are not supposed to happen.',
+        'This was one of them.',
+        'I went down.',
+        'And stayed down.',
+        'The pain was enormous.',
+        'I tried calling Colleen.',
+        'No answer.',
+        'She was kayaking.',
+        'I called her dad.',
+        'Thankfully, he answered.',
+        'Unfortunately, explaining your exact location on an unfamiliar trail while lying on the ground in severe pain is not particularly easy.',
+        'Eventually, some hikers found me and helped me make my way toward the trailhead, where my father-in-law was waiting.',
+        'Rescue complete.',
+        'And soon enough, I found myself returning to an old friend:',
+        'Dr. Genuario.',
+        'Hello again.',
+        'Another MRI.',
+        'Another conversation.',
+        'This one came with an impressive list:',
+        {
+          kind: 'found',
+          items: ['Complete ACL rupture.', 'Meniscus tear.', 'Segond avulsion fracture.']
+        },
+        'Ouch.',
+        'This time, Colleen actually had some sympathy for me.',
+        'Mostly, I suspect, because the diagnosis provided medical confirmation of something she had believed for years:',
+        'I had several screws loose.',
+        'Unfortunately, none of them were in my knee yet.',
+        'Surgery followed.',
+        'The reconstruction was extensive, including use of my quadriceps tendon as graft material as part of rebuilding the damaged structures around my knee. The Segond fracture complicated things because the avulsed piece of bone was too small to simply anchor with a titanium screw.',
+        'It was not fun.',
+        'Coming out of surgery, I felt horrible.',
+        'Then came recovery.',
+        'And recovery.',
+        'And more recovery.',
+        'Strength disappeared astonishingly quickly.',
+        'Building it back took astonishingly long.',
+        'Even now, years later, I don’t know that my knee will ever feel exactly like it did before that afternoon at Chatfield.',
+        'But I can walk.',
+        'I can hike.',
+        'I can ride a bicycle.',
+        'I can run short distances.',
+        'Those things stopped feeling ordinary after I temporarily lost them.',
+        'And I learned something about myself during that recovery.',
+        'Not that I am indestructible.',
+        'Quite the opposite.',
+        'I learned just how destructible I actually am.',
+        'But I also learned that I rebuild.',
+
+        { kind: 'heading', text: 'Apparently We Needed an Epilogue' },
+        'You would think that would be the end of this story.',
+        'It should have been.',
+        'Last year, after a long mountain bike ride, I was riding home and stopped at a red light.',
+        'When the pedestrian signal changed, I started across.',
+        'One hand on the handlebars.',
+        'The other checking my phone.',
+        'Yes.',
+        'I already know.',
+        'A car came toward the crossing hot before stopping short of me.',
+        'It didn’t hit me.',
+        'But it startled the hell out of me.',
+        'I instinctively grabbed the brake.',
+        'Unfortunately, the brake underneath my available hand happened to be the front brake.',
+        'Physics immediately took over.',
+        'For what was now becoming a recurring performance in my life, I launched over the handlebars.',
+        'Superman.',
+        'Again.',
+        'I landed directly on my arm, compressing my elbow.',
+        'It hurt like a…',
+        'Well.',
+        'Remember the warning at the beginning?',
+        'Colleen came to rescue me, and we went to the ER.',
+        'X-rays revealed a hairline fracture of the radial head.',
+        'And once again:',
+        'Steadman Hawkins.',
+        'At this point I should probably have a punch card.',
+        'Fortunately, this injury was relatively minor. No surgery. No cast. Just a splint, sling, and recovery.',
+        'Colleen’s sympathy returned to its historically normal level.',
+        'Approximately zero.',
+        'I recovered quickly, although my elbow still clicks strangely and occasionally reminds me that it, too, remembers.',
+
+        { kind: 'heading', text: 'Keep Riding' },
+        'After all of this, people might reasonably ask:',
+        'Why do you still ride?',
+        'And the answer is complicated.',
+        'I ride much less aggressively now.',
+        'I don’t spend my weekends bombing double-black downhill trails.',
+        'I don’t need every ride to test the boundary of what I can physically do.',
+        'I’ve learned that there is a difference between perseverance and recklessness.',
+        'That lesson only required several hospitals, multiple MRIs, broken bones, dislocated fingers, a reconstructed shoulder, a reconstructed knee, physical therapy for body parts I didn’t know could have physical therapy, and approximately seventeen thousand reminders from my wife.',
+        'But I still ride.',
+        'Because buried underneath all these ridiculous stories is something that has followed me through my entire life.',
+        'When I fall, I get back up.',
+        'Sometimes immediately.',
+        'Sometimes after surgery.',
+        'Sometimes after months of physical therapy.',
+        'Sometimes after years of rebuilding strength.',
+        'But eventually:',
+        'I get back up.',
+        'That isn’t really a mountain biking trait.',
+        'It’s just *me*.',
+        { text: 'I am approaching forty as I write this, and I genuinely hope I have another forty years of riding bicycles ahead of me.', at: 'still-riding' },
+        'Maybe slower.',
+        'Definitely smarter.',
+        'Hopefully with both wheels remaining on the ground considerably more often.',
+        'And I sincerely hope that my collection of orthopedic adventures is now complete.',
+        'That part, fortunately, is increasingly under my control.',
+        'Because perseverance doesn’t mean refusing to change.',
+        'Sometimes perseverance means learning enough from the crashes that you can keep doing the things you love.',
+        'So I’ll keep riding.',
+        'I’ll keep exploring.',
+        'I’ll keep pushing myself — just perhaps not directly over the handlebars anymore.',
+        'And if I do something monumentally stupid on a bicycle again, I already know exactly what will happen.',
+        'I’ll drag myself home.',
+        'I’ll rebuild.',
+        'I’ll get back on the bike.',
+        'And Colleen will have absolutely no sympathy for me whatsoever.',
+        'In fact, I’ll probably get my ass kicked.',
+        'And honestly?',
+        { kind: 'landing', text: 'At that point, I’ll deserve it.' }
+      ],
+      artifact: {
+        label: 'Memory artifact',
+        title: 'A wedding band, resized',
+        lines: [
+          { label: 'Why', text: 'The ring finger never went back to the size it was.' },
+          { label: 'Also on the record', text: 'The splint, in my brother’s wedding photographs.' }
+        ]
+      },
+      source: 'Karsh',
+      relatedStories: ['hi-guys', 'someone-dumped-my-bike'],
+      dateAdded: '2026-08-20'
     }
   ];
 
@@ -2939,12 +3373,19 @@
       });
 
       var LISTED = ['plan', 'found'];        /* kinds whose content is `items` */
+      /* a figure carries neither items nor text — it carries a drawing */
+      (s.story || []).forEach(function (p, pi) {
+        if (!p || p.kind !== 'figure') return;
+        if (!p.svg) out.push(at + ': paragraph ' + pi + ' is a figure with no svg');
+        if (!p.alt) out.push(at + ': paragraph ' + pi + ' is a figure with no alt text');
+      });
       /* kinds whose content is `text` */
       var SPOKEN = ['shout', 'beat', 'landing', 'heading', 'sound', 'reveal',
                     'dedication', 'verse'];
       (s.story || []).forEach(function (p, pi) {
         if (typeof p === 'string' || !p) return;
         var where = at + ': paragraph ' + pi;
+        if (p.kind === 'figure') return;
         if (p.kind && LISTED.indexOf(p.kind) < 0 && SPOKEN.indexOf(p.kind) < 0) {
           out.push(where + ' has an unknown kind "' + p.kind + '"');
         }
