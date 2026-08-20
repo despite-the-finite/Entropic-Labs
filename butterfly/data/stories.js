@@ -418,6 +418,22 @@
       lon: 57.55
     },
     {
+      id: 'kolkata',
+      name: 'Kolkata',
+      region: 'West Bengal',
+      country: 'India',
+      lat: 22.57,
+      lon: 88.36
+    },
+    {
+      id: 'bradley',
+      name: 'Bradley University',
+      region: 'Peoria, Illinois',
+      country: 'United States',
+      lat: 40.70,
+      lon: -89.62
+    },
+    {
       id: 'lucknow',
       name: 'Lucknow',
       region: 'Uttar Pradesh',
@@ -2166,38 +2182,38 @@
       year: 2005,
       approximateDate: '2005',
       strand: 'karsh',
-      location: 'Illinois',
-      place: 'illinois',
+      location: 'Peoria, Illinois',
+      place: 'bradley',
       landmark: {
         name: 'Bradley University',
-        query: 'Bradley University Illinois'
+        query: 'Bradley University Peoria Illinois'
       },
       journey: [
         {
           id: 'zambia',
-          place: 'zambia',
+          place: 'chingola',
           flag: '🇿🇲',
-          label: 'Zambia',
+          label: '54 9th Street, Chingola',
           note: 'Larry’s CD. A guitar that existed only in my imagination.'
         },
         {
           id: 'india',
-          place: 'india',
+          place: 'kolkata',
           flag: '🇮🇳',
-          label: 'India · 2003',
+          label: 'Kolkata · 2003',
           note: 'A guitar store we never got to'
         },
         {
           id: 'illinois',
-          place: 'illinois',
+          place: 'bradley',
           flag: '🇺🇸',
-          label: 'Bradley University, Illinois',
+          label: 'Bradley University, Peoria',
           note: 'The futon money, spent',
-          url: 'https://www.google.com/maps/search/?api=1&query=Bradley+University+Illinois'
+          url: 'https://www.google.com/maps/search/?api=1&query=Bradley+University+Peoria+Illinois'
         },
         {
           id: 'zambia-again',
-          place: 'zambia',
+          place: 'chingola',
           flag: '🇿🇲',
           label: 'Home again, that summer',
           note: 'Carrying the guitar. No hiding it anymore.'
@@ -2213,7 +2229,7 @@
       category: 'beginnings',
       chaosEvent: true,
       tags: [
-        'zambia', 'india', 'illinois', 'guitar', 'music', 'nu metal',
+        'zambia', 'chingola', 'kolkata', 'peoria', 'guitar', 'music', 'nu metal',
         'parents', 'growing up', 'grief', 'indra', 'colleen'
       ],
       people: [
@@ -2242,7 +2258,7 @@
         'The problem was that wanting an electric guitar in Zambia and actually getting one were two very different things.',
         'So for a while, the guitar existed mostly in my imagination.',
         { text: 'Then, in 2003, music became tangled up with something much heavier.', at: 'india' },
-        'My grandfather was very sick. He had suffered a heart attack followed by organ failure, and my family traveled to India to see him.',
+        'My grandfather was very sick. He had suffered a heart attack followed by organ failure, and my family traveled to Kolkata to see him.',
         'During that trip, my brother and I reconnected with our cousin Neelabh. Music became one of the things that bonded us. He was into Dr. Dre, Eminem and Black Sabbath, along with some of the nu metal my brother and I loved.',
         'And somewhere in that strange intersection of family, music, adolescence and grief, the three of us discovered Evanescence together.',
         'My obsession with guitars went into overdrive.',
