@@ -3155,6 +3155,135 @@
       source: 'Karsh',
       relatedStories: ['hi-guys', 'someone-dumped-my-bike'],
       dateAdded: '2026-08-20'
+    },
+
+    {
+      id: 'the-gto',
+      title: '190 km/h to Reality',
+      hook: 'A missed gear shift, a roundabout, and a mother’s flawless radar.',
+      year: 2008,
+      approximateDate: '2008',
+      strand: 'kush',
+      location: 'Chingola, Zambia',
+      place: 'chingola',
+      landmark: {
+        name: 'Kabundi Road',
+        query: 'Kabundi Road Chingola Zambia'
+      },
+      journey: [
+        {
+          id: 'protea',
+          place: 'chingola',
+          flag: '🏨',
+          label: 'Protea Hotel, Kabundi Road',
+          note: 'Where the gauntlet was thrown',
+          url: 'https://www.google.com/maps/search/?api=1&query=Protea+Hotel+Chingola+Kabundi+Road+Zambia'
+        },
+        {
+          id: 'kabundi',
+          place: 'chingola',
+          flag: '🏎',
+          label: 'Kabundi Road, toward the roundabout',
+          note: 'Three honks. Five thousand revs.',
+          url: 'https://www.google.com/maps/search/?api=1&query=Kabundi+Road+Chingola+Zambia'
+        },
+        {
+          id: 'home',
+          place: 'chingola',
+          flag: '🇿🇲',
+          label: 'Our front gate',
+          note: 'The truck was already in the driveway.'
+        },
+        {
+          id: 'peoria',
+          place: 'bradley',
+          flag: '🇺🇸',
+          label: 'Bradley University, Peoria',
+          note: 'A few months later. The lesson came too.',
+          url: 'https://www.google.com/maps/search/?api=1&query=Bradley+University+Peoria+Illinois'
+        }
+      ],
+      category: 'chaos',
+      chaosEvent: true,
+      tags: [
+        'zambia', 'chingola', 'cars', 'driving', 'teenagers', 'growing up',
+        'amma', 'adrenaline', 'shame', 'bradley university'
+      ],
+      people: [
+        { name: 'Kush', relation: 'the driver, aged seventeen' },
+        { name: 'Amma', relation: 'the radar' },
+        { name: 'Dad', relation: 'whose pediatric work connected the families' }
+      ],
+      story: [
+        { kind: 'heading', text: 'The Countdown to Peoria' },
+        {
+          text: 'It was 2008, and the clock was ticking. In just a few months, I’d be trading the vast, warm skies of Zambia for the icy winters of Peoria, Illinois, to start my freshman year at Bradley University. This was my grand farewell tour — my last hurrah with my friends, my youth, and most importantly, my 1994 Mitsubishi GTO Twin Turbo.',
+          at: 'protea'
+        },
+        'It was a quintessential, beautiful Zambian afternoon. We were all hanging out near the Protea Hotel, soaking in the sun, when the inevitable happened. My buddy, sitting smugly behind the wheel of his Toyota Aristo — packing that legendary Supra 2JZ-GTE engine — threw down the gauntlet. A drag race.',
+        'In the passenger seat of my GTO sat a girl. Naturally. I was seventeen, single, and operating entirely on hormones and high-octane fuel. There was absolutely zero chance I was backing down.',
+
+        { kind: 'heading', text: '5,000 RPM and a Prayer' },
+        {
+          text: 'We rolled onto Kabundi Road, pointing the cars toward the roundabout. The rules were unspoken but understood: three honks, and we launch.',
+          at: 'kabundi'
+        },
+        { kind: 'sound', text: 'Honk. Honk. Honk.' },
+        'I brought the revs to 5,000 RPM and dumped the clutch. The Mitsubishi’s all-wheel-drive system bit into the tarmac with violent precision, instantly hooking up. Next to me, my buddy was putting on a smoke show, completely roasting his rear tires as I catapulted forward. I was pulling away gracefully — a flawless victory in the making.',
+        'And then, the infamous third-to-fourth gear shift. I completely missed it.',
+        'My engine roared in protest, and in that split second of automotive fumbling, the Aristo came screaming up beside me. Panic and ego took the wheel. I finally shoved the shifter into fourth and simply buried the pedal into the floor mat.',
+        'By the time the twin turbos fully spooled up, I was leaving him in the dust again. But the thrill blinded me to the speedometer. I was pushing *180 to 190 kilometers per hour* down a small dual carriageway right in the middle of Chingola. I felt untouchable. I felt like Brian O’Conner.',
+        'Then, the roundabout materialized.',
+
+        { kind: 'heading', text: 'The Physics of Teenage Stupidity' },
+        'Time didn’t just slow down; it froze. At nearly 190 km/h, the roundabout wasn’t just an intersection; it was a concrete wall rapidly filling my windshield. I slammed on the brakes, the tires howling in protest, but the laws of physics were not on my side.',
+        'Already navigating the roundabout was a pickup truck, just minding its own business.',
+        'What followed was a desperate, panicked dance. They saw me rocketing toward them and swerved. I yanked the wheel, the GTO’s suspension loading up as I prayed for grip. We missed each other by millimeters. As I fought to keep the GTO on the asphalt, I watched in my rearview mirror as the pickup truck plowed off the road, coming to a halt deep in the landscaping foliage atop the roundabout.',
+        'I managed a clean exit and kept driving. My heart was trying to hammer its way out of my ribs. The girl next to me was wide-eyed, gasping, and — to my absolute shock — incredibly impressed. We drove around aimlessly, laughing with that hysterical, breathless relief that only comes from cheating disaster.',
+        '“I can’t believe we just pulled that off!”',
+        '“Did you see that?! Straight out of a movie!”',
+
+        { kind: 'heading', text: 'The Smallest Town in the World' },
+        'The Hollywood fantasy shattered the second my cell phone rang.',
+        'It was Amma.',
+        'I answered, expecting a question about dinner. Instead, I got a voice colder than ice. “Come home right now.” Click.',
+        'The adrenaline evaporated. Suddenly, I wasn’t Brian O’Conner anymore; I was a seventeen-year-old kid about to face the wrath of his mother. My mind raced the entire drive back. Chingola is small, but it’s not THAT small, right? Did someone recognize the car? Did they call her?',
+        { text: 'I pulled up to our front gate, my stomach in knots. The security guard slowly rolled the gate open, revealing our driveway.', at: 'home' },
+        'My heart dropped to the floorboards.',
+        {
+          kind: 'reveal',
+          text: 'Parked right there, plain as day, was the exact same pickup truck I had just run off the road twenty minutes earlier.'
+        },
+        'How? How did they know where I lived? How did they know my mom?',
+
+        { kind: 'heading', text: 'The Living Room Verdict' },
+        'My hands were shaking so badly I could barely pull the key from the ignition. My legs felt like lead as I walked through the front door, fully accepting my doom.',
+        'Sitting in our living room were three of my parents’ younger friends — folks who worked at the mines, good people whose lives were intertwined with our family through my dad’s pediatric work. They were the ones in the truck. They looked pale. They looked terrified.',
+        'And right there, in front of guests, Amma delivered the most devastating, earth-shattering lecture of my life. In my family, reprimands were always handled privately. Being dressed down in public, in front of the very people I had nearly killed, brought a level of shame I had never known existed.',
+        'I looked at their faces. They weren’t nameless extras in my personal action movie. They were real people, innocently going about their day, whose lives I had carelessly endangered for the sake of a girl’s smile and a drag race. The teenage invincibility cracked, and a heavy, serious reality poured in. I vowed right then and there to leave the antics on the track and respect the machine I was driving.',
+
+        { kind: 'heading', text: 'The Legacy of the GTO' },
+        'Looking back, the duality of that day still haunts me. I am deeply ashamed of the danger I caused. But if I am being completely honest with myself? For that minute and a half, as I watched that Aristo disappear in my rearview mirror, I had never felt more alive. That was the exact moment I realized I had a dangerous addiction to the adrenaline of the wheel — a beast I’d have to learn to tame.',
+        {
+          text: 'It’s a lesson that stuck with me all the way to America. And maybe that’s why the memory of that car is so hard to let go of. It wasn’t just a piece of metal, and it wasn’t just a machine. That twin-turbo monster was the ultimate symbol of my youth —',
+          at: 'peoria'
+        },
+        {
+          kind: 'landing',
+          text: 'a roaring, terrifying, beautiful reminder of the day I finally had to grow up, courtesy of a missed gear shift, a roundabout, and a mother’s flawless radar.'
+        }
+      ],
+      artifact: {
+        label: 'Memory artifact',
+        title: 'A 1994 Mitsubishi GTO Twin Turbo',
+        lines: [
+          { label: 'What it was', text: 'The ultimate symbol of my youth.' },
+          { label: 'What it taught me', text: 'That I had an addiction to the wheel, and a beast to tame.' }
+        ]
+      },
+      source: 'Kush',
+      relatedStories: ['confidence-curve', 'no-futon'],
+      dateAdded: '2026-08-20'
     }
   ];
 
