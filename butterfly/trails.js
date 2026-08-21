@@ -431,6 +431,39 @@
       story.forEach(function (n, i) {
         n.ptr = (braid && n.t !== null) ? braidPos(n.strand, n.t) : trailPos(n, i, total);
       });
+
+      /* Two memories on the same line in the same year land on exactly the
+         same point: one draws over the other, only one label survives, and
+         the one underneath cannot be clicked at all.
+
+         They are the same moment in the same life, so they fan out ACROSS
+         their own line rather than along it. Moving them along it would slide
+         them in time and claim a year nobody wrote down; moving them across
+         it says what is true — these happened together. */
+      var together = {};
+      story.forEach(function (n) {
+        if (!braid || n.t === null) return;
+        var key = (n.strand || '') + '@' + n.t.toFixed(3);
+        (together[key] || (together[key] = [])).push(n);
+      });
+      Object.keys(together).forEach(function (key) {
+        var group = together[key];
+        if (group.length < 2) return;
+        var head = group[0];
+        var ahead = braidPos(head.strand, head.t + 0.02);
+        var dx = ahead.x - head.ptr.x, dy = ahead.y - head.ptr.y;
+        var len = Math.sqrt(dx * dx + dy * dy);
+        /* A lane running dead flat still has a direction; if the sample
+           degenerates, fall back to straight across the axis. */
+        var px = len > 1e-6 ? -dy / len : 0;
+        var py = len > 1e-6 ? dx / len : 1;
+        var step = 0.42;
+        group.forEach(function (n, i) {
+          var off = (i - (group.length - 1) / 2) * step;
+          n.ptr = { x: n.ptr.x + px * off, y: n.ptr.y + py * off };
+        });
+      });
+
       clusters = webLayout(story);
 
       /* Markers are the braid's own furniture — a union, a birth. They belong

@@ -375,6 +375,13 @@ set 0.62rem uppercase mono on, and colour-coding is not worth a contrast
 failure. A category with nothing in it keeps its colour and loses its light,
 because an empty category is waiting rather than broken.
 
+**Two memories on one line in one year fan across it, not along it.** They
+land on the same point otherwise: one draws over the other, one label
+survives, and the one underneath cannot be clicked at all. They are the same
+moment in the same life, so they spread perpendicular to their own strand —
+moving them along it would slide them in time and claim a year nobody wrote
+down.
+
 **An undated confluence sits before the earliest branch**, not before the
 earliest dated anything. A marriage precedes the children that come out of it,
 so that is what it is anchored to — and the distinction is not academic: a
