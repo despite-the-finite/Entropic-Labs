@@ -83,8 +83,9 @@
 
                      { kind: 'plan',    lead: 'The plan was simple:',
                        items: ['One.', 'Two.', 'Three.'] }
-                         a confidently numbered list, for the idea that is
-                         about to go wrong
+                         a confidently numbered list — for the idea that
+                         is about to go wrong, or the one carried out
+                         with entirely unwarranted precision
                      { kind: 'shout',   text: 'Hiiii guyyyyys!' }
                          a line said far too loudly
                      { kind: 'beat',    text: 'CRASH.' }
@@ -432,6 +433,14 @@
       country: 'Mauritius',
       lat: -20.28,
       lon: 57.55
+    },
+    {
+      id: 'ptarmigan',
+      name: 'The Ptarmigan Inn',
+      region: 'Steamboat Springs, Colorado',
+      country: 'United States',
+      lat: 40.457,
+      lon: -106.804
     },
     {
       id: 'trestle',
@@ -3500,6 +3509,170 @@
       },
       source: 'Karsh',
       relatedStories: ['no-futon', 'hi-guys'],
+      dateAdded: '2026-08-20'
+    },
+
+    {
+      id: 'the-ptarmigan',
+      title: 'The Subtle Trashing of the Ptarmigan',
+      hook: 'A Thanksgiving neither of us could go home for, and a hotel room trashed with great care.',
+      year: 2013,
+      approximateDate: 'Circa 2013',
+      strand: 'karsh',
+      location: 'Steamboat Springs, Colorado',
+      place: 'ptarmigan',
+      landmark: {
+        name: 'The Ptarmigan Inn',
+        query: 'Gravity Haus Steamboat 2304 Apres Ski Way Steamboat Springs Colorado'
+      },
+      journey: [
+        {
+          id: 'denver',
+          place: 'denver',
+          flag: '🇺🇸',
+          label: 'Denver',
+          note: 'Neither of us had anywhere to be.'
+        },
+        {
+          id: 'ptarmigan',
+          place: 'ptarmigan',
+          flag: '🏔',
+          label: 'The Ptarmigan Inn, Steamboat Springs',
+          note: 'Après Ski Way. It is Gravity Haus Steamboat now — it changed hands in 2022.',
+          url: 'https://www.google.com/maps/search/?api=1&query=Gravity+Haus+Steamboat+2304+Apres+Ski+Way+Steamboat+Springs+Colorado'
+        },
+        {
+          id: 'still-there',
+          arrival: true,
+          flag: '✦',
+          label: 'Possibly still there',
+          note: 'Above a ceiling tile. Underneath a bed.'
+        }
+      ],
+      category: 'family-lore',
+      tags: [
+        'colorado', 'steamboat springs', 'denver', 'friendship',
+        'thanksgiving', 'hotels', 'young and dumb', 'funny memories'
+      ],
+      people: [
+        { name: 'Karsh', relation: 'me' },
+        { name: 'Josh', relation: 'my roommate, and by then partly metal' }
+      ],
+      story: [
+        { text: 'One of my best friends — and, at the time, my roommate — was Josh.', at: 'denver' },
+        'Josh was doing his MBA at the University of Denver, a program I always respected him for pursuing. He was, and still is, one of those people I admired for being willing to take big steps in his life. He was also incredibly good at tinkering with electronics, taking things apart, figuring out how they worked, and occasionally even putting them back together. A very smart guy who, despite all that intelligence, should never have been allowed on two wheels.',
+        'During his MBA, Josh did a study-abroad class in Greece. Toward the end of the trip, he and some classmates decided to ride scooters around.',
+        'This is, by the way, the same Josh who [[someone-dumped-my-bike|once dumped my motorcycle]].',
+        'Apparently Greece had not been adequately warned.',
+        'Josh crashed the scooter, and this wasn’t some minor spill where you limp around for a few days and tell everyone you had an accident. He absolutely shattered his leg in multiple places — tibia, fibula, ankle. It was serious. Surgery, hardware, a long recovery — the whole ordeal. He returned from Greece with considerably more metal inside him than he’d left with.',
+        'Josh had become a cyborg.',
+        'There’s a much bigger story buried in all of that, and this little anecdote doesn’t do justice to what he actually went through.',
+        'But that’s not what this story is about.',
+        'It’s just important context.',
+        'By Thanksgiving, Josh was back in Denver and recovering well. He had graduated from crutches to a cane, his leg was healing, and, importantly, he’d been given the green light to drive.',
+        'Neither of us had anywhere particularly compelling to be for Thanksgiving.',
+        'My excuse was pretty solid: my parents lived in Zambia.',
+        'Josh’s family was much closer, but flights were expensive, and after an international scooter accident and major surgery, I presume he had some fairly impressive medical bills to deal with.',
+        'So we decided we’d spend Thanksgiving together.',
+        'But rather than sit around our apartment in Denver, we figured we’d make a trip out of it.',
+        'We chose Steamboat Springs.',
+        'It was still the very beginning of the season. The ski mountain hadn’t really gotten going yet — the season was scheduled to kick off after Thanksgiving — so Steamboat was quiet and lodging was relatively cheap.',
+        {
+          text: 'We booked ourselves a room at the Ptarmigan Inn, right near the ski resort.',
+          at: 'ptarmigan'
+        },
+        'And honestly, it turned into a great little trip.',
+        'We found somewhere serving Thanksgiving dinner. We explored Steamboat. At one point we took Josh’s Subaru WRX STI out onto some nearby mountain roads and did a little off-roading — which, considering the driver was a recently reconstructed cyborg with a history of crashing two-wheeled vehicles, was perhaps not the most carefully considered activity.',
+        'But we had fun.',
+        'Mostly, though, we just hung out.',
+        'Two young guys early in their careers, away from our families on Thanksgiving, making our own version of the holiday.',
+        'Then came the final night.',
+        'We decided to get drunk.',
+        'Because that’s what young, single guys celebrating Thanksgiving in a Colorado mountain town apparently did.',
+        { kind: 'found', items: ['Gobble gobble, motherfucker.'] },
+        'For the uninitiated, that’s a ThanksKilling reference.',
+        'And somewhere during the festivities, we had an idea.',
+        'We were going to trash our hotel room.',
+        'There was just one problem.',
+        'We were professionals.',
+        'We had jobs. Responsibilities. Careers beginning to take shape. We understood that actual vandalism was wrong, expensive, and generally frowned upon by society.',
+        'So we arrived at what seemed, in our alcohol-enhanced wisdom, to be an elegant compromise:',
+        'We would trash the hotel room…',
+        { kind: 'reveal', text: 'respectfully.' },
+        'No broken televisions.',
+        'No holes punched through walls.',
+        'No destroyed furniture.',
+        'Nothing that would make some poor housekeeper walk through the door the next morning and immediately reconsider every decision that had led them to a career in hospitality.',
+        {
+          kind: 'plan',
+          lead: 'Instead, we would engage in what can only be described as subtle trashing:',
+          items: [
+            'We hid trash behind the wall art.',
+            'We carefully lifted ceiling tiles and placed empty beverage bottles above them.',
+            'We wrote graffiti underneath the bed — completely out of sight, in a location that might reasonably remain undiscovered for years.'
+          ]
+        },
+        'We weren’t trying to destroy the room.',
+        'We were creating archaeological artifacts.',
+        'Little pieces of evidence that two idiots had once stayed there.',
+        'By the time we finished, the room looked…',
+        'completely normal.',
+        'We checked out the next morning and drove back to Denver.',
+        'Nothing happened.',
+        'No angry phone call.',
+        'No hotel manager demanding an explanation.',
+        'No mysterious charge that I remember.',
+        'Although, to be fair, this was early enough in my career that I wasn’t exactly logging into my bank account every morning and conducting a forensic audit of my transactions.',
+        'Maybe they charged us.',
+        'Maybe housekeeping discovered everything five minutes after we left and cursed our names.',
+        'Maybe some maintenance guy replaced a ceiling tile six months later, had a bottle fall on his head, and wondered what kind of asshole puts a bottle above a ceiling tile.',
+        'Or maybe…',
+        { text: 'they’re still there.', at: 'still-there' },
+        'That’s my favorite possibility.',
+        'Because years later, while working in engineering and construction, I was involved in renovating a historic hangar. During demolition, the contractor opened up part of a wall and discovered old soda cans that workers had apparently left inside decades earlier.',
+        'I remember seeing them and immediately thinking about the Ptarmigan.',
+        'Some construction worker had probably finished his soda fifty years earlier, looked around, shoved the can into the wall, and thought absolutely nothing of it.',
+        'Then decades passed.',
+        'People came and went.',
+        'The building changed.',
+        'And eventually someone opened the wall and found this tiny artifact from another person’s completely ordinary day.',
+        'Maybe someday the Ptarmigan will undergo — or perhaps already has undergone — a renovation.',
+        'Someone will pull down a ceiling.',
+        'A bottle will appear.',
+        'Someone will crawl beneath something and discover our hidden graffiti.',
+        'And they’ll wonder:',
+        'How long has this been here?',
+        'Who the hell did this?',
+        'Maybe they’ll never know.',
+        'But Josh and I will.',
+        'More than a decade later, we still laugh about that Thanksgiving.',
+        'Not because trashing a hotel room was some monumental act of rebellion. It wasn’t. In fact, our insistence on being respectful vandals probably says more about us than the vandalism itself.',
+        'We wanted to misbehave.',
+        'But apparently even our rebellion needed *boundaries*.',
+        'Josh is still one of my closest friends, and I imagine he always will be.',
+        'Someday we’ll be old men telling our grandchildren stories about the things we did when we were young. By then, the WRX STI will probably have become a legendary off-road machine, Josh’s scooter crash will have involved a cliff, and the Ptarmigan story will somehow end with us being chased out of Steamboat by the police.',
+        'That’s how these stories work.',
+        'But underneath the exaggerations will be the truth:',
+        'Once, two young friends who couldn’t go home for Thanksgiving drove into the Colorado mountains together.',
+        'We ate Thanksgiving dinner.',
+        'We explored.',
+        'We drank.',
+        'We laughed.',
+        'And we very carefully trashed a hotel room.',
+        'Young.',
+        'Dumb.',
+        { kind: 'landing', text: 'But respectful.' }
+      ],
+      artifact: {
+        label: 'Memory artifact',
+        title: 'Bottles above a ceiling tile, graffiti under a bed',
+        lines: [
+          { label: 'Left', text: 'One room at the Ptarmigan Inn, one Thanksgiving, circa 2013.' },
+          { label: 'Recovered', text: 'Nothing, so far as anybody has ever told us.' }
+        ]
+      },
+      source: 'Karsh',
+      relatedStories: ['someone-dumped-my-bike', 'the-big-secret'],
       dateAdded: '2026-08-20'
     }
   ];
