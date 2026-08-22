@@ -4,6 +4,7 @@
 <meta name="theme-color" content="#05040D">
 <meta name="description" content="Entropic Labs — a collection of things made, wondered about, remembered and played with. Four rooms: the Observatory, the Studio, the Game Room and Butterfly Trails.">
 <link rel="stylesheet" href="foyer/foyer.css">
+<link rel="stylesheet" href="foyer/tour.css">
 <!--
   The foyer. Not a homepage — the door.
 
@@ -42,6 +43,15 @@
     <h1 class="wordmark">Entropic<span class="dot">·</span>Labs</h1>
     <p class="creed">Curiosity has no filing system.</p>
     <p class="invite">Choose somewhere to wander<span class="caret" aria-hidden="true"></span></p>
+
+    <!-- Revealed by foyer/tour.js; without it there is nothing to open. -->
+    <p class="tour-cue">
+      <button class="tour-open" id="tour-open" type="button">
+        <span class="tour-open-glyph" aria-hidden="true"></span>
+        Take the tour
+        <span class="tour-open-len">30s</span>
+      </button>
+    </p>
   </div>
 
   <nav class="realms" aria-label="The four rooms of Entropic Labs">
@@ -161,4 +171,40 @@
 
 <div class="curtain" id="curtain" aria-hidden="true"><canvas id="curtain-fx"></canvas></div>
 
+<!-- The tour. Chapters, copy and the shots themselves are built by
+     foyer/tour.js — this is the shell they are poured into. -->
+<div class="tour" id="tour" role="dialog" aria-modal="true" aria-labelledby="tour-title" hidden>
+  <div class="tour-scrim"></div>
+
+  <div class="tour-shell">
+    <button class="tour-close" id="tour-close" type="button" aria-label="Close the tour">&times;</button>
+
+    <header class="tour-head">
+      <p class="tour-kicker">A short tour of Entropic Labs<span class="tour-kicker-tail"> — real screenshots, desktop and phone</span></p>
+      <div class="tour-bars" id="tour-bars"></div>
+    </header>
+
+    <div class="tour-body">
+      <figure class="tour-stage" id="tour-stage"></figure>
+      <div class="tour-copy" id="tour-copy"></div>
+    </div>
+
+    <footer class="tour-foot">
+      <div class="tour-transport">
+        <button class="tour-btn" id="tour-prev" type="button" aria-label="Previous chapter">&#8592;</button>
+        <button class="tour-btn" id="tour-play" type="button" aria-label="Pause">&#8214;</button>
+        <button class="tour-btn" id="tour-next" type="button" aria-label="Next chapter">&#8594;</button>
+      </div>
+
+      <div class="tour-devices" role="group" aria-label="Which screen to show">
+        <button class="tour-device-btn" type="button" data-device="desktop" aria-pressed="true">Desktop</button>
+        <button class="tour-device-btn" type="button" data-device="mobile" aria-pressed="false">Phone</button>
+      </div>
+    </footer>
+  </div>
+
+  <p class="sr-only" id="tour-live" role="status" aria-live="polite"></p>
+</div>
+
 <script src="foyer/foyer.js" defer></script>
+<script src="foyer/tour.js" defer></script>

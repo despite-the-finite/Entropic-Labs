@@ -309,6 +309,7 @@
      on this page is a link or a button and handles its own. */
   window.addEventListener('click', function (e) {
     if (!anomaly || reduceMQ.matches) return;
+    if (document.documentElement.classList.contains('tour-is-open')) return;
     if (e.target.closest && e.target.closest('a, button')) return;
     if (Math.hypot(e.clientX - anomaly.x, e.clientY - anomaly.y) > 18) return;
     say(ANOMALY[anomaly.said % ANOMALY.length]);
@@ -610,6 +611,13 @@
   document.addEventListener('visibilitychange', function () {
     if (document.hidden) pause();
     else if (!reduceMQ.matches) play();
+  });
+
+  /* The tour covers the field with an opaque scrim. Nothing can be seen of it
+     while that is up, so stop drawing it — same treatment as a hidden tab. */
+  window.addEventListener('tour:open', pause);
+  window.addEventListener('tour:close', function () {
+    if (!document.hidden && !reduceMQ.matches) play();
   });
 
   onChange(reduceMQ, function () {
