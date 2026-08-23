@@ -319,17 +319,20 @@
     {
       id: 'together', label: 'Amma & Dad', tone: '#FFC46B',
       base: null, side: 0,
-      start: { kind: 'union', year: null }, end: { kind: 'open' }
+      start: { kind: 'union', year: 1984, on: '8 December 1984' },
+      end: { kind: 'open' }
     },
     {
       id: 'amma', label: 'Amma', tone: '#FF6B9A',
       base: 'together', side: -1,
-      start: { kind: 'origin' }, end: { kind: 'joins', year: null, into: 'together' }
+      start: { kind: 'origin' },
+      end: { kind: 'joins', year: 1984, on: '8 December 1984', into: 'together' }
     },
     {
       id: 'dad', label: 'Dad', tone: '#6FE3B8',
       base: 'together', side: 1,
-      start: { kind: 'origin' }, end: { kind: 'joins', year: null, into: 'together' }
+      start: { kind: 'origin' },
+      end: { kind: 'joins', year: 1984, on: '8 December 1984', into: 'together' }
     },
 
     /* --- the second --- */
@@ -380,6 +383,10 @@
      which is the honest drawing of "this happened, we haven't written down
      when". Give the `together` strand a start year and the whole braid
      re-times itself around it. */
+  /* `start` / `end` carry a `year`, which is what places the join on the
+     axis, and optionally an `on` — the day itself, in whatever words you
+     would use out loud. The year does the geometry; `on` is what the
+     reader is told. */
   var BRAID = {
     marriedLabel: 'Married',
     undatedNote: 'Two trails become one. The year has not been written down yet.'

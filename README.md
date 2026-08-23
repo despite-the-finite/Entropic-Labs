@@ -382,8 +382,14 @@ moment in the same life, so they spread perpendicular to their own strand —
 moving them along it would slide them in time and claim a year nobody wrote
 down.
 
+**A join can carry the day, not just the year.** `start`/`end` take an
+optional `on` — "8 December 1984" — beside the `year`. The year does the
+geometry; `on` is what the reader is told, in the index and on the marker.
+
 **An undated confluence sits after the last dated memory before the earliest
-branch, and before the branch itself.** A marriage precedes the children that
+branch, and before the branch itself.** This only applies while a join has no
+year at all — Amma and Dad's now does, so the archive has stopped guessing at
+it. The rule stays for the next one. A marriage precedes the children that
 come out of it, so it cannot be anchored to the axis start — and it cannot sit
 on a fixed backoff either, because a memory on somebody's own line happened
 while they still had one, and a fixed offset lands on top of it the moment the

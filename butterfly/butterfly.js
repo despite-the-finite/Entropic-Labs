@@ -322,7 +322,11 @@
       from: from,
       to: to,
       startsAt: startYear(s),
-      endsAt: endYear(s)
+      endsAt: endYear(s),
+      /* The day itself, where somebody has written it down. `year` places
+         the marker on the axis; this is what the reader is told. */
+      startsOn: (s.start && s.start.on) || null,
+      endsOn: (s.end && s.end.on) || null
     };
   });
 
@@ -335,10 +339,14 @@
     var a = startYear(s), b = endYear(s);
     var kind = (s.start && s.start.kind) || 'union';
     if (kind === 'origin') return ' — runs in from before the record';
-    if (kind === 'union') return a === null ? ' — from an unrecorded year' : ' — from ' + a;
+    if (kind === 'union') {
+      if (s.start && s.start.on) return ' — from ' + s.start.on;
+      return a === null ? ' — from an unrecorded year' : ' — from ' + a;
+    }
     var line = a === null ? '' : ' — from ' + a;
     if (b !== null && s.end && s.end.into && strandById[s.end.into]) {
-      line += ', joining ' + strandById[s.end.into].label + ' in ' + b;
+      line += ', joining ' + strandById[s.end.into].label +
+        ' in ' + ((s.end && s.end.on) || b);
     }
     return line;
   }
@@ -460,6 +468,7 @@
     Object.keys(weddings).forEach(function (key) {
       var w = weddings[key];
       var year = w.lane.endsAt;
+      var said = w.lane.endsOn || (year === null ? null : String(year));
       var target = w.lane.joinTarget;
       list.push({
         id: 'marker-wed-' + target,
@@ -479,7 +488,7 @@
           marker: true,
           note: year === null
             ? undatedNote
-            : w.who.join(' and ') + ' — married ' + year + '. Two trails become one.'
+            : w.who.join(' and ') + ' — married ' + said + '. Two trails become one.'
         }
       });
     });
