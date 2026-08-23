@@ -1102,12 +1102,17 @@
       }
       if (p.kind === 'image') {
         /* A picture set in the telling rather than gathered at the end.
-           Same frame as a drawn figure, because to a reader they are the
-           same object: a thing to look at, with a line underneath saying
-           what it is. Loaded lazily and given its real dimensions so the
-           prose does not jump when it arrives. */
-        var pic = el('figure', 'st-figure');
-        var holder = el('div', 'fig-art');
+           It opens to full size like every other photograph in the room —
+           a picture the reader cannot look at properly is half a picture.
+
+           `mount: 'photo'` gives it the archive's found-photograph frame,
+           tilted on its mount rather than in itself; anything else is a
+           document or a diagram and gets the plain frame. Loaded lazily
+           and given its real dimensions so the prose does not jump. */
+        var asPhoto = p.mount === 'photo';
+        var pic = el('figure', asPhoto ? 'photo inline' : 'st-figure');
+        if (asPhoto) pic.style.setProperty('--tilt', (p.tilt || -0.9) + 'deg');
+
         var im = el('img');
         im.src = p.src || '';
         im.alt = p.alt || '';
@@ -1115,10 +1120,40 @@
         im.decoding = 'async';
         if (p.width) im.setAttribute('width', p.width);
         if (p.height) im.setAttribute('height', p.height);
-        holder.appendChild(im);
-        pic.appendChild(holder);
-        if (p.caption) pic.appendChild(setText(el('figcaption'), p.caption));
+
+        var open = el('button', asPhoto ? 'photo-btn' : 'fig-art fig-open');
+        open.type = 'button';
+        open.appendChild(im);
+        open.setAttribute('aria-label',
+          'Look closer' + (p.caption ? ': ' + p.caption : ''));
+        open.addEventListener('click', function () { openLightbox(p); });
+        pic.appendChild(open);
+
+        if (p.caption) {
+          var fc = setText(el('figcaption'), p.caption);
+          if (p.stamp) fc.appendChild(el('span', 'stamp', p.stamp));
+          pic.appendChild(fc);
+        }
         place(pic);
+        return;
+      }
+
+      if (p.kind === 'poem') {
+        /* Verse, kept as verse. Line breaks are the point, so they are not
+           reflowed into a paragraph, and stanzas keep the air between them
+           that the writer put there. */
+        var poem = el('div', 'poem');
+        if (p.title) poem.appendChild(el('p', 'poem-title', p.title));
+        (p.stanzas || []).forEach(function (stanza) {
+          var st = el('p', 'stanza');
+          arr(stanza).forEach(function (line, i) {
+            if (i) st.appendChild(el('br'));
+            setText(st, line);
+          });
+          poem.appendChild(st);
+        });
+        if (p.by) poem.appendChild(el('p', 'poem-by', p.by));
+        place(poem);
         return;
       }
       if (p.kind === 'figure') {
