@@ -194,6 +194,19 @@
         <button class="tour-btn" id="tour-prev" type="button" aria-label="Previous chapter">&#8592;</button>
         <button class="tour-btn" id="tour-play" type="button" aria-label="Pause">&#8214;</button>
         <button class="tour-btn" id="tour-next" type="button" aria-label="Next chapter">&#8594;</button>
+        <button class="tour-btn tour-sound" id="tour-sound" type="button"
+                aria-pressed="false" aria-label="Turn the music on" hidden>
+          <span class="tour-sound-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M4 9.5h3.2L12 5.4v13.2L7.2 14.5H4z" fill="currentColor"/>
+              <g class="tour-sound-waves">
+                <path d="M15.4 9.2a4 4 0 0 1 0 5.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                <path d="M17.9 6.7a7.5 7.5 0 0 1 0 10.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              </g>
+              <path class="tour-sound-cut" d="M16 9l6 6M22 9l-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+          </span>
+        </button>
       </div>
 
       <div class="tour-devices" role="group" aria-label="Which screen to show">

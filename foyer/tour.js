@@ -28,6 +28,23 @@
 
   var CHAPTER_MS = 6000;                 /* five of these is exactly half a minute */
 
+  /* The music.
+   *
+   * Point this at an audio file you have the right to publish — your own
+   * masters are the obvious candidate for a studio's own site — and the tour
+   * plays it instead of the bed it synthesises. A commercial release needs a
+   * sync and a master licence before it can go on a public page; the file has
+   * to be one you can actually clear.
+   *
+   *   var MUSIC_SRC = 'audio/tour.m4a';
+   *
+   * Left empty, the tour builds its own: five chords, one per room, played on
+   * a drone and a filtered noise wash through the Web Audio API. It weighs
+   * nothing, it is nobody's copyright, and it changes chord when the chapter
+   * does. */
+  var MUSIC_SRC = '';
+  var MUSIC_KEY = 'el.tour.sound';
+
   var reduceMQ = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   /* ------------------------------------------------------- the chapters --- */
@@ -126,6 +143,7 @@
   var copyEl    = document.getElementById('tour-copy');
   var liveEl    = document.getElementById('tour-live');
   var playBtn   = document.getElementById('tour-play');
+  var soundBtn  = document.getElementById('tour-sound');
   var prevBtn   = document.getElementById('tour-prev');
   var nextBtn   = document.getElementById('tour-next');
   var closeBtn  = document.getElementById('tour-close');
@@ -137,6 +155,9 @@
   var open    = false;
   var ended   = false;
   var lastFocus = null;
+  /* True when the tour let itself in, so the music is off and the button is
+     the one thing on the panel asking to be pressed. */
+  var askingForSound = false;
 
   /* --------------------------------------------------------------- bars --- */
 
@@ -288,6 +309,7 @@
     renderCopy();
     armBar();
     syncTransport();
+    music.chapter(current);
     preload(current + 1);
 
     if (liveEl) {
@@ -323,11 +345,181 @@
     });
   }
 
+  /* --------------------------------------------------------------- music --- */
+
+  /* One chord per room, low and open, in D minor. Chapter 00 sits on the root
+     and the four rooms move off it, so the progression walks the building in
+     the same order the chapters do. Frequencies in Hz. */
+  var CHORDS = [
+    [73.42, 110.00, 174.61],    /* 00  Dm   — the foyer */
+    [87.31, 130.81, 220.00],    /* 01  F    — the Observatory */
+    [98.00, 146.83, 233.08],    /* 02  Gm   — the Studio */
+    [116.54, 174.61, 293.66],   /* 03  B♭   — the Game Room */
+    [110.00, 164.81, 261.63]    /* 04  Am   — Butterfly Trails */
+  ];
+
+  var MUSIC_GAIN = 0.14;        /* quiet enough to talk over */
+
+  var music = (function () {
+    var ctx = null, master = null, voices = [], wash = null, washLfo = null;
+    var el = null;              /* the <audio>, when MUSIC_SRC is set */
+    var wanted = false;         /* has the visitor asked for sound */
+    var built = false;
+
+    function now() { return ctx ? ctx.currentTime : 0; }
+
+    function ramp(param, value, seconds) {
+      param.cancelScheduledValues(now());
+      param.setValueAtTime(param.value, now());
+      param.linearRampToValueAtTime(value, now() + seconds);
+    }
+
+    /* Built on first use rather than on load: a context created before the
+       visitor has touched anything starts suspended, and some browsers count
+       it against the page either way. */
+    function build() {
+      if (built) return true;
+
+      if (MUSIC_SRC) {
+        el = new Audio(MUSIC_SRC);
+        el.loop = true;
+        el.volume = 0;
+        built = true;
+        return true;
+      }
+
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return false;
+      try { ctx = new AC(); } catch (e) { return false; }
+
+      master = ctx.createGain();
+      master.gain.value = 0;
+      master.connect(ctx.destination);
+
+      /* The drone: three oscillators, each detuned a few cents off its
+         neighbour so the chord beats slowly instead of sitting still. */
+      for (var i = 0; i < 3; i++) {
+        var osc = ctx.createOscillator();
+        var gain = ctx.createGain();
+        osc.type = i === 0 ? 'sine' : 'triangle';
+        osc.frequency.value = CHORDS[0][i];
+        osc.detune.value = (i - 1) * 4;
+        gain.gain.value = i === 0 ? 0.5 : 0.22;
+        osc.connect(gain);
+        gain.connect(master);
+        osc.start();
+        voices.push(osc);
+      }
+
+      /* The wash. This place is named after the counting, not the mess — but
+         the studio's line is that order emerges from noise if you listen long
+         enough, so there is noise under all of it, filtered almost shut. */
+      var seconds = 4;
+      var buf = ctx.createBuffer(1, ctx.sampleRate * seconds, ctx.sampleRate);
+      var data = buf.getChannelData(0);
+      for (var n = 0; n < data.length; n++) data[n] = Math.random() * 2 - 1;
+
+      var noise = ctx.createBufferSource();
+      noise.buffer = buf;
+      noise.loop = true;
+
+      var filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.value = 320;
+      filter.Q.value = 6;
+
+      wash = ctx.createGain();
+      wash.gain.value = 0.08;
+
+      /* A slow sweep on the cutoff, so the wash breathes rather than hisses. */
+      washLfo = ctx.createOscillator();
+      var washDepth = ctx.createGain();
+      washLfo.frequency.value = 0.05;
+      washDepth.gain.value = 180;
+      washLfo.connect(washDepth);
+      washDepth.connect(filter.frequency);
+      washLfo.start();
+
+      noise.connect(filter);
+      filter.connect(wash);
+      wash.connect(master);
+      noise.start();
+
+      built = true;
+      return true;
+    }
+
+    return {
+      available: function () { return !!(window.AudioContext || window.webkitAudioContext || MUSIC_SRC); },
+      wanted: function () { return wanted; },
+
+      /* Called from a click, which is the only place a browser will let audio
+         start. Returns false if there is nothing to play. */
+      on: function () {
+        if (!build()) return false;
+        wanted = true;
+        if (el) {
+          var p = el.play();
+          if (p && p.catch) p.catch(function () {});
+          var v = 0, step = MUSIC_GAIN / 20;
+          clearInterval(el._fade);
+          el._fade = setInterval(function () {
+            v = Math.min(MUSIC_GAIN, v + step);
+            el.volume = v;
+            if (v >= MUSIC_GAIN) clearInterval(el._fade);
+          }, 60);
+        } else {
+          if (ctx.state === 'suspended') ctx.resume();
+          ramp(master.gain, MUSIC_GAIN, 1.2);
+        }
+        try { localStorage.setItem(MUSIC_KEY, 'on'); } catch (e) {}
+        return true;
+      },
+
+      off: function (remember) {
+        wanted = false;
+        if (el) { clearInterval(el._fade); el.pause(); el.volume = 0; }
+        else if (ctx) ramp(master.gain, 0, 0.5);
+        if (remember !== false) { try { localStorage.setItem(MUSIC_KEY, 'off'); } catch (e) {} }
+      },
+
+      /* The tour pausing is the music pausing — the two are one thing. */
+      hold: function () {
+        if (!wanted) return;
+        if (el) el.pause();
+        else if (ctx) ramp(master.gain, 0, 0.4);
+      },
+      release: function () {
+        if (!wanted) return;
+        if (el) { var p = el.play(); if (p && p.catch) p.catch(function () {}); }
+        else if (ctx) ramp(master.gain, MUSIC_GAIN, 0.8);
+      },
+
+      /* Only the synthesised bed follows the chapters; a track you supply is
+         yours to arrange and gets left alone. */
+      chapter: function (i) {
+        if (!ctx || !voices.length) return;
+        var chord = CHORDS[i] || CHORDS[0];
+        for (var v = 0; v < voices.length; v++) ramp(voices[v].frequency, chord[v], 1.6);
+      }
+    };
+  })();
+
+  function syncSound() {
+    if (!soundBtn) return;
+    var on = music.wanted();
+    soundBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    soundBtn.setAttribute('aria-label', on ? 'Turn the music off' : 'Turn the music on');
+    soundBtn.classList.toggle('is-on', on);
+    soundBtn.classList.toggle('is-asking', !on && askingForSound);
+  }
+
   /* ------------------------------------------------------------ controls --- */
 
   function setPaused(next) {
     paused = next;
     root.classList.toggle('is-paused', paused);
+    if (paused) music.hold(); else music.release();
     syncTransport();
   }
 
@@ -359,6 +551,15 @@
     device = next;
     syncDeviceButtons();
     renderStage();                    /* the chapter clock keeps running */
+  }
+
+  if (soundBtn) {
+    soundBtn.addEventListener('click', function () {
+      askingForSound = false;
+      if (music.wanted()) music.off();
+      else if (!music.on()) { soundBtn.disabled = true; return; }
+      syncSound();
+    });
   }
 
   playBtn.addEventListener('click', function () {
@@ -409,7 +610,7 @@
 
   /* ------------------------------------------------------- open and shut --- */
 
-  function openTour() {
+  function openTour(byGesture) {
     if (open) return;
     open = true;
     ended = false;
@@ -422,6 +623,24 @@
     setPaused(reduceMQ.matches);
     go(0, false);
     preload(0);
+
+    /* Audio can only start from a gesture, and unasked-for sound is rude
+       anyway. Clicking "Take the tour" is both the gesture and the asking, so
+       that opens with music — unless the visitor turned it off last time.
+       When the tour let itself in, the button asks instead of the music. */
+    if (soundBtn) {
+      var pref = null;
+      try { pref = localStorage.getItem(MUSIC_KEY); } catch (e) {}
+      soundBtn.hidden = !music.available();
+      askingForSound = false;
+      if (byGesture && pref !== 'off') {
+        if (!music.on()) soundBtn.hidden = true;
+      } else if (pref !== 'off') {
+        askingForSound = true;
+      }
+      syncSound();
+    }
+
     closeBtn.focus();
     try { localStorage.setItem(SEEN_KEY, '1'); } catch (e) {}
   }
@@ -432,11 +651,13 @@
     root.hidden = true;
     document.documentElement.classList.remove('tour-is-open');
     window.dispatchEvent(new CustomEvent('tour:close'));
+    music.off(false);                 /* stop playing, keep the preference */
+    askingForSound = false;
     for (var i = 0; i < bars.length; i++) bars[i].classList.remove('is-live');
     if (lastFocus && lastFocus.focus) lastFocus.focus();
   }
 
-  cue.addEventListener('click', openTour);
+  cue.addEventListener('click', function () { openTour(true); });
 
   /* --------------------------------------------------------------- boot --- */
 
@@ -449,6 +670,6 @@
     var seen = true;
     try { seen = localStorage.getItem(SEEN_KEY) === '1'; }
     catch (e) { seen = true; }        /* no storage, no unasked-for pop-up */
-    if (!seen) setTimeout(function () { if (!open) openTour(); }, 1800);
+    if (!seen) setTimeout(function () { if (!open) openTour(false); }, 1800);
   }
 })();

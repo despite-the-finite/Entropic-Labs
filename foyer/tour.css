@@ -580,3 +580,38 @@
   .tour-shot{ transform: none; }
   .tour-bar.is-live .tour-bar-fill{ animation: none; transform: scaleX(1); }
 }
+
+/* --------------------------------------------------------------- sound --- */
+
+/* Audio cannot start without a gesture, and unasked-for sound is rude anyway,
+   so this button is the whole of the music's interface: on when the visitor
+   opened the tour themselves, asking when the tour let itself in. */
+.tour-sound[hidden]{ display: none; }
+
+.tour-sound{ padding: 0 0.5rem; }
+.tour-sound-mark{
+  display: block;
+  width: 1.05rem;
+  height: 1.05rem;
+}
+.tour-sound-mark svg{ display: block; width: 100%; height: 100%; }
+
+/* Off is the crossed-out speaker; on swaps the cross for the waves. */
+.tour-sound .tour-sound-waves{ opacity: 0; }
+.tour-sound.is-on .tour-sound-waves{ opacity: 1; }
+.tour-sound.is-on .tour-sound-cut{ opacity: 0; }
+.tour-sound.is-on{ border-color: var(--glow); color: var(--glow); }
+
+/* When the tour opened on its own the music is off, so the button says so
+   the way a room does when someone is waiting in it. */
+@keyframes tour-sound-ask{
+  0%, 100%{ box-shadow: 0 0 0 0 transparent; border-color: var(--hairline); }
+  50%{ box-shadow: 0 0 0 3px var(--glow-soft); border-color: var(--glow); }
+}
+.tour-sound.is-asking{ animation: tour-sound-ask 2.6s ease-in-out infinite; }
+
+.tour-sound[disabled]{ opacity: 0.4; cursor: default; }
+
+@media (prefers-reduced-motion: reduce){
+  .tour-sound.is-asking{ animation: none; border-color: var(--glow); }
+}
