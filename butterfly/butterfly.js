@@ -3,10 +3,20 @@
    Owns the archive, the state machine, the URL and every panel. The renderer
    draws and reports; this decides what any of it means.
 
-   Views
+   Lenses — two ways of experiencing the same archive, chosen by the visitor
+   and remembered between visits:
+     trails         the canvas world. The braid, drawn on one dark plane
+     mountain       a night landscape climbed from the earliest year upward,
+                    where a trail is a life and a light is a memory
+
+   Views — layouts inside the trails lens:
      trail          the reading order, along one meandering path
      constellation  the whole archive at once, clustered and linked
      map            where it happened
+
+   Adding a third lens means one entry in LENSES and one object answering
+   the same handful of calls. Nothing about the archive, the filters or the
+   story panel knows how many there are.
 
    The URL is the state:
      butterfly.html                 the trail
@@ -27,6 +37,7 @@
 
   var DATA = global.BUTTERFLY_DATA;
   var ENGINE = global.BUTTERFLY_TRAILS;
+  var MOUNTAIN = global.BUTTERFLY_MOUNTAIN;
   if (!DATA || !ENGINE) return;
 
   var doc = document;
@@ -374,6 +385,9 @@
   var gateMark = $('#gate-mark');
   var lightboxEl = $('#lightbox');
   var keynavEl = $('#keynav');
+  var mountainEl = $('#mountain');
+  var lensesEl = $('#lenses');
+  var folkEl = $('#folk');
 
   var ESSAY = ARCHIVE.essay || null;
   var view = { mode: 'trail', story: null, essay: false };
@@ -598,6 +612,24 @@
     });
     var linkCount = ordered.reduce(function (n, s) { return n + s.consequences.length; }, 0);
 
+    /* A category or a decade narrows the archive, and the line says what is
+       showing out of what. Following somebody narrows nothing — their family
+       is still there — so that is reported as what it is. */
+    var narrowed = !!(filters.category || filters.era);
+    var who = filters.person && strandById[filters.person];
+    if (narrowed || who) {
+      countsEl.appendChild(el('b', null, String(narrowed ? filtered().length : stories.length)));
+      countsEl.appendChild(el('span', null,
+        (narrowed ? ' of ' + stories.length : '') +
+        (stories.length === 1 && !narrowed ? ' memory' : ' memories')));
+      var words = [];
+      if (filters.category && catById[filters.category]) words.push(catById[filters.category].name);
+      if (filters.era && eraById[filters.era]) words.push(eraById[filters.era].label);
+      if (who) words.push('following ' + who.label);
+      countsEl.appendChild(el('span', null, ' · ' + words.join(' · ')));
+      return;
+    }
+
     var n = el('b', null, String(stories.length));
     countsEl.appendChild(n);
     countsEl.appendChild(el('span', null, stories.length === 1 ? ' memory' : ' memories'));
@@ -611,7 +643,9 @@
   }
 
   function updateHint() {
-    var move = trails.isCoarse() ? 'Drag to explore' : 'Drag to explore · scroll to move';
+    var move = lens === 'mountain'
+      ? (trails.isCoarse() ? 'Swipe upward through the years' : 'Scroll or drag upward through the years')
+      : (trails.isCoarse() ? 'Drag to explore' : 'Drag to explore · scroll to move');
     plateHint.textContent = stories.length
       ? move + ' · Follow a butterfly, or pick a light'
       : move + ' · Stories coming soon';
@@ -700,7 +734,7 @@
 
   /* Two idle butterflies live in the room. They have nowhere to be. */
   function startAmbient() {
-    if (trails.isReduced()) return;
+    if (trails.isReduced() || lens !== 'trails') return;
     var want = trails.quality() > 0.7 ? 2 : 1;
     while (ambient.length < want) {
       var f = spawnFly({ tone: '#FFC46B', size: 0.85, speed: travelSpeed() * 0.6, trailCap: 60 });
@@ -727,7 +761,7 @@
      the interface instead. It sits on a chip or a title for a few seconds,
      then goes back to work. */
   function perchSomewhere() {
-    if (trails.isReduced() || !ambient.length) return;
+    if (trails.isReduced() || !ambient.length || lens !== 'trails') return;
     if (view.mode !== 'trail' || !storyEl.hidden) return;
     var targets = [].slice.call(doc.querySelectorAll(
       '.cat-chip, #surprise, .plate h1, .views button, .era-btn'
@@ -775,6 +809,7 @@
   function maybeRareVisitor() {
     if (trails.isReduced() || Math.random() > 0.025) return;
     global.setTimeout(function () {
+      if (lens !== 'trails') return;
       var f = spawnFly({ tone: '#F1EEFB', size: 0.75, speed: travelSpeed() * 0.7, trailCap: 120 });
       f.alpha = 0.55;
       var b = trails.bounds();
@@ -798,7 +833,6 @@
   function follow(catId) {
     var cat = catById[catId];
     if (!cat) return;
-    markChips(catId);
     releaseEscort(600);
 
     var pool = storiesIn(catId);
@@ -816,10 +850,7 @@
         f.aim({ x: mid.x + (Math.random() - 0.5) * 1.6, y: mid.y + (Math.random() - 0.5) * 1.2 });
       };
       whisperPair(ARCHIVE.noStory, 2800);
-      global.setTimeout(function () {
-        markChips(null);
-        releaseEscort(1400);
-      }, 6400);
+      global.setTimeout(function () { releaseEscort(1400); }, 6400);
       return;
     }
 
@@ -830,15 +861,31 @@
     trails.flyTo(f, target.id, {
       onArrive: function () {
         go('#' + target.id);
-        markChips(null);
         releaseEscort(1600);
       }
     });
   }
 
+  /* A category chip sets the filter both lenses read. What happens next is
+     the lens's own business: the canvas world sends a butterfly to fetch one
+     of them, and the mountain walks you to the earliest of them, because
+     opening a memory over a landscape you have just been shown is not an
+     invitation to look at it. */
+  function toggleCategory(catId) {
+    if (filters.category === catId) { setFilters({ category: null }); return; }
+    var pool = storiesIn(catId);
+    if (pool.length) setFilters({ category: catId });
+
+    if (lens === 'trails') { follow(catId); return; }
+
+    var cat = catById[catId];
+    if (!pool.length) { whisperPair(ARCHIVE.noStory, 2800); return; }
+    whisper('Following ' + cat.name.toLowerCase() + '…', 3000);
+    if (mountain) mountain.focus(pool[0].id, { instant: false });
+  }
+
   function surprise() {
     releaseEscort(600);
-    markChips(null);
 
     if (!stories.length) {
       /* Several of them search, briefly and without success. */
@@ -868,12 +915,16 @@
       return;
     }
 
-    var pool = ordered.filter(function (s) { return s.id !== view.story; });
-    if (!pool.length) pool = ordered;
+    /* Surprise inside whatever the visitor has narrowed things to: a random
+       memory that ignores their own filter is not a surprise, it is a bug. */
+    var within = anyFilter() ? filtered() : ordered;
+    var pool = within.filter(function (s) { return s.id !== view.story; });
+    if (!pool.length) pool = within.length ? within : ordered;
     var target = pick(pool);
+    whisper('Somewhere in ' + (whenOf(target) || 'the archive') + '…', 2800);
+    if (lens !== 'trails') { go('#' + target.id); return; }
     var g = spawnFly({ tone: toneOf(target), size: 1.05, trailCap: 130, state: 'seeking' });
     escort = g;
-    whisper('Somewhere in ' + (whenOf(target) || 'the archive') + '…', 2800);
     trails.flyTo(g, target.id, {
       onArrive: function () { go('#' + target.id); releaseEscort(1600); }
     });
@@ -899,7 +950,7 @@
       b.appendChild(el('span', 'count', n ? String(n) : '—'));
       b.setAttribute('aria-label',
         'Follow ' + cat.name + ' — ' + (n ? n + (n === 1 ? ' memory' : ' memories') : 'no memories yet'));
-      b.addEventListener('click', function () { follow(cat.id); });
+      b.addEventListener('click', function () { toggleCategory(cat.id); });
       dockCats.appendChild(b);
     });
   }
@@ -910,36 +961,57 @@
     var usable = eras.filter(function (e) {
       return ordered.some(function (s) { return eraOf(s) === e; });
     });
-    if (!usable.length) {
-      erasEl.hidden = true;
-      body.removeAttribute('data-eras');
-      return;
-    }
-    erasEl.hidden = false;
-    body.setAttribute('data-eras', '1');
+    erasEl.hidden = !usable.length;
+    /* The rail's slot on a phone is shared with the people, so it is held
+       open by either of them having something to say. */
+    if (usable.length || !folkEl.hidden) body.setAttribute('data-eras', '1');
+    else body.removeAttribute('data-eras');
+
     usable.forEach(function (e) {
       var b = el('button', 'era-btn', e.label);
       b.type = 'button';
+      b.setAttribute('data-era', e.id);
       b.setAttribute('aria-pressed', 'false');
+      b.setAttribute('aria-label', e.label + (e.line ? ' — ' + e.line : ''));
       if (e.line) b.title = e.line;
-      b.addEventListener('click', function () {
-        [].slice.call(erasEl.children).forEach(function (x) { x.setAttribute('aria-pressed', 'false'); });
-        b.setAttribute('aria-pressed', 'true');
-        panToEra(e);
-      });
+      b.addEventListener('click', function () { toggleEra(e); });
       erasEl.appendChild(b);
     });
   }
 
-  function panToStrand(id) {
+  function markEras() {
+    [].slice.call(erasEl.querySelectorAll('.era-btn')).forEach(function (b) {
+      b.setAttribute('aria-pressed',
+        b.getAttribute('data-era') === filters.era ? 'true' : 'false');
+    });
+  }
+
+  /* A decade is a filter now, not only a place to fly to — which is what
+     lets it survive a change of lens. Pressing the one already chosen puts
+     the whole archive back. */
+  function toggleEra(e) {
+    var next = filters.era === e.id ? null : e.id;
+    setFilters({ era: next });
+    if (!next) return;
+    if (lens === 'trails') panToEra(e);
+    else if (mountain) {
+      mountain.showEra({ t0: axisT(e.from === undefined ? axisStart : e.from),
+                         t1: axisT(e.to === undefined ? axisEnd : e.to) });
+      whisper(e.label + (e.line ? ' — ' + e.line : ''), 3400);
+    }
+  }
+
+  function panToStrand(id, opts) {
+    opts = opts || {};
     var st = strandById[id];
     if (!st) return;
+    if (lens !== 'trails') { setLens('trails', { silent: true, remember: false }); }
     if (view.mode !== 'trail') { go('#'); }
     var kind = (st.start && st.start.kind) || 'union';
     var p = trails.strandPoint(id, kind === 'origin' ? 0.25 : 0.6);
     if (!p) return;
     trails.panTo(p.x, p.y, 1.05, 1100);
-    whisper(st.label + strandWhen(st), 3600);
+    if (!opts.quiet) whisper(st.label + strandWhen(st), 3600);
   }
 
   function panToEra(e) {
@@ -954,6 +1026,397 @@
     if (!n) return;
     trails.panTo(sx / n, sy / n, view.mode === 'trail' ? 1.15 : undefined, 1100);
     whisper(e.label + (e.line ? ' — ' + e.line : ''), 3400);
+  }
+
+  /* ==========================================================  THE LENSES
+     Two readings of one archive, and the machinery that keeps them agreeing.
+
+     A lens owns pixels and nothing else. Every question about what a memory
+     is, which ones are showing, who is being followed and what happens when
+     one is opened is answered here, once, and handed to whichever lens is
+     currently up — which is what lets the visitor change their mind without
+     losing their place.
+
+     To add a third: one entry in LENSES, one object with the same six
+     methods, and a renderer that can draw the same node list.
+     ------------------------------------------------------------------- */
+  var LENSES = [
+    {
+      id: 'trails',
+      label: 'Trails',
+      glyph: '✦',
+      line: 'The braid, drawn on one dark plane.'
+    },
+    {
+      id: 'mountain',
+      label: 'Mountain',
+      glyph: '△',
+      line: 'A night landscape. Time climbs; every light is a memory.'
+    }
+  ];
+  var LENS_KEY = 'el-bt-lens';
+  var lens = 'trails';
+
+  /* The mountain is built once and left asleep. It costs nothing until it is
+     activated: no canvas is sized and no element is placed until then. */
+  var mountain = MOUNTAIN ? MOUNTAIN.create(mountainEl) : null;
+  if (!mountain) LENSES.length = 1;
+
+  function lensOk(id) {
+    for (var i = 0; i < LENSES.length; i++) if (LENSES[i].id === id) return true;
+    return false;
+  }
+  function lensDef(id) {
+    for (var i = 0; i < LENSES.length; i++) if (LENSES[i].id === id) return LENSES[i];
+    return LENSES[0];
+  }
+
+  /* -------------------------------------------------- the shared filters
+     Category, person and decade are the archive's state, not any lens's.
+     Both lenses read them, and neither owns them, so switching lens is a
+     change of drawing and never a change of what is being looked at. */
+  var filters = { category: null, person: null, era: null };
+
+  function anyFilter() {
+    return !!(filters.category || filters.person || filters.era);
+  }
+
+  /* Category and decade genuinely narrow the archive. A person does not:
+     following somebody turns their line up and the others down, and their
+     family stays visible behind them, which is the point of a family. */
+  function inFilters(s) {
+    if (filters.category && s.category !== filters.category) return false;
+    if (filters.era) {
+      var e = eraOf(s);
+      if (!e || e.id !== filters.era) return false;
+    }
+    return true;
+  }
+  function filtered() { return ordered.filter(inFilters); }
+
+  /* What is currently narrowing or colouring the archive, in words. Used by
+     the readout, the spoken announcement and the index's way out. */
+  function filterWords() {
+    var out = [];
+    if (filters.category && catById[filters.category]) out.push(catById[filters.category].name);
+    if (filters.era && eraById[filters.era]) out.push(eraById[filters.era].label);
+    if (filters.person && strandById[filters.person]) {
+      out.push('following ' + strandById[filters.person].label);
+    }
+    return out;
+  }
+
+  function setFilters(next, opts) {
+    opts = opts || {};
+    if ('category' in next) filters.category = next.category;
+    if ('person' in next) filters.person = next.person;
+    if ('era' in next) filters.era = next.era;
+    applyFilters(opts);
+  }
+
+  function clearFilters() {
+    if (!anyFilter()) return;
+    setFilters({ category: null, person: null, era: null });
+    whisper('Every memory, back on the trail.', 2800);
+  }
+
+  /* One pass that puts the filter state on every control and on whichever
+     lens is drawing. Called after any change, and again after a lens change,
+     so the two can never drift apart. */
+  function applyFilters(opts) {
+    opts = opts || {};
+    markChips(filters.category);
+    markFolk();
+    markEras();
+    updateCounts();
+
+    var shown = filtered();
+    var ids = null;
+    if (anyFilter()) {
+      ids = {};
+      shown.forEach(function (s) { ids[s.id] = true; });
+    }
+
+    if (lens === 'trails') {
+      /* The engine's spotlight already knows how to hold a subset up and let
+         the rest fall back; a filter is the same gesture as a causal walk. */
+      trails.spotlight(anyFilter() ? shown.map(function (s) { return s.id; }) : null);
+    } else if (mountain) {
+      mountain.setEmphasis({
+        category: filters.category,
+        person: filters.person,
+        era: filters.era,
+        ids: ids
+      });
+    }
+
+    /* The index names what is currently narrowing the archive and offers the
+       way out of it, so it has to be rebuilt when that changes — a list that
+       still describes the last filter is worse than no list. */
+    renderKeynav();
+
+    if (!opts.quiet) {
+      var words = filterWords();
+      liveEl.textContent = words.length
+        ? (filters.category || filters.era
+            ? shown.length + ' of ' + stories.length + ' memories showing — ' + words.join(', ')
+            : stories.length + ' memories showing — ' + words.join(', '))
+        : 'All ' + stories.length + ' memories showing.';
+    }
+  }
+
+  /* ---------------------------------------------------------- the switch */
+  var lensFade = 0;
+
+  function renderLenses() {
+    lensesEl.textContent = '';
+    if (LENSES.length < 2) { lensesEl.hidden = true; return; }
+    LENSES.forEach(function (L) {
+      var b = el('button', 'lens-btn');
+      b.type = 'button';
+      b.setAttribute('data-lens', L.id);
+      b.setAttribute('aria-pressed', 'false');
+      b.title = L.line;
+      var g = el('span', 'lens-glyph', L.glyph);
+      g.setAttribute('aria-hidden', 'true');
+      b.appendChild(g);
+      b.appendChild(el('span', 'lens-name', L.label));
+      b.addEventListener('click', function () { setLens(L.id); });
+      /* A segmented control is one thing with parts, so the arrow keys walk
+         it the way they walk a tab strip. */
+      b.addEventListener('keydown', function (e) {
+        var d = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1
+              : (e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0);
+        if (!d) return;
+        e.preventDefault();
+        var all = [].slice.call(lensesEl.querySelectorAll('.lens-btn'));
+        var i = all.indexOf(b);
+        var to = all[(i + d + all.length) % all.length];
+        if (to) { to.focus(); to.click(); }
+      });
+      lensesEl.appendChild(b);
+    });
+  }
+
+  function markLenses() {
+    [].slice.call(lensesEl.querySelectorAll('.lens-btn')).forEach(function (b) {
+      b.setAttribute('aria-pressed', b.getAttribute('data-lens') === lens ? 'true' : 'false');
+    });
+  }
+
+  /* Where the mountain should open. Whatever the visitor was last looking
+     at, in this order: the memory they have open, the decade they picked,
+     the person they are following, or the bottom of the climb. */
+  function mountainEntry() {
+    if (view.story && byId[view.story]) return { at: view.story };
+    if (filters.era && eraById[filters.era]) {
+      var e = eraById[filters.era];
+      return { t: (axisT(e.from) + axisT(e.to)) / 2 };
+    }
+    if (filters.person && strandById[filters.person]) {
+      var lane = null;
+      lanes.forEach(function (l) { if (l.id === filters.person) lane = l; });
+      if (lane) return { t: lane.from + (lane.to - lane.from) * 0.5 };
+    }
+    return {};
+  }
+
+  function setLens(next, opts) {
+    opts = opts || {};
+    if (!lensOk(next)) next = LENSES[0].id;
+    if (next === lens && !opts.force) return;
+    lens = next;
+    /* A link that names a layout borrows the trails lens for the length of
+       that visit; it does not get to rewrite what the visitor prefers. */
+    if (opts.remember !== false) store(LENS_KEY, lens);
+    body.setAttribute('data-lens', lens);
+    markLenses();
+    global.clearTimeout(lensFade);
+
+    if (lens === 'mountain' && mountain) {
+      /* Nothing draws twice. The canvas world is put down before the
+         landscape is picked up. */
+      releaseEscort(300);
+      trails.stop();
+      mountainEl.classList.add('entering');
+      mountain.setWorld(mountainWorld());
+      mountain.setLights(mountainLights());
+      mountain.activate(mountainEntry());
+      if (trails.isReduced()) mountainEl.classList.remove('entering');
+      else {
+        global.requestAnimationFrame(function () {
+          global.requestAnimationFrame(function () {
+            mountainEl.classList.remove('entering');
+          });
+        });
+      }
+      if (!opts.silent) whisper(lensDef('mountain').line, 4200);
+    } else {
+      if (mountain && mountain.isActive()) {
+        mountainEl.classList.add('entering');
+        var settle = trails.isReduced() ? 0 : 260;
+        lensFade = global.setTimeout(function () {
+          if (lens !== 'trails') return;
+          mountain.deactivate();
+          mountainEl.classList.remove('entering');
+        }, settle);
+      }
+      trails.wake();
+      trails.setMode(view.mode, { force: true, fit: !view.story });
+      if (view.story && byId[view.story]) {
+        trails.focus(view.story, { zoom: FOCUS_ZOOM[view.mode] || 1.35 });
+      } else if (filters.era && eraById[filters.era]) {
+        panToEra(eraById[filters.era]);
+      } else if (filters.person) {
+        panToStrand(filters.person, { quiet: true });
+      }
+      if (entered) startAmbient();
+      if (!opts.silent) whisper(lensDef('trails').line, 3600);
+    }
+
+    applyFilters({ quiet: true });
+    updateHint();
+    global.requestAnimationFrame(applyInset);
+  }
+
+  /* -------------------------------------------- what the mountain is given
+     The same lanes the canvas braid is drawn from and the same ordered
+     stories every other part of the room reads. No second archive, no
+     second copy of anybody's dates. */
+  function mountainWorld() {
+    var lowest = axisStart;
+    lanes.forEach(function (l) { if (l.from < lowest) lowest = l.from; });
+
+    /* How much of the archive a life carries. A line the archive has a lot
+       to say about is drawn wandering more widely — there is more of it. */
+    var counts = {}, most = 1;
+    ordered.forEach(function (s) {
+      var k = storyStrand(s);
+      counts[k] = (counts[k] || 0) + 1;
+      if (counts[k] > most) most = counts[k];
+    });
+
+    var usable = eras.filter(function (e) {
+      return ordered.some(function (s) { return eraOf(s) === e; });
+    });
+
+    return {
+      laneW: 0.55,
+      axis: { start: lowest, end: axisEnd },
+      lanes: lanes.map(function (l) {
+        return {
+          id: l.id, label: l.label, tone: l.tone, side: l.side, base: l.base,
+          startKind: l.startKind, endKind: l.endKind, joinTarget: l.joinTarget,
+          from: l.from, to: l.to,
+          weight: (counts[l.id] || 0) / most
+        };
+      }),
+      decades: usable.map(function (e) {
+        return {
+          id: e.id, label: e.label,
+          t0: axisT(e.from === undefined ? axisStart : e.from),
+          t1: axisT(e.to === undefined ? axisEnd : e.to)
+        };
+      })
+    };
+  }
+
+  /* How brightly a memory burns. Only signals the archive already carries —
+     nothing here invents an importance nobody wrote down. */
+  function weightOf(s) {
+    var w = 0.16;
+    if (s.featured) w += 0.46;
+    if (s.chaosEvent) w += 0.2;
+    if (s.images.length) w += 0.12;
+    if (s.audio) w += 0.1;
+    if (s.consequences.length) w += Math.min(0.16, s.consequences.length * 0.08);
+    return clamp(w, 0, 1);
+  }
+
+  function mountainLights() {
+    return ordered.map(function (s) {
+      var where = [whenOf(s), s.location].filter(Boolean).join(' · ');
+      return {
+        id: s.id,
+        strand: storyStrand(s),
+        t: storyT(s),
+        tone: toneOf(s),
+        title: s.title,
+        when: whenOf(s),
+        location: s.location || '',
+        label: s.title + (where ? '. ' + where : '') + (s.hook ? '. ' + s.hook : ''),
+        weight: weightOf(s),
+        chaos: s.chaosEvent,
+        classified: !!s.classified,
+        ref: { id: s.id }
+      };
+    });
+  }
+
+  /* ------------------------------------------------------- the two events
+     Both lenses report the same two things, and the room answers them the
+     same way, so a memory opens identically however it was found. */
+  if (mountain) {
+    mountain.on('select', function (ref) { go('#' + ref.id); });
+    mountain.on('hover', function (ref) {
+      var s = byId[ref.id];
+      if (!s) return;
+      liveEl.textContent = s.title + '. ' + [standfirst(s), s.hook].filter(Boolean).join(' — ');
+    });
+    mountain.on('empty', function () {
+      if (view.story) { go('#'); return; }
+      if (anyFilter()) clearFilters();
+    });
+    mountain.on('person', function (id) { togglePerson(id); });
+  }
+
+  /* ============================================================= THE FOLK
+     The family, as a rail. Only the people: the lines two of them become
+     are relationships, and the archive draws those by putting two trails
+     side by side rather than by giving them a button. */
+  function folkStrands() {
+    return strands.filter(function (st) {
+      return ((st.start && st.start.kind) || 'union') !== 'union';
+    });
+  }
+
+  function renderFolk() {
+    folkEl.textContent = '';
+    var who = folkStrands();
+    if (who.length < 2) { folkEl.hidden = true; return; }
+    folkEl.hidden = false;
+    who.forEach(function (st) {
+      var b = el('button', 'folk-btn', st.label);
+      b.type = 'button';
+      b.setAttribute('data-strand', st.id);
+      b.setAttribute('aria-pressed', 'false');
+      b.style.setProperty('--tone', st.tone);
+      var n = ordered.filter(function (s) { return storyStrand(s) === st.id; }).length;
+      b.setAttribute('aria-label',
+        'Follow ' + st.label + ' — ' + (n ? n + (n === 1 ? ' memory' : ' memories') : 'no memories yet'));
+      b.title = st.label + strandWhen(st);
+      b.addEventListener('click', function () { togglePerson(st.id); });
+      folkEl.appendChild(b);
+    });
+  }
+
+  function markFolk() {
+    [].slice.call(folkEl.querySelectorAll('.folk-btn')).forEach(function (b) {
+      b.setAttribute('aria-pressed',
+        b.getAttribute('data-strand') === filters.person ? 'true' : 'false');
+    });
+  }
+
+  function togglePerson(id) {
+    var next = filters.person === id ? null : id;
+    setFilters({ person: next });
+    if (!next) return;
+    var st = strandById[id];
+    if (lens === 'trails') panToStrand(id);
+    else {
+      if (mountain) mountain.showPerson(id);
+      if (st) whisper(st.label + strandWhen(st), 3600);
+    }
   }
 
   /* ============================================================= THE VIEWS */
@@ -2031,18 +2494,36 @@
       });
     }
 
+    /* The lens comes before the layouts, because it decides whether the
+       layouts mean anything. */
+    if (LENSES.length > 1) {
+      var lensList = group('Experience');
+      LENSES.forEach(function (L) {
+        into(lensList, L.label + (L.id === lens ? ' — showing' : '') + ' · ' + L.line,
+          function () { setLens(L.id); });
+      });
+    }
+
     var room = group('The room');
     into(room, 'The trail', function () { go('#'); });
     into(room, 'The whole trail', function () { go('#whole-trail'); });
     into(room, 'Places', function () { go('#map'); });
     into(room, 'What is the butterfly effect?', function () { go('#' + ESSAY.id); });
     into(room, 'Surprise me', surprise);
+    if (anyFilter()) {
+      into(room, 'Show every memory — clearing ' + filterWords().join(', '), clearFilters);
+    }
 
     /* The braid is most of what there is to navigate while the archive is
        small, so it belongs in the route as much as the memories. */
     var braidList = group('The braid');
     strands.forEach(function (st) {
-      into(braidList, st.label + strandWhen(st), function () { panToStrand(st.id); });
+      var followable = ((st.start && st.start.kind) || 'union') !== 'union';
+      var mine = filters.person === st.id;
+      into(braidList,
+        st.label + strandWhen(st) + (mine ? ' — following' : ''),
+        followable ? function () { togglePerson(st.id); }
+                   : function () { panToStrand(st.id); });
     });
     if (!ordered.length) {
       keynavEl.appendChild(el('p', 'keynav-note',
@@ -2060,6 +2541,21 @@
   function applyInset() {
     var W = global.innerWidth, H = global.innerHeight;
     var open = !storyEl.hidden ? storyEl : (!essayEl.hidden ? essayEl : null);
+
+    /* The mountain scrolls rather than pans, so all it needs to know is how
+       much of the screen the open panel has taken off the top and bottom —
+       enough to keep a memory out from under the sheet. */
+    if (mountain) {
+      if (!open) mountain.setInset(0, 0);
+      else {
+        var mr = open.getBoundingClientRect();
+        if (mr.width > W * 0.85) {
+          mountain.setInset(mr.top > H - mr.bottom ? 0 : mr.bottom,
+                            mr.top > H - mr.bottom ? H - mr.top : 0);
+        } else mountain.setInset(0, 0);
+      }
+    }
+    if (lens !== 'trails') return;
 
     if (!open) {
       var top = plate.getBoundingClientRect().bottom;
@@ -2109,7 +2605,11 @@
       if (id.toLowerCase() === lower) return { mode: view.mode, story: id, essay: false };
     }
     if (ESSAY && lower === ESSAY.id) return { mode: view.mode, story: null, essay: true };
-    if (VIEW_HASH[lower]) return { mode: VIEW_HASH[lower], story: null, essay: false };
+    /* A link that names a layout is a link into the trails lens: `viaView`
+       says so, and apply() honours it over whatever lens was remembered. */
+    if (VIEW_HASH[lower]) {
+      return { mode: VIEW_HASH[lower], story: null, essay: false, viaView: true };
+    }
     return { mode: 'trail', story: null, essay: false };
   }
 
@@ -2145,7 +2645,10 @@
     view = next;
     body.setAttribute('data-view', next.mode);
 
-    trails.setMode(next.mode, { fit: !next.story });
+    /* Asking for a layout by name asks for the lens that has layouts. */
+    if (next.viaView && lens !== 'trails') setLens('trails', { silent: true, remember: false });
+
+    if (lens === 'trails') trails.setMode(next.mode, { fit: !next.story });
     markViews();
     if (next.mode !== hadMode) noteMode(next.mode);
 
@@ -2156,6 +2659,7 @@
       body.setAttribute('data-panel', '1');
       doc.title = ESSAY.title + ' — Butterfly Trails — Entropic Labs';
       trails.clearFocus();
+      if (mountain) mountain.clearFocus();
       beginningEl.hidden = true;
       var eh = essayEl.querySelector('.st-title');
       if (eh && !hadEssay) global.requestAnimationFrame(function () { eh.focus(); });
@@ -2174,7 +2678,8 @@
       /* How close to go depends on what the view is for: the trail is a
          reading position, the constellation is a shape you would lose by
          zooming into it, the map is a place. */
-      trails.focus(s.id, { zoom: FOCUS_ZOOM[next.mode] || 1.35 });
+      if (lens === 'trails') trails.focus(s.id, { zoom: FOCUS_ZOOM[next.mode] || 1.35 });
+      else if (mountain) mountain.focus(s.id);
       trails.hideGhostBranch();
       beginningEl.hidden = true;
       if (hadStory !== next.story) {
@@ -2194,7 +2699,10 @@
       storyEl.textContent = '';
       body.removeAttribute('data-panel');
       trails.clearFocus();
-      trails.spotlight(null);
+      if (mountain) mountain.clearFocus();
+      /* Closing a memory returns to whatever the visitor had narrowed the
+         archive to, not to the whole of it. */
+      applyFilters({ quiet: true });
       trails.hideGhostBranch();
       doc.title = 'Butterfly Trails — Entropic Labs';
       renderBeginning();
@@ -2269,9 +2777,16 @@
       applyInset();
     }, trails.isReduced() ? 0 : 900);
 
-    trails.fit(trails.isReduced() ? 1 : 1600);
-    startAmbient();
-    maybeRareVisitor();
+    if (lens === 'trails') {
+      trails.fit(trails.isReduced() ? 1 : 1600);
+      startAmbient();
+      maybeRareVisitor();
+    } else {
+      /* The gate's own butterfly was drawn on the canvas world. Now that the
+         room is open and the landscape is the one being looked at, that
+         world stops entirely. */
+      trails.stop();
+    }
 
     /* A word on arrival — unless the visitor has already gone and done
        something, in which case they do not need to be welcomed over the top
@@ -2309,6 +2824,7 @@
 
   trails.on('empty', function () {
     if (view.story) { go('#'); return; }
+    if (anyFilter()) { clearFilters(); return; }
     if (!stories.length) {
       whisper(pick([
         ARCHIVE.empty.note,
@@ -2368,6 +2884,20 @@
     if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
     if (!gate.hidden) return;
 
+    /* V walks the lenses. Everything else in here pans or zooms a camera,
+       which the mountain does not have — it is a scroll container, and the
+       browser's own arrow keys are better at that than anything written
+       here would be. */
+    if (e.key === 'v' || e.key === 'V') {
+      var ids = LENSES.map(function (L) { return L.id; });
+      setLens(ids[(ids.indexOf(lens) + 1) % ids.length]);
+      return;
+    }
+    if (lens !== 'trails') {
+      if (e.key === 's' || e.key === 'S') surprise();
+      return;
+    }
+
     switch (e.key) {
       case 'ArrowLeft':  trails.nudge(-90, 0); e.preventDefault(); break;
       case 'ArrowRight': trails.nudge(90, 0); e.preventDefault(); break;
@@ -2389,25 +2919,50 @@
   var resizeTimer = 0;
   global.addEventListener('resize', function () {
     global.clearTimeout(resizeTimer);
-    resizeTimer = global.setTimeout(function () {
-      trails.resize();
-      applyInset();
-    }, 140);
+    resizeTimer = global.setTimeout(relayout, 140);
   });
   global.addEventListener('orientationchange', function () {
-    global.setTimeout(function () { trails.resize(); applyInset(); }, 280);
+    global.setTimeout(relayout, 280);
+  });
+
+  function relayout() {
+    trails.resize();
+    if (lens !== 'trails') trails.stop();
+    if (mountain) mountain.resize();
+    applyInset();
+  }
+
+  /* trails.js wakes its own loop when the tab comes back. This listener is
+     registered later, so it runs after that one and puts the sleeping lens
+     back to sleep. */
+  doc.addEventListener('visibilitychange', function () {
+    if (!doc.hidden && lens !== 'trails') trails.stop();
   });
 
   /* ================================================================= BOOT */
   renderDock();
   renderViews();
+  renderLenses();
+  renderFolk();
   renderEras();
   updateCounts();
   updateHint();
   renderKeynav();
 
   var initial = resolve(global.location.hash);
+  body.setAttribute('data-lens', lens);
   apply(initial);
+
+  /* The lens the visitor last chose, unless the link they followed asks for
+     one of the trails layouts by name. A remembered preference is a
+     preference, not an override. */
+  (function restoreLens() {
+    var want = initial.viaView ? 'trails' : store(LENS_KEY);
+    if (want && lensOk(want) && want !== lens) {
+      setLens(want, { silent: true, remember: !initial.viaView });
+    }
+    else { markLenses(); applyFilters({ quiet: true }); }
+  })();
 
   if (gateMark) gateMark.textContent = ARCHIVE.beforeTheFinite || '';
 

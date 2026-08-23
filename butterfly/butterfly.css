@@ -347,6 +347,8 @@ h1, h2, h3, h4{
 body[data-gate="1"] .plate,
 body[data-gate="1"] .dock,
 body[data-gate="1"] .views,
+body[data-gate="1"] .lenses,
+body[data-gate="1"] .folk,
 body[data-gate="1"] .eras,
 body[data-gate="1"] .readout,
 body[data-gate="1"] .beginning{
@@ -635,7 +637,7 @@ body[data-panel="1"] .plate{ pointer-events: none; }
   position: fixed;
   z-index: 21;
   right: clamp(1.1rem, 3vw, 2.2rem);
-  top: calc(var(--bar-h) + 0.6rem);
+  top: calc(var(--bar-h) + 4rem);
   display: flex;
   border: 1px solid var(--hairline);
   border-radius: 2px;
@@ -1948,7 +1950,11 @@ body[data-panel="1"] .plate{ pointer-events: none; }
 
   /* the sheet owns the bottom of the screen while it is open */
   body[data-panel="1"] .dock,
+  body[data-panel="1"] .viewbar,
   body[data-panel="1"] .views,
+  body[data-panel="1"] .lenses,
+  body[data-panel="1"] .rails,
+  body[data-panel="1"] .folk,
   body[data-panel="1"] .eras,
   body[data-panel="1"] .readout,
   body[data-panel="1"] .beginning{ display: none; }
@@ -1993,7 +1999,9 @@ body[data-panel="1"] .plate{ pointer-events: none; }
   .cat-chip:focus-visible .wing::before,
   .cat-chip:focus-visible .wing::after{ animation: none; }
   .gate, .gate-line, .gate-actions, .plate, .whisper, .photo,
-  .beginning, .dock, .views, .eras{ transition: none; }
+  .beginning, .dock, .views, .lenses, .folk, .eras,
+  #trails, .mtn, .mtn-light, .mtn-name{ transition: none; }
+  .mtn-light[data-chaos="1"] .mtn-halo{ animation: none; }
   .gate-line, .gate-actions{ opacity: 1; transform: none; }
   .photo{ transform: none; }
   /* The beats in a story are punctuation, so they keep their weight and
@@ -2008,3 +2016,446 @@ body[data-panel="1"] .plate{ pointer-events: none; }
   .journey li{ transition: none; }
   *{ scroll-behavior: auto; }
 }
+
+/* ==========================================================================
+   LENSES — which experience, and the two worlds it chooses between
+   ==========================================================================
+   The lens is a higher-order choice than the view: TRAILS and MOUNTAIN are
+   two readings of the same archive, where TRAIL / WHOLE TRAIL / PLACES are
+   layouts inside the first of them. On a wide screen that hierarchy is drawn
+   as two stacked bars; on a phone there is only room for one, so the two
+   groups share a scrolling strip with a rule between them.
+
+   .viewbar and .rails are grouping boxes that dissolve on a wide screen —
+   display:contents hands their children straight back to the viewport, so
+   each keeps the fixed position it has always had.
+   ========================================================================== */
+.viewbar, .rails{ display: contents; }
+
+.lenses{
+  position: fixed;
+  z-index: 21;
+  right: clamp(1.1rem, 3vw, 2.2rem);
+  top: calc(var(--bar-h) + 0.6rem);
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--hairline-strong);
+  border-radius: 2px;
+  overflow: hidden;
+  background: rgba(11,8,18,0.78);
+  backdrop-filter: blur(9px);
+  -webkit-backdrop-filter: blur(9px);
+  transition: opacity .5s ease;
+}
+.lens-btn{
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ash);
+  background: none;
+  border: 0;
+  border-right: 1px solid var(--hairline);
+  min-height: 3rem;
+  padding: 0 0.95rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color .16s ease, background .16s ease;
+}
+.lens-btn:last-child{ border-right: 0; }
+.lens-btn .lens-glyph{
+  font-size: 0.8rem;
+  line-height: 1;
+  opacity: 0.65;
+  transition: opacity .16s ease, text-shadow .16s ease;
+}
+.lens-btn:hover{ color: var(--paper); }
+.lens-btn:hover .lens-glyph{ opacity: 1; }
+/* The chosen lens is named in three ways at once — filled, lit and marked —
+   because "which of these two am I looking through" must not be a matter of
+   noticing a colour. */
+.lens-btn[aria-pressed="true"]{
+  color: var(--ink);
+  background: var(--ember);
+}
+.lens-btn[aria-pressed="true"] .lens-glyph{ opacity: 1; }
+
+/* ==========================================================================
+   THE PEOPLE RAIL — follow a life
+   ========================================================================== */
+.folk{
+  position: fixed;
+  z-index: 21;
+  left: clamp(1.1rem, 3vw, 2.2rem);
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  align-items: flex-start;
+  max-height: 52vh;
+  overflow-y: auto;
+  scrollbar-width: none;
+  transition: opacity .5s ease;
+}
+.folk[hidden]{ display: none; }
+.folk::-webkit-scrollbar{ display: none; }
+.folk-btn{
+  display: flex;
+  align-items: center;
+  gap: 0.55em;
+  background: none;
+  border: 0;
+  color: rgba(156,147,184,0.7);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  min-height: 2.4rem;
+  padding: 0 0.2rem;
+  white-space: nowrap;
+  transition: color .16s ease;
+}
+/* Each life carries its own light, the same one it is drawn in. The dot is
+   the colour; the label never is, because 0.6rem mono in #7C4DFF is not
+   text anybody can read. */
+.folk-btn::before{
+  content: "";
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex: none;
+  background: var(--tone, var(--ember));
+  box-shadow: 0 0 6px color-mix(in srgb, var(--tone, var(--ember)) 65%, transparent);
+  opacity: 0.7;
+  transition: opacity .16s ease, transform .16s ease;
+}
+.folk-btn:hover{ color: var(--paper); }
+.folk-btn:hover::before{ opacity: 1; }
+.folk-btn[aria-pressed="true"]{ color: var(--ember); }
+.folk-btn[aria-pressed="true"]::before{ opacity: 1; transform: scale(1.45); }
+
+/* ==========================================================================
+   THE TWO WORLDS — cross-fade, and only one of them running
+   ==========================================================================
+   Whichever lens is not being looked through stops drawing entirely: the
+   canvas engine's loop is halted and the mountain's rAF is cancelled, so
+   there is never a second animation burning a phone battery out of sight.
+   ========================================================================== */
+#trails, .mtn{ transition: opacity .26s ease; }
+/* The way in belongs to the canvas whichever lens is remembered: one
+   butterfly crosses the gate, and the landscape waits behind it. */
+body[data-gate="1"] #trails{ opacity: 1; }
+body[data-gate="1"] .mtn{ opacity: 0; }
+body[data-lens="mountain"] #trails{ opacity: 0; pointer-events: none; }
+body[data-lens="mountain"] .views{ display: none; }
+.mtn[hidden]{ display: none; }
+.mtn.entering{ opacity: 0; }
+
+/* ==========================================================================
+   THE MOUNTAIN
+   ==========================================================================
+   A native scroll container. The canvas sticks to the top of it and redraws
+   at the new offset; everything with words in it lives in .mtn-layer, which
+   is pulled back over the canvas by exactly one viewport and then simply
+   scrolls, so no script touches these elements while the mountain moves.
+   ========================================================================== */
+.mtn{
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  cursor: grab;
+  outline: none;
+}
+.mtn::-webkit-scrollbar{ display: none; }
+.mtn[data-drag="1"]{ cursor: grabbing; }
+.mtn:focus-visible{ outline: 2px solid var(--ember); outline-offset: -3px; }
+
+.mtn-canvas{
+  position: sticky;
+  top: 0;
+  display: block;
+  width: 100%;
+  z-index: 0;
+}
+.mtn-layer{
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  pointer-events: none;      /* the landscape below still takes the drag */
+}
+
+/* --- a memory ------------------------------------------------------------
+   The target is 44px and invisible; the lantern inside it is a few pixels
+   across. That gap is the whole trick of putting a constellation on a phone:
+   what you can hit is not what you can see. */
+.mtn-light{
+  position: absolute;
+  width: 44px; height: 44px;
+  margin: -22px 0 0 -22px;
+  padding: 0;
+  border: 0;
+  background: none;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
+  opacity: calc(0.20 + 0.80 * var(--lit, 1));
+  transition: opacity .32s ease;
+}
+.mtn-light[data-off="1"]{ pointer-events: none; }
+.mtn-halo{
+  position: absolute;
+  width: calc(var(--r, 3px) * 9);
+  height: calc(var(--r, 3px) * 9);
+  border-radius: 50%;
+  background: radial-gradient(circle closest-side,
+              color-mix(in srgb, var(--tone, #FFC46B) 34%, transparent) 0%,
+              color-mix(in srgb, var(--tone, #FFC46B) 9%, transparent) 42%,
+              transparent 72%);
+  transition: transform .25s ease, opacity .25s ease;
+}
+.mtn-core{
+  position: relative;
+  width: calc(var(--r, 3px) * 2);
+  height: calc(var(--r, 3px) * 2);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--tone, #FFC46B) 72%, #FFFFFF);
+  box-shadow:
+    0 0 calc(var(--r, 3px) * 2.4) color-mix(in srgb, var(--tone, #FFC46B) 78%, transparent),
+    0 0 calc(var(--r, 3px) * 6)   color-mix(in srgb, var(--tone, #FFC46B) 30%, transparent);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.mtn-light:hover, .mtn-light:focus-visible{ opacity: 1; }
+.mtn-light:hover .mtn-halo,
+.mtn-light:focus-visible .mtn-halo{ transform: scale(1.4); }
+.mtn-light:hover .mtn-core,
+.mtn-light:focus-visible .mtn-core{ transform: scale(1.35); }
+.mtn-light:focus-visible{ outline: 1px solid var(--ember); outline-offset: 2px; }
+/* The one currently open keeps a ring, so it is findable after the sheet
+   covers half the landscape — and the ring is a shape, not a colour. */
+.mtn-light[data-on="1"] .mtn-core{
+  transform: scale(1.4);
+  box-shadow:
+    0 0 0 3px rgba(241,238,251,0.16),
+    0 0 calc(var(--r, 3px) * 3.4) color-mix(in srgb, var(--tone, #FFC46B) 90%, transparent),
+    0 0 calc(var(--r, 3px) * 9)   color-mix(in srgb, var(--tone, #FFC46B) 40%, transparent);
+}
+/* A small moment with long consequences keeps a slow breath, the same signal
+   the canvas trail gives it. */
+.mtn-light[data-chaos="1"] .mtn-halo{ animation: mtn-breathe 4.6s ease-in-out infinite; }
+@keyframes mtn-breathe{
+  0%, 100% { transform: scale(1);    opacity: 0.85; }
+  50%      { transform: scale(1.28); opacity: 1; }
+}
+.mtn-light[data-classified="1"] .mtn-core{
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--tone, #FFC46B) 70%, transparent);
+  box-shadow: 0 0 calc(var(--r, 3px) * 2.6) color-mix(in srgb, var(--tone, #FFC46B) 40%, transparent);
+}
+
+/* --- a name on a path --------------------------------------------------- */
+.mtn-name{
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+  background: rgba(6,5,13,0.5);
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--tone, #FFC46B) 45%, transparent);
+  color: rgba(241,238,251,0.68);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 0.55rem 0.5rem 0.4rem;
+  min-height: 2.4rem;
+  cursor: pointer;
+  white-space: nowrap;
+  border-radius: 2px;
+  transition: color .18s ease, opacity .3s ease, border-color .18s ease;
+}
+.mtn-name:hover{ color: var(--paper); }
+.mtn-name[aria-pressed="true"]{
+  color: var(--paper);
+  border-bottom-color: var(--tone, #FFC46B);
+  border-bottom-width: 2px;
+}
+.mtn-name[data-off="1"]{ opacity: 0.3; }
+
+/* --- a decade, written on the slope ------------------------------------- */
+.mtn-decade{
+  position: absolute;
+  left: 0; right: 0;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0 clamp(0.9rem, 3vw, 2rem);
+  pointer-events: none;
+}
+.mtn-decade[data-side="right"]{ flex-direction: row-reverse; }
+.mtn-decade-name{
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: rgba(241,238,251,0.30);
+  flex: none;
+}
+.mtn-decade-rule{
+  height: 1px;
+  width: clamp(2rem, 12vw, 7rem);
+  background: linear-gradient(to right, rgba(241,238,251,0.20), rgba(241,238,251,0));
+}
+.mtn-decade[data-side="right"] .mtn-decade-rule{
+  background: linear-gradient(to left, rgba(241,238,251,0.20), rgba(241,238,251,0));
+}
+/* On a wide screen both edges of the landscape are already taken — the
+   people down the left, the decades down the right — so the marks written
+   on the slope move inboard of both rails. */
+@media (min-width: 901px){
+  .mtn-decade{ padding: 0 clamp(7rem, 15vw, 13rem); }
+}
+
+/* --- what a light says when you point at it ----------------------------- */
+.mtn-tip{
+  position: fixed;
+  z-index: 24;
+  pointer-events: none;
+  max-width: min(18rem, 70vw);
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.55rem 0.7rem;
+  background: rgba(9,7,15,0.94);
+  border: 1px solid var(--hairline);
+  border-left: 2px solid var(--tone, var(--ember));
+  border-radius: 2px;
+  backdrop-filter: blur(9px);
+  -webkit-backdrop-filter: blur(9px);
+}
+.mtn-tip[hidden]{ display: none; }
+.mtn-tip-when{
+  font-family: var(--font-mono);
+  font-size: 0.54rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ember);
+}
+.mtn-tip-title{
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+  color: var(--paper);
+  line-height: 1.2;
+}
+.mtn-tip-where{
+  font-family: var(--font-mono);
+  font-size: 0.54rem;
+  letter-spacing: 0.1em;
+  color: var(--ash);
+}
+
+/* ==========================================================================
+   THE MOUNTAIN AND THE FURNITURE, ON A PHONE
+   ==========================================================================
+   One bar for the two control groups, one strip for who and when. Nothing
+   new is added to the bottom stack: the people rail moves in beside the
+   decades rather than under them.
+   ========================================================================== */
+@media (max-width: 900px), (pointer: coarse) and (max-width: 1100px){
+  .viewbar{
+    display: flex;
+    position: fixed;
+    z-index: 21;
+    left: 0; right: 0;
+    bottom: calc(7.9rem + env(safe-area-inset-bottom));
+    align-items: center;
+    justify-content: safe center;
+    gap: 0.5rem;
+    padding: 0 var(--pad);
+    overflow-x: auto;
+    scrollbar-width: none;
+    transition: opacity .5s ease;
+  }
+  .viewbar::-webkit-scrollbar{ display: none; }
+  .lenses, .views{
+    position: static;
+    flex: none;
+    transform: none;
+    top: auto; right: auto; bottom: auto; left: auto;
+  }
+  .lens-btn{ font-size: 0.58rem; padding: 0 0.8rem; min-height: 2.9rem; }
+
+  .rails{
+    display: flex;
+    position: fixed;
+    z-index: 21;
+    left: 0; right: 0;
+    bottom: calc(11.1rem + env(safe-area-inset-bottom));
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0 var(--pad);
+    overflow-x: auto;
+    scrollbar-width: none;
+    transition: opacity .5s ease;
+  }
+  .rails::-webkit-scrollbar{ display: none; }
+  /* When runs first, exactly where the decade rail has always been, and who
+     follows it behind a hairline. The strip scrolls, the way the category
+     chips above it always have. */
+  .folk{
+    position: static;
+    transform: none;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.2rem;
+    max-height: none;
+    overflow: visible;
+    flex: none;
+    order: 2;
+    border-left: 1px solid var(--hairline);
+    padding-left: 0.6rem;
+  }
+  .eras{
+    position: static;
+    transform: none;
+    flex: none;
+    order: 1;
+    bottom: auto; top: auto; left: auto; right: auto;
+    padding: 0;
+    overflow: visible;
+  }
+  .eras[hidden] + .folk{ border-left: 0; padding-left: 0; }
+  .folk-btn{ padding: 0 0.55rem; min-height: 2.4rem; }
+
+  /* the landscape gets the whole screen behind the furniture */
+  .mtn-name{ font-size: 0.56rem; }
+}
+
+@media (max-width: 380px){
+  .lens-btn{ font-size: 0.56rem; padding: 0 0.65rem; letter-spacing: 0.12em; }
+  .folk-btn{ font-size: 0.56rem; letter-spacing: 0.1em; }
+}
+
+/* Short landscape phones already give the sheet a side; the mountain rails
+   would leave nothing in the middle, so who and when fold away with the
+   note and the sub-heading. */
+@media (max-height: 460px) and (orientation: landscape){
+  .rails{ display: none; }
+}
+
+/* A memory belonging to somebody other than the person being followed: still
+   in the picture, one step further into it. */
+.mtn-light[data-aside="1"] .mtn-halo{ opacity: 0.4; }

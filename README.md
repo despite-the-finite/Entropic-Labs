@@ -308,8 +308,37 @@ butterfly/
   butterfly.css             styles — the site palette, one room warmer
   data/stories.js           ALL the content: stories, categories, eras, places
   trails.js                 canvas engine: camera, layouts, butterflies, hit-testing
+  mountain.js               the mountain lens: a night landscape climbed by year
   butterfly.js              controller: archive, state machine, routing, panels
 ```
+
+**Two lenses, one archive.** The room can be looked through in two ways, and
+the visitor picks which — TRAILS, the canvas world, and MOUNTAIN, a night
+landscape where the climb is the timeline. The choice sits in a segmented
+control near the view switch, is keyboard-walkable with the arrow keys, and is
+remembered in `localStorage` between visits (`el-bt-lens`). `V` cycles it.
+
+The distinction the architecture rests on: a **lens** is which experience you
+are having; a **view** — trail, whole trail, places — is a layout inside the
+trails lens, so the view switch goes away while the mountain is up and comes
+back with its selection intact. A link that names a layout (`#map`,
+`#whole-trail`) borrows the trails lens for that visit without rewriting the
+remembered preference; a link that names a memory opens it in whichever lens
+the visitor prefers.
+
+Category, decade and person are **shared state**, held by the room rather than
+by either lens, so changing lens is a change of drawing and never a change of
+what is being looked at. Pick the 2010s, pick Chaos, follow Karsh, switch to
+the mountain, and the same two memories are the ones still lit. The open
+memory, the panel and the URL survive the switch too. Only the lens that is
+being looked through draws: the other one's loop is stopped, not merely
+hidden, so a phone is never rendering two worlds at once.
+
+Adding a third lens is one entry in `LENSES` and one object that answers the
+same handful of calls — `setWorld`, `setLights`, `activate`, `deactivate`,
+`focus`, `setEmphasis` — plus the two events every lens reports, `select` and
+`hover`. Nothing about the archive, the filters, the routing or the story
+panel knows how many there are.
 
 **The trail is a braid.** Lives run alongside each other, converge when they
 marry, and divide again each time somebody is born — and then the new lines do
@@ -355,11 +384,57 @@ its markers instead. On a phone, where the whole braid is framed to fit and
 the lanes end up about a thumb's width apart, the markers show years only and
 the names arrive as you zoom in or pass over them.
 
+**The mountain is the same braid, stood on end in a landscape.** Time runs
+*up*: the earliest year is at the foot of the climb, each decade is higher
+than the last, and above the newest memory the land keeps going into mist and
+stars rather than ending in a summit — the archive saying, in the only way a
+picture can, that the story is still being written. Decades are written on the
+slope in small type rather than ruled up an axis.
+
+Every strand becomes a hiking trail. The offsets are the braid's own — the
+same `laneOffset` rule, measured from whatever a line branched out of — so a
+birth still leaves its parent exactly and a marriage still arrives exactly.
+What is added is wander: three detuned waves per strand, with the slowest of
+them tuned differently for each, because two lines that share a frequency
+weave in lockstep forever and that is the difference between two lives running
+alongside each other and two rails on the same track. How widely a line
+wanders is drawn from how much of the archive it carries — a life the record
+has a lot to say about has more of itself to wander with. Two lines that marry
+come to travel side by side and keep a hair's width between them; they never
+fuse, because each of them still has to be findable.
+
+The landscape is four parallax layers of ridgeline, each a folded-sine
+fractal anchored to one edge of the screen — which is what makes it a valley
+with a corridor up the middle rather than a stack of horizontal bands — with
+conifers on the near two, mist in the hollows and stars thickening toward the
+top of the world. It is all seeded from strings, so the same mountain comes
+back on every visit and on every device. Occlusion is nothing more than paint
+order: the trails are drawn between the middle distance and the near ground,
+so a path genuinely goes behind a ridge and comes out above it. A memory never
+goes out entirely, though — a light behind the treeline dims and shows through
+the gaps, because the memories are meant to be the brightest thing in the
+frame.
+
+It scrolls natively. A sticky canvas over a tall spacer, the browser owning
+momentum, keyboard and accessibility, and no wheel handler anywhere — the
+canvas simply redraws at the new offset. Everything with words in it is a real
+DOM element: each memory is a 44px button with a few-pixel light inside it, so
+what you can hit is not what you can see, which is the only way a lantern stays
+a lantern on a phone. That also buys focus rings, labels and keyboard order
+for nothing. On a wide screen the landscape can also be dragged.
+
+**The butterflies are rare here, and both of them mean something.** One walks
+the trail of whoever is being followed, resting a moment at each of their
+memories; one turns up for a couple of seconds when a memory is opened,
+circles it and spirals away. Nothing is on a timer. With reduced motion
+neither appears, nothing breathes, and the loop stops dead between scrolls.
+
 **Adding a story** means appending one object to `STORIES` in
 `butterfly/data/stories.js`. Nothing else needs touching. The trail places it
 on its strand at its year, the constellation clusters it with its era, the map
-plots it if it has coordinates, its category butterfly learns it has somewhere
-to fly, the era rail picks up its era, and every counter updates. Every field
+plots it if it has coordinates, the mountain hangs a light on the right
+person's path at the right elevation, its category butterfly learns it has
+somewhere to fly, the era rail picks up its era, and every counter updates. Every field
 except `id` is optional and the room degrades quietly: a story with a title
 and nothing else renders, it just renders sparely. The field list at the top
 of that file documents every supported key.
