@@ -96,6 +96,12 @@
                          a noise, transcribed. Set in the mono face and
                          split on the spaces, so the syllables land in
                          order rather than all at once
+                     { kind: 'image', src: 'img/trails/a-photo.jpg',
+                       alt: 'What is in it.', caption: 'What it is.',
+                       width: 1023, height: 606 }
+                         a picture set in the telling rather than
+                         gathered at the end. `alt` is required; `width`
+                         and `height` stop the prose jumping when it loads
                      { kind: 'figure', alt: 'What the chart shows.',
                        caption: 'What it is called.',
                        svg: '<svg viewBox="0 0 320 190">…</svg>' }
@@ -3938,6 +3944,14 @@
         heading: 'The talk that named it',
         paragraphs: [
           'Lorenz published the mathematics in 1963, in a paper about a simplified model of convection. Plotted, its solutions trace a shape that never repeats and never escapes — and which happens to look like a pair of wings.',
+          {
+            kind: 'image',
+            src: 'img/trails/lorenz-attractor.jpg',
+            width: 1023,
+            height: 606,
+            alt: 'A butterfly-shaped curve drawn in yellow on a dark ground. Two broad lobes, one left and one right, each built from hundreds of loops spiralling inward toward a centre, joined in the middle where the line crosses from one lobe to the other. The horizontal axis is marked x, from minus twenty to twenty; the vertical axis is marked z, from about five to forty-five. The line never closes and never leaves the shape.',
+            caption: 'The Lorenz attractor, seen against x and z. Every loop is the same system carrying on; the path circles one wing, crosses over, circles the other, and never once repeats itself or leaves the figure.'
+          },
           'The name arrived later and almost by accident. In 1972 Lorenz was down to speak at a meeting of the American Association for the Advancement of Science and had not supplied a title, so the session organiser, Philip Merilees, wrote one for him: "Does the Flap of a Butterfly’s Wings in Brazil Set Off a Tornado in Texas?"',
           'Lorenz had used a seagull in earlier talks. The butterfly is the version that stuck.'
         ]
@@ -4067,9 +4081,15 @@
       var LISTED = ['plan', 'found'];        /* kinds whose content is `items` */
       /* a figure carries neither items nor text — it carries a drawing */
       (s.story || []).forEach(function (p, pi) {
-        if (!p || p.kind !== 'figure') return;
-        if (!p.svg) out.push(at + ': paragraph ' + pi + ' is a figure with no svg');
-        if (!p.alt) out.push(at + ': paragraph ' + pi + ' is a figure with no alt text');
+        if (!p) return;
+        if (p.kind === 'figure') {
+          if (!p.svg) out.push(at + ': paragraph ' + pi + ' is a figure with no svg');
+          if (!p.alt) out.push(at + ': paragraph ' + pi + ' is a figure with no alt text');
+        }
+        if (p.kind === 'image') {
+          if (!p.src) out.push(at + ': paragraph ' + pi + ' is an image with no src');
+          if (!p.alt) out.push(at + ': paragraph ' + pi + ' is an image with no alt text');
+        }
       });
       /* kinds whose content is `text` */
       var SPOKEN = ['shout', 'beat', 'landing', 'heading', 'sound', 'reveal',
@@ -4077,7 +4097,7 @@
       (s.story || []).forEach(function (p, pi) {
         if (typeof p === 'string' || !p) return;
         var where = at + ': paragraph ' + pi;
-        if (p.kind === 'figure') return;
+        if (p.kind === 'figure' || p.kind === 'image') return;
         if (p.kind && LISTED.indexOf(p.kind) < 0 && SPOKEN.indexOf(p.kind) < 0) {
           out.push(where + ' has an unknown kind "' + p.kind + '"');
         }

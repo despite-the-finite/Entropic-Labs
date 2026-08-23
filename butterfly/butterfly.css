@@ -1188,7 +1188,9 @@ body[data-panel="1"] .plate{ pointer-events: none; }
   background: rgba(255,196,107,0.03);
   padding: 0.9rem 0.7rem 0.6rem;
 }
-.st-figure .fig-art svg{ display: block; width: 100%; height: auto; }
+.st-figure .fig-art svg,
+.st-figure .fig-art img{ display: block; width: 100%; height: auto; }
+.st-figure .fig-art img{ border-radius: 1px; }
 .st-figure figcaption{
   font-family: var(--font-mono);
   font-size: 0.62rem;

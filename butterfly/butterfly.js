@@ -1100,6 +1100,27 @@
         place(snd);
         return;
       }
+      if (p.kind === 'image') {
+        /* A picture set in the telling rather than gathered at the end.
+           Same frame as a drawn figure, because to a reader they are the
+           same object: a thing to look at, with a line underneath saying
+           what it is. Loaded lazily and given its real dimensions so the
+           prose does not jump when it arrives. */
+        var pic = el('figure', 'st-figure');
+        var holder = el('div', 'fig-art');
+        var im = el('img');
+        im.src = p.src || '';
+        im.alt = p.alt || '';
+        im.loading = 'lazy';
+        im.decoding = 'async';
+        if (p.width) im.setAttribute('width', p.width);
+        if (p.height) im.setAttribute('height', p.height);
+        holder.appendChild(im);
+        pic.appendChild(holder);
+        if (p.caption) pic.appendChild(setText(el('figcaption'), p.caption));
+        place(pic);
+        return;
+      }
       if (p.kind === 'figure') {
         /* A drawing the story needs and the room cannot compute — a chart,
            a diagram, a joke with axes. The SVG lives in the data file with
@@ -1925,7 +1946,9 @@
     (ESSAY.sections || []).forEach(function (sec, i) {
       var s = section(sec.heading);
       var body = el('div', 'st-body' + (i === 0 ? '' : ' plain'));
-      (sec.paragraphs || []).forEach(function (p) { body.appendChild(el('p', null, p)); });
+      /* The essay gets the same renderer the memories do, so it can carry a
+         picture, a drawing or a link to a story like anything else in here. */
+      renderProse(sec.paragraphs || [], body);
       s.appendChild(body);
       inner.appendChild(s);
     });
