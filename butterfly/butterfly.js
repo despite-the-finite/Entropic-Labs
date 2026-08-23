@@ -265,10 +265,25 @@
     var y = startYear(s);
     if (y !== null) branchYears.push(y);
   });
-  var firstDated = branchYears.length
+  var firstBranchT = branchYears.length
     ? axisT(Math.min.apply(null, branchYears))
     : (axis.length ? axis[0].t : 0);
-  var undatedT = firstDated - UNDATED_BACKOFF;
+
+  /* It also sits AFTER the last dated memory that precedes that branch. A
+     memory on somebody's own line happened while they still had one, so an
+     unrecorded wedding cannot be placed on top of it — and a fixed backoff
+     will do exactly that as soon as the archive gains memories older than
+     its first birth. Halfway between the two is the only placement the data
+     supports; the year itself stays unwritten, and the index still says so. */
+  var lastBefore = null;
+  ordered.forEach(function (st) {
+    if (st.year === null) return;
+    var t = axisT(st.year);
+    if (t < firstBranchT && (lastBefore === null || t > lastBefore)) lastBefore = t;
+  });
+  var undatedT = lastBefore === null
+    ? firstBranchT - UNDATED_BACKOFF
+    : Math.max(firstBranchT - UNDATED_BACKOFF, (lastBefore + firstBranchT) / 2);
 
   /* A year on the axis, where null means "nobody wrote it down". */
   function momentT(year) { return year === null ? undatedT : axisT(year); }

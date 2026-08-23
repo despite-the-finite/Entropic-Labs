@@ -382,12 +382,16 @@ moment in the same life, so they spread perpendicular to their own strand —
 moving them along it would slide them in time and claim a year nobody wrote
 down.
 
-**An undated confluence sits before the earliest branch**, not before the
-earliest dated anything. A marriage precedes the children that come out of it,
-so that is what it is anchored to — and the distinction is not academic: a
-memory can be older than every birth on the braid, because people had lives
-before their children, and anchoring to the axis start would slide an
-unrecorded wedding back behind it and silently claim a date nobody wrote down.
+**An undated confluence sits after the last dated memory before the earliest
+branch, and before the branch itself.** A marriage precedes the children that
+come out of it, so it cannot be anchored to the axis start — and it cannot sit
+on a fixed backoff either, because a memory on somebody's own line happened
+while they still had one, and a fixed offset lands on top of it the moment the
+archive gains memories older than its first birth. Halfway between the two is
+the only placement the data supports. Both failures were live: the first when
+Dad's 1973 memory arrived, the second when Amma's 1975 one did, and each would
+have drawn a wedding at a year nobody ever wrote down. The year itself stays
+unwritten, and the index still says so.
 
 **Causality is the point.** `causedBy` and `consequences` state the edges;
 reciprocal links are filled in automatically at load, so each edge is written

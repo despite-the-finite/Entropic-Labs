@@ -4236,6 +4236,86 @@
       source: 'Karsh',
       relatedStories: ['helen', 'gin-joints'],
       dateAdded: '2026-08-20'
+    },
+
+    {
+      id: 'too-short-to-stop',
+      title: 'Too Short to Stop',
+      hook: 'Sixteen years old, ninety pounds, four hundred pounds of Royal Enfield, and two classmates on the back.',
+      year: 1975,
+      approximateDate: 'Circa 1975',
+      strand: 'amma',
+      location: 'Lucknow, India',
+      place: 'lucknow',
+      category: 'family-lore',
+      tags: [
+        'india', 'lucknow', 'motorcycles', 'teenagers', 'family',
+        'growing up', 'funny memories'
+      ],
+      people: [
+        { name: 'Amma', relation: 'the rider, aged sixteen' },
+        { name: 'Her father', relation: '“Dad” — who knew everyone in Lucknow' },
+        { name: 'Her mother', relation: 'whose blood pressure did not survive it' },
+        { name: 'Her brother', relation: 'whose friend owned the bike' }
+      ],
+      story: [
+        'I was born into that dangerous combo: upper-middle class + Dad’s favorite + zero chill.',
+        'Did I want it? I got it.',
+        'Did I need it? Irrelevant.',
+        'Did my wish require a genie? Nope. Just “Dad” and puppy eyes.',
+        'It probably didn’t hurt that my dad was also a very well-connected man in Lucknow. He seemed to know everyone, and everyone seemed to know him — including the police. At the time, I didn’t fully appreciate just how useful that particular family perk could become.',
+        'I was also that rare unicorn among my friends — the girl who could actually ride a scooter and a motorcycle. Main character energy, zero survival instincts.',
+        'Then came The Day.',
+        'My brother’s friend owned a Royal Enfield. For context: this bike is 80% metal, 20% ego, and 100% taller than me.',
+        'I’m petite.',
+        'My feet had to file a separate travel visa just to reach the ground.',
+        'Did that stop me? Absolutely not. I was a teenager. We were basically invincible and also very bad at risk assessment.',
+        'So, being the responsible adult I was not, I borrowed — okay, borrowed is a strong word — I commandeered the Enfield.',
+        'And because one act of bad judgment is never enough, I picked up two classmates too.',
+        'Triple seating.',
+        'On a Royal Enfield.',
+        'In the middle of a crowded Lucknow.',
+        'Me on the seat, tiptoes doing ballet just to balance. My classmates behind me, holding on like their lives depended on it.',
+        'Because they did.',
+        'There was, however, one small logistical problem with this entire adventure: stopping.',
+        'As long as the motorcycle was moving, I was fine. But whenever we stopped, my feet barely reached the ground. Every traffic signal therefore became a small negotiation between me, gravity, and several hundred pounds of Royal Enfield.',
+        'And then came perhaps the most ridiculous example of my dad’s influence.',
+        'At one point, a police officer recognized me. More importantly, he knew who my parents were.',
+        'Instead of stopping us — or perhaps asking why a tiny 16-year-old girl was riding a massive Royal Enfield through town with two classmates hanging off the back — the officer prioritized giving us the right of way through traffic.',
+        'Not because we were in a hurry.',
+        'Not because there was an emergency.',
+        'But because he knew I was too short to comfortably put my feet down.',
+        {
+          kind: 'reveal',
+          text: 'The police were essentially helping me keep the motorcycle moving so I wouldn’t fall over.'
+        },
+        'Somehow we made it through traffic, through stares, through physics.',
+        'I’m pretty sure I could’ve gotten away with anything that day.',
+        'Jaywalking? Fine.',
+        'Littering? Fine.',
+        'Grand theft motorcycle? Also probably fine.',
+        'Dad’s favorite privilege card was absolutely maxed out.',
+        'Looking back: I was 16 years old, about 90 pounds, riding a roughly 400-pound motorcycle, carrying two passengers, with the confidence of a *Bollywood hero*.',
+        'The only thing heavier than that Royal Enfield was my dad’s heart when he eventually found out.',
+        'Moral of the story:',
+        'I survived.',
+        'My brother’s friend’s bike survived.',
+        'My classmates survived.',
+        'And somewhere in Lucknow, there was probably a police officer wondering whether helping a teenage girl on a triple-seated Royal Enfield avoid putting her feet down was technically part of his job description.',
+        'As for my mom?',
+        { kind: 'landing', text: 'Her blood pressure — and her anger — were unimaginable.' }
+      ],
+      artifact: {
+        label: 'Memory artifact',
+        title: 'A commandeered Royal Enfield',
+        lines: [
+          { label: 'Weight', text: 'Roughly four hundred pounds. I was ninety.' },
+          { label: 'Returned', text: 'Intact. So were both classmates.' }
+        ]
+      },
+      source: 'Amma',
+      relatedStories: ['the-gto', 'confidence-curve'],
+      dateAdded: '2026-08-20'
     }
   ];
 
