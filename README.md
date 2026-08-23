@@ -455,12 +455,17 @@ rather than on open, once each, and under `prefers-reduced-motion` they keep
 their weight and spacing and simply stop moving. Use them sparingly; the
 writing carries the rest.
 
-**Four things a story can carry besides prose.** A `warning` — a line or a
+**Five things a story can carry besides prose.** A `warning` — a line or a
 few — prints above the telling rather than inside it, because a warning that
 arrives late is not one. An `image` sets a picture in the telling rather than
-gathering it at the end, in the same frame a drawing gets, since to a reader
-they are the same object: a thing to look at with a line underneath saying
-what it is. A `figure` carries a drawing the room cannot compute:
+gathering it at the end, and opens to full size like every other photograph
+in the room, because a picture you cannot look at properly is half a picture.
+`mount: 'photo'` gives it the archive's found-photograph frame — tilted on
+its mount, never in itself — and anything without it is a document or a
+diagram and keeps the plain frame. A `poem` keeps verse as verse: the line
+breaks are the writing rather than the layout, and the stanzas keep the air
+the writer put between them. A `figure` carries a drawing the room cannot
+compute:
 a chart, a diagram, a joke with axes, written as SVG in the data file beside
 the words, because it is content and not machinery; `alt` is required and it
 is what the figure says to somebody who cannot see it. And inside any
