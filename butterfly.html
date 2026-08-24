@@ -14,11 +14,11 @@
 
 <canvas id="trails" aria-hidden="true"></canvas>
 
-<!-- The second lens. Empty here: mountain.js builds its own canvas, its
-     lights and its labels inside this scroller, and only while it is the
-     lens actually being looked through. -->
-<div class="mtn" id="mountain" tabindex="0" role="group"
-     aria-label="The mountain of lives — a scrollable night landscape. Scroll upward to move forward through the years."
+<!-- The second lens. Empty here: atlas.js paints the country, places the
+     waypoints and writes the names inside this element, and only while it is
+     the lens actually being looked through. -->
+<div class="atlas" id="atlas" tabindex="0" role="group"
+     aria-label="A trail map of one life. Drag to move the map, scroll or pinch to zoom, arrow keys to pan, plus and minus to zoom, zero to see the whole country."
      hidden></div>
 
 <div class="haze" aria-hidden="true"></div>
@@ -136,5 +136,5 @@
 
 <script src="butterfly/data/stories.js"></script>
 <script src="butterfly/trails.js"></script>
-<script src="butterfly/mountain.js"></script>
+<script src="butterfly/atlas.js"></script>
 <script src="butterfly/butterfly.js"></script>

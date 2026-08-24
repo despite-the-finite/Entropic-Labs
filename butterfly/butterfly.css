@@ -2000,8 +2000,8 @@ body[data-panel="1"] .plate{ pointer-events: none; }
   .cat-chip:focus-visible .wing::after{ animation: none; }
   .gate, .gate-line, .gate-actions, .plate, .whisper, .photo,
   .beginning, .dock, .views, .lenses, .folk, .eras,
-  #trails, .mtn, .mtn-light, .mtn-name{ transition: none; }
-  .mtn-light[data-chaos="1"] .mtn-halo{ animation: none; }
+  #trails, .atlas, .atlas-wp, .atlas-region, .atlas-town{ transition: none; }
+  .atlas-wp[data-chaos="1"] .atlas-wp-glow{ animation: none; }
   .gate-line, .gate-actions{ opacity: 1; transform: none; }
   .photo{ transform: none; }
   /* The beats in a story are punctuation, so they keep their weight and
@@ -2136,68 +2136,130 @@ body[data-panel="1"] .plate{ pointer-events: none; }
 .folk-btn:hover{ color: var(--paper); }
 .folk-btn:hover::before{ opacity: 1; }
 .folk-btn[aria-pressed="true"]{ color: var(--ember); }
-.folk-btn[aria-pressed="true"]::before{ opacity: 1; transform: scale(1.45); }
-
-/* ==========================================================================
+.folk-btn[aria-pressed="true"]::before{ opacity: 1; transform: scale(1.45); }/* ==========================================================================
    THE TWO WORLDS — cross-fade, and only one of them running
    ==========================================================================
    Whichever lens is not being looked through stops drawing entirely: the
-   canvas engine's loop is halted and the mountain's rAF is cancelled, so
-   there is never a second animation burning a phone battery out of sight.
+   canvas engine's loop is halted and the atlas's rAF is cancelled, so there
+   is never a second animation burning a phone battery out of sight.
    ========================================================================== */
-#trails, .mtn{ transition: opacity .26s ease; }
+#trails, .atlas{ transition: opacity .26s ease; }
 /* The way in belongs to the canvas whichever lens is remembered: one
-   butterfly crosses the gate, and the landscape waits behind it. */
+   butterfly crosses the gate, and the country waits behind it. */
 body[data-gate="1"] #trails{ opacity: 1; }
-body[data-gate="1"] .mtn{ opacity: 0; }
-body[data-lens="mountain"] #trails{ opacity: 0; pointer-events: none; }
-body[data-lens="mountain"] .views{ display: none; }
-.mtn[hidden]{ display: none; }
-.mtn.entering{ opacity: 0; }
+body[data-gate="1"] .atlas{ opacity: 0; }
+body[data-lens="atlas"] #trails{ opacity: 0; pointer-events: none; }
+body[data-lens="atlas"] .views{ display: none; }
+.atlas[hidden]{ display: none; }
+.atlas.entering{ opacity: 0; }
+
+/* On paper the room's own furniture has to change colour or it disappears.
+   Only the pieces that sit over the map are touched; every panel, sheet and
+   dialogue stays exactly as dark as it has always been. */
+body[data-lens="atlas"]{
+  background: #E4D8BC;
+}
+body[data-lens="atlas"] .haze::after{
+  background: radial-gradient(118% 96% at 50% 52%, transparent 52%, rgba(120,96,58,0.30) 100%);
+}
+body[data-lens="atlas"] .haze::before{ opacity: 0.055; mix-blend-mode: multiply; }
+body[data-lens="atlas"] .bt-nav{
+  background: linear-gradient(rgba(244,237,220,0.94), rgba(244,237,220,0.72) 70%, rgba(244,237,220,0));
+  border-bottom-color: rgba(74,59,44,0.14);
+}
+body[data-lens="atlas"] .bt-nav .brand,
+body[data-lens="atlas"] .navlinks a:hover,
+body[data-lens="atlas"] .navlinks a[aria-current="page"]{ color: #33281E; }
+body[data-lens="atlas"] .navlinks a{ color: #6B5B49; }
+body[data-lens="atlas"] .plate h1{ color: #33281E; text-shadow: 0 1px 0 rgba(255,252,240,0.7); }
+/* The room's own words now sit over paint rather than over a dark room, so
+   they carry a paper-coloured halo instead of relying on the ground. */
+body[data-lens="atlas"] .plate .sub,
+body[data-lens="atlas"] .plate .hint,
+body[data-lens="atlas"] .counts,
+body[data-lens="atlas"] .whisper{
+  text-shadow: 0 0 4px rgba(246,240,225,0.95), 0 0 9px rgba(246,240,225,0.85);
+}
+body[data-lens="atlas"] .plate .sub{ color: #6B5B49; }
+body[data-lens="atlas"] .plate .hint{ color: rgba(107,91,73,0.78); }
+body[data-lens="atlas"] .what-is{ color: #2F6F63; border-bottom-color: rgba(47,111,99,0.4); }
+body[data-lens="atlas"] .counts{ color: rgba(74,59,44,0.78); }
+body[data-lens="atlas"] .counts b{ color: #9A5A1E; }
+body[data-lens="atlas"] .whisper{ color: #4A3B2C; }
+body[data-lens="atlas"] .whisper::before{ filter: grayscale(1) brightness(0.5); }
+body[data-lens="atlas"] .lenses,
+body[data-lens="atlas"] .views{
+  background: rgba(250,245,232,0.86);
+  border-color: rgba(74,59,44,0.28);
+}
+body[data-lens="atlas"] .lens-btn{ color: #6B5B49; border-right-color: rgba(74,59,44,0.16); }
+body[data-lens="atlas"] .lens-btn:hover{ color: #2C2219; }
+body[data-lens="atlas"] .lens-btn[aria-pressed="true"]{ color: #FFF8E8; background: #B4432E; }
+body[data-lens="atlas"] .era-btn,
+body[data-lens="atlas"] .folk-btn{
+  text-shadow: 0 0 4px rgba(246,240,225,0.95), 0 0 8px rgba(246,240,225,0.8);
+}
+body[data-lens="atlas"] .era-btn{ color: rgba(74,59,44,0.66); }
+body[data-lens="atlas"] .era-btn:hover,
+body[data-lens="atlas"] .era-btn[aria-pressed="true"]{ color: #B4432E; }
+body[data-lens="atlas"] .folk-btn{ color: rgba(74,59,44,0.7); }
+body[data-lens="atlas"] .folk-btn:hover{ color: #2C2219; }
+body[data-lens="atlas"] .folk-btn[aria-pressed="true"]{ color: #B4432E; }
+body[data-lens="atlas"] .cat-chip{
+  background: color-mix(in srgb, var(--tone, #B4432E) 13%, rgba(250,245,232,0.88));
+  color: #4A3B2C;
+  border-color: color-mix(in srgb, var(--tone, #B4432E) 45%, transparent);
+}
+body[data-lens="atlas"] .cat-chip .count{ color: rgba(74,59,44,0.6); }
+body[data-lens="atlas"] .cat-chip[data-empty="1"]{
+  background: rgba(250,245,232,0.8); color: rgba(74,59,44,0.5);
+  border-color: rgba(74,59,44,0.18);
+}
+body[data-lens="atlas"] .bt-btn{
+  background: rgba(250,245,232,0.9);
+  border-color: rgba(74,59,44,0.26);
+  color: #4A3B2C;
+}
+body[data-lens="atlas"] .bt-btn:hover{ border-color: #B4432E; color: #B4432E; }
+body[data-lens="atlas"] a:focus-visible,
+body[data-lens="atlas"] button:focus-visible{ outline-color: #B4432E; }
 
 /* ==========================================================================
-   THE MOUNTAIN
+   THE ATLAS — a trail map of one life
    ==========================================================================
-   A native scroll container. The canvas sticks to the top of it and redraws
-   at the new offset; everything with words in it lives in .mtn-layer, which
-   is pulled back over the canvas by exactly one viewport and then simply
-   scrolls, so no script touches these elements while the mountain moves.
+   Sunlit paper, painted country, and the memories set into it as lights.
+   The map is one canvas; everything with words in it lives in .atlas-layer,
+   which pans and zooms as a single transform. Type counter-scales off the
+   --z that layer carries, so a label is the same size at every scale, and
+   --lod decides how much of it there is room to say.
    ========================================================================== */
-.mtn{
+.atlas{
   position: fixed;
   inset: 0;
   z-index: 1;
-  overflow-x: hidden;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
+  overflow: hidden;
+  touch-action: none;          /* the map owns pan and pinch */
   cursor: grab;
   outline: none;
+  background: #E4D8BC;
 }
-.mtn::-webkit-scrollbar{ display: none; }
-.mtn[data-drag="1"]{ cursor: grabbing; }
-.mtn:focus-visible{ outline: 2px solid var(--ember); outline-offset: -3px; }
-
-.mtn-canvas{
-  position: sticky;
-  top: 0;
-  display: block;
-  width: 100%;
-  z-index: 0;
-}
-.mtn-layer{
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  pointer-events: none;      /* the landscape below still takes the drag */
+.atlas[data-drag="1"]{ cursor: grabbing; }
+.atlas:focus-visible{ outline: 2px solid #B4432E; outline-offset: -3px; }
+.atlas-canvas{ position: absolute; inset: 0; display: block; }
+.atlas-layer{
+  position: absolute;
+  left: 0; top: 0;
+  width: 0; height: 0;
+  transform-origin: 0 0;
+  pointer-events: none;        /* the paper underneath still takes the drag */
 }
 
 /* --- a memory ------------------------------------------------------------
-   The target is 44px and invisible; the lantern inside it is a few pixels
-   across. That gap is the whole trick of putting a constellation on a phone:
-   what you can hit is not what you can see. */
-.mtn-light{
+   A numbered disc, the way a trail map numbers its segments, lit from
+   inside in its category's colour. The number is the channel that does not
+   depend on seeing the colour; the glow is the one that makes it a memory
+   rather than a bus stop. */
+.atlas-wp{
   position: absolute;
   width: 44px; height: 44px;
   margin: -22px 0 0 -22px;
@@ -2210,165 +2272,204 @@ body[data-lens="mountain"] .views{ display: none; }
   cursor: pointer;
   pointer-events: auto;
   -webkit-tap-highlight-color: transparent;
-  opacity: calc(0.20 + 0.80 * var(--lit, 1));
-  transition: opacity .32s ease;
+  transform: scale(calc(1 / var(--z, 1)));
+  transition: opacity .3s ease;
 }
-.mtn-light[data-off="1"]{ pointer-events: none; }
-.mtn-halo{
+.atlas-wp[data-off="1"]{ opacity: 0.16; pointer-events: none; }
+.atlas-wp[data-aside="1"]{ opacity: 0.42; }
+.atlas-wp-glow{
   position: absolute;
-  width: calc(var(--r, 3px) * 9);
-  height: calc(var(--r, 3px) * 9);
+  width: calc(46px * var(--w, 1)); height: calc(46px * var(--w, 1));
   border-radius: 50%;
   background: radial-gradient(circle closest-side,
-              color-mix(in srgb, var(--tone, #FFC46B) 34%, transparent) 0%,
-              color-mix(in srgb, var(--tone, #FFC46B) 9%, transparent) 42%,
-              transparent 72%);
+              color-mix(in srgb, var(--tone, #FFC46B) 62%, transparent) 0%,
+              color-mix(in srgb, var(--tone, #FFC46B) 22%, transparent) 38%,
+              transparent 70%);
+  filter: blur(1px);
   transition: transform .25s ease, opacity .25s ease;
 }
-.mtn-core{
+.atlas-wp-disc{
   position: relative;
-  width: calc(var(--r, 3px) * 2);
-  height: calc(var(--r, 3px) * 2);
+  width: 17px; height: 17px;
   border-radius: 50%;
-  background: color-mix(in srgb, var(--tone, #FFC46B) 72%, #FFFFFF);
+  background: var(--deep, #8a6a3a);
+  border: 1.5px solid rgba(255,250,235,0.92);
   box-shadow:
-    0 0 calc(var(--r, 3px) * 2.4) color-mix(in srgb, var(--tone, #FFC46B) 78%, transparent),
-    0 0 calc(var(--r, 3px) * 6)   color-mix(in srgb, var(--tone, #FFC46B) 30%, transparent);
-  transition: transform .2s ease, box-shadow .2s ease;
-}
-.mtn-light:hover, .mtn-light:focus-visible{ opacity: 1; }
-.mtn-light:hover .mtn-halo,
-.mtn-light:focus-visible .mtn-halo{ transform: scale(1.4); }
-.mtn-light:hover .mtn-core,
-.mtn-light:focus-visible .mtn-core{ transform: scale(1.35); }
-.mtn-light:focus-visible{ outline: 1px solid var(--ember); outline-offset: 2px; }
-/* The one currently open keeps a ring, so it is findable after the sheet
-   covers half the landscape — and the ring is a shape, not a colour. */
-.mtn-light[data-on="1"] .mtn-core{
-  transform: scale(1.4);
-  box-shadow:
-    0 0 0 3px rgba(241,238,251,0.16),
-    0 0 calc(var(--r, 3px) * 3.4) color-mix(in srgb, var(--tone, #FFC46B) 90%, transparent),
-    0 0 calc(var(--r, 3px) * 9)   color-mix(in srgb, var(--tone, #FFC46B) 40%, transparent);
-}
-/* A small moment with long consequences keeps a slow breath, the same signal
-   the canvas trail gives it. */
-.mtn-light[data-chaos="1"] .mtn-halo{ animation: mtn-breathe 4.6s ease-in-out infinite; }
-@keyframes mtn-breathe{
-  0%, 100% { transform: scale(1);    opacity: 0.85; }
-  50%      { transform: scale(1.28); opacity: 1; }
-}
-.mtn-light[data-classified="1"] .mtn-core{
-  background: transparent;
-  border: 1px solid color-mix(in srgb, var(--tone, #FFC46B) 70%, transparent);
-  box-shadow: 0 0 calc(var(--r, 3px) * 2.6) color-mix(in srgb, var(--tone, #FFC46B) 40%, transparent);
-}
-
-/* --- a name on a path --------------------------------------------------- */
-.mtn-name{
-  position: absolute;
-  transform: translate(-50%, -50%);
-  pointer-events: auto;
-  background: rgba(6,5,13,0.5);
-  border: 0;
-  border-bottom: 1px solid color-mix(in srgb, var(--tone, #FFC46B) 45%, transparent);
-  color: rgba(241,238,251,0.68);
+    0 0 0 1px rgba(74,59,44,0.5),
+    0 0 9px color-mix(in srgb, var(--tone, #FFC46B) 80%, transparent),
+    0 1px 2px rgba(74,59,44,0.4);
+  color: #FFF8E8;
   font-family: var(--font-mono);
-  font-size: 0.58rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  padding: 0.55rem 0.5rem 0.4rem;
-  min-height: 2.4rem;
-  cursor: pointer;
-  white-space: nowrap;
-  border-radius: 2px;
-  transition: color .18s ease, opacity .3s ease, border-color .18s ease;
+  font-size: 9px;
+  line-height: 14px;
+  font-weight: 600;
+  text-align: center;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
 }
-.mtn-name:hover{ color: var(--paper); }
-.mtn-name[aria-pressed="true"]{
-  color: var(--paper);
-  border-bottom-color: var(--tone, #FFC46B);
-  border-bottom-width: 2px;
-}
-.mtn-name[data-off="1"]{ opacity: 0.3; }
-
-/* --- a decade, written on the slope ------------------------------------- */
-.mtn-decade{
+.atlas-wp-cap{
   position: absolute;
-  left: 0; right: 0;
-  transform: translateY(-50%);
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0 clamp(0.9rem, 3vw, 2rem);
+  top: 27px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+  font-style: italic;
+  font-size: 11px;
+  color: #3E3125;
+  text-shadow: 0 0 3px rgba(250,245,232,0.95), 0 0 6px rgba(250,245,232,0.8);
+  opacity: 0;
+  transition: opacity .25s ease;
   pointer-events: none;
 }
-.mtn-decade[data-side="right"]{ flex-direction: row-reverse; }
-.mtn-decade-name{
-  font-family: var(--font-mono);
-  font-size: 0.58rem;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-  color: rgba(241,238,251,0.30);
-  flex: none;
+.atlas-layer[data-lod="near"] .atlas-wp-cap{ opacity: 0.92; }
+.atlas-wp:hover .atlas-wp-glow,
+.atlas-wp:focus-visible .atlas-wp-glow{ transform: scale(1.5); }
+.atlas-wp:hover .atlas-wp-disc,
+.atlas-wp:focus-visible .atlas-wp-disc{ transform: scale(1.16); }
+.atlas-wp:focus-visible{ outline: 2px solid #B4432E; outline-offset: 3px; }
+.atlas-wp[data-on="1"] .atlas-wp-disc{
+  transform: scale(1.3);
+  box-shadow:
+    0 0 0 2px rgba(255,250,235,0.95),
+    0 0 0 3.5px rgba(180,67,46,0.9),
+    0 0 14px color-mix(in srgb, var(--tone, #FFC46B) 90%, transparent);
 }
-.mtn-decade-rule{
-  height: 1px;
-  width: clamp(2rem, 12vw, 7rem);
-  background: linear-gradient(to right, rgba(241,238,251,0.20), rgba(241,238,251,0));
+.atlas-wp[data-chaos="1"] .atlas-wp-glow{ animation: atlas-breathe 4.4s ease-in-out infinite; }
+/* A sealed memory keeps its place on the route and gives no light away. */
+.atlas-wp[data-classified="1"] .atlas-wp-disc{
+  background: rgba(250,245,232,0.92);
+  color: var(--deep, #8a6a3a);
+  box-shadow: 0 0 0 1px rgba(74,59,44,0.55), 0 1px 2px rgba(74,59,44,0.35);
 }
-.mtn-decade[data-side="right"] .mtn-decade-rule{
-  background: linear-gradient(to left, rgba(241,238,251,0.20), rgba(241,238,251,0));
-}
-/* On a wide screen both edges of the landscape are already taken — the
-   people down the left, the decades down the right — so the marks written
-   on the slope move inboard of both rails. */
-@media (min-width: 901px){
-  .mtn-decade{ padding: 0 clamp(7rem, 15vw, 13rem); }
+.atlas-wp[data-classified="1"] .atlas-wp-glow{ opacity: 0.35; }
+@keyframes atlas-breathe{
+  0%, 100% { transform: scale(1);    opacity: 0.9; }
+  50%      { transform: scale(1.3);  opacity: 1; }
 }
 
-/* --- what a light says when you point at it ----------------------------- */
-.mtn-tip{
+/* --- what the country calls itself -------------------------------------- */
+.atlas-region{
+  position: absolute;
+  transform: translate(-50%, -50%) scale(calc(1 / var(--z, 1)));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  pointer-events: none;
+  text-align: center;
+  transition: opacity .3s ease;
+}
+.atlas-region-name{
+  font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+  font-style: italic;
+  font-size: 0.95rem;
+  letter-spacing: 0.16em;
+  color: rgba(62,49,37,0.72);
+  text-shadow: 0 0 4px rgba(250,245,232,0.85);
+  white-space: nowrap;
+}
+.atlas-region-sub{
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(62,49,37,0.42);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+/* A region lists its towns only while they are not yet drawn. Once the
+   towns have their own names on the paper, saying them twice is noise. */
+.atlas-layer[data-lod="mid"] .atlas-region-sub{ opacity: 1; }
+.atlas-layer[data-lod="near"] .atlas-region{ opacity: 0.4; }
+
+.atlas-town{
+  position: absolute;
+  transform: translate(-50%, -50%) scale(calc(1 / var(--z, 1)));
+  display: flex;
+  align-items: center;
+  gap: 0.32em;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+.atlas-layer[data-lod="mid"] .atlas-town,
+.atlas-layer[data-lod="near"] .atlas-town{ opacity: 1; }
+.atlas-town-dot{
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: #FAF5E8;
+  border: 1.5px solid #4A3B2C;
+  flex: none;
+}
+.atlas-town-name{
+  font-family: var(--font-body);
+  font-size: 0.56rem;
+  letter-spacing: 0.06em;
+  color: #3E3125;
+  text-shadow: 0 0 3px rgba(250,245,232,0.95);
+  white-space: nowrap;
+}
+
+/* --- where it starts, and where the paint gives out --------------------- */
+.atlas-mark{
+  position: absolute;
+  transform: translate(-50%, -50%) scale(calc(1 / var(--z, 1)));
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #B4432E;
+  text-shadow: 0 0 4px rgba(250,245,232,0.95);
+  white-space: nowrap;
+  pointer-events: none;
+}
+.atlas-mark.onward{
+  color: rgba(74,59,44,0.45);
+  font-style: normal;
+  letter-spacing: 0.16em;
+}
+
+/* --- what a waypoint says when you point at it -------------------------- */
+.atlas-tip{
   position: fixed;
   z-index: 24;
   pointer-events: none;
   max-width: min(18rem, 70vw);
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
-  padding: 0.55rem 0.7rem;
-  background: rgba(9,7,15,0.94);
-  border: 1px solid var(--hairline);
-  border-left: 2px solid var(--tone, var(--ember));
+  gap: 0.12rem;
+  padding: 0.5rem 0.7rem;
+  background: rgba(250,245,232,0.97);
+  border: 1px solid rgba(74,59,44,0.22);
+  border-left: 3px solid var(--tone, #B4432E);
   border-radius: 2px;
-  backdrop-filter: blur(9px);
-  -webkit-backdrop-filter: blur(9px);
+  box-shadow: 0 6px 18px rgba(74,59,44,0.18);
 }
-.mtn-tip[hidden]{ display: none; }
-.mtn-tip-when{
+.atlas-tip[hidden]{ display: none; }
+.atlas-tip-when{
   font-family: var(--font-mono);
   font-size: 0.54rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--ember);
+  color: #9A5A1E;
 }
-.mtn-tip-title{
-  font-family: var(--font-display);
-  text-transform: uppercase;
-  font-size: 0.82rem;
-  letter-spacing: 0.02em;
-  color: var(--paper);
+.atlas-tip-title{
+  font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+  font-size: 0.94rem;
   line-height: 1.2;
+  color: #2C2219;
 }
-.mtn-tip-where{
+.atlas-tip-where{
   font-family: var(--font-mono);
   font-size: 0.54rem;
   letter-spacing: 0.1em;
-  color: var(--ash);
+  color: rgba(74,59,44,0.62);
 }
 
 /* ==========================================================================
-   THE MOUNTAIN AND THE FURNITURE, ON A PHONE
+   THE FURNITURE, ON A PHONE
    ==========================================================================
    One bar for the two control groups, one strip for who and when. Nothing
    new is added to the bottom stack: the people rail moves in beside the
@@ -2440,8 +2541,9 @@ body[data-lens="mountain"] .views{ display: none; }
   .eras[hidden] + .folk{ border-left: 0; padding-left: 0; }
   .folk-btn{ padding: 0 0.55rem; min-height: 2.4rem; }
 
-  /* the landscape gets the whole screen behind the furniture */
-  .mtn-name{ font-size: 0.56rem; }
+  /* the country gets the whole screen behind the furniture */
+  .atlas-region-name{ font-size: 0.72rem; }
+  .atlas-wp-cap{ display: none; }
 }
 
 @media (max-width: 380px){
@@ -2455,7 +2557,3 @@ body[data-lens="mountain"] .views{ display: none; }
 @media (max-height: 460px) and (orientation: landscape){
   .rails{ display: none; }
 }
-
-/* A memory belonging to somebody other than the person being followed: still
-   in the picture, one step further into it. */
-.mtn-light[data-aside="1"] .mtn-halo{ opacity: 0.4; }

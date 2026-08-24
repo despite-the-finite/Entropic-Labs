@@ -6,8 +6,8 @@
    Lenses — two ways of experiencing the same archive, chosen by the visitor
    and remembered between visits:
      trails         the canvas world. The braid, drawn on one dark plane
-     mountain       a night landscape climbed from the earliest year upward,
-                    where a trail is a life and a light is a memory
+     atlas          a trail map of an invented country whose regions are the
+                    archive's own eras, with every memory a lit waypoint
 
    Views — layouts inside the trails lens:
      trail          the reading order, along one meandering path
@@ -37,7 +37,7 @@
 
   var DATA = global.BUTTERFLY_DATA;
   var ENGINE = global.BUTTERFLY_TRAILS;
-  var MOUNTAIN = global.BUTTERFLY_MOUNTAIN;
+  var ATLAS = global.BUTTERFLY_ATLAS;
   if (!DATA || !ENGINE) return;
 
   var doc = document;
@@ -385,7 +385,7 @@
   var gateMark = $('#gate-mark');
   var lightboxEl = $('#lightbox');
   var keynavEl = $('#keynav');
-  var mountainEl = $('#mountain');
+  var atlasEl = $('#atlas');
   var lensesEl = $('#lenses');
   var folkEl = $('#folk');
 
@@ -643,11 +643,12 @@
   }
 
   function updateHint() {
-    var move = lens === 'mountain'
-      ? (trails.isCoarse() ? 'Swipe upward through the years' : 'Scroll or drag upward through the years')
+    var move = lens === 'atlas'
+      ? (trails.isCoarse() ? 'Drag the map · pinch to zoom' : 'Drag the map · scroll to zoom')
       : (trails.isCoarse() ? 'Drag to explore' : 'Drag to explore · scroll to move');
+    var pick = lens === 'atlas' ? ' · Every numbered light is a memory' : ' · Follow a butterfly, or pick a light';
     plateHint.textContent = stories.length
-      ? move + ' · Follow a butterfly, or pick a light'
+      ? move + pick
       : move + ' · Stories coming soon';
   }
 
@@ -868,9 +869,9 @@
 
   /* A category chip sets the filter both lenses read. What happens next is
      the lens's own business: the canvas world sends a butterfly to fetch one
-     of them, and the mountain walks you to the earliest of them, because
-     opening a memory over a landscape you have just been shown is not an
-     invitation to look at it. */
+     of them, and the map flies you to the earliest of them, because opening
+     a memory over a country you have just been shown is not an invitation to
+     look at it. */
   function toggleCategory(catId) {
     if (filters.category === catId) { setFilters({ category: null }); return; }
     var pool = storiesIn(catId);
@@ -881,7 +882,7 @@
     var cat = catById[catId];
     if (!pool.length) { whisperPair(ARCHIVE.noStory, 2800); return; }
     whisper('Following ' + cat.name.toLowerCase() + '…', 3000);
-    if (mountain) mountain.focus(pool[0].id, { instant: false });
+    if (atlas) atlas.focus(pool[0].id, { instant: false });
   }
 
   function surprise() {
@@ -994,9 +995,8 @@
     setFilters({ era: next });
     if (!next) return;
     if (lens === 'trails') panToEra(e);
-    else if (mountain) {
-      mountain.showEra({ t0: axisT(e.from === undefined ? axisStart : e.from),
-                         t1: axisT(e.to === undefined ? axisEnd : e.to) });
+    else if (atlas) {
+      atlas.showEra(e);
       whisper(e.label + (e.line ? ' — ' + e.line : ''), 3400);
     }
   }
@@ -1048,19 +1048,20 @@
       line: 'The braid, drawn on one dark plane.'
     },
     {
-      id: 'mountain',
-      label: 'Mountain',
-      glyph: '△',
-      line: 'A night landscape. Time climbs; every light is a memory.'
+      id: 'atlas',
+      label: 'Map',
+      glyph: '✤',
+      line: 'A trail map of one life. Every waypoint is a memory.'
     }
   ];
   var LENS_KEY = 'el-bt-lens';
   var lens = 'trails';
 
-  /* The mountain is built once and left asleep. It costs nothing until it is
-     activated: no canvas is sized and no element is placed until then. */
-  var mountain = MOUNTAIN ? MOUNTAIN.create(mountainEl) : null;
-  if (!mountain) LENSES.length = 1;
+  /* The atlas is built once and left asleep. It costs nothing until it is
+     activated: the country is not painted and no element is placed until
+     somebody actually asks to look at it. */
+  var atlas = ATLAS ? ATLAS.create(atlasEl) : null;
+  if (!atlas) LENSES.length = 1;
 
   function lensOk(id) {
     for (var i = 0; i < LENSES.length; i++) if (LENSES[i].id === id) return true;
@@ -1141,8 +1142,8 @@
       /* The engine's spotlight already knows how to hold a subset up and let
          the rest fall back; a filter is the same gesture as a causal walk. */
       trails.spotlight(anyFilter() ? shown.map(function (s) { return s.id; }) : null);
-    } else if (mountain) {
-      mountain.setEmphasis({
+    } else if (atlas) {
+      atlas.setEmphasis({
         category: filters.category,
         person: filters.person,
         era: filters.era,
@@ -1204,20 +1205,11 @@
     });
   }
 
-  /* Where the mountain should open. Whatever the visitor was last looking
-     at, in this order: the memory they have open, the decade they picked,
-     the person they are following, or the bottom of the climb. */
-  function mountainEntry() {
+  /* Where the map should open. Whatever the visitor was last looking at: the
+     memory they have open, or failing that the whole country, which is what
+     anybody wants from a map they have not seen before. */
+  function atlasEntry() {
     if (view.story && byId[view.story]) return { at: view.story };
-    if (filters.era && eraById[filters.era]) {
-      var e = eraById[filters.era];
-      return { t: (axisT(e.from) + axisT(e.to)) / 2 };
-    }
-    if (filters.person && strandById[filters.person]) {
-      var lane = null;
-      lanes.forEach(function (l) { if (l.id === filters.person) lane = l; });
-      if (lane) return { t: lane.from + (lane.to - lane.from) * 0.5 };
-    }
     return {};
   }
 
@@ -1233,32 +1225,32 @@
     markLenses();
     global.clearTimeout(lensFade);
 
-    if (lens === 'mountain' && mountain) {
-      /* Nothing draws twice. The canvas world is put down before the
-         landscape is picked up. */
+    if (lens === 'atlas' && atlas) {
+      /* Nothing draws twice. The canvas world is put down before the paper
+         is picked up. */
       releaseEscort(300);
       trails.stop();
-      mountainEl.classList.add('entering');
-      mountain.setWorld(mountainWorld());
-      mountain.setLights(mountainLights());
-      mountain.activate(mountainEntry());
-      if (trails.isReduced()) mountainEl.classList.remove('entering');
+      atlasEl.classList.add('entering');
+      atlas.setWorld(lensWorld());
+      atlas.setLights(lensLights());
+      atlas.activate(atlasEntry());
+      if (trails.isReduced()) atlasEl.classList.remove('entering');
       else {
         global.requestAnimationFrame(function () {
           global.requestAnimationFrame(function () {
-            mountainEl.classList.remove('entering');
+            atlasEl.classList.remove('entering');
           });
         });
       }
-      if (!opts.silent) whisper(lensDef('mountain').line, 4200);
+      if (!opts.silent) whisper(lensDef('atlas').line, 4200);
     } else {
-      if (mountain && mountain.isActive()) {
-        mountainEl.classList.add('entering');
+      if (atlas && atlas.isActive()) {
+        atlasEl.classList.add('entering');
         var settle = trails.isReduced() ? 0 : 260;
         lensFade = global.setTimeout(function () {
           if (lens !== 'trails') return;
-          mountain.deactivate();
-          mountainEl.classList.remove('entering');
+          atlas.deactivate();
+          atlasEl.classList.remove('entering');
         }, settle);
       }
       trails.wake();
@@ -1279,44 +1271,19 @@
     global.requestAnimationFrame(applyInset);
   }
 
-  /* -------------------------------------------- what the mountain is given
-     The same lanes the canvas braid is drawn from and the same ordered
-     stories every other part of the room reads. No second archive, no
-     second copy of anybody's dates. */
-  function mountainWorld() {
-    var lowest = axisStart;
-    lanes.forEach(function (l) { if (l.from < lowest) lowest = l.from; });
-
-    /* How much of the archive a life carries. A line the archive has a lot
-       to say about is drawn wandering more widely — there is more of it. */
-    var counts = {}, most = 1;
-    ordered.forEach(function (s) {
-      var k = storyStrand(s);
-      counts[k] = (counts[k] || 0) + 1;
-      if (counts[k] > most) most = counts[k];
-    });
-
+  /* ------------------------------------------- what a lens is handed
+     The archive's own places and its own eras. A lens decides what to make
+     of them; nothing here knows whether it is drawing a braid or a country,
+     and no lens gets a second copy of anybody's dates. */
+  function lensWorld() {
     var usable = eras.filter(function (e) {
       return ordered.some(function (s) { return eraOf(s) === e; });
     });
-
     return {
-      laneW: 0.55,
-      axis: { start: lowest, end: axisEnd },
-      lanes: lanes.map(function (l) {
-        return {
-          id: l.id, label: l.label, tone: l.tone, side: l.side, base: l.base,
-          startKind: l.startKind, endKind: l.endKind, joinTarget: l.joinTarget,
-          from: l.from, to: l.to,
-          weight: (counts[l.id] || 0) / most
-        };
-      }),
+      places: DATA.places || [],
+      strands: strands,
       decades: usable.map(function (e) {
-        return {
-          id: e.id, label: e.label,
-          t0: axisT(e.from === undefined ? axisStart : e.from),
-          t1: axisT(e.to === undefined ? axisEnd : e.to)
-        };
+        return { id: e.id, label: e.label, from: e.from, to: e.to };
       })
     };
   }
@@ -1333,13 +1300,15 @@
     return clamp(w, 0, 1);
   }
 
-  function mountainLights() {
+  function lensLights() {
     return ordered.map(function (s) {
       var where = [whenOf(s), s.location].filter(Boolean).join(' · ');
       return {
         id: s.id,
+        place: s.place || null,
+        year: s.year,
+        era: eraOf(s) ? eraOf(s).id : null,
         strand: storyStrand(s),
-        t: storyT(s),
         tone: toneOf(s),
         title: s.title,
         when: whenOf(s),
@@ -1356,18 +1325,17 @@
   /* ------------------------------------------------------- the two events
      Both lenses report the same two things, and the room answers them the
      same way, so a memory opens identically however it was found. */
-  if (mountain) {
-    mountain.on('select', function (ref) { go('#' + ref.id); });
-    mountain.on('hover', function (ref) {
+  if (atlas) {
+    atlas.on('select', function (ref) { go('#' + ref.id); });
+    atlas.on('hover', function (ref) {
       var s = byId[ref.id];
       if (!s) return;
       liveEl.textContent = s.title + '. ' + [standfirst(s), s.hook].filter(Boolean).join(' — ');
     });
-    mountain.on('empty', function () {
+    atlas.on('empty', function () {
       if (view.story) { go('#'); return; }
       if (anyFilter()) clearFilters();
     });
-    mountain.on('person', function (id) { togglePerson(id); });
   }
 
   /* ============================================================= THE FOLK
@@ -1414,7 +1382,7 @@
     var st = strandById[id];
     if (lens === 'trails') panToStrand(id);
     else {
-      if (mountain) mountain.showPerson(id);
+      if (atlas) atlas.showPerson(id);
       if (st) whisper(st.label + strandWhen(st), 3600);
     }
   }
@@ -2510,6 +2478,9 @@
     into(room, 'Places', function () { go('#map'); });
     into(room, 'What is the butterfly effect?', function () { go('#' + ESSAY.id); });
     into(room, 'Surprise me', surprise);
+    if (lens === 'atlas' && atlas) {
+      into(room, 'See the whole country', function () { atlas.fit(700); });
+    }
     if (anyFilter()) {
       into(room, 'Show every memory — clearing ' + filterWords().join(', '), clearFilters);
     }
@@ -2542,18 +2513,22 @@
     var W = global.innerWidth, H = global.innerHeight;
     var open = !storyEl.hidden ? storyEl : (!essayEl.hidden ? essayEl : null);
 
-    /* The mountain scrolls rather than pans, so all it needs to know is how
-       much of the screen the open panel has taken off the top and bottom —
-       enough to keep a memory out from under the sheet. */
-    if (mountain) {
-      if (!open) mountain.setInset(0, 0);
+    /* All the map needs to know is how much of the screen an open panel has
+       taken off the top and bottom, so a waypoint is never framed underneath
+       the sheet that is covering it. */
+    if (atlas) {
+      if (!open) atlas.setInset(0, 0);
       else {
         var mr = open.getBoundingClientRect();
         if (mr.width > W * 0.85) {
-          mountain.setInset(mr.top > H - mr.bottom ? 0 : mr.bottom,
-                            mr.top > H - mr.bottom ? H - mr.top : 0);
-        } else mountain.setInset(0, 0);
+          atlas.setInset(mr.top > H - mr.bottom ? 0 : mr.bottom,
+                         mr.top > H - mr.bottom ? H - mr.top : 0);
+        } else atlas.setInset(0, 0);
       }
+      /* The panel's size is only known after it is laid out, so a memory
+         framed before that lands under the sheet. Re-frame it now that the
+         free strip has actually been measured. */
+      if (atlas.isActive() && view.story && byId[view.story]) atlas.focus(view.story);
     }
     if (lens !== 'trails') return;
 
@@ -2659,7 +2634,7 @@
       body.setAttribute('data-panel', '1');
       doc.title = ESSAY.title + ' — Butterfly Trails — Entropic Labs';
       trails.clearFocus();
-      if (mountain) mountain.clearFocus();
+      if (atlas) atlas.clearFocus();
       beginningEl.hidden = true;
       var eh = essayEl.querySelector('.st-title');
       if (eh && !hadEssay) global.requestAnimationFrame(function () { eh.focus(); });
@@ -2679,7 +2654,7 @@
          reading position, the constellation is a shape you would lose by
          zooming into it, the map is a place. */
       if (lens === 'trails') trails.focus(s.id, { zoom: FOCUS_ZOOM[next.mode] || 1.35 });
-      else if (mountain) mountain.focus(s.id);
+      else if (atlas) atlas.focus(s.id);
       trails.hideGhostBranch();
       beginningEl.hidden = true;
       if (hadStory !== next.story) {
@@ -2699,7 +2674,7 @@
       storyEl.textContent = '';
       body.removeAttribute('data-panel');
       trails.clearFocus();
-      if (mountain) mountain.clearFocus();
+      if (atlas) atlas.clearFocus();
       /* Closing a memory returns to whatever the visitor had narrowed the
          archive to, not to the whole of it. */
       applyFilters({ quiet: true });
@@ -2884,10 +2859,9 @@
     if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
     if (!gate.hidden) return;
 
-    /* V walks the lenses. Everything else in here pans or zooms a camera,
-       which the mountain does not have — it is a scroll container, and the
-       browser's own arrow keys are better at that than anything written
-       here would be. */
+    /* V walks the lenses. The map has a camera of its own and binds its own
+       arrows, zoom and 0-to-fit on the element that has focus, so nothing
+       below should reach across and move the other lens's camera instead. */
     if (e.key === 'v' || e.key === 'V') {
       var ids = LENSES.map(function (L) { return L.id; });
       setLens(ids[(ids.indexOf(lens) + 1) % ids.length]);
@@ -2928,7 +2902,7 @@
   function relayout() {
     trails.resize();
     if (lens !== 'trails') trails.stop();
-    if (mountain) mountain.resize();
+    if (atlas) atlas.resize();
     applyInset();
   }
 
