@@ -2059,7 +2059,7 @@ body[data-panel="1"] .plate{ pointer-events: none; }
   .cat-chip:focus-visible .wing::after{ animation: none; }
   .gate, .gate-line, .gate-actions, .plate, .whisper, .photo,
   .beginning, .dock, .views, .lenses, .folk, .eras,
-  #trails, .atlas, .atlas-wp, .atlas-region, .atlas-town,
+  #trails, .atlas, .atlas-wp, .atlas-town,
   .atlas-name, .atlas-joint{ transition: none; }
   .atlas-wp[data-chaos="1"] .atlas-wp-glow{ animation: none; }
   .gate-line, .gate-actions{ opacity: 1; transform: none; }
@@ -2348,24 +2348,27 @@ body[data-lens="atlas"] button:focus-visible{ outline-color: #B4432E; }
   filter: blur(1px);
   transition: transform .25s ease, opacity .25s ease;
 }
+/* A light on the ground. Small and bright, with a thin ink ring so it still
+   reads where the paper behind it is pale — the ring is the part that does
+   not depend on the colour being seen. */
 .atlas-wp-disc{
   position: relative;
-  width: 17px; height: 17px;
+  width: 11px; height: 11px;
   border-radius: 50%;
-  background: var(--deep, #8a6a3a);
-  border: 1.5px solid rgba(255,250,235,0.92);
+  /* A lit bead rather than a ring: bright where the light is, its own colour
+     around that, and the deepened tone at the rim so it still has an edge on
+     pale paper. The ring of paper outside it is what lifts it off the
+     ground, and is the part that does not depend on seeing the colour. */
+  background: radial-gradient(circle at 36% 32%,
+              #FFFDF6 0%,
+              color-mix(in srgb, var(--tone, #FFC46B) 72%, #FFFFFF) 30%,
+              var(--tone, #FFC46B) 62%,
+              var(--deep, #8a6a3a) 100%);
   box-shadow:
-    0 0 0 1px rgba(74,59,44,0.5),
-    0 0 9px color-mix(in srgb, var(--tone, #FFC46B) 80%, transparent),
-    0 1px 2px rgba(74,59,44,0.4);
-  color: #FFF8E8;
-  font-family: var(--font-mono);
-  font-size: 9px;
-  line-height: 14px;
-  font-weight: 600;
-  text-align: center;
-  letter-spacing: 0;
-  font-variant-numeric: tabular-nums;
+    0 0 0 1.5px rgba(255,252,242,0.92),
+    0 0 0 2.4px rgba(74,59,44,0.42),
+    0 0 9px color-mix(in srgb, var(--tone, #FFC46B) 95%, transparent),
+    0 0 18px color-mix(in srgb, var(--tone, #FFC46B) 60%, transparent);
 }
 .atlas-wp-cap{
   position: absolute;
@@ -2389,18 +2392,18 @@ body[data-lens="atlas"] button:focus-visible{ outline-color: #B4432E; }
 .atlas-wp:focus-visible .atlas-wp-disc{ transform: scale(1.16); }
 .atlas-wp:focus-visible{ outline: 2px solid #B4432E; outline-offset: 3px; }
 .atlas-wp[data-on="1"] .atlas-wp-disc{
-  transform: scale(1.3);
+  transform: scale(1.4);
   box-shadow:
-    0 0 0 2px rgba(255,250,235,0.95),
-    0 0 0 3.5px rgba(180,67,46,0.9),
-    0 0 14px color-mix(in srgb, var(--tone, #FFC46B) 90%, transparent);
+    0 0 0 2.5px rgba(255,250,235,0.95),
+    0 0 0 4px rgba(180,67,46,0.9),
+    0 0 16px color-mix(in srgb, var(--tone, #FFC46B) 95%, transparent);
 }
 .atlas-wp[data-chaos="1"] .atlas-wp-glow{ animation: atlas-breathe 4.4s ease-in-out infinite; }
 /* A sealed memory keeps its place on the route and gives no light away. */
+/* A sealed memory keeps its place on the trail and gives no light away. */
 .atlas-wp[data-classified="1"] .atlas-wp-disc{
-  background: rgba(250,245,232,0.92);
-  color: var(--deep, #8a6a3a);
-  box-shadow: 0 0 0 1px rgba(74,59,44,0.55), 0 1px 2px rgba(74,59,44,0.35);
+  background: rgba(250,245,232,0.94);
+  box-shadow: 0 0 0 1.5px rgba(255,252,242,0.9), 0 0 0 2.4px rgba(74,59,44,0.5);
 }
 .atlas-wp[data-classified="1"] .atlas-wp-glow{ opacity: 0.35; }
 @keyframes atlas-breathe{
@@ -2408,44 +2411,8 @@ body[data-lens="atlas"] button:focus-visible{ outline-color: #B4432E; }
   50%      { transform: scale(1.3);  opacity: 1; }
 }
 
-/* --- what the country calls itself -------------------------------------- */
-.atlas-region{
-  position: absolute;
-  transform: translate(-50%, -50%) scale(calc(1 / var(--z, 1)));
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.15rem;
-  pointer-events: none;
-  text-align: center;
-  transition: opacity .3s ease;
-}
-.atlas-region-name{
-  font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
-  font-style: italic;
-  font-size: 0.95rem;
-  letter-spacing: 0.16em;
-  color: rgba(62,49,37,0.72);
-  text-shadow: 0 0 4px rgba(250,245,232,0.85);
-  white-space: nowrap;
-}
-.atlas-region-sub{
-  font-family: var(--font-mono);
-  font-size: 0.5rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(62,49,37,0.42);
-  white-space: nowrap;
-  opacity: 0;
-  transition: opacity .3s ease;
-}
-/* A region lists its towns only while they are not yet drawn. Once the
-   towns have their own names on the paper, saying them twice is noise. */
-.atlas-layer[data-lod="mid"] .atlas-region-sub{ opacity: 1; }
-.atlas-layer[data-lod="near"] .atlas-region{ opacity: 0.4; }
-/* A named upland or island inside a chapter speaks more quietly than the
-   chapter it sits in. */
-.atlas-region[data-small="1"] .atlas-region-name{ font-size: 0.76rem; letter-spacing: 0.12em; }
+/* --- the towns. The only names the map prints, and every one of them
+   comes from the archive: a place a memory actually happened in. ------ */
 
 .atlas-town{
   position: absolute;
@@ -2672,7 +2639,6 @@ body[data-lens="atlas"] button:focus-visible{ outline-color: #B4432E; }
   .folk-btn{ padding: 0 0.55rem; min-height: 2.4rem; }
 
   /* the country gets the whole screen behind the furniture */
-  .atlas-region-name{ font-size: 0.72rem; }
   .atlas-wp-cap{ display: none; }
   .atlas-name{ font-size: 0.54rem; }
   .atlas-joint-text{ font-size: 0.48rem; }

@@ -402,22 +402,19 @@ long sweep with one slow wave over it, sized so the tightest bend anywhere is
 about 290 map units against a widest lane of some 170 — enough room, and the
 reason it stays a braid instead of a knot.
 
-**The regions are chapters, not places.** Because time runs along the spine, a
-region can only be a stretch of years — so each is a chapter of the life
-wearing the landscape of wherever that chapter mostly happened, and the real
-place names are the towns inside it, set at the memories that actually
-happened there:
+**The ground is chapters, and none of it is named.** Because time runs along
+the spine, a stretch of ground can only be a stretch of years — so each one
+wears the landscape of wherever that chapter mostly happened: plains before
+1986, copper savanna through the Zambian years, a coast and an island for the
+years of leaving, alpine country for Colorado, water at the far end, and then
+the paper stops.
 
-| chapter | drawn from | when |
-|---|---|---|
-| The Long Plain | Lucknow, Kolkata | before 1986 |
-| The Copper Country | Kitwe, Chingola | 1986–2004 |
-| The Deodar Hills | Nainital | an upland inside it |
-| The Crossing | Peoria inland, Mauritius offshore | 2005–2009 |
-| The Turquoise Isles | Péreybère, Chamarel | an island off it |
-| The High Range | Denver, Loveland, Steamboat | 2010–2019 |
-| The Far Water | Livingstone | 2020–2024 |
-| The Near Country | — | 2025 on |
+Not one of them carries an invented name. These are real memories, and a
+made-up place name printed over them makes a true story look like a made-up
+one — the map ends up doing the archive a disservice by decorating it. The
+only names on this paper are the archive's own: the towns where the memories
+actually happened, set at the memories that happened there, and the names of
+the people whose lines they are.
 
 A chapter's outline is cut from the spine rather than placed: sample the years
 it covers, walk out to either bank, close the loop. The coast is cut the same
@@ -425,8 +422,17 @@ way, one arm's length further out, which makes the country an island shaped
 like the life it carries — and means the map can never fall out of step with
 the family's layout, because both are derived from the same line.
 
-**Everything written on the paper goes through one collision list.** Chapters,
-towns, names, trailheads and the joints of the braid all check against the
+**A memory is a light on the ground**, in the category tone the whole room
+uses. It carried a number for a while, the way a trail map numbers its
+segments — but a life is not a set of segments, and the number only told you
+the order, which the trail itself already tells you. What is left is a lit
+bead: bright where the light is, its own colour around that, a ring of paper
+to lift it off the ground and a ring of ink outside that, which is the part
+that does not depend on the colour being seen. A chaos event keeps the slow
+breath it has in every other view.
+
+**Everything written on the paper goes through one collision list.** Towns,
+names, trailheads and the joints of the braid all check against the
 memories first and then against each other, each stepping off in a direction
 that suits it — a name steps the way its own line already leans, so it never
 crosses the braid to find room. Add a story and every label re-negotiates.
@@ -483,12 +489,20 @@ is its distance.
 **Adding a story** means appending one object to `STORIES` in
 `butterfly/data/stories.js`. Nothing else needs touching. The trail places it
 on its strand at its year, the constellation clusters it with its era, the map
-plots it if it has coordinates, the map hangs a numbered light on the right
-person's line at the right year and re-negotiates every label around it, its
-category butterfly learns it has somewhere to fly, the era rail picks up its era, and every counter updates. Every field
+plots it if it has coordinates, the map hangs a light on the right person's
+line at the right year and re-negotiates every label around it, its category
+butterfly learns it has somewhere to fly, the era rail picks up its era, and every counter updates. Every field
 except `id` is optional and the room degrades quietly: a story with a title
 and nothing else renders, it just renders sparely. The field list at the top
 of that file documents every supported key.
+
+**The readout says what you have narrowed the archive to, and nothing else.**
+It used to open with the collection's measurements — how many memories, which
+years, how many places, how many traced forward — and that is a fact about the
+archive rather than about anything on the screen: it sat over the trail on
+every visit and said the same thing every time. What is left only appears once
+somebody has picked a category, a decade or a person, and says what they
+picked.
 
 **The butterflies are colour-coded**, and the code runs the whole way through:
 each category carries a `tone`, and that one value paints its chip in the dock,

@@ -16,19 +16,17 @@
      own offsets, unchanged — so a birth still leaves its parent exactly and
      a marriage still arrives exactly.
 
-   The regions are chapters, not places
-     Because time runs along the spine, a region can only be a stretch of
-     years; so each one is a chapter of the life wearing the landscape of
-     wherever that chapter mostly happened, and the real place names are the
-     towns inside it, set where their memories actually fall:
+   The ground is chapters, and none of it is named
+     Because time runs along the spine, a stretch of ground can only be a
+     stretch of years — so each one wears the landscape of wherever that
+     chapter mostly happened: plains before 1986, copper savanna through the
+     Zambian years, a coast and an island for the years of leaving, alpine
+     country for Colorado, water at the far end, and then the paper stops.
 
-       The Long Plain     before 1986   Lucknow, Kolkata
-       The Copper Country 1986–2004     Kitwe, Chingola — and, up in its
-                                        northern hills, Nainital
-       The Crossing       2005–2009     Peoria inland, Mauritius offshore
-       The High Range     2010–2019     Denver, Loveland, Steamboat
-       The Far Water      2020–2024     Livingstone, and the gorge
-       The Near Country   2025 on       and then the paper stops
+     Not one of them carries an invented name. These are real memories, and a
+     made-up place name printed over them makes a true story look like a made
+     -up one. The only names on this paper are the archive's own: the towns
+     where the memories actually happened.
 
    How it is drawn
      The whole static map — paper, land, water, terrain, the braid itself —
@@ -174,35 +172,35 @@
 
   /* ------------------------------------------------------------------------
      THE COUNTRY
-     Regions are chapters of one life, in order, because time runs along the
-     spine and a region can therefore only be a stretch of years. `from` and
-     `to` are years; everything else is how that chapter is painted. `span`
+     Chapters of one life, in order, because time runs along the spine and a
+     stretch of ground can therefore only be a stretch of years. `from` and
+     `to` are years; everything else is how that stretch is painted. `span`
      is how far either side of the spine the wash reaches.
+
+     None of them is named. The landscape says which years these are — the
+     copper savanna, the alpine years, the water at the far end — and the
+     only names printed on this paper are the ones the archive supplies
+     itself: the towns where the memories actually happened.
      ------------------------------------------------------------------------ */
   var REGIONS = [
-    { id: 'plain', name: 'The Long Plain', sub: 'Lucknow · Kolkata',
-      from: -Infinity, to: 1985, wash: '#E2CE8E', terrain: 'plain', span: 190 },
-    { id: 'copper', name: 'The Copper Country', sub: 'Kitwe · Chingola',
-      from: 1986, to: 2004, wash: '#D9BA76', terrain: 'bush', span: 218 },
-    { id: 'crossing', name: 'The Crossing', sub: 'Peoria · Mauritius',
-      from: 2005, to: 2009, wash: '#CBDFC6', terrain: 'coast', span: 186 },
-    { id: 'range', name: 'The High Range', sub: 'Denver · Steamboat',
-      from: 2010, to: 2019, wash: '#B6BAC8', terrain: 'peak', span: 205 },
-    { id: 'water', name: 'The Far Water', sub: 'Livingstone',
-      from: 2020, to: 2024, wash: '#A6C6BC', terrain: 'falls', span: 160 },
-    { id: 'near', name: 'The Near Country', sub: 'now',
-      from: 2025, to: Infinity, wash: '#DFD6B6', terrain: 'soft', span: 150 }
+    { id: 'plain', from: -Infinity, to: 1985, wash: '#E2CE8E', terrain: 'plain', span: 190 },
+    { id: 'copper', from: 1986, to: 2004, wash: '#D9BA76', terrain: 'bush', span: 218 },
+    { id: 'crossing', from: 2005, to: 2009, wash: '#CBDFC6', terrain: 'coast', span: 186 },
+    { id: 'range', from: 2010, to: 2019, wash: '#B6BAC8', terrain: 'peak', span: 205 },
+    { id: 'water', from: 2020, to: 2024, wash: '#A6C6BC', terrain: 'falls', span: 160 },
+    { id: 'near', from: 2025, to: Infinity, wash: '#DFD6B6', terrain: 'soft', span: 150 }
   ];
   var REGION_BY = {};
   REGIONS.forEach(function (r) { REGION_BY[r.id] = r; });
 
-  /* Two places inside those chapters that are too particular to lose: a pine
-     upland north of the copper country, and an island off the crossing.
+  /* Two pieces of ground inside those chapters that are too particular to
+     lose: a pine upland beside the copper years, and an island off the years
+     of leaving. Unnamed, like the chapters — they are landscape, not places.
      `at` is the year they sit beside, `side` which bank of the spine. */
   var FEATURES = [
-    { id: 'hills', name: 'The Deodar Hills', at: 1999, side: -1,
+    { id: 'hills', at: 1999, side: -1,
       out: 250, rx: 165, ry: 118, wash: PIG.pine, terrain: 'hill' },
-    { id: 'isles', name: 'The Turquoise Isles', at: 2007, side: 1,
+    { id: 'isles', at: 2007, side: 1,
       out: 265, rx: 132, ry: 96, wash: PIG.lagoon, terrain: 'isle', island: true }
   ];
 
@@ -2036,7 +2034,7 @@
          top of one another however the family's dates move. Memories are in
          it first and never move: they are the thing being labelled. */
       var taken = waypoints.map(function (w) {
-        return { x: w.x, y: w.y, w: 62, h: 30 };
+        return { x: w.x, y: w.y, w: 40, h: 26 };
       });
       function clear(p, w, h, dirx, diry) {
         for (var g = 0; g < 16; g++) {
@@ -2053,26 +2051,11 @@
         return p;
       }
 
-      /* --- the chapters, named on their own stretch of country */
-      REGIONS.concat(FEATURES).forEach(function (R) {
-        if (!R.shape) return;
-        var n = el('div', 'atlas-region');
-        if (R.rx && R.rx < 200) n.dataset.small = '1';
-        var at = R.mid || { x: R.x, y: R.y };
-        at = clear({ x: at.x + (R.lx || 0), y: at.y + (R.ly || 0) },
-                   Math.max(120, R.name.length * 9), 34, 0, 1);
-        n.style.left = at.x + 'px';
-        n.style.top = at.y + 'px';
-        var name = el('span', 'atlas-region-name');
-        name.textContent = R.name;
-        n.appendChild(name);
-        if (R.sub) {
-          var sub = el('span', 'atlas-region-sub');
-          sub.textContent = R.sub;
-          n.appendChild(sub);
-        }
-        layer.appendChild(n);
-      });
+      /* The chapters are not named. They still decide the landscape — which
+         ground is savanna, which is alpine, where the water is — but an
+         invented place name on a map of real memories does the archive a
+         disservice: it makes a true story look like a made-up one. The only
+         names on this paper are the ones the archive itself supplies.
 
       /* --- the towns. Every place a memory actually happened in gets its
          name on the paper, at the memory that happened there — so the map's
@@ -2157,10 +2140,10 @@
         layer.appendChild(n);
       });
 
-      /* --- the memories. A numbered disc, the way a trail map numbers its
-         segments, lit from inside in its category's colour. The number is
-         the channel that does not depend on seeing the colour; the glow is
-         the one that makes it a memory rather than a bus stop. */
+      /* --- the memories. A light on the ground, in its category's colour.
+         It carried a number for a while, the way a trail map numbers its
+         segments — but a life is not a set of segments and the numbers only
+         told you the order, which the trail itself already tells you. */
       waypoints.forEach(function (w) {
         var b = el('button', 'atlas-wp');
         b.type = 'button';
@@ -2178,9 +2161,7 @@
         b.setAttribute('aria-label', w.label);
 
         b.appendChild(el('span', 'atlas-wp-glow'));
-        var disc = el('span', 'atlas-wp-disc');
-        disc.textContent = String(w.i + 1);
-        b.appendChild(disc);
+        b.appendChild(el('span', 'atlas-wp-disc'));
         var cap = el('span', 'atlas-wp-cap');
         cap.textContent = w.title;
         b.appendChild(cap);
@@ -2219,7 +2200,7 @@
       var on = el('div', 'atlas-mark onward');
       on.style.left = clamp(last.x - 40, 80, MAP.w - 80) + 'px';
       on.style.top = clamp(last.y + 86, 40, MAP.h - 40) + 'px';
-      on.textContent = 'The country continues';
+      on.textContent = 'The trail continues';
       layer.appendChild(on);
 
       applyEmphasisToDom();
@@ -2255,8 +2236,8 @@
       if (coarse && !viaFocus) return;
       tip.textContent = '';
       var when = el('span', 'atlas-tip-when');
-      when.textContent = (w.i + 1) + ' · ' + (w.when || '');
-      tip.appendChild(when);
+      when.textContent = w.when || '';
+      if (w.when) tip.appendChild(when);
       var t = el('span', 'atlas-tip-title');
       t.textContent = w.title;
       tip.appendChild(t);

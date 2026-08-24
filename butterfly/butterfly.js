@@ -610,67 +610,37 @@
     }
   }
 
-  /* =============================================================== COUNTS */
+  /* =============================================================== COUNTS
+     The readout says what the visitor has narrowed the archive to, and
+     nothing else. It used to open with the archive's measurements — how many
+     memories, which years, how many places — and that is a fact about the
+     collection rather than about anything on the screen: it sat over the
+     trail on every page and said the same thing every time. What is left
+     only appears once somebody has asked for it. */
   function updateCounts() {
     countsEl.textContent = '';
-    if (!stories.length) {
-      countsEl.appendChild(el('span', null, 'Archive open · '));
-      var z = el('b', null, '0');
-      countsEl.appendChild(z);
-      countsEl.appendChild(el('span', null, ' memories'));
-      return;
-    }
-    var years = ordered.filter(function (s) { return s.year !== null; })
-      .map(function (s) { return s.year; });
-    /* Everywhere the archive knows about: where memories happened, and
-       everywhere the travelling ones passed through. */
-    var places = {};
-    ordered.forEach(function (s) {
-      /* Key on the place where there is one: 'chingola' and
-         'Chingola, Zambia' are the same town written two ways. */
-      if (s.place && placeById[s.place]) places[s.place] = true;
-      else if (s.location) places[s.location] = true;
-      s.journey.forEach(function (stop) {
-        if (stop.place && placeById[stop.place]) places[stop.place] = true;
-      });
-    });
-    var linkCount = ordered.reduce(function (n, s) { return n + s.consequences.length; }, 0);
+    if (!stories.length) return;
 
-    /* A category or a decade narrows the archive, and the line says what is
-       showing out of what. Following somebody narrows nothing — their family
-       is still there — so that is reported as what it is. */
     var narrowed = !!(filters.category || filters.era);
     var who = filters.person && strandById[filters.person];
-    if (narrowed || who) {
-      countsEl.appendChild(el('b', null, String(narrowed ? filtered().length : stories.length)));
-      countsEl.appendChild(el('span', null,
-        (narrowed ? ' of ' + stories.length : '') +
-        (stories.length === 1 && !narrowed ? ' memory' : ' memories')));
-      var words = [];
-      if (filters.category && catById[filters.category]) words.push(catById[filters.category].name);
-      if (filters.era && eraById[filters.era]) words.push(eraById[filters.era].label);
-      if (who) words.push('following ' + who.label);
-      countsEl.appendChild(el('span', null, ' · ' + words.join(' · ')));
-      return;
-    }
+    if (!narrowed && !who) return;
 
-    var n = el('b', null, String(stories.length));
-    countsEl.appendChild(n);
-    countsEl.appendChild(el('span', null, stories.length === 1 ? ' memory' : ' memories'));
-    if (years.length) {
-      countsEl.appendChild(el('span', null,
-        ' · ' + Math.min.apply(null, years) + '–' + Math.max.apply(null, years)));
-    }
-    var placeN = Object.keys(places).length;
-    if (placeN) countsEl.appendChild(el('span', null, ' · ' + placeN + (placeN === 1 ? ' place' : ' places')));
-    if (linkCount) countsEl.appendChild(el('span', null, ' · ' + linkCount + ' traced forward'));
+    countsEl.appendChild(el('b', null, String(narrowed ? filtered().length : stories.length)));
+    countsEl.appendChild(el('span', null,
+      (narrowed ? ' of ' + stories.length : '') +
+      (stories.length === 1 && !narrowed ? ' memory' : ' memories')));
+    var words = [];
+    if (filters.category && catById[filters.category]) words.push(catById[filters.category].name);
+    if (filters.era && eraById[filters.era]) words.push(eraById[filters.era].label);
+    if (who) words.push('following ' + who.label);
+    countsEl.appendChild(el('span', null, ' · ' + words.join(' · ')));
   }
 
   function updateHint() {
     var move = lens === 'atlas'
       ? (trails.isCoarse() ? 'Drag the map · pinch to zoom' : 'Drag the map · scroll to zoom')
       : (trails.isCoarse() ? 'Drag to explore' : 'Drag to explore · scroll to move');
-    var pick = lens === 'atlas' ? ' · Every numbered light is a memory' : ' · Follow a butterfly, or pick a light';
+    var pick = ' · Follow a butterfly, or pick a light';
     plateHint.textContent = stories.length
       ? move + pick
       : move + ' · Stories coming soon';
