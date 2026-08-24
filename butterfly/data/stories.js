@@ -523,6 +523,21 @@
       lon: -105.07
     },
     {
+      id: 'front-range-christian',
+      name: 'Front Range Christian School',
+      region: 'Littleton, Colorado',
+      country: 'United States',
+      lat: 39.58,
+      lon: -105.08
+    },
+    {
+      id: 'kansas-city',
+      name: 'Kansas City',
+      country: 'United States',
+      lat: 39.10,
+      lon: -94.58
+    },
+    {
       id: 'lusaka',
       name: 'Lusaka',
       country: 'Zambia',
@@ -4323,6 +4338,156 @@
       source: 'Amma',
       relatedStories: ['the-gto', 'confidence-curve'],
       dateAdded: '2026-08-20'
+    },
+
+    /* The first memory to sit on Indra's own strand. Narrated by her dad,
+       but the week belongs to her. */
+    {
+      id: 'the-little-heart',
+      title: 'The Little Heart on Her Hand',
+      hook: 'A four-year-old found a way to carry her mother into the classroom with her.',
+      year: 2026,
+      approximateDate: 'August 2026',
+      strand: 'indra',
+      location: 'Littleton, Colorado',
+      place: 'front-range-christian',
+      landmark: {
+        name: 'Front Range Christian School',
+        query: 'Front Range Christian School Littleton Colorado'
+      },
+      journey: [
+        {
+          id: 'kansas-city',
+          place: 'kansas-city',
+          flag: '✈',
+          label: 'Kansas City',
+          note: 'Principal Development Program. I missed the first drop-off.',
+          url: 'https://www.google.com/maps/search/?api=1&query=Kansas+City'
+        },
+        {
+          id: 'school',
+          place: 'front-range-christian',
+          flag: '🎒',
+          label: 'Front Range Christian School, Littleton',
+          note: 'Day two. The morning was mine.',
+          url: 'https://www.google.com/maps/search/?api=1&query=Front+Range+Christian+School+Littleton+Colorado'
+        },
+        {
+          id: 'car',
+          place: 'front-range-christian',
+          flag: '📕',
+          label: 'The back seat of the car',
+          note: 'A book, and a sheet of stickers behind the last page'
+        },
+        {
+          id: 'hand',
+          arrival: true,
+          flag: '❤',
+          label: 'A small heart, pressed onto a small hand',
+          note: 'Mom is coming with her'
+        }
+      ],
+      category: 'love',
+      tags: [
+        'colorado', 'littleton', 'pre-k', 'school', 'indra', 'colleen',
+        'parenting', 'courage', 'the kissing hand', 'mornings'
+      ],
+      people: [
+        { name: 'Indra', relation: 'my daughter, aged four' },
+        { name: 'Colleen', relation: 'her mom — and the reason for the sticker' },
+        { name: 'Karsh', relation: 'me, pretending not to look' },
+        { name: 'Colleen’s parents', relation: 'the first-day pickup' }
+      ],
+      story: [
+        'It was back-to-school week for Indra.',
+        'She’d had a great summer. Lots of time at home, lots of adventures, and — most importantly — lots of quality time with Colleen. But summer eventually does what summer always does: it ends. And suddenly it was time to get back to reality.',
+        'Or, at least, the four-year-old version of reality.',
+        { kind: 'beat', text: 'Pre-K.' },
+        'And it hit her hard.',
+        {
+          text: 'The first week was tough. Getting ready in the morning became a negotiation worthy of international diplomacy. We had to convince Indra that, yes, school is important. Yes, she actually has to go. And yes, apparently they do expect you to arrive at something resembling the scheduled start time.',
+          at: 'school'
+        },
+        {
+          text: 'Her first day of school happened to fall while I was in Kansas City for my Principal Development Program, so I missed that first drop-off. Luckily, Colleen’s parents were there and could help by picking her up early while she transitioned back into the routine.',
+          at: 'kansas-city'
+        },
+        { kind: 'beat', text: 'But I was home for day two.', at: 'school' },
+        'In our house, I’m generally the morning drop-off guy, and Colleen handles pickup. This arrangement is somewhat ironic because Colleen is absolutely the morning person and I am absolutely not. I’m the guy who stays up late writing these stories, making music, building games, and tinkering with Entropic Labs when any reasonable person would be asleep.',
+        'But Colleen goes to work early, so mornings with Indra are mine.',
+        'At least on an ideal day.',
+        'On my first morning dropping her off, I helped her out of the car and started walking her toward her classroom.',
+        'That’s when I noticed something.',
+        { kind: 'beat', text: 'There was a little heart sticker on her hand.' },
+        'I looked at it and smiled.',
+        '“Are you pretending you have a tattoo?”',
+        'She immediately shut that idea down.',
+        { kind: 'beat', text: 'No.' },
+        'And she didn’t really want to talk about it.',
+        'Fair enough.',
+        'The next morning, I noticed the heart again.',
+        'Now I was curious.',
+        'Where were these little heart stickers coming from?',
+        { text: 'That’s when I noticed a book sitting in the car:', at: 'car' },
+        { kind: 'found', items: ['The Kissing Hand'] },
+        'Suddenly, everything clicked.',
+        'The Kissing Hand is a children’s story about a little raccoon named Chester who is afraid to go to school and leave his mother. His mother kisses the palm of his hand and tells him that whenever he feels lonely, he can press that hand against his cheek and remember that her love is always with him.',
+        'And at the back of Indra’s copy of the book was a whole sheet of little heart-shaped Kissing Hand stickers.',
+        'There it was.',
+        'Her “tattoo.”',
+        { kind: 'reveal', text: 'Indra had been putting one on her hand before school.' },
+        'She didn’t explain it to me. For whatever reason, she seemed a little embarrassed to admit what she was doing.',
+        'So I didn’t ask again.',
+        'I just watched.',
+        'Quietly.',
+        'I pretended I wasn’t paying attention as she carefully put that little heart on her hand.',
+        'And suddenly I understood what I was seeing.',
+        'That tiny sticker was giving her courage.',
+        { kind: 'beat', text: 'She missed her mom.' },
+        'After an entire summer of being close to Colleen, suddenly she was being asked to leave that comfort behind, walk into a classroom, and face the real-ish world on her own.',
+        'So she carried her mom with her.',
+        { kind: 'beat', text: 'Right there on her hand.', at: 'hand' },
+        'I watched the care with which she put it on. I could see the longing in her eyes. But I could also see something else.',
+        { kind: 'beat', text: 'Strength.' },
+        'That little heart gave her what she needed to get out of the car, walk through those doors, and face another day.',
+        'And for just a moment, it brought a tear to my eye.',
+        'Not a tear of sadness.',
+        { kind: 'beat', text: 'A tear of pride.' },
+        'Because my daughter is incredibly intelligent, loving, caring, and kind. And what makes me especially proud is that none of it seems performative. She doesn’t need everyone to know what she’s feeling. She doesn’t boast about it. Sometimes she doesn’t even want her dad to know.',
+        'She just quietly finds her own way through it.',
+        'Her bond with Colleen is incredible.',
+        'Sometimes, if I’m being truthful, I wish I had a bond with Indra that felt as strong as the one she has with her mom.',
+        'But I also know that bond didn’t simply appear. It has been built through thousands of little moments — the comfort, patience, play, reassurance, difficult days, ordinary days, and all the time Colleen has poured into being her mom.',
+        'Watching that little heart on her hand didn’t make me jealous of it.',
+        'It made me happy.',
+        'Because how lucky is my daughter to love someone that deeply — and to know, with complete certainty, that she is loved just as deeply in return?',
+        'And maybe part of being her dad is understanding that I don’t have to be at the center of every moment.',
+        'Sometimes my job is simply to drive the car.',
+        'Open the door.',
+        'Walk beside her.',
+        'And pretend I don’t notice the little heart on her hand.',
+        'Next week, when Monday morning comes and we’re inevitably negotiating socks, breakfast, shoes, backpacks, and the apparently unreasonable expectation that school starts at a specific time, I’ll be watching.',
+        'Not obviously, of course.',
+        'I’ll look away.',
+        'I’ll give her privacy.',
+        'And I’ll secretly wait to see if that little heart appears on her hand again.',
+        'If it does, I won’t say anything.',
+        'I’ll just smile to myself.',
+        'Because I’ll know exactly what it means.',
+        { kind: 'landing', text: 'Mom is coming with her.', at: 'hand' }
+      ],
+      artifact: {
+        label: 'Memory artifact',
+        title: 'One heart-shaped sticker',
+        lines: [
+          { label: 'Found', text: 'On a sheet at the back of her copy of The Kissing Hand.' },
+          { label: 'Worn', text: 'On the back of her hand, every school morning.' },
+          { label: 'Explained', text: 'Never. And never asked about again.' }
+        ]
+      },
+      source: 'Karsh',
+      relatedStories: ['momo', 'no-futon'],
+      dateAdded: '2026-08-24'
     }
   ];
 
