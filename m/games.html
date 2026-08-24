@@ -2,7 +2,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#07050F">
-<meta name="description" content="Video game design at Entropic Labs — a minor function of the studio. Browser games by Despite the Finite, two of them playable here.">
+<meta name="description" content="Video game design at Entropic Labs — a minor function of the studio. Browser games by Despite the Finite, three of them playable here.">
 <link rel="canonical" href="../games.html">
 <link rel="stylesheet" href="mobile.css">
 <script>
@@ -44,7 +44,7 @@
     </div>
     <div class="body-copy">
       <p>Entropic Labs is a recording and production studio first. Game design is the side room — a minor function of the studio, run the same way a session is: start from noise, keep whatever holds together.</p>
-      <p style="color:var(--ash);font-size:0.9rem">Tap a game for the full write-up. Two are playable right here.</p>
+      <p style="color:var(--ash);font-size:0.9rem">Tap a game for the full write-up. Three are playable right here.</p>
     </div>
   </section>
 
@@ -96,6 +96,28 @@
     <summary>
       <span class="summary-main">
         <span class="game-index">G.03</span>
+        <h2>Little Heroes Hospital</h2>
+        <span class="game-meta">Browser hospital game &middot; Ages 4&ndash;10 &middot; No build step</span>
+      </span>
+      <span class="game-toggle" aria-hidden="true"></span>
+    </summary>
+    <div class="game-panel">
+    <p class="game-flag">Built for touch first — every target is finger-sized and every drag also works as two taps, so it plays the same on a phone as on a laptop.</p>
+    <div class="cta-stack">
+      <a class="btn btn-solid" href="../play/little-heroes-hospital/">Play it now</a>
+    </div>
+    <div class="game-body">
+      <p>A game for four-to-ten-year-olds who want to be a doctor or a vet: people or pets, everyone needs a hero. It opens on a character creator &mdash; skin, hair, glasses, scrubs, lab coat, shoes, accessories and a &ldquo;surprise me&rdquo; die &mdash; then asks which career to start in. Both stay open and swapping never costs progress. One choice sets the difficulty of the whole game: <em>Little Helper</em> for roughly four-to-six, where the right tool sparkles and a question only offers two answers, or <em>Medical Explorer</em> for roughly seven-to-ten, with more tools, more answers and the real names for things.</p>
+      <p>Twenty levels ship &mdash; ten Doctor, ten Vet &mdash; and each is a patient rather than a stage: they arrive, the child talks to them, picks tools, works out what is wrong and treats it. Helping a patient grows the building. The hospital is an illustrated cutaway whose locked rooms are visible from the start with their unlock conditions written on them &mdash; X-Ray Room, Laboratory, Animal Recovery, Emergency Room, and Surgery and the Helipad for finishing a whole track &mdash; and each arrives with a construction animation. Alongside it sit a Doctor Bag of twenty-four collectable tools and a Supply Room that spends coins on decor, toys, outfits and one buildable new wing. Hero Stars reward solving, Kindness Stars reward how the patient was treated on the way.</p>
+      <p>It is careful about being wrong. No buzzer, no red cross, no failure screen &mdash; just &ldquo;Hmm&hellip; let&rsquo;s try another tool!&rdquo;, and after two tries it quietly shows the answer. Nothing frightening: no blood, no needles, no emergencies, and the title screen says it is make-believe and not medical advice. Every target is at least 56&nbsp;px and every drag also works as two taps, so it is built for a phone first; sound is off by default and mutable from every screen. There are no dependencies and no binary assets &mdash; every character, room and X-ray is inline SVG and every sound is synthesised &mdash; progress saves to <code>localStorage</code>, and nothing ever leaves the browser.</p>
+    </div>
+    </div>
+  </details>
+
+  <details class="game">
+    <summary>
+      <span class="summary-main">
+        <span class="game-index">G.04</span>
         <h2>Live Trivia</h2>
         <span class="game-meta">Browser trivia platform · Serverless API · Postgres</span>
       </span>
