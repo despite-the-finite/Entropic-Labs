@@ -906,7 +906,11 @@
     var cat = catById[catId];
     if (!pool.length) { whisperPair(ARCHIVE.noStory, 2800); return; }
     whisper('Following ' + cat.name.toLowerCase() + '…', 3000);
-    if (atlas) atlas.focus(pool[0].id, { instant: false });
+    /* The same choice the canvas trail makes: a memory the archive wants
+       read first if there is one, otherwise any of them. */
+    var featured = pool.filter(function (s) { return s.featured; });
+    var target = pick(featured.length ? featured : pool);
+    if (atlas) atlas.follow({ tone: cat.tone, id: target.id });
   }
 
   function surprise() {
@@ -1296,18 +1300,44 @@
   }
 
   /* ------------------------------------------- what a lens is handed
-     The archive's own places and its own eras. A lens decides what to make
-     of them; nothing here knows whether it is drawing a braid or a country,
-     and no lens gets a second copy of anybody's dates. */
+     The braid the canvas trail is drawn from, the archive's own places, and
+     its own eras. A lens decides what to make of them; nothing here knows
+     whether it is drawing a dark plane or a painted country, and no lens
+     gets a second copy of anybody's dates. */
   function lensWorld() {
     var usable = eras.filter(function (e) {
       return ordered.some(function (s) { return eraOf(s) === e; });
     });
+    var lowest = axisStart;
+    lanes.forEach(function (l) { if (l.from < lowest) lowest = l.from; });
+
+    /* How much of the archive each life carries. A lens may draw a line the
+       record has more to say about a little more strongly. */
+    var counts = {}, most = 1;
+    ordered.forEach(function (s) {
+      var k = storyStrand(s);
+      counts[k] = (counts[k] || 0) + 1;
+      if (counts[k] > most) most = counts[k];
+    });
+
     return {
       places: DATA.places || [],
-      strands: strands,
+      laneW: 0.55,
+      axis: { start: lowest, end: axisEnd },
+      lanes: lanes.map(function (l) {
+        return {
+          id: l.id, label: l.label, tone: l.tone, side: l.side, base: l.base,
+          startKind: l.startKind, endKind: l.endKind, joinTarget: l.joinTarget,
+          from: l.from, to: l.to, startsAt: l.startsAt, endsAt: l.endsAt,
+          weight: (counts[l.id] || 0) / most
+        };
+      }),
+      trunk: trunk ? trunk.id : null,
+      married: braidCfg.marriedLabel || 'Married',
       decades: usable.map(function (e) {
-        return { id: e.id, label: e.label, from: e.from, to: e.to };
+        return { id: e.id, label: e.label, from: e.from, to: e.to,
+                 t0: axisT(e.from === undefined ? axisStart : e.from),
+                 t1: axisT(e.to === undefined ? axisEnd : e.to) };
       })
     };
   }
@@ -1331,6 +1361,7 @@
         id: s.id,
         place: s.place || null,
         year: s.year,
+        t: storyT(s),
         era: eraOf(s) ? eraOf(s).id : null,
         strand: storyStrand(s),
         tone: toneOf(s),

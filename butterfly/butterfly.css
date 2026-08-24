@@ -2059,7 +2059,8 @@ body[data-panel="1"] .plate{ pointer-events: none; }
   .cat-chip:focus-visible .wing::after{ animation: none; }
   .gate, .gate-line, .gate-actions, .plate, .whisper, .photo,
   .beginning, .dock, .views, .lenses, .folk, .eras,
-  #trails, .atlas, .atlas-wp, .atlas-region, .atlas-town{ transition: none; }
+  #trails, .atlas, .atlas-wp, .atlas-region, .atlas-town,
+  .atlas-name, .atlas-joint{ transition: none; }
   .atlas-wp[data-chaos="1"] .atlas-wp-glow{ animation: none; }
   .gate-line, .gate-actions{ opacity: 1; transform: none; }
   .photo{ transform: none; }
@@ -2442,6 +2443,9 @@ body[data-lens="atlas"] button:focus-visible{ outline-color: #B4432E; }
    towns have their own names on the paper, saying them twice is noise. */
 .atlas-layer[data-lod="mid"] .atlas-region-sub{ opacity: 1; }
 .atlas-layer[data-lod="near"] .atlas-region{ opacity: 0.4; }
+/* A named upland or island inside a chapter speaks more quietly than the
+   chapter it sits in. */
+.atlas-region[data-small="1"] .atlas-region-name{ font-size: 0.76rem; letter-spacing: 0.12em; }
 
 .atlas-town{
   position: absolute;
@@ -2453,6 +2457,7 @@ body[data-lens="atlas"] button:focus-visible{ outline-color: #B4432E; }
   opacity: 0;
   transition: opacity .3s ease;
 }
+.atlas-town[data-side="left"]{ flex-direction: row-reverse; }
 .atlas-layer[data-lod="mid"] .atlas-town,
 .atlas-layer[data-lod="near"] .atlas-town{ opacity: 1; }
 .atlas-town-dot{
@@ -2467,6 +2472,72 @@ body[data-lens="atlas"] button:focus-visible{ outline-color: #B4432E; }
   font-size: 0.56rem;
   letter-spacing: 0.06em;
   color: #3E3125;
+  text-shadow: 0 0 3px rgba(250,245,232,0.95);
+  white-space: nowrap;
+}
+
+/* --- whose line is whose ------------------------------------------------
+   Written at whichever end of a life stays open, in that life's own colour,
+   and pressable: a name is how you follow somebody. */
+.atlas-name{
+  position: absolute;
+  transform: translate(-50%, -50%) scale(calc(1 / var(--z, 1)));
+  pointer-events: auto;
+  background: none;
+  border: 0;
+  border-bottom: 1.5px solid color-mix(in srgb, var(--tone, #B4432E) 70%, transparent);
+  color: #3E3125;
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 0.5rem 0.3rem 0.28rem;
+  min-height: 2.4rem;
+  cursor: pointer;
+  white-space: nowrap;
+  /* a halo rather than a box: this is a name written on the paper, not a
+     control sitting on top of it */
+  text-shadow: 0 0 4px rgba(250,245,232,0.98), 0 0 9px rgba(250,245,232,0.9);
+  transition: color .18s ease, opacity .3s ease;
+}
+.atlas-name:hover{ color: #17110B; border-bottom-color: var(--tone, #B4432E); }
+.atlas-name[aria-pressed="true"]{
+  color: #17110B;
+  border-bottom-color: var(--tone, #B4432E);
+  border-bottom-width: 3px;
+}
+.atlas-name[data-off="1"]{ opacity: 0.34; }
+.atlas-name:focus-visible{ outline: 2px solid #B4432E; outline-offset: 2px; }
+
+/* --- the joints of the braid: a life starting, two becoming one ---------- */
+.atlas-joint{
+  position: absolute;
+  transform: translate(-50%, -50%) scale(calc(1 / var(--z, 1)));
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+.atlas-layer[data-lod="mid"] .atlas-joint,
+.atlas-layer[data-lod="near"] .atlas-joint{ opacity: 1; }
+.atlas-joint-mark{
+  width: 7px; height: 7px;
+  flex: none;
+  border: 1.5px solid color-mix(in srgb, var(--tone, #B4432E) 75%, #4A3B2C);
+  background: rgba(255,252,242,0.9);
+}
+/* A birth is a fork in the line; a marriage is a diamond where two arrive.
+   The shapes differ so the two never rely on their colour to be told apart. */
+.atlas-joint[data-kind="birth"] .atlas-joint-mark{ border-radius: 50%; }
+.atlas-joint[data-kind="union"] .atlas-joint-mark{ transform: rotate(45deg); }
+.atlas-joint-text{
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(62,49,37,0.62);
   text-shadow: 0 0 3px rgba(250,245,232,0.95);
   white-space: nowrap;
 }
@@ -2603,6 +2674,8 @@ body[data-lens="atlas"] button:focus-visible{ outline-color: #B4432E; }
   /* the country gets the whole screen behind the furniture */
   .atlas-region-name{ font-size: 0.72rem; }
   .atlas-wp-cap{ display: none; }
+  .atlas-name{ font-size: 0.54rem; }
+  .atlas-joint-text{ font-size: 0.48rem; }
 }
 
 @media (max-width: 380px){

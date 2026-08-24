@@ -384,87 +384,108 @@ its markers instead. On a phone, where the whole braid is framed to fit and
 the lanes end up about a thumb's width apart, the markers show years only and
 the names arrive as you zoom in or pass over them.
 
-**The map is a country invented out of real places.** Its regions are the
-archive's own eras, each wearing the landscape of wherever that era actually
-happened — and the names are the real ones, kept as the towns:
+**The map is the braid, walked across a country.** It is the same layout the
+canvas trail draws — one line per life, lives running alongside each other,
+converging when they marry and dividing again each time somebody is born —
+laid over painted ground instead of a dark plane. Nothing about the family is
+decided in `atlas.js`: it is handed the same resolved lanes and the same time
+axis the canvas lens gets, and only says where on the paper they fall.
 
-| region | drawn from | when |
+**One spine carries the time.** A single line crosses the country from the
+east, where the record starts, to the west, where the paint gives out; each
+strand is drawn at its own offset either side of it, using the braid's own
+offsets unchanged, so a birth still leaves its parent exactly and a marriage
+still arrives exactly. That spine is generated rather than plotted, because it
+has a requirement a hand-drawn line kept breaking: an offset curve folds over
+itself wherever the curve it follows turns tighter than the offset. It is a
+long sweep with one slow wave over it, sized so the tightest bend anywhere is
+about 290 map units against a widest lane of some 170 — enough room, and the
+reason it stays a braid instead of a knot.
+
+**The regions are chapters, not places.** Because time runs along the spine, a
+region can only be a stretch of years — so each is a chapter of the life
+wearing the landscape of wherever that chapter mostly happened, and the real
+place names are the towns inside it, set at the memories that actually
+happened there:
+
+| chapter | drawn from | when |
 |---|---|---|
-| The Long Plain | Lucknow, Kolkata | the years before |
-| The Copper Veld | Kitwe, Chingola, Lusaka | the Zambian childhood |
-| The Deodar Hills | Nainital | the mountain school |
-| The Flat Country | Peoria, Illinois | university |
-| The Turquoise Isles | Péreybère, Chamarel | Mauritius |
-| The Front Range | Denver, Steamboat, Winter Park | Colorado |
-| The Great Falls | Livingstone | the return |
-| The Near Country | — | now |
+| The Long Plain | Lucknow, Kolkata | before 1986 |
+| The Copper Country | Kitwe, Chingola | 1986–2004 |
+| The Deodar Hills | Nainital | an upland inside it |
+| The Crossing | Peoria inland, Mauritius offshore | 2005–2009 |
+| The Turquoise Isles | Péreybère, Chamarel | an island off it |
+| The High Range | Denver, Loveland, Steamboat | 2010–2019 |
+| The Far Water | Livingstone | 2020–2024 |
+| The Near Country | — | 2025 on |
 
-The veld sits in the middle because the archive keeps going back to it, and
-everything else radiates off it, so the route leaves and returns the way a
-life does. Which region a memory lands in is decided by its own `place`: the
-table in `atlas.js` maps place ids to regions, and a place it has not heard of
-inherits the region of whichever memory sits next to it in time, so a new
-story can be added anywhere and none of them ever lands off the map.
+A chapter's outline is cut from the spine rather than placed: sample the years
+it covers, walk out to either bank, close the loop. The coast is cut the same
+way, one arm's length further out, which makes the country an island shaped
+like the life it carries — and means the map can never fall out of step with
+the family's layout, because both are derived from the same line.
 
-**The route is drawn the way a cartographer draws one.** The memories are
-grouped into *runs* — stretches that happened in the same region — and the
-line enters a region once per run, bends through its memories in the order
-they happened, and leaves. That is what stops four separate returns to Zambia
-from being four lines scribbled across the same ground. Legs between regions
-bow, and consecutive legs bow opposite ways, so a trip out and the trip back
-open into a loop instead of lying on top of each other. Two memories that
-land within a disc of each other are eased apart. And the route does not end:
-past the last memory it runs west until the paint gives out, under a line of
-type that says *the country continues*.
+**Everything written on the paper goes through one collision list.** Chapters,
+towns, names, trailheads and the joints of the braid all check against the
+memories first and then against each other, each stepping off in a direction
+that suits it — a name steps the way its own line already leans, so it never
+crosses the braid to find room. Add a story and every label re-negotiates.
 
-**Waypoints are numbered, and lit.** Numbered because a trail map numbers its
-segments and because a number is a channel that does not depend on seeing a
-colour; lit because these are memories, in the category tone the whole room
-uses. On paper those tones need taking down a stop or they read as
-highlighter, so the disc is a deepened version of the tone and the halo around
-it keeps the original light. A chaos event keeps the slow breath it has in
-every other view.
+**The braid's joints are map furniture.** A birth is a circle on the line with
+the child's name and year; a marriage is a diamond where two lines arrive.
+They are different shapes as well as different colours, so neither depends on
+being seen in colour.
 
-**The paint.** Sunlit cream paper, three passes of thin colour per wash that
-do not quite line up, and the darker rim a brush leaves where the water dries
-last — on coastlines, which want it, and not on regions, where it would draw
-the very ellipse the shape is trying not to look like. Peaks are folded-sine
-fractals; the terrain is drawn as chevrons, stipple and dashes clipped inside
-each region so no texture spills into the next era. All of it is seeded from
-strings, so the same country comes back on every visit and on every device.
+**The butterflies are the room's own, and there are four reasons one appears.**
+You followed a category, and its butterfly crosses the country in that
+category's tone and opens the memory when it gets there, camera in tow — the
+same gesture the canvas trail makes. You are following a life, and one walks
+that strand, resting a moment at each of their memories. You opened a memory,
+and one circles it for two seconds and goes. Or the map is simply being looked
+at, and two drift over it with nowhere to be. Only the ones on an errand leave
+a thread behind them: a thread means somebody sent it. With reduced motion
+none of them move and the loop stops dead between gestures.
+
+**The paint.** Sunlit cream paper, three passes of thin colour per wash that do
+not quite line up, and the darker rim a brush leaves where the water dries
+last — on coastlines, which want it, and not on chapters, where it would draw
+the very ellipse the shape is trying not to look like. The island is punched
+out of the water rather than floated on it, or every green would be a green
+mixed with blue. Peaks are folded-sine fractals; terrain is chevrons, stipple
+and dashes clipped inside each chapter; woods are planted across the whole
+island, not only where the archive has a name for the ground. All of it is
+seeded from strings, so the same country comes back on every visit and on
+every device.
+
+**Three animals, and they are the places.** An elk for Colorado over the high
+range, an African fish eagle for the Zambezi above the far water, and a dodo
+for Mauritius on the island off the crossing — painted as silhouettes rather
+than portraits, because a map illustration is not a field guide. Each has one
+part that moves.
 
 **How it performs.** The whole static map is painted once into an offscreen
-canvas at map resolution and then blitted under the camera; only the trees,
-the animals and the butterflies are drawn per frame. Everything with words in
-it is a real DOM element inside one transformed layer, so panning and zooming
-is a single transform and one custom property rather than a hundred style
-writes, and the labels counter-scale off that property so type stays type at
-every zoom. How much is said is decided by how much country is on the screen,
-not by how far from a fit the camera is — otherwise a phone, whose fit is
-tiny, opens shouting every town name it has.
-
-**Three animals, and they are the places.** An elk for Colorado, an African
-fish eagle for the Zambezi, and a dodo for Mauritius — painted as silhouettes
-rather than portraits, because a map illustration is not a field guide. Each
-has one part that moves. The butterflies are still rare and still mean
-something: one walks the route of whoever is being followed and rests at each
-of their memories, and one turns up for a couple of seconds when a memory is
-opened, circles it and spirals away. With reduced motion none of them move and
-the loop stops dead between gestures.
+canvas at map resolution and blitted under the camera; only the trees, the
+animals and the butterflies are drawn per frame. Everything with words in it
+is a real DOM element inside one transformed layer, so panning and zooming is
+a single transform and one custom property rather than a hundred style writes,
+and the labels counter-scale off that property so type stays type at every
+zoom. How much is said is decided by how much country is on the screen, not by
+how far from a fit the camera is — otherwise a phone, whose fit is tiny, opens
+shouting every town name it has.
 
 **Getting around.** Drag or scroll to move, pinch or wheel to zoom, double tap
 to go in — or, once you are already in, back out to the whole country. Arrow
 keys pan, `+`/`-` zoom and `0` fits when the map has focus; the index carries
-*See the whole country* for anyone who would rather press a word. On a wide
-screen a compass rose and a scale bar sit in the corner, and the scale is in
-years, because this is a map of a life and that is its distance.
+*See the whole country*. On a wide screen a compass rose and a scale bar sit in
+the corner, and the scale is in years, because this is a map of a life and that
+is its distance.
 
 **Adding a story** means appending one object to `STORIES` in
 `butterfly/data/stories.js`. Nothing else needs touching. The trail places it
 on its strand at its year, the constellation clusters it with its era, the map
-plots it if it has coordinates, the map sets it down as the next numbered
-waypoint in whichever region its place belongs to, its category butterfly
-learns it has somewhere to fly, the era rail picks up its era, and every counter updates. Every field
+plots it if it has coordinates, the map hangs a numbered light on the right
+person's line at the right year and re-negotiates every label around it, its
+category butterfly learns it has somewhere to fly, the era rail picks up its era, and every counter updates. Every field
 except `id` is optional and the room degrades quietly: a story with a title
 and nothing else renders, it just renders sparely. The field list at the top
 of that file documents every supported key.

@@ -1,33 +1,41 @@
 /* Entropic Labs — Butterfly Trails, the atlas.
    ==========================================================================
-   A trail map of one family, drawn the way a long-distance trail gets drawn:
-   the whole country on one sheet, a route running through it, and the
-   memories numbered along the route in the order they happened.
+   The braid, walked across a country.
 
-   The country is invented. Its regions are not — each one is an era of the
-   archive wearing the landscape of wherever that era actually happened, so
-   the map is made of the real places without pretending to be a real map:
+   This is the same layout the canvas trail draws — one line per life, lives
+   running alongside each other, converging when they marry and dividing
+   again each time somebody is born — laid over a painted map instead of a
+   dark plane. Nothing about the family is decided here: butterfly.js hands
+   over the same resolved lanes and the same time axis the canvas lens gets,
+   and this file only says where on the paper they fall.
 
-     The Long Plain        Lucknow, Kolkata          the years before
-     The Copper Veld       Kitwe, Chingola, Lusaka   the Zambian childhood
-     The Deodar Hills      Nainital                  the mountain school
-     The Flat Country      Peoria, Illinois          university
-     The Turquoise Isles   Péreybère, Chamarel       Mauritius
-     The Front Range       Denver, Steamboat         Colorado
-     The Great Falls       Livingstone               the return
-     The Near Country      now                       and then the paper stops
+   The spine
+     One meandering line crosses the country from the east, where the record
+     starts, to the west, where the paint gives out. Time runs along it. Each
+     strand is drawn at its own offset either side of that line — the braid's
+     own offsets, unchanged — so a birth still leaves its parent exactly and
+     a marriage still arrives exactly.
 
-   The veld sits at the centre because the archive keeps going back to it.
-   Everything else radiates off it, so the route leaves and returns the way a
-   life does, and the map ends not at a summit but at the edge of what has
-   been painted — the country carries on into blank paper.
+   The regions are chapters, not places
+     Because time runs along the spine, a region can only be a stretch of
+     years; so each one is a chapter of the life wearing the landscape of
+     wherever that chapter mostly happened, and the real place names are the
+     towns inside it, set where their memories actually fall:
+
+       The Long Plain     before 1986   Lucknow, Kolkata
+       The Copper Country 1986–2004     Kitwe, Chingola — and, up in its
+                                        northern hills, Nainital
+       The Crossing       2005–2009     Peoria inland, Mauritius offshore
+       The High Range     2010–2019     Denver, Loveland, Steamboat
+       The Far Water      2020–2024     Livingstone, and the gorge
+       The Near Country   2025 on       and then the paper stops
 
    How it is drawn
-     The whole static map — paper, land, water, terrain, the route itself —
-     is painted once into an offscreen canvas at map resolution and then
-     blitted under the camera. Only what actually moves is drawn per frame:
-     the trees, the animals, one butterfly. That is what buys a watercolour
-     this detailed on a phone.
+     The whole static map — paper, land, water, terrain, the braid itself —
+     is painted once into an offscreen canvas at map resolution and blitted
+     under the camera. Only what actually moves is drawn per frame: the
+     trees, three animals, and the butterflies. That is what buys a
+     watercolour this detailed on a phone.
 
      Everything with words in it is a real DOM element inside one transformed
      layer, so panning and zooming is a single transform rather than a
@@ -37,6 +45,7 @@
    Coordinate spaces
      map      the country's own units, 1600 × 1000. Everything below is in
               these unless it says otherwise.
+     axis     the controller's compressed time axis. The braid's own units.
      screen   CSS pixels. The camera converts.
    ========================================================================== */
 
@@ -165,68 +174,45 @@
 
   /* ------------------------------------------------------------------------
      THE COUNTRY
-     Regions are eras. The veld is the middle because the archive keeps
-     coming back to it; everything else is a spur off it.
+     Regions are chapters of one life, in order, because time runs along the
+     spine and a region can therefore only be a stretch of years. `from` and
+     `to` are years; everything else is how that chapter is painted. `span`
+     is how far either side of the spine the wash reaches.
      ------------------------------------------------------------------------ */
   var REGIONS = [
     { id: 'plain', name: 'The Long Plain', sub: 'Lucknow · Kolkata',
-      x: 1330, y: 620, rx: 215, ry: 175, wash: PIG.plain, terrain: 'plain', lx: -128, ly: -104 },
-    { id: 'hills', name: 'The Deodar Hills', sub: 'Nainital',
-      x: 1235, y: 195, rx: 175, ry: 130, wash: PIG.pine, terrain: 'hill' },
-    { id: 'flat', name: 'The Flat Country', sub: 'Peoria',
-      x: 455, y: 172, rx: 200, ry: 122, wash: PIG.prairie, terrain: 'prairie' },
-    { id: 'veld', name: 'The Copper Veld', sub: 'Kitwe · Chingola · Lusaka',
-      x: 815, y: 505, rx: 270, ry: 215, wash: PIG.veld, terrain: 'bush', ly: 150 },
-    { id: 'range', name: 'The Front Range', sub: 'Denver · Steamboat',
-      x: 305, y: 520, rx: 215, ry: 225, wash: PIG.rock, terrain: 'peak', ly: 175 },
-    { id: 'isles', name: 'The Turquoise Isles', sub: 'Péreybère · Chamarel',
-      x: 1330, y: 830, rx: 118, ry: 88, wash: PIG.lagoon, terrain: 'isle', island: true, lx: 132, ly: -6 },
-    { id: 'falls', name: 'The Great Falls', sub: 'Livingstone',
-      x: 800, y: 880, rx: 165, ry: 110, wash: PIG.gorge, terrain: 'falls', lx: -20, ly: 78 },
+      from: -Infinity, to: 1985, wash: '#E2CE8E', terrain: 'plain', span: 190 },
+    { id: 'copper', name: 'The Copper Country', sub: 'Kitwe · Chingola',
+      from: 1986, to: 2004, wash: '#D9BA76', terrain: 'bush', span: 218 },
+    { id: 'crossing', name: 'The Crossing', sub: 'Peoria · Mauritius',
+      from: 2005, to: 2009, wash: '#CBDFC6', terrain: 'coast', span: 186 },
+    { id: 'range', name: 'The High Range', sub: 'Denver · Steamboat',
+      from: 2010, to: 2019, wash: '#B6BAC8', terrain: 'peak', span: 205 },
+    { id: 'water', name: 'The Far Water', sub: 'Livingstone',
+      from: 2020, to: 2024, wash: '#A6C6BC', terrain: 'falls', span: 160 },
     { id: 'near', name: 'The Near Country', sub: 'now',
-      x: 330, y: 880, rx: 140, ry: 100, wash: PIG.near, terrain: 'soft' }
+      from: 2025, to: Infinity, wash: '#DFD6B6', terrain: 'soft', span: 150 }
   ];
   var REGION_BY = {};
   REGIONS.forEach(function (r) { REGION_BY[r.id] = r; });
 
-  /* Which region a memory's place belongs to. A place the archive adds later
-     and this table has not heard of falls back to the region its neighbours
-     in time are in, so a new story never lands nowhere. */
-  var PLACE_REGION = {
-    lucknow: 'plain', kolkata: 'plain', india: 'plain',
-    kitwe: 'veld', chingola: 'veld', lusaka: 'veld', zambia: 'veld',
-    nainital: 'hills',
-    bradley: 'flat', illinois: 'flat',
-    mauritius: 'isles', pereybere: 'isles', chamarel: 'isles',
-    denver: 'range', ptarmigan: 'range', trestle: 'range', 'lookout-mountain': 'range',
-    'ken-caryl': 'range', chatfield: 'range', lakewood: 'range', centennial: 'range',
-    'emerald-mountain': 'range', haverford: 'range', loveland: 'range',
-    'idaho-springs': 'range', california: 'range',
-    livingstone: 'falls', avani: 'falls', 'livingstone-island': 'falls',
-    'victoria-falls-bridge': 'falls',
-    america: 'near', china: 'near'
-  };
-
-  /* Towns. They are labels on the paper, not data — the archive's own place
-     list decides which ones a reader ever sees, because a settlement is only
-     drawn where a memory actually happened. */
-  var SETTLEMENTS = [
-    { place: 'lucknow', region: 'plain', dx: -60, dy: -40 },
-    { place: 'kolkata', region: 'plain', dx: 95, dy: 60 },
-    { place: 'nainital', region: 'hills', dx: 0, dy: 20 },
-    { place: 'kitwe', region: 'veld', dx: -105, dy: -85 },
-    { place: 'chingola', region: 'veld', dx: 70, dy: -110 },
-    { place: 'lusaka', region: 'veld', dx: 120, dy: 95 },
-    { place: 'bradley', region: 'flat', dx: 0, dy: 10 },
-    { place: 'pereybere', region: 'isles', dx: 40, dy: -45 },
-    { place: 'chamarel', region: 'isles', dx: -45, dy: 40 },
-    { place: 'denver', region: 'range', dx: 80, dy: 60 },
-    { place: 'ptarmigan', region: 'range', dx: -60, dy: -110 },
-    { place: 'trestle', region: 'range', dx: -110, dy: 20 },
-    { place: 'lookout-mountain', region: 'range', dx: 105, dy: -70 },
-    { place: 'loveland', region: 'range', dx: 30, dy: -160 },
-    { place: 'livingstone', region: 'falls', dx: -30, dy: -30 }
+  /* Two places inside those chapters that are too particular to lose: a pine
+     upland north of the copper country, and an island off the crossing.
+     `at` is the year they sit beside, `side` which bank of the spine. */
+  var FEATURES = [
+    { id: 'hills', name: 'The Deodar Hills', at: 1999, side: -1,
+      out: 250, rx: 165, ry: 118, wash: PIG.pine, terrain: 'hill' },
+    { id: 'isles', name: 'The Turquoise Isles', at: 2007, side: 1,
+      out: 265, rx: 132, ry: 96, wash: PIG.lagoon, terrain: 'isle', island: true }
   ];
+
+  /* Which chapter a year belongs to. */
+  function regionForYear(y) {
+    for (var i = 0; i < REGIONS.length; i++) {
+      if (y >= REGIONS[i].from && y <= REGIONS[i].to) return REGIONS[i];
+    }
+    return REGIONS[REGIONS.length - 1];
+  }
 
   function create(host, options) {
     options = options || {};
@@ -263,13 +249,15 @@
     var sheet = null;                          /* the painted map, offscreen */
     var sheetScale = 1;
     var waypoints = [], wpById = {};
-    var route = [], routeLen = 0;
+    var lanes = [], laneById = {}, lanePaths = [], laneW = 0.55;
+    var axis = { start: 0, end: 1 };
+    var trunkId = null, marriedWord = 'Married';
+    var joints = [];                           /* births and marriages */
     var trees = [], fauna = [];
     var placeById = {}, eras = [];
     var emphasis = { category: null, person: null, era: null, ids: null };
     var focusedId = null;
     var inset = { top: 0, bottom: 0 };
-    var flier = null, visitor = null;
     var lod = 'far';
 
     var quality = 1;
@@ -286,6 +274,173 @@
       var l = listeners[name];
       if (!l) return;
       for (var i = 0; i < l.length; i++) l[i](payload);
+    }
+
+    /* ============================================================ THE SPINE
+       One line across the country, east to west, and time runs along it. It
+       is hand-drawn rather than derived: a country's shape is a decision,
+       and this one has to leave room for a range in the west, a coast in the
+       middle and a plain in the east. Everything else in the map is placed
+       off it. */
+    /* The spine is generated rather than plotted, because it has one hard
+       requirement a hand-drawn line keeps breaking: every strand is drawn at
+       an offset from it, and an offset curve folds over itself wherever the
+       curve it follows turns tighter than that offset. So the shape is a
+       long sweep from east to west with one slow wave laid over it and a
+       second, much slower one to stop that reading as a formula — chosen so
+       the tightest bend anywhere is comfortably wider than the widest lane.
+
+           radius of a sine's tightest bend = (wavelength / 2π)² / amplitude
+
+       which at these numbers is about 290 map units against a widest lane
+       of some 170: enough room, and the reason it stays a braid. */
+    var SPINE = { x0: 1552, x1: 128, y0: 500, amp: 158, waves: 1.05, drift: 42 };
+    var spinePts = [], spineLen = [];
+
+    function buildSpine() {
+      var pts = [], n = 170;
+      for (var i = 0; i <= n; i++) {
+        var k = i / n;
+        pts.push({
+          x: SPINE.x0 + (SPINE.x1 - SPINE.x0) * k,
+          y: SPINE.y0
+             + Math.sin(k * TAU * SPINE.waves + 0.55) * SPINE.amp
+             + Math.sin(k * TAU * 0.4 + 2.1) * SPINE.drift
+        });
+      }
+      spinePts = waver(pts, 2.2, 'spine');
+      spineLen = [0];
+      for (var j = 1; j < spinePts.length; j++) {
+        var dx = spinePts[j].x - spinePts[j - 1].x, dy = spinePts[j].y - spinePts[j - 1].y;
+        spineLen[j] = spineLen[j - 1] + Math.sqrt(dx * dx + dy * dy);
+      }
+    }
+
+    /* A point and a direction some fraction of the way along the spine. */
+    function onSpine(u) {
+      if (!spinePts.length) return { x: 0, y: 0, nx: 0, ny: -1 };
+      var total = spineLen[spineLen.length - 1];
+      var want = clamp(u, -0.06, 1.06) * total;
+      var i = 1;
+      while (i < spineLen.length - 1 && spineLen[i] < want) i++;
+      var a = spinePts[i - 1], b = spinePts[i];
+      var seg = spineLen[i] - spineLen[i - 1] || 1;
+      var k = (want - spineLen[i - 1]) / seg;
+      var dx = b.x - a.x, dy = b.y - a.y;
+      var d = Math.sqrt(dx * dx + dy * dy) || 1;
+      /* Off the ends the spine keeps going straight, so a line that runs in
+         from before the record still has somewhere to run in from. */
+      var over = want < 0 ? want : (want > total ? want - total : 0);
+      return {
+        x: a.x + dx * k + (over ? dx / d * over : 0),
+        y: a.y + dy * k + (over ? dy / d * over : 0),
+        nx: -dy / d, ny: dx / d
+      };
+    }
+
+    function uOf(t) {
+      var span = Math.max(0.001, axis.end - axis.start);
+      return (t - axis.start) / span;
+    }
+
+    /* ========================================================== THE BRAID
+       Lifted from the canvas renderer on purpose, so the two lenses cannot
+       disagree about the family: a strand is measured from whatever it
+       branched out of, never from zero, so a birth leaves its parent exactly
+       and a marriage arrives exactly, with no seam to line up by hand. */
+    var MERGE_W = 1.15, BRANCH_W = 0.95;
+    var LANE_PX = 78;                       /* one lane, in map units */
+
+    function smoothstepL(e0, e1, x) {
+      if (e1 === e0) return x < e0 ? 0 : 1;
+      var t = clamp((x - e0) / (e1 - e0), 0, 1);
+      return t * t * (3 - 2 * t);
+    }
+
+    function wobble(t, lane) {
+      var a = lane.amp, f = lane.freq;
+      return Math.sin(t * f + lane.phase * 6.283) * 0.34 * a
+           + Math.sin(t * f * 0.43 + lane.phase * 14.1) * 0.2 * a
+           + Math.sin(t * f * 2.2 + lane.phase * 3.9) * 0.06 * a;
+    }
+
+    function laneOffset(lane, t, depth) {
+      if (!lane) return 0;
+      depth = depth || 0;
+      if (depth > 8) return 0;
+      var base = lane.base ? laneOffset(laneById[lane.base], t, depth + 1) : 0;
+      var own = base + lane.side * laneW + wobble(t, lane);
+      if (lane.startKind === 'born') {
+        var br = smoothstepL(lane.from, lane.from + BRANCH_W, t);
+        if (br < 1) own = lerp(base, own, br);
+      }
+      if (lane.endKind === 'joins') {
+        var target = laneById[lane.joinTarget];
+        if (target) {
+          /* Two lives do not become one line. They come to travel beside
+             each other and keep a hair's width between them, which is the
+             honest drawing and the only way both stay findable. */
+          var jn = smoothstepL(lane.to - MERGE_W, lane.to, t);
+          if (jn > 0) own = lerp(own, laneOffset(target, t, depth + 1) + lane.pairGap, jn);
+        }
+      }
+      return own;
+    }
+
+    function laneAt(lane, t) {
+      var p = onSpine(uOf(t));
+      var off = laneOffset(lane, t) * LANE_PX;
+      return { x: p.x + p.nx * off, y: p.y + p.ny * off };
+    }
+
+    function buildBraid() {
+      buildSpine();
+      lanePaths = lanes.map(function (lane) {
+        var step = Math.max(0.02, (axis.end - axis.start) / 700);
+        var pts = [];
+        for (var t = lane.from; t <= lane.to + 1e-6; t += step) pts.push(laneAt(lane, t));
+        pts.push(laneAt(lane, lane.to));
+        return { lane: lane, pts: pts };
+      });
+
+      /* The joints: where a life starts and where two lines become one. They
+         are structure rather than memory, and the map writes them the way a
+         trail map writes a trailhead. */
+      joints = [];
+      var weddings = {};
+      lanes.forEach(function (lane) {
+        if (lane.startKind === 'born' || lane.startKind === 'begins') {
+          var p = laneAt(lane, lane.from + 0.12);
+          joints.push({
+            kind: 'birth', id: 'b-' + lane.id, tone: lane.tone,
+            text: lane.label + (lane.startsAt === null ? '' : ' · ' + lane.startsAt),
+            x: p.x, y: p.y
+          });
+        }
+        if (lane.endKind === 'joins' && lane.joinTarget) {
+          var key = lane.joinTarget + '@' + lane.to.toFixed(2);
+          if (weddings[key]) { weddings[key].who.push(lane.label); return; }
+          weddings[key] = { lane: lane, who: [lane.label] };
+        }
+      });
+      Object.keys(weddings).forEach(function (k) {
+        var w = weddings[k];
+        var target = laneById[w.lane.joinTarget];
+        if (!target) return;
+        var p = laneAt(target, w.lane.to);
+        joints.push({
+          kind: 'union', id: 'u-' + w.lane.joinTarget, tone: target.tone,
+          text: marriedWord + (w.lane.endsAt === null ? '' : ' · ' + w.lane.endsAt),
+          x: p.x, y: p.y
+        });
+      });
+    }
+
+    function lanePathFor(id) {
+      for (var i = 0; i < lanePaths.length; i++) {
+        if (lanePaths[i].lane.id === id) return lanePaths[i];
+      }
+      return null;
     }
 
     /* ============================================================ CAMERA */
@@ -424,11 +579,28 @@
       paintPaper(g);
       paintSea(g);
       paintLand(g);
+
+      /* Chapters, rivers, terrain and woods all belong to the land, so they
+         are painted inside its outline. Without this a chapter's wash runs
+         out past its own coast and the island stops reading as one. */
+      g.save();
+      tracePath(g, coast(), true);
+      g.clip();
       REGIONS.forEach(function (R) { paintRegion(g, R); });
       paintRivers(g);
       REGIONS.forEach(function (R) { paintTerrain(g, R); });
+      g.restore();
+
+      /* The isles are offshore, so they bring their own water and are not */
+      FEATURES.forEach(function (F) {
+        if (F.water) wash(g, F.water, PIG.sea, 0.55, F.id + 'water', true);
+        paintRegion(g, F);
+        paintTerrain(g, F);
+      });
+
+      paintForest(g);
       paintCoastInk(g);
-      paintRoute(g);
+      paintBraid(g);
       paintEdgeOfSurvey(g);
       paintGrain(g);
       sheet = c;
@@ -482,54 +654,101 @@
       g.globalAlpha = 1;
     }
 
+    /* Open water, everywhere the country is not. An island, because a life
+       has edges on every side of it. */
     function paintSea(g) {
-      var pts = waver(spline([
-        { x: MAP.w + 70, y: 250 }, { x: 1476, y: 400 }, { x: 1392, y: 570 },
-        { x: 1258, y: 668 }, { x: 1152, y: 782 }, { x: 1062, y: 918 },
-        { x: 960, y: MAP.h + 70 }, { x: MAP.w + 90, y: MAP.h + 90 }
-      ], 14), 5, 'sea');
-      wash(g, pts, PIG.sea, 0.85, 'sea-a');
-      wash(g, pts, PIG.seaDeep, 0.28, 'sea-b');
-
-      /* the horizontal ticks a cartographer uses for open water */
+      var pts = [{ x: -40, y: -40 }, { x: MAP.w + 40, y: -40 },
+                 { x: MAP.w + 40, y: MAP.h + 40 }, { x: -40, y: MAP.h + 40 }];
+      /* Punch the island out of the water rather than painting the water
+         under it — otherwise every green on the map is a green mixed with
+         blue, and the land goes cold. */
       g.save();
-      tracePath(g, pts, true);
-      g.clip();
-      g.globalAlpha = 0.3;
-      g.strokeStyle = PIG.seaDeep;
-      g.lineWidth = 1.6;
+      g.beginPath();
+      g.rect(-40, -40, MAP.w + 80, MAP.h + 80);
+      var land = coast();
+      g.moveTo(land[0].x, land[0].y);
+      for (var i = 1; i < land.length; i++) g.lineTo(land[i].x, land[i].y);
+      g.closePath();
+      g.clip('evenodd');
+      wash(g, pts, PIG.sea, 0.62, 'sea-a', false);
+      wash(g, pts, PIG.seaDeep, 0.16, 'sea-b', false);
+
+      /* the ticks a cartographer uses for open water, thinning as they get
+         further from the shore so the eye still goes to the land */
       var r = rng('waves');
-      for (var y = 300; y < MAP.h + 60; y += 26) {
-        var x = 1050 + r() * 460;
-        var w = 40 + r() * 90;
-        g.beginPath();
-        g.moveTo(x, y);
-        g.bezierCurveTo(x + w * 0.3, y - 5, x + w * 0.7, y + 5, x + w, y);
-        g.stroke();
+      g.save();
+      g.globalAlpha = 0.26;
+      g.strokeStyle = PIG.seaDeep;
+      g.lineWidth = 1.5;
+      for (var y = 30; y < MAP.h; y += 30) {
+        for (var b = 0; b < 5; b++) {
+          var x = r() * MAP.w;
+          var w = 34 + r() * 70;
+          g.globalAlpha = 0.12 + r() * 0.2;
+          g.beginPath();
+          g.moveTo(x, y);
+          g.bezierCurveTo(x + w * 0.3, y - 5, x + w * 0.7, y + 5, x + w, y);
+          g.stroke();
+        }
       }
+      g.restore();
       g.restore();
       g.globalAlpha = 1;
     }
 
     /* The mainland. One irregular mass, deliberately unfinished at the
        south-west, where the paint gives out and the country carries on. */
+    /* The country is an island, and its shape is the braid's: the coast is
+       the spine walked at arm's length either side, tapering to a point at
+       each end. A hand-drawn outline kept having to be re-drawn every time
+       the family's layout moved; this one cannot fall out of step with it. */
     var coastPts = null;
     function coast() {
       if (coastPts) return coastPts;
-      coastPts = waver(spline([
-        { x: 620, y: 40 }, { x: 1000, y: 52 }, { x: 1300, y: 34 }, { x: 1466, y: 156 },
-        { x: 1494, y: 336 }, { x: 1452, y: 512 }, { x: 1330, y: 618 }, { x: 1206, y: 700 },
-        { x: 1128, y: 812 }, { x: 1010, y: 930 }, { x: 800, y: 972 }, { x: 560, y: 984 },
-        { x: 320, y: 962 }, { x: 118, y: 852 }, { x: 42, y: 648 }, { x: 62, y: 428 },
-        { x: 126, y: 246 }, { x: 306, y: 108 }
-      ], 16), 8, 'coast');
+      var n = 74, up = [], down = [], i;
+      for (i = 0; i <= n; i++) {
+        var k = i / n;
+        /* the widest chapter anywhere near this point decides how far the
+           land reaches, and both ends taper so the island has a nose */
+        var t = lerp(axis.start - 1.6, axis.end + 1.6, k);
+        var span = spanAt(t);
+        var taper = Math.pow(Math.sin(clamp(k, 0, 1) * Math.PI), 0.42);
+        var w = span * 1.62 * taper + 26;
+        var sp = onSpine(uOf(t));
+        up.push({ x: sp.x + sp.nx * w, y: clamp(sp.y + sp.ny * w, 54, MAP.h - 54) });
+        down.push({ x: sp.x - sp.nx * w, y: clamp(sp.y - sp.ny * w, 54, MAP.h - 54) });
+      }
+      down.reverse();
+      coastPts = waver(spline(up.concat(down), 5), 11, 'coast');
       return coastPts;
+    }
+
+    /* How wide the country is at a given moment — the widest chapter that
+       reaches it, so the coast never cuts a chapter in half. */
+    function spanAt(t) {
+      var w = 150;
+      REGIONS.forEach(function (R) {
+        if (R.t0 === undefined) return;
+        var pad = 1.2;
+        if (t < R.t0 - pad || t > R.t1 + pad) return;
+        w = Math.max(w, R.span);
+      });
+      FEATURES.forEach(function (F) {
+        if (F.tAt === undefined) return;
+        if (Math.abs(t - F.tAt) > 1.6) return;
+        w = Math.max(w, Math.abs(F.out) + Math.max(F.rx, F.ry) * 1.15);
+      });
+      return w;
     }
 
     function paintLand(g) {
       var pts = coast();
-      wash(g, pts, PIG.land, 0.62, 'land-a');
-      wash(g, pts, '#B9CE95', 0.22, 'land-b');
+      g.save();
+      tracePath(g, pts, true);
+      g.clip();
+      wash(g, pts, PIG.land, 0.68, 'land-a', false);
+      wash(g, pts, '#B9CE95', 0.24, 'land-b', false);
+      g.restore();
     }
 
     /* The unpainted corner. Not a hole — the wash simply thins out and stops,
@@ -549,23 +768,33 @@
     function paintCoastInk(g) {
       var pts = coast();
       g.save();
-      g.globalAlpha = 0.34;
-      g.strokeStyle = PIG.ink;
-      g.lineWidth = 1.5;
+      /* a pale strand just inside the line, which is what makes a coast read
+         as a shore rather than as a cut edge */
+      g.globalAlpha = 0.5;
+      g.strokeStyle = '#EFE3C4';
+      g.lineWidth = 7;
       tracePath(g, pts, true);
       g.stroke();
+      g.globalAlpha = 0.36;
+      g.strokeStyle = PIG.ink;
+      g.lineWidth = 1.4;
+      g.stroke();
       g.restore();
+      g.globalAlpha = 1;
     }
 
+    /* Chapters get their outline from the spine in buildRegions; features
+       are small enough to be a blob of their own. */
     function regionShape(R) {
       if (R.shape) return R.shape;
-      R.shape = waver(spline(ring(R.x, R.y, R.rx, R.ry, 15, 0.5, R.id), 8), 11, R.id + 'w');
+      R.shape = waver(spline(ring(R.x || 0, R.y || 0, R.rx || 120, R.ry || 90,
+                                  13, 0.42, R.id), 8), 8, R.id + 'w');
       return R.shape;
     }
 
     function paintRegion(g, R) {
       var pts = regionShape(R);
-      wash(g, pts, R.wash, R.island ? 0.72 : 0.34, R.id + 'wash', !!R.island);
+      wash(g, pts, R.wash, R.island ? 0.72 : 0.44, R.id + 'wash', !!R.island);
     }
 
     function paintRivers(g) {
@@ -602,6 +831,17 @@
     function paintTerrain(g, R) {
       var pts = regionShape(R);
       var r = rng(R.id + 'terrain');
+      /* A chapter's texture is scattered over the box its outline occupies,
+         then clipped to that outline — which is what lets a shape derived
+         from the spine carry the same glyphs a hand-drawn blob would. */
+      var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+      pts.forEach(function (p) {
+        if (p.x < minX) minX = p.x; if (p.x > maxX) maxX = p.x;
+        if (p.y < minY) minY = p.y; if (p.y > maxY) maxY = p.y;
+      });
+      R.x = (minX + maxX) / 2; R.y = (minY + maxY) / 2;
+      R.rx = Math.max(40, (maxX - minX) / 2); R.ry = Math.max(40, (maxY - minY) / 2);
+      var area = clamp((R.rx * R.ry) / (240 * 190), 0.35, 3.2);
       g.save();
       tracePath(g, pts, true);
       g.clip();
@@ -611,7 +851,7 @@
       var n, i, x, y, s;
       if (R.terrain === 'peak' || R.terrain === 'hill') {
         var big = R.terrain === 'peak';
-        n = Math.round((big ? 64 : 30) * (0.7 + quality * 0.4));
+        n = Math.round((big ? 64 : 30) * area * (0.7 + quality * 0.4));
         /* Back rows sit higher and paler: the range recedes. */
         for (i = 0; i < n; i++) {
           x = R.x + (r() - 0.5) * R.rx * 1.9;
@@ -652,7 +892,7 @@
           }
         }
       } else if (R.terrain === 'bush') {
-        n = Math.round(230 * (0.6 + quality * 0.5));
+        n = Math.round(230 * area * (0.6 + quality * 0.5));
         for (i = 0; i < n; i++) {
           x = R.x + (r() - 0.5) * R.rx * 1.95;
           y = R.y + (r() - 0.5) * R.ry * 1.95;
@@ -664,7 +904,7 @@
           g.fill();
         }
         /* the flat-topped trees the veld is actually made of */
-        n = Math.round(40 * (0.6 + quality * 0.6));
+        n = Math.round(40 * area * (0.6 + quality * 0.6));
         for (i = 0; i < n; i++) {
           x = R.x + (r() - 0.5) * R.rx * 1.8;
           y = R.y + (r() - 0.5) * R.ry * 1.8;
@@ -680,7 +920,7 @@
           g.fill();
         }
       } else if (R.terrain === 'prairie' || R.terrain === 'plain' || R.terrain === 'soft') {
-        n = Math.round(270 * (0.6 + quality * 0.5));
+        n = Math.round(270 * area * (0.6 + quality * 0.5));
         for (i = 0; i < n; i++) {
           x = R.x + (r() - 0.5) * R.rx * 1.95;
           y = R.y + (r() - 0.5) * R.ry * 1.95;
@@ -689,6 +929,30 @@
           g.lineWidth = 1.1;
           var w = 5 + r() * 11;
           g.beginPath(); g.moveTo(x, y); g.lineTo(x + w, y - (r() - 0.5) * 3); g.stroke();
+        }
+      } else if (R.terrain === 'coast') {
+        /* The years of leaving: flat country on one bank of the line and
+           open water on the other, with the strait between them. */
+        n = Math.round(150 * area * (0.6 + quality * 0.5));
+        for (i = 0; i < n; i++) {
+          x = R.x + (r() - 0.5) * R.rx * 1.95;
+          y = R.y + (r() - 0.5) * R.ry * 1.95;
+          g.globalAlpha = 0.13 + r() * 0.18;
+          g.strokeStyle = PIG.forest;
+          g.lineWidth = 1.1;
+          g.beginPath(); g.moveTo(x, y); g.lineTo(x + 5 + r() * 10, y - (r() - 0.5) * 3); g.stroke();
+        }
+        g.globalAlpha = 0.28;
+        g.strokeStyle = PIG.seaDeep;
+        g.lineWidth = 1.5;
+        for (i = 0; i < 26; i++) {
+          x = R.x + (r() - 0.5) * R.rx * 1.7;
+          y = R.y + (r() - 0.5) * R.ry * 1.7;
+          var ww = 26 + r() * 60;
+          g.beginPath();
+          g.moveTo(x, y);
+          g.bezierCurveTo(x + ww * 0.3, y - 4, x + ww * 0.7, y + 4, x + ww, y);
+          g.stroke();
         }
       } else if (R.terrain === 'isle') {
         /* a volcanic cone and some palms, which is the whole of an island */
@@ -768,162 +1032,182 @@
       g.restore();
     }
 
-    /* =========================================================== THE ROUTE
-       The memories in the order they happened, each placed in the region its
-       own place belongs to, joined by a walked line. Where the route leaves
-       the veld and comes back it bows out one way and returns the other, so
-       an out-and-back reads as a loop rather than as one line drawn twice. */
-    function buildRoute() {
-      if (!waypoints.length) { route = []; return; }
-      waypoints.forEach(function (w, i) { w.i = i; });
-
-      /* A run is a stretch of consecutive memories that happened in the same
-         region. The route enters a region once per run, wanders through its
-         memories, and leaves — which is what stops four separate returns to
-         the veld from being drawn as four lines across the same ground. */
-      var runs = [];
-      waypoints.forEach(function (w) {
-        var last = runs[runs.length - 1];
-        if (last && last.region === w.region) last.list.push(w);
-        else runs.push({ region: w.region, list: [w] });
+    /* ====================================================== THE MEMORIES
+       A memory sits on its own strand at its own year — the same rule the
+       canvas trail follows. Nothing is placed by hand. */
+    function placeWaypoints() {
+      waypoints.forEach(function (w, i) {
+        w.i = i;
+        var lane = laneById[w.strand] || laneById[trunkId] || lanes[0];
+        w.lane = lane ? lane.id : null;
+        var t = clamp(w.t, axis.start, axis.end);
+        var p = lane ? laneAt(lane, t) : onSpine(uOf(t));
+        w.x = p.x; w.y = p.y;
       });
 
-      var ENTRY = { x: MAP.w + 110, y: 690 };      /* the road in, off the east */
-      var EXIT = { x: 28, y: 790 };                /* and where the paint ends */
-
-      function norm(dx, dy) {
+      /* Two memories in the same year on the same line land on one pixel.
+         They fan *across* their line rather than along it — the same rule
+         the canvas trail follows, because sliding them along would move
+         them in time and claim a year nobody wrote down. */
+      var groups = {};
+      waypoints.forEach(function (w) {
+        var key = w.lane + '|' + w.t.toFixed(3);
+        (groups[key] || (groups[key] = [])).push(w);
+      });
+      Object.keys(groups).forEach(function (key) {
+        var g = groups[key];
+        if (g.length < 2) return;
+        var lane = laneById[g[0].lane];
+        var t = g[0].t;
+        var eps = (axis.end - axis.start) / 400;
+        var p0 = lane ? laneAt(lane, t) : onSpine(uOf(t));
+        var p1 = lane ? laneAt(lane, t + eps) : onSpine(uOf(t + eps));
+        var dx = p1.x - p0.x, dy = p1.y - p0.y;
         var d = Math.sqrt(dx * dx + dy * dy) || 1;
-        return { x: dx / d, y: dy / d };
-      }
-      /* A point on a region's rim, in the direction of somewhere else. */
-      function rim(R, towards, f) {
-        var n = norm(towards.x - R.x, towards.y - R.y);
-        return { x: R.x + n.x * R.rx * f, y: R.y + n.y * R.ry * f };
-      }
-
-      runs.forEach(function (run, ri) {
-        var R = REGION_BY[run.region] || REGION_BY.veld;
-        var before = ri > 0 ? (REGION_BY[runs[ri - 1].region] || R) : null;
-        var after = ri < runs.length - 1 ? (REGION_BY[runs[ri + 1].region] || R) : null;
-        run.R = R;
-        run.enter = rim(R, before || ENTRY, 0.78);
-        run.leave = rim(R, after || EXIT, 0.78);
-
-        /* Where the wander through this region bulges. A run of one memory
-           still gets a bulge, so the route bends around it rather than
-           clipping the corner of the region on its way past. */
-        var mx = (run.enter.x + run.leave.x) / 2;
-        var my = (run.enter.y + run.leave.y) / 2;
-        var toC = norm(R.x - mx, R.y - my);
-        var seed = hash01(run.region + ri);
-        /* the more memories a region holds, the further into it the route
-           has to go to fit them all in without stacking them on one bend */
-        var crowd = 1 + Math.max(0, run.list.length - 2) * 0.18;
-        var push = Math.min((0.5 + seed * 0.7) * Math.min(R.rx, R.ry) * 0.9 * crowd,
-                            Math.min(R.rx, R.ry) * 1.05);
-        run.bulge = { x: mx + toC.x * push, y: my + toC.y * push };
-
-        /* the memories, spread along that bend in the order they happened */
-        var k = run.list.length;
-        run.list.forEach(function (w, j) {
-          var t = k === 1 ? 0.5 : 0.1 + (j / (k - 1)) * 0.8;
-          var u = 1 - t;
-          var jit = hash01(w.id) - 0.5;
-          var jit2 = hash01(w.id + 'y') - 0.5;
-          var spread = k > 2 ? 0.4 : 0.24;
-          w.x = u * u * run.enter.x + 2 * u * t * run.bulge.x + t * t * run.leave.x
-                + jit * R.rx * spread;
-          w.y = u * u * run.enter.y + 2 * u * t * run.bulge.y + t * t * run.leave.y
-                + jit2 * R.ry * spread;
+        g.forEach(function (w, k) {
+          var off = (k - (g.length - 1) / 2) * 34;
+          w.x = p0.x + (-dy / d) * off;
+          w.y = p0.y + (dx / d) * off;
         });
       });
 
-      /* The control polyline: in at the rim, round the bend past every
-         memory, out at the rim, then one bowed midpoint on the leg to the
-         next region. Consecutive legs bow opposite ways, so a trip out and
-         the trip back open into a loop instead of lying on top of each
-         other — which is exactly what an out-and-back looks like when a
-         cartographer draws one. */
-      var ctrl = [ENTRY];
-      runs.forEach(function (run, ri) {
-        ctrl.push(run.enter);
-        if (run.list.length > 1) ctrl.push(run.bulge);
-        run.list.forEach(function (w) { ctrl.push({ x: w.x, y: w.y }); });
-        ctrl.push(run.leave);
-
-        var to = ri < runs.length - 1 ? runs[ri + 1] : null;
-        var target = to ? to.enter : EXIT;
-        var dx = target.x - run.leave.x, dy = target.y - run.leave.y;
-        var d = Math.sqrt(dx * dx + dy * dy);
-        if (d > 150) {
-          var side = (ri % 2 === 0) ? 1 : -1;
-          var bow = clamp(d * 0.17, 30, 130) * side;
-          ctrl.push({
-            x: (run.leave.x + target.x) / 2 - dy / d * bow,
-            y: (run.leave.y + target.y) / 2 + dx / d * bow
-          });
-        }
-      });
-      ctrl.push(EXIT);
-      ctrl.push({ x: -130, y: 762 });
-
-      route = waver(spline(ctrl, 14), 2.4, 'route');
-
-      /* Nothing is allowed to sit on top of anything else. Two memories that
-         land within a disc of each other are eased apart along the line
-         between them — the same fan the canvas trail does for a shared year,
-         done in two dimensions because a map has them. */
-      for (var pass = 0; pass < 5; pass++) {
+      /* and then nothing at all is allowed to sit on top of anything else */
+      for (var pass = 0; pass < 6; pass++) {
         var moved = false;
-        for (var a = 0; a < waypoints.length; a++) {
-          for (var b = a + 1; b < waypoints.length; b++) {
-            var A = waypoints[a], B = waypoints[b];
-            var dx2 = B.x - A.x, dy2 = B.y - A.y;
-            var dd2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
-            if (dd2 >= 38) continue;
-            var push2 = (38 - dd2) / 2 + 0.5;
-            if (dd2 < 0.001) { dx2 = 1; dy2 = 0; dd2 = 1; }
-            A.x -= dx2 / dd2 * push2; A.y -= dy2 / dd2 * push2;
-            B.x += dx2 / dd2 * push2; B.y += dy2 / dd2 * push2;
+        for (var i = 0; i < waypoints.length; i++) {
+          for (var j = i + 1; j < waypoints.length; j++) {
+            var A = waypoints[i], B = waypoints[j];
+            var ddx = B.x - A.x, ddy = B.y - A.y;
+            var dd = Math.sqrt(ddx * ddx + ddy * ddy);
+            if (dd >= 34) continue;
+            if (dd < 0.001) { ddx = 1; ddy = 0; dd = 1; }
+            var push = (34 - dd) / 2 + 0.5;
+            A.x -= ddx / dd * push; A.y -= ddy / dd * push;
+            B.x += ddx / dd * push; B.y += ddy / dd * push;
             moved = true;
           }
         }
         if (!moved) break;
       }
-
-      /* where on the polyline each memory sits, for the butterfly to rest at */
-      waypoints.forEach(function (w) {
-        var best = 0, bd = Infinity;
-        for (var j = 0; j < route.length; j++) {
-          var ddx = route[j].x - w.x, ddy = route[j].y - w.y;
-          var dd = ddx * ddx + ddy * ddy;
-          if (dd < bd) { bd = dd; best = j; }
-        }
-        w.at = best;
-      });
-      routeLen = route.length;
     }
 
-    function paintRoute(g) {
-      if (route.length < 2) return;
+    /* ========================================================= THE REGIONS
+       A chapter is a stretch of the spine, so its shape is derived from the
+       spine rather than placed: sample the years it covers, walk out to
+       either bank, and close the loop. The wash then follows the country
+       instead of sitting on it as a circle. */
+    function buildRegions() {
+      REGIONS.forEach(function (R) {
+        var y0 = R.from === -Infinity ? yearOfT(axis.start) - 6 : R.from;
+        var y1 = R.to === Infinity ? yearOfT(axis.end) + 6 : R.to;
+        var t0 = tOfYear(y0) - (R.from === -Infinity ? 1.4 : 0.45);
+        var t1 = tOfYear(y1) + (R.to === Infinity ? 1.4 : 0.45);
+        R.t0 = t0; R.t1 = t1;
+
+        var n = 16, up = [], down = [], i, p, sp;
+        for (i = 0; i <= n; i++) {
+          var t = lerp(t0, t1, i / n);
+          sp = onSpine(uOf(t));
+          /* the banks bulge in the middle of a chapter and pinch at its ends,
+             so consecutive chapters run into one another rather than butting */
+          var k = Math.sin((i / n) * Math.PI);
+          var w = R.span * (0.42 + k * 0.72);
+          up.push({ x: sp.x + sp.nx * w, y: sp.y + sp.ny * w });
+          down.push({ x: sp.x - sp.nx * w, y: sp.y - sp.ny * w });
+        }
+        down.reverse();
+        R.mid = onSpine(uOf((t0 + t1) / 2));
+        R.shape = waver(spline(up.concat(down), 5), 9, R.id + 'shape');
+      });
+
+      FEATURES.forEach(function (F) {
+        F.tAt = tOfYear(F.at);
+        var sp = onSpine(uOf(F.tAt));
+        /* `side` means uphill or seaward, not left or right: which way the
+           spine's normal happens to point at that moment is an accident of
+           where the wave is, so it is resolved against the page here. */
+        var flip = F.side * (sp.ny > 0 ? 1 : -1);
+        F.x = sp.x + sp.nx * F.out * flip;
+        F.y = sp.y + sp.ny * F.out * flip;
+        F.shape = waver(spline(ring(F.x, F.y, F.rx, F.ry, 13, 0.42, F.id), 8), 8, F.id + 'w');
+        /* An island needs water around it, and the open sea is a long way
+           east of where the crossing falls — so it brings its own. */
+        if (F.island) {
+          F.water = waver(spline(ring(F.x, F.y, F.rx * 1.58, F.ry * 1.62, 12, 0.3, F.id + 'sea'), 8),
+                          10, F.id + 'sw');
+        }
+      });
+    }
+
+    /* the controller's axis, read backwards — only used to size a chapter */
+    var yearAnchors = [];
+    function tOfYear(y) {
+      if (!yearAnchors.length) return axis.start;
+      if (y <= yearAnchors[0].year) return yearAnchors[0].t;
+      var last = yearAnchors[yearAnchors.length - 1];
+      if (y >= last.year) return last.t;
+      for (var i = 1; i < yearAnchors.length; i++) {
+        var A = yearAnchors[i - 1], B = yearAnchors[i];
+        if (y <= B.year) {
+          var span = B.year - A.year;
+          return span ? A.t + (B.t - A.t) * ((y - A.year) / span) : A.t;
+        }
+      }
+      return last.t;
+    }
+    function yearOfT(t) {
+      if (!yearAnchors.length) return 2000;
+      if (t <= yearAnchors[0].t) return yearAnchors[0].year;
+      var last = yearAnchors[yearAnchors.length - 1];
+      if (t >= last.t) return last.year;
+      for (var i = 1; i < yearAnchors.length; i++) {
+        var A = yearAnchors[i - 1], B = yearAnchors[i];
+        if (t <= B.t) {
+          var span = B.t - A.t;
+          return span ? A.year + (B.year - A.year) * ((t - A.t) / span) : A.year;
+        }
+      }
+      return last.year;
+    }
+
+    /* ============================================================ THE INK
+       Every life gets its own line, in its own colour, knocked out of the
+       terrain by a pale casing the way a printed route is. The trunk — the
+       line two people became — is drawn heaviest, because it is the one
+       carrying everybody. */
+    function paintBraid(g) {
+      if (!lanePaths.length) return;
       g.save();
       g.lineJoin = 'round';
       g.lineCap = 'round';
-      /* a pale casing under the line, the way a printed route is knocked out
-         of whatever it crosses so it stays readable over terrain */
-      g.globalAlpha = 0.72;
+
+      /* casing first, all of them, so no line is knocked out of another */
+      g.globalAlpha = 0.62;
       g.strokeStyle = PIG.paper;
-      g.lineWidth = 7.5;
-      tracePath(g, route, false);
-      g.stroke();
-      g.globalAlpha = 0.92;
-      g.strokeStyle = PIG.trail;
-      g.lineWidth = 2.6;
-      g.stroke();
-      g.globalAlpha = 0.34;
-      g.strokeStyle = PIG.trailInk;
-      g.lineWidth = 0.9;
-      g.stroke();
+      lanePaths.forEach(function (P) {
+        if (P.pts.length < 2) return;
+        g.lineWidth = P.lane.id === trunkId ? 9.5 : 7.5;
+        tracePath(g, P.pts, false);
+        g.stroke();
+      });
+
+      lanePaths.forEach(function (P) {
+        if (P.pts.length < 2) return;
+        var trunk = P.lane.id === trunkId;
+        tracePath(g, P.pts, false);
+        g.globalAlpha = 0.16;
+        g.strokeStyle = P.lane.tone;
+        g.lineWidth = trunk ? 8 : 6;
+        g.stroke();
+        g.globalAlpha = 0.92;
+        g.lineWidth = trunk ? 3.9 : 2.7;
+        g.stroke();
+        /* a hair of ink along it, so a pale strand still reads on paper */
+        g.globalAlpha = 0.3;
+        g.strokeStyle = PIG.ink;
+        g.lineWidth = 0.7;
+        g.stroke();
+      });
       g.restore();
       g.globalAlpha = 1;
     }
@@ -932,39 +1216,187 @@
        The part that moves. A few dozen trees that lean in the wind and a
        handful of animals, drawn as painted silhouettes rather than as
        portraits — a map illustration, not a field guide. */
+    /* A country has trees everywhere, not only where the map has a name for
+       the ground. These are the ones that move: seeded, culled to the view,
+       and thickened wherever the chapter they stand in is wooded. */
     function buildScenery() {
       var r = rng('trees');
       trees = [];
-      var want = Math.round(58 * (0.5 + quality * 0.7));
-      var pools = [
-        { id: 'range', n: 0.3, kind: 'conifer' },
-        { id: 'hills', n: 0.22, kind: 'conifer' },
-        { id: 'veld', n: 0.28, kind: 'flat' },
-        { id: 'flat', n: 0.1, kind: 'round' },
-        { id: 'near', n: 0.1, kind: 'round' }
-      ];
-      pools.forEach(function (p) {
-        var R = REGION_BY[p.id];
-        var n = Math.round(want * p.n);
+      var want = Math.round(360 * (0.45 + quality * 0.75));
+      var KIND = { peak: 'conifer', hill: 'conifer', bush: 'flat',
+                   plain: 'round', prairie: 'round', coast: 'round',
+                   isle: 'palm', falls: 'round', soft: 'round' };
+      var pool = REGIONS.concat(FEATURES);
+      /* The country between the chapters is country too. A third of the
+         planting goes everywhere the island reaches, so the ground is not
+         bare wherever the archive happens to have nothing to say. */
+      var open = coast();
+      var oMinX = Infinity, oMaxX = -Infinity, oMinY = Infinity, oMaxY = -Infinity;
+      open.forEach(function (p) {
+        if (p.x < oMinX) oMinX = p.x; if (p.x > oMaxX) oMaxX = p.x;
+        if (p.y < oMinY) oMinY = p.y; if (p.y > oMaxY) oMaxY = p.y;
+      });
+      var loose = Math.round(want * 0.42);
+      for (var q = 0; q < loose; q++) {
+        var lx = oMinX + r() * (oMaxX - oMinX);
+        var ly = oMinY + r() * (oMaxY - oMinY);
+        if (!inside(open, lx, ly)) { q--; if (r() > 0.99) break; continue; }
+        trees.push({
+          x: lx, y: ly, s: 7 + r() * 11,
+          kind: r() > 0.55 ? 'round' : 'conifer',
+          ph: r() * TAU, sp: 0.55 + r() * 0.8
+        });
+      }
+
+      /* how much of the planting each chapter gets: bigger chapters and
+         wooded ones take more of it */
+      var weights = pool.map(function (R) {
+        var wooded = R.terrain === 'peak' || R.terrain === 'hill' || R.terrain === 'bush';
+        return (R.span || R.rx || 140) * (wooded ? 1.5 : 0.7);
+      });
+      var total = weights.reduce(function (a, b) { return a + b; }, 0) || 1;
+
+      pool.forEach(function (R, ri) {
+        var pts = R.shape;
+        if (!pts || !pts.length) return;
+        var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+        pts.forEach(function (p) {
+          if (p.x < minX) minX = p.x; if (p.x > maxX) maxX = p.x;
+          if (p.y < minY) minY = p.y; if (p.y > maxY) maxY = p.y;
+        });
+        var n = Math.round(want * (weights[ri] / total));
+        var kind = KIND[R.terrain] || 'round';
+        var land = R.island ? null : coast();
         for (var i = 0; i < n; i++) {
-          var a = r() * TAU, rad = Math.sqrt(r());
+          var x = minX + r() * (maxX - minX);
+          var y = minY + r() * (maxY - minY);
+          if (!inside(pts, x, y) || (land && !inside(land, x, y))) {
+            i--; if (r() > 0.985) break; continue;
+          }
           trees.push({
-            x: R.x + Math.cos(a) * R.rx * rad * 0.92,
-            y: R.y + Math.sin(a) * R.ry * rad * 0.92,
-            s: 9 + r() * 11,
-            kind: p.kind,
-            ph: r() * TAU,
-            sp: 0.6 + r() * 0.7
+            x: x, y: y, s: 8 + r() * 13, kind: kind,
+            ph: r() * TAU, sp: 0.55 + r() * 0.8
           });
         }
       });
       trees.sort(function (a, b) { return a.y - b.y; });
 
       fauna = [
-        { kind: 'elk',   x: 300, y: 250, s: 1.25, ph: 0 },
-        { kind: 'eagle', x: 1382, y: 306, s: 1, ph: 0, drift: 0 },
-        { kind: 'dodo',  x: 1232, y: 872, s: 0.9, ph: 0 }
+        { kind: 'elk',   x: 0, y: 0, s: 1.25, ph: 0 },
+        { kind: 'eagle', x: 0, y: 0, s: 1, ph: 0 },
+        { kind: 'dodo',  x: 0, y: 0, s: 0.9, ph: 0 }
       ];
+      /* Each animal stands in the country it comes from: the elk over the
+         high range, the fish eagle above the far water, the dodo on the
+         island off the crossing. */
+      placeBeast('elk', REGION_BY.range, -1, 0.95);
+      placeBeast('eagle', REGION_BY.water, -1, 1.35);
+      var isles = FEATURES.filter(function (f) { return f.id === 'isles'; })[0];
+      if (isles) { fauna[2].x = isles.x + isles.rx * 0.1; fauna[2].y = isles.y + isles.ry * 0.72; }
+    }
+
+    function placeBeast(kind, R, side, out) {
+      var f = fauna.filter(function (x) { return x.kind === kind; })[0];
+      if (!f || !R) return;
+      var sp = onSpine(uOf((R.t0 + R.t1) / 2));
+      f.x = clamp(sp.x + sp.nx * (R.span || 200) * out * side, 110, MAP.w - 110);
+      f.y = clamp(sp.y + sp.ny * (R.span || 200) * out * side, 120, MAP.h - 190);
+    }
+
+    /* Even–odd crossing test, so a tree planted in a chapter's bounding box
+       that misses the chapter itself is thrown away rather than drawn in the
+       sea. */
+    function inside(pts, x, y) {
+      var hit = false;
+      for (var i = 0, j = pts.length - 1; i < pts.length; j = i++) {
+        var a = pts[i], b = pts[j];
+        if (((a.y > y) !== (b.y > y)) &&
+            (x < (b.x - a.x) * (y - a.y) / ((b.y - a.y) || 1e-6) + a.x)) hit = !hit;
+      }
+      return hit;
+    }
+
+    /* And a great many more that do not move, printed into the sheet: the
+       woods themselves, against which the moving ones read as individuals. */
+    function paintForest(g) {
+      var r = rng('forest');
+      var pool = REGIONS.concat(FEATURES);
+      var land = coast();
+
+      /* the woods between the chapters */
+      var bMinX = Infinity, bMaxX = -Infinity, bMinY = Infinity, bMaxY = -Infinity;
+      land.forEach(function (p) {
+        if (p.x < bMinX) bMinX = p.x; if (p.x > bMaxX) bMaxX = p.x;
+        if (p.y < bMinY) bMinY = p.y; if (p.y > bMaxY) bMaxY = p.y;
+      });
+      g.save();
+      tracePath(g, land, true);
+      g.clip();
+      var loose = Math.round(520 * (0.5 + quality * 0.7));
+      for (var q = 0; q < loose; q++) {
+        var lx = bMinX + r() * (bMaxX - bMinX);
+        var ly = bMinY + r() * (bMaxY - bMinY);
+        var ls = 4 + r() * 7;
+        g.globalAlpha = 0.16 + r() * 0.2;
+        g.fillStyle = r() > 0.5 ? PIG.forest : PIG.forestDeep;
+        if (r() > 0.5) {
+          g.beginPath();
+          g.moveTo(lx, ly - ls);
+          g.lineTo(lx + ls * 0.4, ly + ls * 0.32);
+          g.lineTo(lx - ls * 0.4, ly + ls * 0.32);
+          g.closePath();
+          g.fill();
+        } else {
+          g.beginPath();
+          g.ellipse(lx, ly, ls * 0.36, ls * 0.32, 0, 0, TAU);
+          g.fill();
+        }
+      }
+      g.restore();
+      g.globalAlpha = 1;
+
+      pool.forEach(function (R) {
+        var pts = R.shape;
+        if (!pts || !pts.length) return;
+        var wooded = R.terrain === 'peak' || R.terrain === 'hill' || R.terrain === 'bush';
+        var n = Math.round((wooded ? 320 : 120) * (0.5 + quality * 0.7));
+        var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+        pts.forEach(function (p) {
+          if (p.x < minX) minX = p.x; if (p.x > maxX) maxX = p.x;
+          if (p.y < minY) minY = p.y; if (p.y > maxY) maxY = p.y;
+        });
+        g.save();
+        if (!R.island) { tracePath(g, land, true); g.clip(); }
+        tracePath(g, pts, true);
+        g.clip();
+        for (var i = 0; i < n; i++) {
+          var x = minX + r() * (maxX - minX);
+          var y = minY + r() * (maxY - minY);
+          var s = 5 + r() * 8;
+          g.globalAlpha = 0.24 + r() * 0.28;
+          if (R.terrain === 'peak' || R.terrain === 'hill') {
+            g.fillStyle = r() > 0.4 ? PIG.forestDeep : PIG.forest;
+            g.beginPath();
+            g.moveTo(x, y - s);
+            g.lineTo(x + s * 0.42, y + s * 0.35);
+            g.lineTo(x - s * 0.42, y + s * 0.35);
+            g.closePath();
+            g.fill();
+          } else if (R.terrain === 'bush') {
+            g.fillStyle = PIG.forest;
+            g.beginPath();
+            g.ellipse(x, y, s * 0.62, s * 0.24, 0, 0, TAU);
+            g.fill();
+          } else {
+            g.fillStyle = PIG.forest;
+            g.beginPath();
+            g.ellipse(x, y, s * 0.34, s * 0.3, 0, 0, TAU);
+            g.fill();
+          }
+        }
+        g.restore();
+        g.globalAlpha = 1;
+      });
     }
 
     function drawTree(g, t, time) {
@@ -994,6 +1426,17 @@
         g.beginPath();
         g.ellipse(0, -s * 0.72, s * 0.62, s * 0.24, 0, 0, TAU);
         g.fill();
+      } else if (t.kind === 'palm') {
+        g.strokeStyle = PIG.forest;
+        g.lineWidth = Math.max(1, s * 0.09);
+        for (var f = 0; f < 5; f++) {
+          var a = -Math.PI / 2 + (f - 2) * 0.52;
+          g.beginPath();
+          g.moveTo(0, -s * 0.55);
+          g.quadraticCurveTo(Math.cos(a) * s * 0.34, -s * 0.55 + Math.sin(a) * s * 0.34,
+                             Math.cos(a) * s * 0.6, -s * 0.4 + Math.sin(a) * s * 0.6);
+          g.stroke();
+        }
       } else {
         g.beginPath();
         g.ellipse(0, -s * 0.78, s * 0.42, s * 0.38, 0, 0, TAU);
@@ -1190,42 +1633,197 @@
     var FAUNA_DRAW = { elk: drawElk, eagle: drawEagle, dodo: drawDodo };
 
     /* ========================================================= BUTTERFLIES
-       One walks the route of whoever is being followed. One turns up when a
-       memory is opened, circles it and goes. Neither is on a timer. */
-    function Walker(ids, tone) {
-      this.tone = tone;
-      this.stops = ids.slice();
-      this.i = 0;
-      this.hold = 0;
-      this.ph = 0;
-      this.next = 0;
+       The room's own, over the country. There are four reasons one appears
+       and no others: you followed a category, you are following a person,
+       you opened a memory, or the map is simply being looked at. None of
+       them is a decoration on a timer.
+
+       A butterfly carries the colour of whatever sent it — a category's
+       tone, a life's tone — which is the same code the dock, the chips and
+       the memory lights all run on, so the violet butterfly that leaves the
+       Chaos chip arrives at a violet light.
+       ------------------------------------------------------------------- */
+    var fliers = [];
+
+    function Flier(o) {
+      o = o || {};
+      this.x = o.x || 0; this.y = o.y || 0;
+      this.tone = o.tone || PIG.trail;
+      this.size = o.size || 1;
+      this.speed = o.speed || 0.19;          /* map units per ms */
+      this.arriveAt = o.arriveAt || 16;
+      this.trailCap = o.trailCap === undefined ? 46 : o.trailCap;
+      this.target = o.target || null;
+      this.onArrive = o.onArrive || null;
+      this.kind = o.kind || 'idle';
+      this.trail = [];
+      this.ph = hash01((o.seed || 'f') + 'p') * TAU;
+      this.weave = 0.5 + hash01((o.seed || 'f') + 'w') * 0.9;
       this.a = 0;
-      var first = wpById[this.stops[0]];
-      this.i = first ? Math.max(0, first.at - 60) : 0;
-      this.x = route.length ? route[this.i].x : 0;
-      this.y = route.length ? route[this.i].y : 0;
+      this.fade = 0;
+      this.hold = 0;
+      this.done = false;
     }
-    Walker.prototype.step = function (dt) {
-      if (!route.length) return;
-      this.a = Math.min(1, this.a + dt / 600);
-      this.ph += dt * 0.013;
+    Flier.prototype.aim = function (pt, onArrive) {
+      this.target = pt; this.onArrive = onArrive || null;
+    };
+    Flier.prototype.step = function (dt) {
+      this.ph += dt * 0.012;
+      this.a = this.fade ? Math.max(0, this.a - dt * this.fade) : Math.min(1, this.a + dt / 500);
+      if (this.fade && this.a <= 0) { this.done = true; return; }
       if (this.hold > 0) { this.hold -= dt; return; }
-      this.i += dt * 0.06;
-      if (this.i >= route.length - 1) {
-        var f = wpById[this.stops[0]];
-        this.i = f ? Math.max(0, f.at - 60) : 0;
-        this.next = 0;
+      if (!this.target) return;
+
+      var dx = this.target.x - this.x, dy = this.target.y - this.y;
+      var d = Math.sqrt(dx * dx + dy * dy);
+      if (d < this.arriveAt) {
+        var fn = this.onArrive;
+        this.onArrive = null;
+        if (fn) fn(this);
+        return;
       }
-      var p = route[Math.floor(this.i)];
-      this.x = p.x; this.y = p.y;
-      while (this.next < this.stops.length) {
-        var w = wpById[this.stops[this.next]];
-        if (w && this.i >= w.at) { this.hold = 950; this.next++; break; }
-        if (!w) { this.next++; continue; }
-        break;
+      /* A butterfly does not fly at a thing, it flies about it and gets
+         there anyway: the heading is the bearing plus a slow sideways
+         weave, which is the whole of the illusion. */
+      var ux = dx / d, uy = dy / d;
+      var w = Math.sin(this.ph * this.weave) * 0.55;
+      var vx = ux + -uy * w, vy = uy + ux * w;
+      var vl = Math.sqrt(vx * vx + vy * vy) || 1;
+      var step = Math.min(d, this.speed * dt);
+      this.x += vx / vl * step;
+      this.y += vy / vl * step;
+      if (this.trailCap) {
+        this.trail.push({ x: this.x, y: this.y });
+        if (this.trail.length > this.trailCap) this.trail.shift();
       }
     };
 
+    function spawnFlier(o) {
+      var f = new Flier(o);
+      fliers.push(f);
+      wake();
+      return f;
+    }
+    function releaseFlier(f, ms) {
+      if (!f) return;
+      f.fade = 1 / (ms || 900);
+      wake();
+    }
+
+    /* Somewhere off the edge of the paper, where a butterfly on an errand
+       should come from. */
+    function offPaper() {
+      var r = Math.random();
+      if (r < 0.5) return { x: r < 0.25 ? -90 : MAP.w + 90, y: 120 + Math.random() * (MAP.h - 240) };
+      return { x: 140 + Math.random() * (MAP.w - 280), y: r < 0.75 ? -90 : MAP.h + 90 };
+    }
+
+    /* --- the one on an errand: a category's butterfly, sent to fetch one of
+       its memories, exactly as the canvas trail sends it. */
+    var escort = null;
+    function sendTo(opts) {
+      var w = wpById[opts.id];
+      if (!w) return;
+      if (escort) { releaseFlier(escort, 500); escort = null; }
+      if (reduceMotion) { emit('select', w.ref); return; }
+      var at = offPaper();
+      escort = spawnFlier({
+        x: at.x, y: at.y, tone: opts.tone || w.tone, size: 1.1,
+        speed: 0.58, trailCap: 90, kind: 'escort', seed: opts.id
+      });
+      escort.aim({ x: w.x, y: w.y }, function (f) {
+        releaseFlier(f, 1400);
+        if (escort === f) escort = null;
+        emit('select', w.ref);
+      });
+      /* the camera goes along behind it, so you see it arrive */
+      goTo(w.x, w.y, Math.max(cam.z, zFit * 1.7), 1500);
+    }
+
+    /* --- the ones with nowhere to be. Two of them live over the country. */
+    var ambient = [];
+    function startAmbient() {
+      if (reduceMotion) return;
+      var want = quality > 0.7 ? 2 : 1;
+      while (ambient.length < want) {
+        var at = offPaper();
+        var f = spawnFlier({
+          /* An idle butterfly leaves no thread. The ones that do are the
+             ones on an errand — a thread means somebody sent it. */
+          x: at.x, y: at.y, tone: '#C97A55', size: 0.8,
+          speed: 0.1, trailCap: 0, kind: 'ambient', seed: 'amb' + ambient.length
+        });
+        f.a = 0.6;
+        ambient.push(f);
+        wander(f);
+      }
+    }
+    function wander(f) {
+      if (!f) return;
+      f.aim({ x: 120 + Math.random() * (MAP.w - 240),
+              y: 120 + Math.random() * (MAP.h - 240) },
+            function (self) { self.hold = 700 + Math.random() * 2600; wanderSoon(self); });
+    }
+    function wanderSoon(f) {
+      global.setTimeout(function () { if (active && !f.done) wander(f); }, 900 + Math.random() * 2200);
+    }
+
+    /* --- the one following a life: it walks that strand and rests a moment
+       at each of that person's memories. */
+    var walker = null, walkStops = [], walkNext = 0;
+    function startFollow(strandId) {
+      stopFollow();
+      if (reduceMotion || !strandId) return;
+      var P = lanePathFor(strandId);
+      var lane = laneById[strandId];
+      if (!P || P.pts.length < 2 || !lane) return;
+      walkStops = waypoints
+        .filter(function (w) { return w.lane === strandId; })
+        .sort(function (a, b) { return a.t - b.t; });
+      walkNext = 0;
+      walker = spawnFlier({
+        x: P.pts[0].x, y: P.pts[0].y, tone: lane.tone, size: 1.05,
+        speed: 0.2, trailCap: 70, kind: 'walker', seed: strandId
+      });
+      walker.i = 0;
+      stepWalk();
+    }
+    function stepWalk() {
+      if (!walker) return;
+      var P = lanePathFor(emphasis.person);
+      if (!P) { stopFollow(); return; }
+      if (walkNext >= walkStops.length) {
+        /* past the last of their memories, on to the end of their line */
+        var end = P.pts[P.pts.length - 1];
+        walker.aim({ x: end.x, y: end.y }, function (f) {
+          releaseFlier(f, 1600);
+          walker = null;
+        });
+        walkNext++;
+        return;
+      }
+      var w = walkStops[walkNext++];
+      walker.aim({ x: w.x, y: w.y }, function (f) {
+        f.hold = 950;
+        stepWalk();
+      });
+    }
+    function stopFollow() {
+      if (walker) { releaseFlier(walker, 600); walker = null; }
+      walkStops = []; walkNext = 0;
+    }
+
+    /* --- the one that turns up for a moment when a memory is opened,
+       circles it once and goes. */
+    var visitor = null;
+    function flutterAt(w) {
+      if (reduceMotion || !w) return;
+      visitor = { cx: w.x, cy: w.y, tone: w.tone, age: 0, life: 2500, ph: 0,
+                  r: 24 + hash01(w.id) * 14, dir: hash01(w.id + 'd') < 0.5 ? -1 : 1 };
+      wake();
+    }
+
+    /* One pair of wings and the thread of light behind them. */
     function wings(g, x, y, tone, alpha, beat, size) {
       g.save();
       g.globalAlpha = alpha;
@@ -1234,23 +1832,62 @@
       g.fillStyle = tone;
       for (var s = -1; s <= 1; s += 2) {
         g.beginPath();
-        g.ellipse(s * 4 * beat, 0, 4.4 * beat, 6.6, s * 0.34, 0, TAU);
+        g.ellipse(s * 4.2 * beat, 0, 4.6 * beat, 6.8, s * 0.34, 0, TAU);
         g.fill();
       }
-      g.globalAlpha = alpha * 0.6;
+      g.globalAlpha = alpha * 0.75;
       g.strokeStyle = PIG.ink;
-      g.lineWidth = 0.9;
-      g.beginPath(); g.moveTo(0, -5); g.lineTo(0, 6); g.stroke();
+      g.lineWidth = 1;
+      g.beginPath(); g.moveTo(0, -5.5); g.lineTo(0, 6.5); g.stroke();
       g.restore();
       g.globalAlpha = 1;
     }
 
-    function flutterAt(w) {
-      if (reduceMotion || !w) return;
-      visitor = { cx: w.x, cy: w.y, tone: w.tone, age: 0, life: 2500,
-                  ph: 0, r: 22 + hash01(w.id) * 14,
-                  dir: hash01(w.id + 'd') < 0.5 ? -1 : 1 };
-      wake();
+    function paintFlier(g, f) {
+      if (f.trail.length > 1) {
+        g.save();
+        g.lineCap = 'round';
+        g.lineJoin = 'round';
+        g.strokeStyle = f.tone;
+        for (var i = 1; i < f.trail.length; i++) {
+          var k = i / f.trail.length;
+          g.globalAlpha = f.a * k * k * (f.kind === 'ambient' ? 0.2 : 0.42);
+          g.lineWidth = 0.5 + k * 1.5;
+          g.beginPath();
+          g.moveTo(f.trail[i - 1].x, f.trail[i - 1].y);
+          g.lineTo(f.trail[i].x, f.trail[i].y);
+          g.stroke();
+        }
+        g.restore();
+        g.globalAlpha = 1;
+      }
+      var beat = reduceMotion ? 0.75 : (0.42 + 0.58 * Math.abs(Math.sin(f.ph * 1.7)));
+      wings(g, f.x, f.y, f.tone, f.a, beat, f.size);
+    }
+
+    function stepFliers(dt) {
+      for (var i = fliers.length - 1; i >= 0; i--) {
+        fliers[i].step(dt);
+        if (fliers[i].done) {
+          var gone = fliers.splice(i, 1)[0];
+          var k = ambient.indexOf(gone);
+          if (k >= 0) ambient.splice(k, 1);
+          if (gone === escort) escort = null;
+          if (gone === walker) walker = null;
+        }
+      }
+      if (visitor) {
+        visitor.age += dt;
+        visitor.ph += dt * 0.0032 * visitor.dir;
+        if (visitor.age > visitor.life) visitor = null;
+      }
+    }
+
+    function clearFliers() {
+      fliers.length = 0;
+      ambient.length = 0;
+      escort = null; walker = null; visitor = null;
+      walkStops = []; walkNext = 0;
     }
 
     /* ============================================================== DRAW */
@@ -1282,10 +1919,7 @@
         FAUNA_DRAW[f.kind](ctx, f, time);
       }
 
-      if (flier) {
-        var beat = reduceMotion ? 0.75 : (0.45 + 0.55 * Math.abs(Math.sin(flier.ph)));
-        wings(ctx, flier.x, flier.y, flier.tone, flier.a, beat, 1.1);
-      }
+      for (i = 0; i < fliers.length; i++) paintFlier(ctx, fliers[i]);
       if (visitor) {
         var k = visitor.age / visitor.life;
         var a = Math.min(1, k * 6) * Math.min(1, (1 - k) * 3.4);
@@ -1376,14 +2010,11 @@
     /* How much of a life a pixel is worth here. Derived from the route: its
        whole length is the span of the archive. */
     function yearsPerPixel() {
-      if (!waypoints.length || route.length < 2) return 1;
+      if (!waypoints.length || !spineLen.length) return 1;
       var y0 = waypoints[0].year, y1 = waypoints[waypoints.length - 1].year;
       if (!y0 || !y1 || y1 === y0) return 1;
-      var len = 0;
-      for (var i = 1; i < route.length; i++) {
-        var dx = route[i].x - route[i - 1].x, dy = route[i].y - route[i - 1].y;
-        len += Math.sqrt(dx * dx + dy * dy);
-      }
+      /* the whole spine is the whole span of the archive */
+      var len = spineLen[spineLen.length - 1] || 1;
       return ((y1 - y0) / len) / cam.z;
     }
     function niceYears(v) {
@@ -1400,10 +2031,38 @@
       layer.textContent = '';
       if (!waypoints.length) return;
 
-      REGIONS.forEach(function (R) {
+      /* Everything written on the paper goes through one collision list, so
+         a chapter, a name, a trailhead and a memory can never be printed on
+         top of one another however the family's dates move. Memories are in
+         it first and never move: they are the thing being labelled. */
+      var taken = waypoints.map(function (w) {
+        return { x: w.x, y: w.y, w: 62, h: 30 };
+      });
+      function clear(p, w, h, dirx, diry) {
+        for (var g = 0; g < 16; g++) {
+          var hit = false;
+          for (var i = 0; i < taken.length; i++) {
+            var q = taken[i];
+            if (Math.abs(q.x - p.x) < (q.w + w) / 2 &&
+                Math.abs(q.y - p.y) < (q.h + h) / 2) { hit = true; break; }
+          }
+          if (!hit) break;
+          p = { x: p.x + dirx * 22, y: p.y + diry * 22 };
+        }
+        taken.push({ x: p.x, y: p.y, w: w, h: h });
+        return p;
+      }
+
+      /* --- the chapters, named on their own stretch of country */
+      REGIONS.concat(FEATURES).forEach(function (R) {
+        if (!R.shape) return;
         var n = el('div', 'atlas-region');
-        n.style.left = (R.x + (R.lx || 0)) + 'px';
-        n.style.top = (R.y + (R.ly || 0)) + 'px';
+        if (R.rx && R.rx < 200) n.dataset.small = '1';
+        var at = R.mid || { x: R.x, y: R.y };
+        at = clear({ x: at.x + (R.lx || 0), y: at.y + (R.ly || 0) },
+                   Math.max(120, R.name.length * 9), 34, 0, 1);
+        n.style.left = at.x + 'px';
+        n.style.top = at.y + 'px';
         var name = el('span', 'atlas-region-name');
         name.textContent = R.name;
         n.appendChild(name);
@@ -1415,22 +2074,93 @@
         layer.appendChild(n);
       });
 
-      SETTLEMENTS.forEach(function (S) {
-        var place = placeById[S.place];
-        if (!place) return;
-        var R = REGION_BY[S.region];
-        if (!R) return;
+      /* --- the towns. Every place a memory actually happened in gets its
+         name on the paper, at the memory that happened there — so the map's
+         settlements come out of the archive rather than out of a list kept
+         here that would drift the moment a story was added. */
+      var townAt = {};
+      waypoints.forEach(function (w) {
+        if (!w.place || townAt[w.place] || !placeById[w.place]) return;
+        townAt[w.place] = w;
+      });
+      Object.keys(townAt).forEach(function (id, i) {
+        var w = townAt[id];
         var n = el('div', 'atlas-town');
-        n.style.left = (R.x + S.dx) + 'px';
-        n.style.top = (R.y + S.dy) + 'px';
+        /* alternate which side of its memory a town writes itself, so two
+           near neighbours do not print over one another */
+        n.dataset.side = (i % 2) ? 'left' : 'right';
+        n.style.left = w.x + 'px';
+        n.style.top = (w.y + (i % 4 < 2 ? -22 : 22)) + 'px';
         var dot = el('span', 'atlas-town-dot');
         var name = el('span', 'atlas-town-name');
-        name.textContent = place.name;
+        name.textContent = placeById[id].name;
         n.appendChild(dot);
         n.appendChild(name);
         layer.appendChild(n);
       });
 
+      /* --- whose line is whose. Written at whichever end of a life stays
+         open — the lines that run in from before the record are named in
+         the east, the lines still going are named in the west — and
+         pressable, because a name is how you follow somebody. */
+      /* The canvas trail names a line only at whichever end of it stays
+         open, and lets its markers name the rest. A map cannot do that: a
+         name here is the thing you press to follow somebody, so every life
+         gets one, written on its own line — at the start for a line running
+         in from before the record, near the end for one still going, and in
+         the middle of a life that both begins and joins inside the braid. */
+      var nameN = 0;
+      lanes.forEach(function (lane) {
+        if (!lane.label) return;
+        var openStart = lane.startKind === 'origin';
+        var openEnd = lane.endKind === 'open';
+        var t = openStart ? lane.from + 0.2 + nameN * 0.34
+              : (openEnd ? lane.to - 0.4 - nameN * 1.5
+                         : lane.from + (lane.to - lane.from) * 0.42);
+        nameN++;
+        var p = laneAt(lane, t);
+        /* Every line still going ends at the same moment, so their names
+           would otherwise be written on the same row. Each steps off its own
+           line until it is clear — the way its line already leans, so a name
+           never crosses the braid to find room. */
+        var away = laneOffset(lane, t) >= 0 ? 1 : -1;
+        var sp0 = onSpine(uOf(t));
+        p = clear(p, Math.max(70, lane.label.length * 8), 28,
+                  sp0.nx * away, sp0.ny * away);
+        var b = el('button', 'atlas-name');
+        b.type = 'button';
+        b.dataset.strand = lane.id;
+        b.style.setProperty('--tone', lane.tone);
+        b.style.left = clamp(p.x, 60, MAP.w - 60) + 'px';
+        b.style.top = clamp(p.y, 30, MAP.h - 30) + 'px';
+        b.textContent = lane.label;
+        b.setAttribute('aria-pressed', 'false');
+        b.setAttribute('aria-label', 'Follow ' + lane.label + '’s trail');
+        b.addEventListener('click', function () { emit('person', lane.id); });
+        layer.appendChild(b);
+      });
+
+      /* --- the joints of the braid: a life starting, two becoming one */
+      joints.forEach(function (j) {
+        var n = el('div', 'atlas-joint');
+        var jp = clear({ x: j.x, y: j.y }, Math.max(80, j.text.length * 6), 24, 0, -1);
+        n.dataset.kind = j.kind;
+        n.style.setProperty('--tone', j.tone);
+        n.style.left = jp.x + 'px';
+        n.style.top = jp.y + 'px';
+        n.setAttribute('aria-hidden', 'true');
+        var mark = el('span', 'atlas-joint-mark');
+        var text = el('span', 'atlas-joint-text');
+        text.textContent = j.text;
+        n.appendChild(mark);
+        n.appendChild(text);
+        layer.appendChild(n);
+      });
+
+      /* --- the memories. A numbered disc, the way a trail map numbers its
+         segments, lit from inside in its category's colour. The number is
+         the channel that does not depend on seeing the colour; the glow is
+         the one that makes it a memory rather than a bus stop. */
       waypoints.forEach(function (w) {
         var b = el('button', 'atlas-wp');
         b.type = 'button';
@@ -1441,7 +2171,7 @@
         b.style.setProperty('--deep', w.deep);
         /* Importance, where the archive has stated any — a featured memory
            carries a wider halo, not a bigger disc, because the numbers along
-           a route have to stay one size to be read as a sequence. */
+           a line have to stay one size to be read as a sequence. */
         b.style.setProperty('--w', (0.82 + w.weight * 0.5).toFixed(2));
         if (w.chaos) b.dataset.chaos = '1';
         if (w.classified) b.dataset.classified = '1';
@@ -1475,17 +2205,20 @@
         layer.appendChild(b);
       });
 
-      /* START, and no finish: the route runs on off the painted corner. */
+      /* Where the record starts, and where the paint gives out. No finish:
+         the country carries on past the last thing anybody has written. */
       var first = waypoints[0];
       var start = el('div', 'atlas-mark');
-      start.style.left = (first.x + 46) + 'px';
-      start.style.top = (first.y - 34) + 'px';
+      var sp = clear({ x: first.x, y: first.y - 34 }, 108, 26, -0.6, -0.8);
+      start.style.left = clamp(sp.x, 70, MAP.w - 70) + 'px';
+      start.style.top = sp.y + 'px';
       start.textContent = 'Start · ' + (first.year || '');
       layer.appendChild(start);
 
+      var last = onSpine(1.05);
       var on = el('div', 'atlas-mark onward');
-      on.style.left = '162px';
-      on.style.top = '748px';
+      on.style.left = clamp(last.x - 40, 80, MAP.w - 80) + 'px';
+      on.style.top = clamp(last.y + 86, 40, MAP.h - 40) + 'px';
       on.textContent = 'The country continues';
       layer.appendChild(on);
 
@@ -1498,11 +2231,12 @@
       layer.style.transform = 'translate(' + (vw / 2) + 'px,' + (vh / 2) + 'px) scale(' + s +
                               ') translate(' + (-cam.x) + 'px,' + (-cam.y) + 'px)';
       layer.style.setProperty('--z', s.toFixed(4));
-      /* How much to say is a question about how much country is on the
-         screen, not about how far from a fit we happen to be — otherwise a
-         phone, whose fit is tiny, opens shouting every town name it has. */
-      var across = vw / s;
-      var next = across > 1250 ? 'far' : (across > 620 ? 'mid' : 'near');
+      /* How much to say is a question of how large the paper is being drawn,
+         which is the same question as how much room a name has. Keying it to
+         how much country is on screen looks right on a desktop and wrong on
+         a phone, where the same stretch of country arrives in a third of the
+         width and every town name lands on its neighbour. */
+      var next = s < 0.95 ? 'far' : (s < 1.6 ? 'mid' : 'near');
       if (next !== lod) { lod = next; layer.dataset.lod = lod; }
     }
 
@@ -1550,6 +2284,14 @@
         w.node.setAttribute('aria-hidden', on ? 'false' : 'true');
         w.node.tabIndex = on ? 0 : -1;
       });
+      /* The name of whoever is being followed is marked as chosen, and the
+         other lives step back — the same gesture the people rail makes, so
+         pressing either one shows the same thing. */
+      [].slice.call(layer.querySelectorAll('.atlas-name')).forEach(function (n) {
+        var mine = n.dataset.strand === emphasis.person;
+        n.setAttribute('aria-pressed', mine ? 'true' : 'false');
+        n.dataset.off = (emphasis.person && !mine) ? '1' : '';
+      });
       drawWanted = true;
     }
     function markFocus() {
@@ -1560,15 +2302,7 @@
       drawWanted = true;
     }
 
-    function startFollow(strand) {
-      if (reduceMotion || !strand) { flier = null; return; }
-      var ids = waypoints.filter(function (w) { return w.strand === strand; })
-                         .map(function (w) { return w.id; });
-      if (!ids.length) { flier = null; return; }
-      var tone = wpById[ids[0]] ? wpById[ids[0]].deep : PIG.trail;
-      flier = new Walker(ids, tone);
-      wake();
-    }
+
 
     /* ========================================================= INTERACTION */
     (function pointer() {
@@ -1712,15 +2446,9 @@
       lastFrame = time;
 
       if (camTo) stepCam();
-      if (flier && !reduceMotion) { flier.step(dt); drawWanted = true; }
-      if (visitor) {
-        visitor.age += dt;
-        visitor.ph += dt * 0.0032 * visitor.dir;
-        if (visitor.age > visitor.life) visitor = null;
-        drawWanted = true;
-      }
+      if (fliers.length || visitor) { stepFliers(dt); drawWanted = true; }
 
-      var busy = !!camTo || !!visitor || (flier && !reduceMotion);
+      var busy = !!camTo || !!visitor || fliers.length > 0;
       var interval = busy ? 0 : 96;
       if (drawWanted || busy || (!reduceMotion && time - lastDrawn > interval)) {
         syncLayer();
@@ -1750,10 +2478,52 @@
 
       /* Everything the country needs that the archive already knows: its
          places, its eras, and nothing invented here. */
+      /* The braid, in the controller's own axis units — the same object the
+         canvas lens is handed, so the two cannot disagree about the family —
+         plus the archive's places and its decades. */
       setWorld: function (spec) {
         placeById = {};
         (spec.places || []).forEach(function (p) { placeById[p.id] = p; });
         eras = spec.decades || [];
+        laneW = spec.laneW || 0.55;
+        trunkId = spec.trunk || null;
+        marriedWord = spec.married || 'Married';
+        if (spec.axis) axis = { start: spec.axis.start, end: spec.axis.end };
+
+        lanes = (spec.lanes || []).map(function (l) {
+          var seed = hash01(l.id);
+          return {
+            id: l.id, label: l.label || '', tone: l.tone || PIG.trail,
+            side: l.side || 0, base: l.base || null,
+            startKind: l.startKind || 'union', endKind: l.endKind || 'open',
+            joinTarget: l.joinTarget || null,
+            from: l.from, to: l.to,
+            startsAt: l.startsAt === undefined ? null : l.startsAt,
+            endsAt: l.endsAt === undefined ? null : l.endsAt,
+            phase: seed,
+            /* How much a life wanders. A line the archive has a lot to say
+               about wanders visibly; one it barely knows keeps closer to its
+               lane, because there is less of it to wander with. */
+            amp: 0.5 + (l.weight || 0) * 0.42 + seed * 0.26,
+            freq: 0.74 + seed * 0.4,
+            /* Two lines that marry travel side by side rather than fusing.
+               Which side is decided by where each came from, so neither
+               crosses over its partner to get there. */
+            pairGap: (l.side < 0 ? -1 : 1) * 0.2
+          };
+        });
+        laneById = {};
+        lanes.forEach(function (l) { laneById[l.id] = l; });
+
+        /* The year-to-axis anchors, which is all a chapter needs in order to
+           know which stretch of the spine it covers. */
+        var anchors = [];
+        (spec.decades || []).forEach(function (d) {
+          if (typeof d.from === 'number' && typeof d.t0 === 'number') anchors.push({ year: d.from, t: d.t0 });
+          if (typeof d.to === 'number' && typeof d.t1 === 'number') anchors.push({ year: d.to, t: d.t1 });
+        });
+        anchors.sort(function (a, b) { return a.year - b.year; });
+        yearAnchors = anchors;
         return api;
       },
 
@@ -1764,8 +2534,8 @@
           return {
             id: w.id,
             place: w.place || null,
-            region: PLACE_REGION[w.place] || null,
             year: w.year || null,
+            t: (w.t === undefined || w.t === null) ? axis.start : w.t,
             era: w.era || null,
             strand: w.strand || null,
             tone: w.tone || PIG.trail,
@@ -1778,22 +2548,19 @@
             chaos: !!w.chaos,
             classified: !!w.classified,
             ref: w.ref || { id: w.id },
-            x: 0, y: 0, at: 0, node: null
+            x: 0, y: 0, node: null, lane: null
           };
         });
-
-        /* A place the table has not heard of takes the region of whichever
-           memory it sits next to in time — so the archive can add stories
-           anywhere and none of them lands off the map. */
-        var lastRegion = 'veld';
-        waypoints.forEach(function (w) {
-          if (!w.region) w.region = lastRegion;
-          lastRegion = w.region;
-        });
-
         wpById = {};
         waypoints.forEach(function (w) { wpById[w.id] = w; });
-        buildRoute();
+
+        /* Order matters: the braid decides where everything is, the chapters
+           are cut from the braid's spine, and the trees are planted inside
+           the chapters. */
+        buildBraid();
+        placeWaypoints();
+        buildRegions();
+        coastPts = null;
         buildScenery();
         sheet = null;
         return api;
@@ -1817,12 +2584,10 @@
         layout();
         placeFurniture();
         lastFrame = 0; lastDrawn = 0; drawWanted = true;
+        startAmbient();
         var w = opts.at && wpById[opts.at];
         if (w) { cam.z = zFit; cam.x = MAP.w / 2; cam.y = MAP.h / 2; goTo(w.x, w.y, zFit * 2.4, 0); }
-        else if (opts.region && REGION_BY[opts.region]) {
-          var R = REGION_BY[opts.region];
-          cam.z = zFit; goTo(R.x, R.y, zFit * 1.9, 0);
-        } else openingView();
+        else openingView();
         camT = 1; camTo = null;
         clampCam();
         syncLayer();
@@ -1834,8 +2599,7 @@
         active = false;
         if (rafId) { global.cancelAnimationFrame(rafId); rafId = 0; }
         hideTip();
-        flier = null;
-        visitor = null;
+        clearFliers();
         host.hidden = true;
         return api;
       },
@@ -1867,7 +2631,7 @@
         };
         applyEmphasisToDom();
         if (emphasis.person && emphasis.person !== was) startFollow(emphasis.person);
-        if (!emphasis.person) flier = null;
+        if (!emphasis.person) stopFollow();
         wake();
         return api;
       },
@@ -1883,11 +2647,18 @@
 
       showPerson: function (id) {
         if (!active) return api;
-        var theirs = waypoints.filter(function (w) { return w.strand === id; });
-        if (!theirs.length) return api;
-        frameOn(theirs);
+        var theirs = waypoints.filter(function (w) { return w.lane === id; });
+        if (theirs.length) { frameOn(theirs); return api; }
+        /* A life with no memories of its own still has a line. Frame that. */
+        var P = lanePathFor(id);
+        if (P && P.pts.length) frameOn(P.pts.filter(function (p, i) { return i % 12 === 0; }));
         return api;
       },
+
+      /* Follow a category: its own butterfly crosses the country, and the
+         memory opens when it gets there. The room's oldest gesture, on a
+         map instead of a dark plane. */
+      follow: function (opts) { sendTo(opts || {}); return api; },
 
       fit: function (ms) { if (active) fitAll(ms === undefined ? 700 : ms); return api; },
 
