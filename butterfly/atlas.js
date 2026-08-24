@@ -292,18 +292,31 @@
 
        which at these numbers is about 290 map units against a widest lane
        of some 170: enough room, and the reason it stays a braid. */
-    var SPINE = { x0: 1552, x1: 128, y0: 500, amp: 158, waves: 1.05, drift: 42 };
+    /* West to east, because that is the way the canvas trail runs and the
+       way anybody reads. It also settles which bank is which: the normal of
+       a line running rightward points down, so a strand at side -1 sits
+       above the trunk here exactly as it does there. */
+    /* Shallow on purpose. The canvas trail is a level ribbon, and the
+       whole of its readability comes from that: the eye follows a line that
+       stays where it was. A map wants some wander in it, so there is some —
+       but a fraction of what a landscape would take, because the moment the
+       braid climbs and dives across the sheet it stops being followable. */
+    var SPINE = { x0: 128, x1: 1552, y0: 500, amp: 58, drift: 18 };
     var spinePts = [], spineLen = [];
 
     function buildSpine() {
+      /* Both waves complete a whole number of turns across the sheet, so the
+         line comes back to the height it started at. A spine that drifts —
+         1.05 turns, say — reads as one long diagonal, and the braid slides
+         off two corners of the paper however wide the country is drawn. */
       var pts = [], n = 170;
       for (var i = 0; i <= n; i++) {
         var k = i / n;
         pts.push({
           x: SPINE.x0 + (SPINE.x1 - SPINE.x0) * k,
           y: SPINE.y0
-             + Math.sin(k * TAU * SPINE.waves + 0.55) * SPINE.amp
-             + Math.sin(k * TAU * 0.4 + 2.1) * SPINE.drift
+             + Math.sin(k * TAU + 0.9) * SPINE.amp
+             + Math.sin(k * TAU * 2 + 2.4) * SPINE.drift
         });
       }
       spinePts = waver(pts, 2.2, 'spine');
@@ -347,7 +360,7 @@
        branched out of, never from zero, so a birth leaves its parent exactly
        and a marriage arrives exactly, with no seam to line up by hand. */
     var MERGE_W = 1.15, BRANCH_W = 0.95;
-    var LANE_PX = 78;                       /* one lane, in map units */
+    var LANE_PX = 104;                      /* one lane, in map units */
 
     function smoothstepL(e0, e1, x) {
       if (e1 === e0) return x < e0 ? 0 : 1;
@@ -355,11 +368,14 @@
       return t * t * (3 - 2 * t);
     }
 
+    /* Two slow sines per strand, so no two lines wander the same way — and
+       these are the canvas trail's own numbers, not larger ones. A map is a
+       bigger sheet than a screen and it is tempting to let the lines wander
+       further across it; that is exactly what made the braid hard to follow.
+       The wander stays small and the distance between lanes does the work. */
     function wobble(t, lane) {
-      var a = lane.amp, f = lane.freq;
-      return Math.sin(t * f + lane.phase * 6.283) * 0.34 * a
-           + Math.sin(t * f * 0.43 + lane.phase * 14.1) * 0.2 * a
-           + Math.sin(t * f * 2.2 + lane.phase * 3.9) * 0.06 * a;
+      return Math.sin(t * 1.45 + lane.phase) * 0.058
+           + Math.sin(t * 0.62 + lane.phase * 2.3) * 0.036;
     }
 
     function laneOffset(lane, t, depth) {
@@ -375,11 +391,12 @@
       if (lane.endKind === 'joins') {
         var target = laneById[lane.joinTarget];
         if (target) {
-          /* Two lives do not become one line. They come to travel beside
-             each other and keep a hair's width between them, which is the
-             honest drawing and the only way both stay findable. */
+          /* A line gives up its own position for the one it joins, exactly —
+             the same interpolation the canvas trail makes, wobble included,
+             so the confluence is exact by construction and there is no seam
+             to line up. Two trails become one. */
           var jn = smoothstepL(lane.to - MERGE_W, lane.to, t);
-          if (jn > 0) own = lerp(own, laneOffset(target, t, depth + 1) + lane.pairGap, jn);
+          if (jn > 0) own = lerp(own, laneOffset(target, t, depth + 1), jn);
         }
       }
       return own;
@@ -411,6 +428,7 @@
           var p = laneAt(lane, lane.from + 0.12);
           joints.push({
             kind: 'birth', id: 'b-' + lane.id, tone: lane.tone,
+            strand: lane.id, who: lane.label,
             text: lane.label + (lane.startsAt === null ? '' : ' · ' + lane.startsAt),
             x: p.x, y: p.y
           });
@@ -711,7 +729,9 @@
         var t = lerp(axis.start - 1.6, axis.end + 1.6, k);
         var span = spanAt(t);
         var taper = Math.pow(Math.sin(clamp(k, 0, 1) * Math.PI), 0.42);
-        var w = span * 1.62 * taper + 26;
+        /* close enough that the country reads as the ground the braid
+           crosses, rather than a continent with the family in a stripe */
+        var w = span * 1.28 * taper + 24;
         var sp = onSpine(uOf(t));
         up.push({ x: sp.x + sp.nx * w, y: clamp(sp.y + sp.ny * w, 54, MAP.h - 54) });
         down.push({ x: sp.x - sp.nx * w, y: clamp(sp.y - sp.ny * w, 54, MAP.h - 54) });
@@ -754,12 +774,16 @@
        route included, so the whole country fades together. */
     function paintEdgeOfSurvey(g) {
       g.save();
-      var grad = g.createRadialGradient(6, 812, 24, 6, 812, 300);
+      /* Wherever the trail ends up running out, rather than a corner chosen
+         by hand — so the paint gives out at the end of the record however
+         the country is laid out. */
+      var end = onSpine(1.04);
+      var grad = g.createRadialGradient(end.x, end.y, 24, end.x, end.y, 320);
       grad.addColorStop(0, 'rgba(244,237,220,0.97)');
       grad.addColorStop(0.5, 'rgba(244,237,220,0.72)');
       grad.addColorStop(1, 'rgba(244,237,220,0)');
       g.fillStyle = grad;
-      g.fillRect(0, 512, 340, 488);
+      g.fillRect(end.x - 340, end.y - 340, 680, 680);
       g.restore();
     }
 
@@ -1179,35 +1203,58 @@
       g.lineJoin = 'round';
       g.lineCap = 'round';
 
-      /* casing first, all of them, so no line is knocked out of another */
-      g.globalAlpha = 0.62;
+      /* The casing goes down for every strand before any strand is inked, so
+         no line is knocked out of another where they cross. */
+      g.globalAlpha = 0.55;
       g.strokeStyle = PIG.paper;
+      g.lineWidth = 8;
       lanePaths.forEach(function (P) {
         if (P.pts.length < 2) return;
-        g.lineWidth = P.lane.id === trunkId ? 9.5 : 7.5;
         tracePath(g, P.pts, false);
         g.stroke();
       });
 
+      /* Then each line: a soft bloom in its own colour and a fine core in
+         the same, which is the canvas trail's structure read onto paper —
+         and every strand at the same weight, because the line two people
+         became is not more important than either of them. */
       lanePaths.forEach(function (P) {
         if (P.pts.length < 2) return;
-        var trunk = P.lane.id === trunkId;
-        tracePath(g, P.pts, false);
-        g.globalAlpha = 0.16;
-        g.strokeStyle = P.lane.tone;
-        g.lineWidth = trunk ? 8 : 6;
-        g.stroke();
-        g.globalAlpha = 0.92;
-        g.lineWidth = trunk ? 3.9 : 2.7;
-        g.stroke();
-        /* a hair of ink along it, so a pale strand still reads on paper */
-        g.globalAlpha = 0.3;
-        g.strokeStyle = PIG.ink;
-        g.lineWidth = 0.7;
-        g.stroke();
+        strokeStrand(g, P);
       });
       g.restore();
       g.globalAlpha = 1;
+    }
+
+    function strokeStrand(g, P) {
+      var pts = P.pts;
+      /* A line that simply begins — somebody whose own parents are not in
+         this archive — comes up out of nothing rather than switching on.
+         Canvas cannot fade along a stroke, so the head is built out of
+         stacked partial strokes, each starting a little later, exactly as
+         the canvas trail builds it. */
+      var cut = P.lane.fadeIn ? Math.max(2, Math.round(pts.length * 0.16)) : 0;
+
+      function from(i0, mul) {
+        var passes = [[7, 0.13], [2.4, 0.92], [0.7, 0.2]];
+        for (var k = 0; k < passes.length; k++) {
+          g.lineWidth = passes[k][0];
+          g.strokeStyle = k === 2 ? PIG.ink : P.lane.tone;
+          g.globalAlpha = passes[k][1] * mul;
+          g.beginPath();
+          g.moveTo(pts[i0].x, pts[i0].y);
+          for (var j = i0 + 1; j < pts.length; j++) g.lineTo(pts[j].x, pts[j].y);
+          g.stroke();
+        }
+      }
+
+      if (cut) {
+        from(Math.round(cut * 0.55), 0.34);
+        from(Math.round(cut * 0.8), 0.33);
+        from(cut, 0.33);
+      } else {
+        from(0, 1);
+      }
     }
 
     /* ============================================================ SCENERY
@@ -1287,8 +1334,8 @@
       /* Each animal stands in the country it comes from: the elk over the
          high range, the fish eagle above the far water, the dodo on the
          island off the crossing. */
-      placeBeast('elk', REGION_BY.range, -1, 0.95);
-      placeBeast('eagle', REGION_BY.water, -1, 1.35);
+      placeBeast('elk', REGION_BY.range, 1, 1.15);
+      placeBeast('eagle', REGION_BY.water, -1, 1.3);
       var isles = FEATURES.filter(function (f) { return f.id === 'isles'; })[0];
       if (isles) { fauna[2].x = isles.x + isles.rx * 0.1; fauna[2].y = isles.y + isles.ry * 0.72; }
     }
@@ -1297,8 +1344,11 @@
       var f = fauna.filter(function (x) { return x.kind === kind; })[0];
       if (!f || !R) return;
       var sp = onSpine(uOf((R.t0 + R.t1) / 2));
-      f.x = clamp(sp.x + sp.nx * (R.span || 200) * out * side, 110, MAP.w - 110);
-      f.y = clamp(sp.y + sp.ny * (R.span || 200) * out * side, 120, MAP.h - 190);
+      f.x = clamp(sp.x + sp.nx * (R.span || 200) * out * side, 150, MAP.w - 210);
+      f.y = clamp(sp.y + sp.ny * (R.span || 200) * out * side, 175, MAP.h - 215);
+      /* the room's own view switch lives in the top right corner of the
+         screen, and at a fitted zoom that is the top right of the paper */
+      if (f.y < 470 && f.x > MAP.w - 540) f.x = MAP.w - 540;
     }
 
     /* Even–odd crossing test, so a tree planted in a chapter's bounding box
@@ -2086,20 +2136,19 @@
          open — the lines that run in from before the record are named in
          the east, the lines still going are named in the west — and
          pressable, because a name is how you follow somebody. */
-      /* The canvas trail names a line only at whichever end of it stays
-         open, and lets its markers name the rest. A map cannot do that: a
-         name here is the thing you press to follow somebody, so every life
-         gets one, written on its own line — at the start for a line running
-         in from before the record, near the end for one still going, and in
-         the middle of a life that both begins and joins inside the braid. */
+      /* A name goes at whichever end of a line stays open — where it runs
+         in from, or where it is still going — and a life that both begins
+         and joins inside the braid is named by its birth instead, so no
+         name is ever drawn twice. That is the canvas trail's rule, and
+         following it is most of what makes the two read alike. */
       var nameN = 0;
       lanes.forEach(function (lane) {
         if (!lane.label) return;
         var openStart = lane.startKind === 'origin';
         var openEnd = lane.endKind === 'open';
+        if (!openStart && !openEnd) return;
         var t = openStart ? lane.from + 0.2 + nameN * 0.34
-              : (openEnd ? lane.to - 0.4 - nameN * 1.5
-                         : lane.from + (lane.to - lane.from) * 0.42);
+                          : lane.to - 0.4 - nameN * 1.5;
         nameN++;
         var p = laneAt(lane, t);
         /* Every line still going ends at the same moment, so their names
@@ -2114,7 +2163,7 @@
         b.type = 'button';
         b.dataset.strand = lane.id;
         b.style.setProperty('--tone', lane.tone);
-        b.style.left = clamp(p.x, 60, MAP.w - 60) + 'px';
+        b.style.left = clamp(p.x, 60, MAP.w - 215) + 'px';
         b.style.top = clamp(p.y, 30, MAP.h - 30) + 'px';
         b.textContent = lane.label;
         b.setAttribute('aria-pressed', 'false');
@@ -2125,18 +2174,30 @@
 
       /* --- the joints of the braid: a life starting, two becoming one */
       joints.forEach(function (j) {
-        var n = el('div', 'atlas-joint');
-        var jp = clear({ x: j.x, y: j.y }, Math.max(80, j.text.length * 6), 24, 0, -1);
+        /* A birth is where a life is named, so it is also where you press to
+           follow it — the mark and the name are one thing. A marriage names
+           no one new, so it stays a mark on the paper. */
+        var follows = j.kind === 'birth' && j.strand;
+        var n = el(follows ? 'button' : 'div', 'atlas-joint');
+        var jp = clear({ x: j.x, y: j.y }, Math.max(84, j.text.length * 6.5), 26, 0, -1);
         n.dataset.kind = j.kind;
         n.style.setProperty('--tone', j.tone);
         n.style.left = jp.x + 'px';
         n.style.top = jp.y + 'px';
-        n.setAttribute('aria-hidden', 'true');
         var mark = el('span', 'atlas-joint-mark');
         var text = el('span', 'atlas-joint-text');
         text.textContent = j.text;
         n.appendChild(mark);
         n.appendChild(text);
+        if (follows) {
+          n.type = 'button';
+          n.dataset.strand = j.strand;
+          n.setAttribute('aria-pressed', 'false');
+          n.setAttribute('aria-label', 'Follow ' + j.who + '’s trail');
+          n.addEventListener('click', function () { emit('person', j.strand); });
+        } else {
+          n.setAttribute('aria-hidden', 'true');
+        }
         layer.appendChild(n);
       });
 
@@ -2162,6 +2223,9 @@
 
         b.appendChild(el('span', 'atlas-wp-glow'));
         b.appendChild(el('span', 'atlas-wp-disc'));
+        var year = el('span', 'atlas-wp-year');
+        year.textContent = w.year || '';
+        if (w.year) b.appendChild(year);
         var cap = el('span', 'atlas-wp-cap');
         cap.textContent = w.title;
         b.appendChild(cap);
@@ -2190,16 +2254,16 @@
          the country carries on past the last thing anybody has written. */
       var first = waypoints[0];
       var start = el('div', 'atlas-mark');
-      var sp = clear({ x: first.x, y: first.y - 34 }, 108, 26, -0.6, -0.8);
+      var sp = clear({ x: first.x - 58, y: first.y - 30 }, 108, 26, -0.7, -0.7);
       start.style.left = clamp(sp.x, 70, MAP.w - 70) + 'px';
       start.style.top = sp.y + 'px';
       start.textContent = 'Start · ' + (first.year || '');
       layer.appendChild(start);
 
-      var last = onSpine(1.05);
+      var last = onSpine(1.0);
       var on = el('div', 'atlas-mark onward');
-      on.style.left = clamp(last.x - 40, 80, MAP.w - 80) + 'px';
-      on.style.top = clamp(last.y + 86, 40, MAP.h - 40) + 'px';
+      on.style.left = clamp(last.x - 30, 80, MAP.w - 230) + 'px';
+      on.style.top = clamp(last.y + 96, 40, MAP.h - 40) + 'px';
       on.textContent = 'The trail continues';
       layer.appendChild(on);
 
@@ -2268,11 +2332,12 @@
       /* The name of whoever is being followed is marked as chosen, and the
          other lives step back — the same gesture the people rail makes, so
          pressing either one shows the same thing. */
-      [].slice.call(layer.querySelectorAll('.atlas-name')).forEach(function (n) {
-        var mine = n.dataset.strand === emphasis.person;
-        n.setAttribute('aria-pressed', mine ? 'true' : 'false');
-        n.dataset.off = (emphasis.person && !mine) ? '1' : '';
-      });
+      [].slice.call(layer.querySelectorAll('.atlas-name, .atlas-joint[data-strand]'))
+        .forEach(function (n) {
+          var mine = n.dataset.strand === emphasis.person;
+          n.setAttribute('aria-pressed', mine ? 'true' : 'false');
+          n.dataset.off = (emphasis.person && !mine) ? '1' : '';
+        });
       drawWanted = true;
     }
     function markFocus() {
@@ -2481,16 +2546,11 @@
             from: l.from, to: l.to,
             startsAt: l.startsAt === undefined ? null : l.startsAt,
             endsAt: l.endsAt === undefined ? null : l.endsAt,
-            phase: seed,
-            /* How much a life wanders. A line the archive has a lot to say
-               about wanders visibly; one it barely knows keeps closer to its
-               lane, because there is less of it to wander with. */
-            amp: 0.5 + (l.weight || 0) * 0.42 + seed * 0.26,
-            freq: 0.74 + seed * 0.4,
-            /* Two lines that marry travel side by side rather than fusing.
-               Which side is decided by where each came from, so neither
-               crosses over its partner to get there. */
-            pairGap: (l.side < 0 ? -1 : 1) * 0.2
+            /* One number per strand, and the same wander for every life:
+               how much the archive happens to say about somebody is not a
+               reason to draw their line differently. */
+            phase: seed * TAU,
+            fadeIn: !!l.fadeIn
           };
         });
         laneById = {};

@@ -1298,6 +1298,7 @@
         return {
           id: l.id, label: l.label, tone: l.tone, side: l.side, base: l.base,
           startKind: l.startKind, endKind: l.endKind, joinTarget: l.joinTarget,
+          fadeIn: l.startKind === 'begins',
           from: l.from, to: l.to, startsAt: l.startsAt, endsAt: l.endsAt,
           weight: (counts[l.id] || 0) / most
         };

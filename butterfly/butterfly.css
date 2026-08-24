@@ -2370,6 +2370,26 @@ body[data-lens="atlas"] button:focus-visible{ outline-color: #B4432E; }
     0 0 9px color-mix(in srgb, var(--tone, #FFC46B) 95%, transparent),
     0 0 18px color-mix(in srgb, var(--tone, #FFC46B) 60%, transparent);
 }
+.atlas-wp-year{
+  position: absolute;
+  bottom: 26px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  font-variant-numeric: tabular-nums;
+  color: rgba(62,49,37,0.7);
+  text-shadow: 0 0 3px rgba(250,245,232,0.98), 0 0 6px rgba(250,245,232,0.85);
+  opacity: 0;
+  transition: opacity .25s ease;
+  pointer-events: none;
+}
+.atlas-layer[data-lod="mid"] .atlas-wp-year,
+.atlas-layer[data-lod="near"] .atlas-wp-year{ opacity: 1; }
+.atlas-wp[data-off="1"] .atlas-wp-year{ opacity: 0; }
+
 .atlas-wp-cap{
   position: absolute;
   top: 27px;
@@ -2483,12 +2503,26 @@ body[data-lens="atlas"] button:focus-visible{ outline-color: #B4432E; }
   display: flex;
   align-items: center;
   gap: 0.3em;
+  background: none;
+  border: 0;
+  padding: 0.4rem 0.3rem;
+  min-height: 2.2rem;
   pointer-events: none;
-  opacity: 0;
   transition: opacity .3s ease;
 }
-.atlas-layer[data-lod="mid"] .atlas-joint,
-.atlas-layer[data-lod="near"] .atlas-joint{ opacity: 1; }
+/* A birth names somebody, so it is pressable; a marriage names no one new. */
+button.atlas-joint{ pointer-events: auto; cursor: pointer; }
+button.atlas-joint:hover .atlas-joint-text{ color: #17110B; }
+button.atlas-joint[aria-pressed="true"] .atlas-joint-text{ color: #17110B; }
+button.atlas-joint[aria-pressed="true"] .atlas-joint-mark{
+  background: var(--tone, #B4432E);
+  transform: scale(1.25);
+}
+button.atlas-joint[data-kind="union"][aria-pressed="true"] .atlas-joint-mark{
+  transform: rotate(45deg) scale(1.25);
+}
+.atlas-joint[data-off="1"]{ opacity: 0.34; }
+button.atlas-joint:focus-visible{ outline: 2px solid #B4432E; outline-offset: 2px; }
 .atlas-joint-mark{
   width: 7px; height: 7px;
   flex: none;

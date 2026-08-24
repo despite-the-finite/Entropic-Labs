@@ -391,16 +391,28 @@ laid over painted ground instead of a dark plane. Nothing about the family is
 decided in `atlas.js`: it is handed the same resolved lanes and the same time
 axis the canvas lens gets, and only says where on the paper they fall.
 
-**One spine carries the time.** A single line crosses the country from the
-east, where the record starts, to the west, where the paint gives out; each
-strand is drawn at its own offset either side of it, using the braid's own
-offsets unchanged, so a birth still leaves its parent exactly and a marriage
-still arrives exactly. That spine is generated rather than plotted, because it
-has a requirement a hand-drawn line kept breaking: an offset curve folds over
-itself wherever the curve it follows turns tighter than the offset. It is a
-long sweep with one slow wave over it, sized so the tightest bend anywhere is
-about 290 map units against a widest lane of some 170 — enough room, and the
-reason it stays a braid instead of a knot.
+**One spine carries the time**, west to east, the way the canvas trail runs
+and the way anybody reads. Each strand is drawn at its own offset either side
+of it — and the offsets, the wobble, the merge and branch widths are the
+canvas trail's own numbers, not larger ones. That last part matters more than
+it sounds: a map is a bigger sheet than a screen and it is tempting to let the
+lines wander further across it, which is exactly what made the braid hard to
+follow. The wander stays small, the distance between lanes does the work, and
+a line that joins another gives up its position for it *exactly*, so the
+confluence is exact by construction and two trails really do become one.
+
+The spine is shallow, and generated rather than plotted, for two reasons. An
+offset curve folds over itself wherever the curve it follows turns tighter
+than the offset, so both of its waves complete a whole number of turns across
+the sheet and the tightest bend anywhere is several times the widest lane —
+that is the difference between a braid and a knot. And a line that climbs and
+dives across the paper stops being followable at all: the canvas trail is a
+level ribbon and the whole of its readability comes from that, so this one
+undulates a fraction of what a landscape would take.
+
+Because time runs left to right, the spine's normal points down, which means a
+strand at side −1 sits above the trunk here exactly as it does there. Flip the
+spine and the whole family mirrors.
 
 **The ground is chapters, and none of it is named.** Because time runs along
 the spine, a stretch of ground can only be a stretch of years — so each one
@@ -423,7 +435,7 @@ like the life it carries — and means the map can never fall out of step with
 the family's layout, because both are derived from the same line.
 
 **A memory is a light on the ground**, in the category tone the whole room
-uses. It carried a number for a while, the way a trail map numbers its
+uses, with its year under it once there is room to print one. It carried a number for a while, the way a trail map numbers its
 segments — but a life is not a set of segments, and the number only told you
 the order, which the trail itself already tells you. What is left is a lit
 bead: bright where the light is, its own colour around that, a ring of paper
@@ -437,10 +449,13 @@ memories first and then against each other, each stepping off in a direction
 that suits it — a name steps the way its own line already leans, so it never
 crosses the braid to find room. Add a story and every label re-negotiates.
 
-**The braid's joints are map furniture.** A birth is a circle on the line with
-the child's name and year; a marriage is a diamond where two lines arrive.
-They are different shapes as well as different colours, so neither depends on
-being seen in colour.
+**The braid's joints are map furniture, and they name people.** A birth is a
+circle on the line carrying the child's name and year; a marriage is a diamond
+where two lines arrive. Different shapes as well as different colours, so
+neither depends on being seen in colour — and because a birth is where a life
+is named, it is also what you press to follow that life. A name is otherwise
+written only at whichever end of a line stays open, which is the canvas
+trail's rule: no name is ever drawn twice.
 
 **The butterflies are the room's own, and there are four reasons one appears.**
 You followed a category, and its butterfly crosses the country in that
