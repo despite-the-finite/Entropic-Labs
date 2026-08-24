@@ -13,6 +13,14 @@
 -->
 
 <canvas id="trails" aria-hidden="true"></canvas>
+
+<!-- The second lens. Empty here: atlas.js paints the country, places the
+     waypoints and writes the names inside this element, and only while it is
+     the lens actually being looked through. -->
+<div class="atlas" id="atlas" tabindex="0" role="group"
+     aria-label="A trail map of one life. Drag to move the map, scroll or pinch to zoom, arrow keys to pan, plus and minus to zoom, zero to see the whole country."
+     hidden></div>
+
 <div class="haze" aria-hidden="true"></div>
 
 <nav class="bt-nav">
@@ -76,13 +84,24 @@
   </div>
 </div>
 
-<div class="views" id="views" role="group" aria-label="View">
-  <button type="button" data-view="trail" aria-pressed="true">Trail</button>
-  <button type="button" data-view="constellation" aria-pressed="false" title="See the whole trail">Whole trail</button>
-  <button type="button" data-view="map" aria-pressed="false" title="See where it happened">Places</button>
+<!-- Two controls, one bar on a phone and two stacked on a wide screen.
+     The lens is which experience you are having; the view is a layout
+     inside the trails lens, so it goes away when the mountain is up. -->
+<div class="viewbar" id="viewbar">
+  <div class="lenses" id="lenses" role="group" aria-label="Visual experience"></div>
+  <div class="views" id="views" role="group" aria-label="View">
+    <button type="button" data-view="trail" aria-pressed="true">Trail</button>
+    <button type="button" data-view="constellation" aria-pressed="false" title="See the whole trail">Whole trail</button>
+    <button type="button" data-view="map" aria-pressed="false" title="See where it happened">Places</button>
+  </div>
 </div>
 
-<div class="eras" id="eras" role="group" aria-label="Time" hidden></div>
+<!-- Who and when. One scrolling strip on a phone; two rails, one at each
+     edge, on a wide screen. -->
+<div class="rails" id="rails">
+  <div class="folk" id="folk" role="group" aria-label="Follow a person" hidden></div>
+  <div class="eras" id="eras" role="group" aria-label="Time" hidden></div>
+</div>
 
 <!-- one memory -->
 <article class="panel story" id="story" role="region" aria-label="A memory" hidden></article>
@@ -117,4 +136,5 @@
 
 <script src="butterfly/data/stories.js"></script>
 <script src="butterfly/trails.js"></script>
+<script src="butterfly/atlas.js"></script>
 <script src="butterfly/butterfly.js"></script>

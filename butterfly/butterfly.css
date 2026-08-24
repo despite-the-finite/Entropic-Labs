@@ -347,6 +347,8 @@ h1, h2, h3, h4{
 body[data-gate="1"] .plate,
 body[data-gate="1"] .dock,
 body[data-gate="1"] .views,
+body[data-gate="1"] .lenses,
+body[data-gate="1"] .folk,
 body[data-gate="1"] .eras,
 body[data-gate="1"] .readout,
 body[data-gate="1"] .beginning{
@@ -635,7 +637,7 @@ body[data-panel="1"] .plate{ pointer-events: none; }
   position: fixed;
   z-index: 21;
   right: clamp(1.1rem, 3vw, 2.2rem);
-  top: calc(var(--bar-h) + 0.6rem);
+  top: calc(var(--bar-h) + 4rem);
   display: flex;
   border: 1px solid var(--hairline);
   border-radius: 2px;
@@ -2007,7 +2009,11 @@ body[data-panel="1"] .plate{ pointer-events: none; }
 
   /* the sheet owns the bottom of the screen while it is open */
   body[data-panel="1"] .dock,
+  body[data-panel="1"] .viewbar,
   body[data-panel="1"] .views,
+  body[data-panel="1"] .lenses,
+  body[data-panel="1"] .rails,
+  body[data-panel="1"] .folk,
   body[data-panel="1"] .eras,
   body[data-panel="1"] .readout,
   body[data-panel="1"] .beginning{ display: none; }
@@ -2052,7 +2058,10 @@ body[data-panel="1"] .plate{ pointer-events: none; }
   .cat-chip:focus-visible .wing::before,
   .cat-chip:focus-visible .wing::after{ animation: none; }
   .gate, .gate-line, .gate-actions, .plate, .whisper, .photo,
-  .beginning, .dock, .views, .eras{ transition: none; }
+  .beginning, .dock, .views, .lenses, .folk, .eras,
+  #trails, .atlas, .atlas-wp, .atlas-town,
+  .atlas-name, .atlas-joint{ transition: none; }
+  .atlas-wp[data-chaos="1"] .atlas-wp-glow{ animation: none; }
   .gate-line, .gate-actions{ opacity: 1; transform: none; }
   .photo{ transform: none; }
   /* The beats in a story are punctuation, so they keep their weight and
@@ -2066,4 +2075,583 @@ body[data-panel="1"] .plate{ pointer-events: none; }
   .at-now.moved{ animation: none; }
   .journey li{ transition: none; }
   *{ scroll-behavior: auto; }
+}
+
+/* ==========================================================================
+   LENSES — which experience, and the two worlds it chooses between
+   ==========================================================================
+   The lens is a higher-order choice than the view: TRAILS and MOUNTAIN are
+   two readings of the same archive, where TRAIL / WHOLE TRAIL / PLACES are
+   layouts inside the first of them. On a wide screen that hierarchy is drawn
+   as two stacked bars; on a phone there is only room for one, so the two
+   groups share a scrolling strip with a rule between them.
+
+   .viewbar and .rails are grouping boxes that dissolve on a wide screen —
+   display:contents hands their children straight back to the viewport, so
+   each keeps the fixed position it has always had.
+   ========================================================================== */
+.viewbar, .rails{ display: contents; }
+
+.lenses{
+  position: fixed;
+  z-index: 21;
+  right: clamp(1.1rem, 3vw, 2.2rem);
+  top: calc(var(--bar-h) + 0.6rem);
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--hairline-strong);
+  border-radius: 2px;
+  overflow: hidden;
+  background: rgba(11,8,18,0.78);
+  backdrop-filter: blur(9px);
+  -webkit-backdrop-filter: blur(9px);
+  transition: opacity .5s ease;
+}
+.lens-btn{
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ash);
+  background: none;
+  border: 0;
+  border-right: 1px solid var(--hairline);
+  min-height: 3rem;
+  padding: 0 0.95rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color .16s ease, background .16s ease;
+}
+.lens-btn:last-child{ border-right: 0; }
+.lens-btn .lens-glyph{
+  font-size: 0.8rem;
+  line-height: 1;
+  opacity: 0.65;
+  transition: opacity .16s ease, text-shadow .16s ease;
+}
+.lens-btn:hover{ color: var(--paper); }
+.lens-btn:hover .lens-glyph{ opacity: 1; }
+/* The chosen lens is named in three ways at once — filled, lit and marked —
+   because "which of these two am I looking through" must not be a matter of
+   noticing a colour. */
+.lens-btn[aria-pressed="true"]{
+  color: var(--ink);
+  background: var(--ember);
+}
+.lens-btn[aria-pressed="true"] .lens-glyph{ opacity: 1; }
+
+/* ==========================================================================
+   THE PEOPLE RAIL — follow a life
+   ========================================================================== */
+.folk{
+  position: fixed;
+  z-index: 21;
+  left: clamp(1.1rem, 3vw, 2.2rem);
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  align-items: flex-start;
+  max-height: 52vh;
+  overflow-y: auto;
+  scrollbar-width: none;
+  transition: opacity .5s ease;
+}
+.folk[hidden]{ display: none; }
+.folk::-webkit-scrollbar{ display: none; }
+.folk-btn{
+  display: flex;
+  align-items: center;
+  gap: 0.55em;
+  background: none;
+  border: 0;
+  color: rgba(156,147,184,0.7);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  min-height: 2.4rem;
+  padding: 0 0.2rem;
+  white-space: nowrap;
+  transition: color .16s ease;
+}
+/* Each life carries its own light, the same one it is drawn in. The dot is
+   the colour; the label never is, because 0.6rem mono in #7C4DFF is not
+   text anybody can read. */
+.folk-btn::before{
+  content: "";
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex: none;
+  background: var(--tone, var(--ember));
+  box-shadow: 0 0 6px color-mix(in srgb, var(--tone, var(--ember)) 65%, transparent);
+  opacity: 0.7;
+  transition: opacity .16s ease, transform .16s ease;
+}
+.folk-btn:hover{ color: var(--paper); }
+.folk-btn:hover::before{ opacity: 1; }
+.folk-btn[aria-pressed="true"]{ color: var(--ember); }
+.folk-btn[aria-pressed="true"]::before{ opacity: 1; transform: scale(1.45); }/* ==========================================================================
+   THE TWO WORLDS — cross-fade, and only one of them running
+   ==========================================================================
+   Whichever lens is not being looked through stops drawing entirely: the
+   canvas engine's loop is halted and the atlas's rAF is cancelled, so there
+   is never a second animation burning a phone battery out of sight.
+   ========================================================================== */
+#trails, .atlas{ transition: opacity .26s ease; }
+/* The way in belongs to the canvas whichever lens is remembered: one
+   butterfly crosses the gate, and the country waits behind it. */
+body[data-gate="1"] #trails{ opacity: 1; }
+body[data-gate="1"] .atlas{ opacity: 0; }
+body[data-lens="atlas"] #trails{ opacity: 0; pointer-events: none; }
+body[data-lens="atlas"] .views{ display: none; }
+.atlas[hidden]{ display: none; }
+.atlas.entering{ opacity: 0; }
+
+/* On paper the room's own furniture has to change colour or it disappears.
+   Only the pieces that sit over the map are touched; every panel, sheet and
+   dialogue stays exactly as dark as it has always been. */
+body[data-lens="atlas"]{
+  background: #E4D8BC;
+}
+body[data-lens="atlas"] .haze::after{
+  background: radial-gradient(118% 96% at 50% 52%, transparent 52%, rgba(120,96,58,0.30) 100%);
+}
+body[data-lens="atlas"] .haze::before{ opacity: 0.055; mix-blend-mode: multiply; }
+body[data-lens="atlas"] .bt-nav{
+  background: linear-gradient(rgba(244,237,220,0.94), rgba(244,237,220,0.72) 70%, rgba(244,237,220,0));
+  border-bottom-color: rgba(74,59,44,0.14);
+}
+body[data-lens="atlas"] .bt-nav .brand,
+body[data-lens="atlas"] .navlinks a:hover,
+body[data-lens="atlas"] .navlinks a[aria-current="page"]{ color: #33281E; }
+body[data-lens="atlas"] .navlinks a{ color: #6B5B49; }
+body[data-lens="atlas"] .plate h1{ color: #33281E; text-shadow: 0 1px 0 rgba(255,252,240,0.7); }
+/* The room's own words now sit over paint rather than over a dark room, so
+   they carry a paper-coloured halo instead of relying on the ground. */
+body[data-lens="atlas"] .plate .sub,
+body[data-lens="atlas"] .plate .hint,
+body[data-lens="atlas"] .counts,
+body[data-lens="atlas"] .whisper{
+  text-shadow: 0 0 4px rgba(246,240,225,0.95), 0 0 9px rgba(246,240,225,0.85);
+}
+body[data-lens="atlas"] .plate .sub{ color: #6B5B49; }
+body[data-lens="atlas"] .plate .hint{ color: rgba(107,91,73,0.78); }
+body[data-lens="atlas"] .what-is{ color: #2F6F63; border-bottom-color: rgba(47,111,99,0.4); }
+body[data-lens="atlas"] .counts{ color: rgba(74,59,44,0.78); }
+body[data-lens="atlas"] .counts b{ color: #9A5A1E; }
+body[data-lens="atlas"] .whisper{ color: #4A3B2C; }
+body[data-lens="atlas"] .whisper::before{ filter: grayscale(1) brightness(0.5); }
+body[data-lens="atlas"] .lenses,
+body[data-lens="atlas"] .views{
+  background: rgba(250,245,232,0.86);
+  border-color: rgba(74,59,44,0.28);
+}
+body[data-lens="atlas"] .lens-btn{ color: #6B5B49; border-right-color: rgba(74,59,44,0.16); }
+body[data-lens="atlas"] .lens-btn:hover{ color: #2C2219; }
+body[data-lens="atlas"] .lens-btn[aria-pressed="true"]{ color: #FFF8E8; background: #B4432E; }
+body[data-lens="atlas"] .era-btn,
+body[data-lens="atlas"] .folk-btn{
+  text-shadow: 0 0 4px rgba(246,240,225,0.95), 0 0 8px rgba(246,240,225,0.8);
+}
+body[data-lens="atlas"] .era-btn{ color: rgba(74,59,44,0.66); }
+body[data-lens="atlas"] .era-btn:hover,
+body[data-lens="atlas"] .era-btn[aria-pressed="true"]{ color: #B4432E; }
+body[data-lens="atlas"] .folk-btn{ color: rgba(74,59,44,0.7); }
+body[data-lens="atlas"] .folk-btn:hover{ color: #2C2219; }
+body[data-lens="atlas"] .folk-btn[aria-pressed="true"]{ color: #B4432E; }
+body[data-lens="atlas"] .cat-chip{
+  background: color-mix(in srgb, var(--tone, #B4432E) 13%, rgba(250,245,232,0.88));
+  color: #4A3B2C;
+  border-color: color-mix(in srgb, var(--tone, #B4432E) 45%, transparent);
+}
+body[data-lens="atlas"] .cat-chip .count{ color: rgba(74,59,44,0.6); }
+body[data-lens="atlas"] .cat-chip[data-empty="1"]{
+  background: rgba(250,245,232,0.8); color: rgba(74,59,44,0.5);
+  border-color: rgba(74,59,44,0.18);
+}
+body[data-lens="atlas"] .bt-btn{
+  background: rgba(250,245,232,0.9);
+  border-color: rgba(74,59,44,0.26);
+  color: #4A3B2C;
+}
+body[data-lens="atlas"] .bt-btn:hover{ border-color: #B4432E; color: #B4432E; }
+body[data-lens="atlas"] a:focus-visible,
+body[data-lens="atlas"] button:focus-visible{ outline-color: #B4432E; }
+
+/* ==========================================================================
+   THE ATLAS — a trail map of one life
+   ==========================================================================
+   Sunlit paper, painted country, and the memories set into it as lights.
+   The map is one canvas; everything with words in it lives in .atlas-layer,
+   which pans and zooms as a single transform. Type counter-scales off the
+   --z that layer carries, so a label is the same size at every scale, and
+   --lod decides how much of it there is room to say.
+   ========================================================================== */
+.atlas{
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  touch-action: none;          /* the map owns pan and pinch */
+  cursor: grab;
+  outline: none;
+  background: #E4D8BC;
+}
+.atlas[data-drag="1"]{ cursor: grabbing; }
+.atlas:focus-visible{ outline: 2px solid #B4432E; outline-offset: -3px; }
+.atlas-canvas{ position: absolute; inset: 0; display: block; }
+.atlas-layer{
+  position: absolute;
+  left: 0; top: 0;
+  width: 0; height: 0;
+  transform-origin: 0 0;
+  pointer-events: none;        /* the paper underneath still takes the drag */
+}
+
+/* --- a memory ------------------------------------------------------------
+   A numbered disc, the way a trail map numbers its segments, lit from
+   inside in its category's colour. The number is the channel that does not
+   depend on seeing the colour; the glow is the one that makes it a memory
+   rather than a bus stop. */
+.atlas-wp{
+  position: absolute;
+  width: 44px; height: 44px;
+  margin: -22px 0 0 -22px;
+  padding: 0;
+  border: 0;
+  background: none;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
+  transform: scale(calc(1 / var(--z, 1)));
+  transition: opacity .3s ease;
+}
+.atlas-wp[data-off="1"]{ opacity: 0.16; pointer-events: none; }
+.atlas-wp[data-aside="1"]{ opacity: 0.42; }
+.atlas-wp-glow{
+  position: absolute;
+  width: calc(46px * var(--w, 1)); height: calc(46px * var(--w, 1));
+  border-radius: 50%;
+  background: radial-gradient(circle closest-side,
+              color-mix(in srgb, var(--tone, #FFC46B) 62%, transparent) 0%,
+              color-mix(in srgb, var(--tone, #FFC46B) 22%, transparent) 38%,
+              transparent 70%);
+  filter: blur(1px);
+  transition: transform .25s ease, opacity .25s ease;
+}
+/* A light on the ground. Small and bright, with a thin ink ring so it still
+   reads where the paper behind it is pale — the ring is the part that does
+   not depend on the colour being seen. */
+.atlas-wp-disc{
+  position: relative;
+  width: 11px; height: 11px;
+  border-radius: 50%;
+  /* A lit bead rather than a ring: bright where the light is, its own colour
+     around that, and the deepened tone at the rim so it still has an edge on
+     pale paper. The ring of paper outside it is what lifts it off the
+     ground, and is the part that does not depend on seeing the colour. */
+  background: radial-gradient(circle at 36% 32%,
+              #FFFDF6 0%,
+              color-mix(in srgb, var(--tone, #FFC46B) 72%, #FFFFFF) 30%,
+              var(--tone, #FFC46B) 62%,
+              var(--deep, #8a6a3a) 100%);
+  box-shadow:
+    0 0 0 1.5px rgba(255,252,242,0.92),
+    0 0 0 2.4px rgba(74,59,44,0.42),
+    0 0 9px color-mix(in srgb, var(--tone, #FFC46B) 95%, transparent),
+    0 0 18px color-mix(in srgb, var(--tone, #FFC46B) 60%, transparent);
+}
+.atlas-wp-cap{
+  position: absolute;
+  top: 27px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+  font-style: italic;
+  font-size: 11px;
+  color: #3E3125;
+  text-shadow: 0 0 3px rgba(250,245,232,0.95), 0 0 6px rgba(250,245,232,0.8);
+  opacity: 0;
+  transition: opacity .25s ease;
+  pointer-events: none;
+}
+.atlas-layer[data-lod="near"] .atlas-wp-cap{ opacity: 0.92; }
+.atlas-wp:hover .atlas-wp-glow,
+.atlas-wp:focus-visible .atlas-wp-glow{ transform: scale(1.5); }
+.atlas-wp:hover .atlas-wp-disc,
+.atlas-wp:focus-visible .atlas-wp-disc{ transform: scale(1.16); }
+.atlas-wp:focus-visible{ outline: 2px solid #B4432E; outline-offset: 3px; }
+.atlas-wp[data-on="1"] .atlas-wp-disc{
+  transform: scale(1.4);
+  box-shadow:
+    0 0 0 2.5px rgba(255,250,235,0.95),
+    0 0 0 4px rgba(180,67,46,0.9),
+    0 0 16px color-mix(in srgb, var(--tone, #FFC46B) 95%, transparent);
+}
+.atlas-wp[data-chaos="1"] .atlas-wp-glow{ animation: atlas-breathe 4.4s ease-in-out infinite; }
+/* A sealed memory keeps its place on the route and gives no light away. */
+/* A sealed memory keeps its place on the trail and gives no light away. */
+.atlas-wp[data-classified="1"] .atlas-wp-disc{
+  background: rgba(250,245,232,0.94);
+  box-shadow: 0 0 0 1.5px rgba(255,252,242,0.9), 0 0 0 2.4px rgba(74,59,44,0.5);
+}
+.atlas-wp[data-classified="1"] .atlas-wp-glow{ opacity: 0.35; }
+@keyframes atlas-breathe{
+  0%, 100% { transform: scale(1);    opacity: 0.9; }
+  50%      { transform: scale(1.3);  opacity: 1; }
+}
+
+/* --- the towns. The only names the map prints, and every one of them
+   comes from the archive: a place a memory actually happened in. ------ */
+
+.atlas-town{
+  position: absolute;
+  transform: translate(-50%, -50%) scale(calc(1 / var(--z, 1)));
+  display: flex;
+  align-items: center;
+  gap: 0.32em;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+.atlas-town[data-side="left"]{ flex-direction: row-reverse; }
+.atlas-layer[data-lod="mid"] .atlas-town,
+.atlas-layer[data-lod="near"] .atlas-town{ opacity: 1; }
+.atlas-town-dot{
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: #FAF5E8;
+  border: 1.5px solid #4A3B2C;
+  flex: none;
+}
+.atlas-town-name{
+  font-family: var(--font-body);
+  font-size: 0.56rem;
+  letter-spacing: 0.06em;
+  color: #3E3125;
+  text-shadow: 0 0 3px rgba(250,245,232,0.95);
+  white-space: nowrap;
+}
+
+/* --- whose line is whose ------------------------------------------------
+   Written at whichever end of a life stays open, in that life's own colour,
+   and pressable: a name is how you follow somebody. */
+.atlas-name{
+  position: absolute;
+  transform: translate(-50%, -50%) scale(calc(1 / var(--z, 1)));
+  pointer-events: auto;
+  background: none;
+  border: 0;
+  border-bottom: 1.5px solid color-mix(in srgb, var(--tone, #B4432E) 70%, transparent);
+  color: #3E3125;
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 0.5rem 0.3rem 0.28rem;
+  min-height: 2.4rem;
+  cursor: pointer;
+  white-space: nowrap;
+  /* a halo rather than a box: this is a name written on the paper, not a
+     control sitting on top of it */
+  text-shadow: 0 0 4px rgba(250,245,232,0.98), 0 0 9px rgba(250,245,232,0.9);
+  transition: color .18s ease, opacity .3s ease;
+}
+.atlas-name:hover{ color: #17110B; border-bottom-color: var(--tone, #B4432E); }
+.atlas-name[aria-pressed="true"]{
+  color: #17110B;
+  border-bottom-color: var(--tone, #B4432E);
+  border-bottom-width: 3px;
+}
+.atlas-name[data-off="1"]{ opacity: 0.34; }
+.atlas-name:focus-visible{ outline: 2px solid #B4432E; outline-offset: 2px; }
+
+/* --- the joints of the braid: a life starting, two becoming one ---------- */
+.atlas-joint{
+  position: absolute;
+  transform: translate(-50%, -50%) scale(calc(1 / var(--z, 1)));
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+.atlas-layer[data-lod="mid"] .atlas-joint,
+.atlas-layer[data-lod="near"] .atlas-joint{ opacity: 1; }
+.atlas-joint-mark{
+  width: 7px; height: 7px;
+  flex: none;
+  border: 1.5px solid color-mix(in srgb, var(--tone, #B4432E) 75%, #4A3B2C);
+  background: rgba(255,252,242,0.9);
+}
+/* A birth is a fork in the line; a marriage is a diamond where two arrive.
+   The shapes differ so the two never rely on their colour to be told apart. */
+.atlas-joint[data-kind="birth"] .atlas-joint-mark{ border-radius: 50%; }
+.atlas-joint[data-kind="union"] .atlas-joint-mark{ transform: rotate(45deg); }
+.atlas-joint-text{
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(62,49,37,0.62);
+  text-shadow: 0 0 3px rgba(250,245,232,0.95);
+  white-space: nowrap;
+}
+
+/* --- where it starts, and where the paint gives out --------------------- */
+.atlas-mark{
+  position: absolute;
+  transform: translate(-50%, -50%) scale(calc(1 / var(--z, 1)));
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #B4432E;
+  text-shadow: 0 0 4px rgba(250,245,232,0.95);
+  white-space: nowrap;
+  pointer-events: none;
+}
+.atlas-mark.onward{
+  color: rgba(74,59,44,0.45);
+  font-style: normal;
+  letter-spacing: 0.16em;
+}
+
+/* --- what a waypoint says when you point at it -------------------------- */
+.atlas-tip{
+  position: fixed;
+  z-index: 24;
+  pointer-events: none;
+  max-width: min(18rem, 70vw);
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  padding: 0.5rem 0.7rem;
+  background: rgba(250,245,232,0.97);
+  border: 1px solid rgba(74,59,44,0.22);
+  border-left: 3px solid var(--tone, #B4432E);
+  border-radius: 2px;
+  box-shadow: 0 6px 18px rgba(74,59,44,0.18);
+}
+.atlas-tip[hidden]{ display: none; }
+.atlas-tip-when{
+  font-family: var(--font-mono);
+  font-size: 0.54rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #9A5A1E;
+}
+.atlas-tip-title{
+  font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+  font-size: 0.94rem;
+  line-height: 1.2;
+  color: #2C2219;
+}
+.atlas-tip-where{
+  font-family: var(--font-mono);
+  font-size: 0.54rem;
+  letter-spacing: 0.1em;
+  color: rgba(74,59,44,0.62);
+}
+
+/* ==========================================================================
+   THE FURNITURE, ON A PHONE
+   ==========================================================================
+   One bar for the two control groups, one strip for who and when. Nothing
+   new is added to the bottom stack: the people rail moves in beside the
+   decades rather than under them.
+   ========================================================================== */
+@media (max-width: 900px), (pointer: coarse) and (max-width: 1100px){
+  .viewbar{
+    display: flex;
+    position: fixed;
+    z-index: 21;
+    left: 0; right: 0;
+    bottom: calc(7.9rem + env(safe-area-inset-bottom));
+    align-items: center;
+    justify-content: safe center;
+    gap: 0.5rem;
+    padding: 0 var(--pad);
+    overflow-x: auto;
+    scrollbar-width: none;
+    transition: opacity .5s ease;
+  }
+  .viewbar::-webkit-scrollbar{ display: none; }
+  .lenses, .views{
+    position: static;
+    flex: none;
+    transform: none;
+    top: auto; right: auto; bottom: auto; left: auto;
+  }
+  .lens-btn{ font-size: 0.58rem; padding: 0 0.8rem; min-height: 2.9rem; }
+
+  .rails{
+    display: flex;
+    position: fixed;
+    z-index: 21;
+    left: 0; right: 0;
+    bottom: calc(11.1rem + env(safe-area-inset-bottom));
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0 var(--pad);
+    overflow-x: auto;
+    scrollbar-width: none;
+    transition: opacity .5s ease;
+  }
+  .rails::-webkit-scrollbar{ display: none; }
+  /* When runs first, exactly where the decade rail has always been, and who
+     follows it behind a hairline. The strip scrolls, the way the category
+     chips above it always have. */
+  .folk{
+    position: static;
+    transform: none;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.2rem;
+    max-height: none;
+    overflow: visible;
+    flex: none;
+    order: 2;
+    border-left: 1px solid var(--hairline);
+    padding-left: 0.6rem;
+  }
+  .eras{
+    position: static;
+    transform: none;
+    flex: none;
+    order: 1;
+    bottom: auto; top: auto; left: auto; right: auto;
+    padding: 0;
+    overflow: visible;
+  }
+  .eras[hidden] + .folk{ border-left: 0; padding-left: 0; }
+  .folk-btn{ padding: 0 0.55rem; min-height: 2.4rem; }
+
+  /* the country gets the whole screen behind the furniture */
+  .atlas-wp-cap{ display: none; }
+  .atlas-name{ font-size: 0.54rem; }
+  .atlas-joint-text{ font-size: 0.48rem; }
+}
+
+@media (max-width: 380px){
+  .lens-btn{ font-size: 0.56rem; padding: 0 0.65rem; letter-spacing: 0.12em; }
+  .folk-btn{ font-size: 0.56rem; letter-spacing: 0.1em; }
+}
+
+/* Short landscape phones already give the sheet a side; the mountain rails
+   would leave nothing in the middle, so who and when fold away with the
+   note and the sub-heading. */
+@media (max-height: 460px) and (orientation: landscape){
+  .rails{ display: none; }
 }

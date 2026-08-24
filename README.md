@@ -308,8 +308,37 @@ butterfly/
   butterfly.css             styles — the site palette, one room warmer
   data/stories.js           ALL the content: stories, categories, eras, places
   trails.js                 canvas engine: camera, layouts, butterflies, hit-testing
+  atlas.js                  the map lens: an invented country, painted and walked
   butterfly.js              controller: archive, state machine, routing, panels
 ```
+
+**Two lenses, one archive.** The room can be looked through in two ways, and
+the visitor picks which — TRAILS, the canvas world, and MAP, a painted trail
+map of an invented country. The choice sits in a segmented control near the
+view switch, is keyboard-walkable with the arrow keys, and is remembered in
+`localStorage` between visits (`el-bt-lens`). `V` cycles it.
+
+The distinction the architecture rests on: a **lens** is which experience you
+are having; a **view** — trail, whole trail, places — is a layout inside the
+trails lens, so the view switch goes away while the map is up and comes back
+with its selection intact. A link that names a layout (`#map`,
+`#whole-trail`) borrows the trails lens for that visit without rewriting the
+remembered preference; a link that names a memory opens it in whichever lens
+the visitor prefers.
+
+Category, decade and person are **shared state**, held by the room rather than
+by either lens, so changing lens is a change of drawing and never a change of
+what is being looked at. Pick the 2010s, pick Chaos, follow Karsh, switch to
+the map, and the same two memories are the ones still lit. The open
+memory, the panel and the URL survive the switch too. Only the lens that is
+being looked through draws: the other one's loop is stopped, not merely
+hidden, so a phone is never rendering two worlds at once.
+
+Adding a third lens is one entry in `LENSES` and one object that answers the
+same handful of calls — `setWorld`, `setLights`, `activate`, `deactivate`,
+`focus`, `setEmphasis` — plus the two events every lens reports, `select` and
+`hover`. Nothing about the archive, the filters, the routing or the story
+panel knows how many there are.
 
 **The trail is a braid.** Lives run alongside each other, converge when they
 marry, and divide again each time somebody is born — and then the new lines do
@@ -355,14 +384,125 @@ its markers instead. On a phone, where the whole braid is framed to fit and
 the lanes end up about a thumb's width apart, the markers show years only and
 the names arrive as you zoom in or pass over them.
 
+**The map is the braid, walked across a country.** It is the same layout the
+canvas trail draws — one line per life, lives running alongside each other,
+converging when they marry and dividing again each time somebody is born —
+laid over painted ground instead of a dark plane. Nothing about the family is
+decided in `atlas.js`: it is handed the same resolved lanes and the same time
+axis the canvas lens gets, and only says where on the paper they fall.
+
+**One spine carries the time.** A single line crosses the country from the
+east, where the record starts, to the west, where the paint gives out; each
+strand is drawn at its own offset either side of it, using the braid's own
+offsets unchanged, so a birth still leaves its parent exactly and a marriage
+still arrives exactly. That spine is generated rather than plotted, because it
+has a requirement a hand-drawn line kept breaking: an offset curve folds over
+itself wherever the curve it follows turns tighter than the offset. It is a
+long sweep with one slow wave over it, sized so the tightest bend anywhere is
+about 290 map units against a widest lane of some 170 — enough room, and the
+reason it stays a braid instead of a knot.
+
+**The ground is chapters, and none of it is named.** Because time runs along
+the spine, a stretch of ground can only be a stretch of years — so each one
+wears the landscape of wherever that chapter mostly happened: plains before
+1986, copper savanna through the Zambian years, a coast and an island for the
+years of leaving, alpine country for Colorado, water at the far end, and then
+the paper stops.
+
+Not one of them carries an invented name. These are real memories, and a
+made-up place name printed over them makes a true story look like a made-up
+one — the map ends up doing the archive a disservice by decorating it. The
+only names on this paper are the archive's own: the towns where the memories
+actually happened, set at the memories that happened there, and the names of
+the people whose lines they are.
+
+A chapter's outline is cut from the spine rather than placed: sample the years
+it covers, walk out to either bank, close the loop. The coast is cut the same
+way, one arm's length further out, which makes the country an island shaped
+like the life it carries — and means the map can never fall out of step with
+the family's layout, because both are derived from the same line.
+
+**A memory is a light on the ground**, in the category tone the whole room
+uses. It carried a number for a while, the way a trail map numbers its
+segments — but a life is not a set of segments, and the number only told you
+the order, which the trail itself already tells you. What is left is a lit
+bead: bright where the light is, its own colour around that, a ring of paper
+to lift it off the ground and a ring of ink outside that, which is the part
+that does not depend on the colour being seen. A chaos event keeps the slow
+breath it has in every other view.
+
+**Everything written on the paper goes through one collision list.** Towns,
+names, trailheads and the joints of the braid all check against the
+memories first and then against each other, each stepping off in a direction
+that suits it — a name steps the way its own line already leans, so it never
+crosses the braid to find room. Add a story and every label re-negotiates.
+
+**The braid's joints are map furniture.** A birth is a circle on the line with
+the child's name and year; a marriage is a diamond where two lines arrive.
+They are different shapes as well as different colours, so neither depends on
+being seen in colour.
+
+**The butterflies are the room's own, and there are four reasons one appears.**
+You followed a category, and its butterfly crosses the country in that
+category's tone and opens the memory when it gets there, camera in tow — the
+same gesture the canvas trail makes. You are following a life, and one walks
+that strand, resting a moment at each of their memories. You opened a memory,
+and one circles it for two seconds and goes. Or the map is simply being looked
+at, and two drift over it with nowhere to be. Only the ones on an errand leave
+a thread behind them: a thread means somebody sent it. With reduced motion
+none of them move and the loop stops dead between gestures.
+
+**The paint.** Sunlit cream paper, three passes of thin colour per wash that do
+not quite line up, and the darker rim a brush leaves where the water dries
+last — on coastlines, which want it, and not on chapters, where it would draw
+the very ellipse the shape is trying not to look like. The island is punched
+out of the water rather than floated on it, or every green would be a green
+mixed with blue. Peaks are folded-sine fractals; terrain is chevrons, stipple
+and dashes clipped inside each chapter; woods are planted across the whole
+island, not only where the archive has a name for the ground. All of it is
+seeded from strings, so the same country comes back on every visit and on
+every device.
+
+**Three animals, and they are the places.** An elk for Colorado over the high
+range, an African fish eagle for the Zambezi above the far water, and a dodo
+for Mauritius on the island off the crossing — painted as silhouettes rather
+than portraits, because a map illustration is not a field guide. Each has one
+part that moves.
+
+**How it performs.** The whole static map is painted once into an offscreen
+canvas at map resolution and blitted under the camera; only the trees, the
+animals and the butterflies are drawn per frame. Everything with words in it
+is a real DOM element inside one transformed layer, so panning and zooming is
+a single transform and one custom property rather than a hundred style writes,
+and the labels counter-scale off that property so type stays type at every
+zoom. How much is said is decided by how much country is on the screen, not by
+how far from a fit the camera is — otherwise a phone, whose fit is tiny, opens
+shouting every town name it has.
+
+**Getting around.** Drag or scroll to move, pinch or wheel to zoom, double tap
+to go in — or, once you are already in, back out to the whole country. Arrow
+keys pan, `+`/`-` zoom and `0` fits when the map has focus; the index carries
+*See the whole country*. On a wide screen a compass rose and a scale bar sit in
+the corner, and the scale is in years, because this is a map of a life and that
+is its distance.
+
 **Adding a story** means appending one object to `STORIES` in
 `butterfly/data/stories.js`. Nothing else needs touching. The trail places it
 on its strand at its year, the constellation clusters it with its era, the map
-plots it if it has coordinates, its category butterfly learns it has somewhere
-to fly, the era rail picks up its era, and every counter updates. Every field
+plots it if it has coordinates, the map hangs a light on the right person's
+line at the right year and re-negotiates every label around it, its category
+butterfly learns it has somewhere to fly, the era rail picks up its era, and every counter updates. Every field
 except `id` is optional and the room degrades quietly: a story with a title
 and nothing else renders, it just renders sparely. The field list at the top
 of that file documents every supported key.
+
+**The readout says what you have narrowed the archive to, and nothing else.**
+It used to open with the collection's measurements — how many memories, which
+years, how many places, how many traced forward — and that is a fact about the
+archive rather than about anything on the screen: it sat over the trail on
+every visit and said the same thing every time. What is left only appears once
+somebody has picked a category, a decade or a person, and says what they
+picked.
 
 **The butterflies are colour-coded**, and the code runs the whole way through:
 each category carries a `tone`, and that one value paints its chip in the dock,
