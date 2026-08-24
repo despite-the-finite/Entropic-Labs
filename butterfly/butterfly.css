@@ -1201,6 +1201,65 @@ body[data-panel="1"] .plate{ pointer-events: none; }
   color: var(--ash);
   margin-top: 0.7rem;
 }
+/* A date on a document sits under the caption, not against the end of it. */
+.st-figure figcaption .stamp{
+  display: block;
+  font-size: 0.55rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(156,147,184,0.62);
+  margin-top: 0.25rem;
+}
+
+/* A photograph standing in the telling rather than in the gallery at the
+   end. It borrows the found-photograph mount and only has to sit like a
+   paragraph instead of like a grid cell. */
+.photo.inline{
+  margin: 2rem auto;
+  max-width: 30rem;
+}
+.st-figure .fig-open{
+  display: block;
+  width: 100%;
+  padding: 0.9rem 0.7rem 0.6rem;
+  background: rgba(255,196,107,0.03);
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  cursor: zoom-in;
+  transition: border-color .16s ease;
+}
+.st-figure .fig-open:hover{ border-color: rgba(255,196,107,0.4); }
+
+/* Verse, kept as verse: the line breaks are the writing, not the layout. */
+.poem{
+  margin: 2rem 0;
+  padding: 0 0 0 1.3rem;
+  border-left: 1px solid rgba(255,196,107,0.3);
+}
+.poem-title{
+  font-family: var(--font-mono) !important;
+  font-size: 0.62rem !important;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ember) !important;
+  margin: 0 0 1.1rem !important;
+}
+.poem .stanza{
+  font-family: var(--font-body);
+  font-size: 1rem !important;
+  line-height: 1.95 !important;
+  color: var(--paper-warm) !important;
+  margin: 0 0 1.3rem !important;
+  text-wrap: initial;
+}
+.poem .stanza:last-of-type{ margin-bottom: 0 !important; }
+.poem-by{
+  font-family: var(--font-mono) !important;
+  font-size: 0.62rem !important;
+  letter-spacing: 0.14em;
+  color: var(--ash) !important;
+  margin: 1.2rem 0 0 !important;
+}
 
 /* A line in another language, and what it means. Same left rule as a
    transcribed noise, because both are lines lifted out of the telling and

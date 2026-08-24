@@ -487,12 +487,22 @@ moment in the same life, so they spread perpendicular to their own strand —
 moving them along it would slide them in time and claim a year nobody wrote
 down.
 
-**An undated confluence sits before the earliest branch**, not before the
-earliest dated anything. A marriage precedes the children that come out of it,
-so that is what it is anchored to — and the distinction is not academic: a
-memory can be older than every birth on the braid, because people had lives
-before their children, and anchoring to the axis start would slide an
-unrecorded wedding back behind it and silently claim a date nobody wrote down.
+**A join can carry the day, not just the year.** `start`/`end` take an
+optional `on` — "8 December 1984" — beside the `year`. The year does the
+geometry; `on` is what the reader is told, in the index and on the marker.
+
+**An undated confluence sits after the last dated memory before the earliest
+branch, and before the branch itself.** This only applies while a join has no
+year at all — Amma and Dad's now does, so the archive has stopped guessing at
+it. The rule stays for the next one. A marriage precedes the children that
+come out of it, so it cannot be anchored to the axis start — and it cannot sit
+on a fixed backoff either, because a memory on somebody's own line happened
+while they still had one, and a fixed offset lands on top of it the moment the
+archive gains memories older than its first birth. Halfway between the two is
+the only placement the data supports. Both failures were live: the first when
+Dad's 1973 memory arrived, the second when Amma's 1975 one did, and each would
+have drawn a wedding at a year nobody ever wrote down. The year itself stays
+unwritten, and the index still says so.
 
 **Causality is the point.** `causedBy` and `consequences` state the edges;
 reciprocal links are filled in automatically at load, so each edge is written
@@ -560,12 +570,17 @@ rather than on open, once each, and under `prefers-reduced-motion` they keep
 their weight and spacing and simply stop moving. Use them sparingly; the
 writing carries the rest.
 
-**Four things a story can carry besides prose.** A `warning` — a line or a
+**Five things a story can carry besides prose.** A `warning` — a line or a
 few — prints above the telling rather than inside it, because a warning that
 arrives late is not one. An `image` sets a picture in the telling rather than
-gathering it at the end, in the same frame a drawing gets, since to a reader
-they are the same object: a thing to look at with a line underneath saying
-what it is. A `figure` carries a drawing the room cannot compute:
+gathering it at the end, and opens to full size like every other photograph
+in the room, because a picture you cannot look at properly is half a picture.
+`mount: 'photo'` gives it the archive's found-photograph frame — tilted on
+its mount, never in itself — and anything without it is a document or a
+diagram and keeps the plain frame. A `poem` keeps verse as verse: the line
+breaks are the writing rather than the layout, and the stanzas keep the air
+the writer put between them. A `figure` carries a drawing the room cannot
+compute:
 a chart, a diagram, a joke with axes, written as SVG in the data file beside
 the words, because it is content and not machinery; `alt` is required and it
 is what the figure says to somebody who cannot see it. And inside any

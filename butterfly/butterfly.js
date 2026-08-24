@@ -276,10 +276,25 @@
     var y = startYear(s);
     if (y !== null) branchYears.push(y);
   });
-  var firstDated = branchYears.length
+  var firstBranchT = branchYears.length
     ? axisT(Math.min.apply(null, branchYears))
     : (axis.length ? axis[0].t : 0);
-  var undatedT = firstDated - UNDATED_BACKOFF;
+
+  /* It also sits AFTER the last dated memory that precedes that branch. A
+     memory on somebody's own line happened while they still had one, so an
+     unrecorded wedding cannot be placed on top of it — and a fixed backoff
+     will do exactly that as soon as the archive gains memories older than
+     its first birth. Halfway between the two is the only placement the data
+     supports; the year itself stays unwritten, and the index still says so. */
+  var lastBefore = null;
+  ordered.forEach(function (st) {
+    if (st.year === null) return;
+    var t = axisT(st.year);
+    if (t < firstBranchT && (lastBefore === null || t > lastBefore)) lastBefore = t;
+  });
+  var undatedT = lastBefore === null
+    ? firstBranchT - UNDATED_BACKOFF
+    : Math.max(firstBranchT - UNDATED_BACKOFF, (lastBefore + firstBranchT) / 2);
 
   /* A year on the axis, where null means "nobody wrote it down". */
   function momentT(year) { return year === null ? undatedT : axisT(year); }
@@ -318,7 +333,11 @@
       from: from,
       to: to,
       startsAt: startYear(s),
-      endsAt: endYear(s)
+      endsAt: endYear(s),
+      /* The day itself, where somebody has written it down. `year` places
+         the marker on the axis; this is what the reader is told. */
+      startsOn: (s.start && s.start.on) || null,
+      endsOn: (s.end && s.end.on) || null
     };
   });
 
@@ -331,10 +350,14 @@
     var a = startYear(s), b = endYear(s);
     var kind = (s.start && s.start.kind) || 'union';
     if (kind === 'origin') return ' — runs in from before the record';
-    if (kind === 'union') return a === null ? ' — from an unrecorded year' : ' — from ' + a;
+    if (kind === 'union') {
+      if (s.start && s.start.on) return ' — from ' + s.start.on;
+      return a === null ? ' — from an unrecorded year' : ' — from ' + a;
+    }
     var line = a === null ? '' : ' — from ' + a;
     if (b !== null && s.end && s.end.into && strandById[s.end.into]) {
-      line += ', joining ' + strandById[s.end.into].label + ' in ' + b;
+      line += ', joining ' + strandById[s.end.into].label +
+        ' in ' + ((s.end && s.end.on) || b);
     }
     return line;
   }
@@ -459,6 +482,7 @@
     Object.keys(weddings).forEach(function (key) {
       var w = weddings[key];
       var year = w.lane.endsAt;
+      var said = w.lane.endsOn || (year === null ? null : String(year));
       var target = w.lane.joinTarget;
       list.push({
         id: 'marker-wed-' + target,
@@ -478,7 +502,7 @@
           marker: true,
           note: year === null
             ? undatedNote
-            : w.who.join(' and ') + ' — married ' + year + '. Two trails become one.'
+            : w.who.join(' and ') + ' — married ' + said + '. Two trails become one.'
         }
       });
     });
@@ -1533,12 +1557,17 @@
       }
       if (p.kind === 'image') {
         /* A picture set in the telling rather than gathered at the end.
-           Same frame as a drawn figure, because to a reader they are the
-           same object: a thing to look at, with a line underneath saying
-           what it is. Loaded lazily and given its real dimensions so the
-           prose does not jump when it arrives. */
-        var pic = el('figure', 'st-figure');
-        var holder = el('div', 'fig-art');
+           It opens to full size like every other photograph in the room —
+           a picture the reader cannot look at properly is half a picture.
+
+           `mount: 'photo'` gives it the archive's found-photograph frame,
+           tilted on its mount rather than in itself; anything else is a
+           document or a diagram and gets the plain frame. Loaded lazily
+           and given its real dimensions so the prose does not jump. */
+        var asPhoto = p.mount === 'photo';
+        var pic = el('figure', asPhoto ? 'photo inline' : 'st-figure');
+        if (asPhoto) pic.style.setProperty('--tilt', (p.tilt || -0.9) + 'deg');
+
         var im = el('img');
         im.src = p.src || '';
         im.alt = p.alt || '';
@@ -1546,10 +1575,40 @@
         im.decoding = 'async';
         if (p.width) im.setAttribute('width', p.width);
         if (p.height) im.setAttribute('height', p.height);
-        holder.appendChild(im);
-        pic.appendChild(holder);
-        if (p.caption) pic.appendChild(setText(el('figcaption'), p.caption));
+
+        var open = el('button', asPhoto ? 'photo-btn' : 'fig-art fig-open');
+        open.type = 'button';
+        open.appendChild(im);
+        open.setAttribute('aria-label',
+          'Look closer' + (p.caption ? ': ' + p.caption : ''));
+        open.addEventListener('click', function () { openLightbox(p); });
+        pic.appendChild(open);
+
+        if (p.caption) {
+          var fc = setText(el('figcaption'), p.caption);
+          if (p.stamp) fc.appendChild(el('span', 'stamp', p.stamp));
+          pic.appendChild(fc);
+        }
         place(pic);
+        return;
+      }
+
+      if (p.kind === 'poem') {
+        /* Verse, kept as verse. Line breaks are the point, so they are not
+           reflowed into a paragraph, and stanzas keep the air between them
+           that the writer put there. */
+        var poem = el('div', 'poem');
+        if (p.title) poem.appendChild(el('p', 'poem-title', p.title));
+        (p.stanzas || []).forEach(function (stanza) {
+          var st = el('p', 'stanza');
+          arr(stanza).forEach(function (line, i) {
+            if (i) st.appendChild(el('br'));
+            setText(st, line);
+          });
+          poem.appendChild(st);
+        });
+        if (p.by) poem.appendChild(el('p', 'poem-by', p.by));
+        place(poem);
         return;
       }
       if (p.kind === 'figure') {

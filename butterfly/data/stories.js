@@ -98,10 +98,20 @@
                          order rather than all at once
                      { kind: 'image', src: 'img/trails/a-photo.jpg',
                        alt: 'What is in it.', caption: 'What it is.',
-                       width: 1023, height: 606 }
+                       width: 950, height: 950, mount: 'photo' }
                          a picture set in the telling rather than
-                         gathered at the end. `alt` is required; `width`
-                         and `height` stop the prose jumping when it loads
+                         gathered at the end. It opens full size like
+                         every photograph here. `alt` is required, and
+                         `width`/`height` stop the prose jumping when it
+                         loads. `mount: 'photo'` gives it the found-
+                         photograph frame, tilted on its mount rather
+                         than in itself; leave it off for a document or
+                         a diagram
+                     { kind: 'poem', title: 'For Dan',
+                       stanzas: [['A line.', 'And another.'], ['A new one.']] }
+                         verse kept as verse — the line breaks are the
+                         writing, not the layout, and the stanzas keep
+                         the air the writer put between them
                      { kind: 'figure', alt: 'What the chart shows.',
                        caption: 'What it is called.',
                        svg: '<svg viewBox="0 0 320 190">…</svg>' }
@@ -309,17 +319,20 @@
     {
       id: 'together', label: 'Amma & Dad', tone: '#FFC46B',
       base: null, side: 0,
-      start: { kind: 'union', year: null }, end: { kind: 'open' }
+      start: { kind: 'union', year: 1984, on: '8 December 1984' },
+      end: { kind: 'open' }
     },
     {
       id: 'amma', label: 'Amma', tone: '#FF6B9A',
       base: 'together', side: -1,
-      start: { kind: 'origin' }, end: { kind: 'joins', year: null, into: 'together' }
+      start: { kind: 'origin' },
+      end: { kind: 'joins', year: 1984, on: '8 December 1984', into: 'together' }
     },
     {
       id: 'dad', label: 'Dad', tone: '#6FE3B8',
       base: 'together', side: 1,
-      start: { kind: 'origin' }, end: { kind: 'joins', year: null, into: 'together' }
+      start: { kind: 'origin' },
+      end: { kind: 'joins', year: 1984, on: '8 December 1984', into: 'together' }
     },
 
     /* --- the second --- */
@@ -370,6 +383,10 @@
      which is the honest drawing of "this happened, we haven't written down
      when". Give the `together` strand a start year and the whole braid
      re-times itself around it. */
+  /* `start` / `end` carry a `year`, which is what places the join on the
+     axis, and optionally an `on` — the day itself, in whatever words you
+     would use out loud. The year does the geometry; `on` is what the
+     reader is told. */
   var BRAID = {
     marriedLabel: 'Married',
     undatedNote: 'Two trails become one. The year has not been written down yet.'
@@ -439,6 +456,31 @@
       country: 'Mauritius',
       lat: -20.28,
       lon: 57.55
+    },
+    {
+      id: 'loveland',
+      name: 'Loveland Ski Area',
+      region: 'Colorado',
+      country: 'United States',
+      lat: 39.680,
+      lon: -105.898
+    },
+    {
+      id: 'idaho-springs',
+      name: 'Idaho Springs',
+      region: 'Colorado',
+      country: 'United States',
+      lat: 39.742,
+      lon: -105.514
+    },
+    {
+      /* The state, and no finer: the story says California and does not
+         say where in it. */
+      id: 'california',
+      name: 'California',
+      country: 'United States',
+      lat: 37.0,
+      lon: -119.7
     },
     {
       id: 'ptarmigan',
@@ -3853,6 +3895,434 @@
       source: 'Karsh',
       relatedStories: ['someone-dumped-my-bike', 'the-big-secret', 'the-ptarmigan'],
       dateAdded: '2026-08-20'
+    },
+
+    {
+      id: 'dank-style',
+      title: 'Dank Style',
+      hook: 'Some people enter your life quietly. Daniel Kelly was not one of those people.',
+      year: 2012,
+      approximateDate: 'Circa 2012',
+      strand: 'karsh',
+      location: 'Colorado',
+      place: 'loveland',
+      landmark: {
+        name: 'Loveland Ski Area',
+        query: 'Loveland Ski Area Colorado'
+      },
+      journey: [
+        {
+          id: 'loveland',
+          place: 'loveland',
+          flag: '🏂',
+          label: 'Loveland Ski Area',
+          note: 'Outside the Rathskeller, on a bluebird day',
+          url: 'https://www.google.com/maps/search/?api=1&query=Loveland+Ski+Area+Colorado'
+        },
+        {
+          id: 'idaho-springs',
+          place: 'idaho-springs',
+          flag: '🏔',
+          label: 'Idaho Springs',
+          note: 'Thursday nights. Friday mornings on the hill.',
+          url: 'https://www.google.com/maps/search/?api=1&query=Idaho+Springs+Colorado'
+        },
+        {
+          id: 'denver',
+          place: 'denver',
+          flag: '🏢',
+          label: 'Uptown Denver',
+          note: 'Three weeks on our couch, and half the neighbourhood knew him.',
+          url: 'https://www.google.com/maps/search/?api=1&query=300+E+17th+Ave+Denver+CO'
+        },
+        {
+          id: 'california',
+          place: 'california',
+          flag: '🇺🇸',
+          label: 'California',
+          note: 'The last move. He was planning to come back.'
+        },
+        {
+          id: 'williams',
+          place: 'denver',
+          flag: '🍺',
+          label: 'Williams Tavern, one more time',
+          note: 'The memorial. Of course it was there.',
+          url: 'https://www.google.com/maps/search/?api=1&query=Williams+Tavern+Denver+Colorado'
+        },
+        {
+          id: 'never-bad',
+          arrival: true,
+          flag: '✦',
+          label: 'Never a bad memory',
+          note: 'I still tell stories about him.'
+        }
+      ],
+      category: 'love',
+      tags: [
+        'colorado', 'denver', 'loveland', 'idaho springs', 'snowboarding',
+        'friendship', 'grief', 'williams tavern', 'poetry', 'uptown'
+      ],
+      people: [
+        { name: 'Karsh', relation: 'me, new to Colorado' },
+        { name: 'Daniel Kelly', relation: 'Dank Style' },
+        { name: 'Josh', relation: 'my roommate' },
+        { name: 'Adam Bradley', relation: 'who had not met him yet' },
+        { name: 'Colleen' }
+      ],
+      story: [
+        'Some people enter your life quietly.',
+        'Daniel Kelly was not one of those people.',
+        {
+          text: 'I met Daniel — better known to almost everyone as Dank Style — during the 2012 ski season, not long after I had moved to downtown Denver. I was still relatively new to Colorado and doing everything I could to embrace the life I had moved there for. In winter, that meant snowboarding.',
+          at: 'loveland'
+        },
+        'A lot.',
+        'I had a season pass to Loveland Ski Area and was getting better every time I went. One particular bluebird day, I stopped riding for a while and headed down to the Rathskeller, the little bar tucked into the lower level of the lodge. The weather was surprisingly comfortable for the middle of winter, so I was hanging around outside.',
+        'Somehow, through one of those random interactions that seems completely insignificant at the time, I started talking to this guy.',
+        'That was Dan.',
+        'He had recently moved from Texas to Colorado and was working as a lift operator at Loveland. He didn’t know many people yet. Neither did I.',
+        'And Dan had this energy about him.',
+        'It is difficult to adequately describe Dank Style to someone who never met him. Imagine a Kurt Cobain-looking ski bum who somehow wandered onto a Colorado mountain and decided everybody he encountered was already his friend. He was good-looking, charismatic, outgoing, completely uninhibited, and possessed an almost ridiculous ability to talk to anybody.',
+        'People were drawn to him.',
+        'Especially women.',
+        'Definitely women.',
+        'But really, everybody.',
+        {
+          kind: 'image',
+          mount: 'photo',
+          tilt: -1.1,
+          src: 'img/trails/dan-kelley.jpg',
+          width: 950,
+          height: 950,
+          alt: 'A close photograph of Daniel Kelly in profile, looking off to the right. Long light-brown hair falls across his face, and he has a heavy beard. The light is low and warm; the background is dark.',
+          caption: 'Daniel Kelly — Dank Style.'
+        },
+        'We discovered pretty quickly that we had a lot in common, and after running into each other at Loveland a few more times, we started actually hanging out.',
+        'Eventually Dan told me he was going to be in Denver and suggested we meet up.',
+        { text: 'Naturally, I took him to Williams Tavern.', at: 'denver' },
+        'Williams was my neighborhood bar when I lived downtown. I knew plenty of people there and felt pretty connected to the place.',
+        'Then I brought Dan.',
+        'Within what felt like five minutes, somehow he knew everybody.',
+        'That was Dank Style.',
+
+        { kind: 'heading', text: 'The Idaho Springs Years' },
+        {
+          text: 'When I first met him, Dan was living in Idaho Springs and commuting up to Loveland for work.',
+          at: 'idaho-springs'
+        },
+        'At the time, my company worked a 9/80 schedule, which meant I had every other Friday off. That created what became one of my favorite little routines from that period of my life.',
+        'On Thursday evening, I’d drive up to Idaho Springs and stay at Dan’s place.',
+        'Friday morning, we’d go ride Loveland together.',
+        'Then I’d stay over again Friday night. Dan would usually have to work Saturday, but by then I’d met enough of his friends that I’d just go snowboard with them.',
+        'Dan introduced me to a whole little mountain community.',
+        'We explored Loveland together and discovered some of the hidden shacks tucked into the trees off the black-diamond runs. We’d disappear into the trees, find one of these little shelters that somebody had built, hang out for a while, and then continue riding.',
+        'Those days were simple.',
+        'Snowboard. Laugh. Meet people. Repeat.',
+        'I loved them.',
+        'And Dan seemed completely at home in that world.',
+        'He was technically a lift operator at the time, but that wasn’t really what he did. Dan was a hairstylist. That was his actual talent. He worked in salons, picked up odd jobs, cut his friends’ hair, and generally floated through life finding ways to make things work.',
+        'Eventually he decided to leave Idaho Springs and move to Denver.',
+        'Which, from my perspective, was fantastic.',
+        'There was only one problem.',
+        'He didn’t have anywhere to live.',
+
+        { kind: 'heading', text: 'Our Temporary Roommate' },
+        { text: 'By this point Dan had already met my roommate Josh. He’d spent New Year’s with us, which I remember particularly fondly.', at: 'denver' },
+        'My family was thousands of miles away, and because I was going through the immigration process at the time, traveling internationally wasn’t really an option for me. So friends became family.',
+        'Dan fit naturally into that.',
+        'When he decided to move to Denver and found himself temporarily between places, Josh and I told him he could stay with us.',
+        'So Dank Style moved into our downtown apartment.',
+        'For about three weeks.',
+        'As a thank-you, he eventually convinced me to let him cut my hair.',
+        'I agreed.',
+        'And I have regretted every haircut I’ve received from anybody else since.',
+        'It was legitimately the best haircut I had ever had.',
+        'So naturally, Dan became my barber.',
+        'We’d go out to Williams together, and the phenomenon I’d noticed the first time continued. I had lived in the neighborhood. I thought I knew people.',
+        'Dan somehow knew more.',
+        'Friends.',
+        'Friends of friends.',
+        'People from salons.',
+        'People from bars.',
+        'People he’d apparently spoken to once on a sidewalk six months earlier.',
+        'It felt like half of Uptown knew Dank Style.',
+        'And that wasn’t because he was wealthy or important or professionally successful.',
+        'Dan wasn’t any of those things.',
+        'People remembered him because he made them feel good.',
+        'He was interested in people.',
+        'He encouraged people.',
+        'And he made ordinary situations slightly more ridiculous simply by being present.',
+        'One afternoon, my friend Adam Bradley and I were eating lamb chops at Red Square. Dan happened to be working nearby and spotted us.',
+        'I didn’t see him approaching.',
+        'Dan walked directly up to our table without saying anything, grabbed one of the bones I had finished eating, and started pretending to gnaw on it.',
+        'Then he grabbed one of Adam’s bones and did the same thing.',
+        'There was one important piece of information Dan didn’t have.',
+        'Adam had never met him.',
+        'So from Adam’s perspective, some random Kurt Cobain-looking lunatic had just walked up to our table and started eating the discarded bones off our plates.',
+        'Adam stood up looking ready to ask what the hell this guy’s problem was.',
+        'Dan and I immediately lost it laughing.',
+        'A few seconds later Adam realized what was happening.',
+        'That was Dan.',
+        'Boundaries were more like suggestions.',
+
+        { kind: 'heading', text: 'Drifting' },
+        'Eventually Dan found his own place.',
+        'Life kept moving.',
+        'I was becoming increasingly consumed with my career. Dan was doing salon work and private haircuts, bouncing between jobs and adventures, meeting approximately seventeen new best friends everywhere he went.',
+        'We were still friends.',
+        'We just didn’t see each other constantly anymore.',
+        'At some point, Dan traded a BMW his mother had given him for a van and essentially moved into it with his girlfriend at the time, a Russian woman he was dating.',
+        'That sentence alone probably tells you quite a bit about Dan.',
+        'He’d occasionally come over to Peakview Place and cut my hair. By then Colleen was part of my life, although I don’t think she ever actually got the chance to meet him.',
+        'She certainly knew about him.',
+        'Everybody close to me knew about Dank Style.',
+        'Eventually the van disappeared. The relationship ended. And after a few questionable financial decisions, Dan acquired a very cheap Volvo station wagon that appeared to be approaching the end of its natural life.',
+        'There was one thing about that car that genuinely bothered me.',
+        'The driver’s seat belt had been chewed through by rodents.',
+        'Dan drove it anyway.',
+        'I remember telling him:',
+        'Dude. Fix the seat belt.',
+        'He didn’t seem particularly concerned.',
+        'At one point, when Colleen and I were still dating long-distance, Dan drove me to the airport in that Volvo so I could fly out to see her.',
+        'Again, I brought up the seat belt.',
+        'Again, Dan shrugged it off.',
+        'That was also Dan.',
+        'Free-spirited could sometimes extend a little too far into believing everything would probably work itself out.',
+        'For most of his life, somehow, it did.',
+
+        { kind: 'heading', text: 'California' },
+        { text: 'Eventually Dan left Colorado.', at: 'california' },
+        'He headed to California, where some friends had found lucrative work in marijuana cultivation and harvesting. It sounded exactly like the kind of unconventional adventure Dan would pursue.',
+        'So off he went.',
+        'As distance tends to do, it made our contact less frequent.',
+        'Every once in a while we’d reconnect.',
+        'Then one day Dan reached out with exciting news.',
+        'He was coming back to Colorado.',
+        'There wasn’t a firm timeline yet, but he was planning to return.',
+        'I was genuinely excited.',
+        'Dank Style was coming home.',
+        'And then, sometime later, I opened social media.',
+        'There were messages appearing on Dan’s page.',
+        { kind: 'found', items: ['Rest in peace.'] },
+        'At first, I thought there had to be some mistake.',
+        'I reached out to mutual friends.',
+        'There wasn’t.',
+        'Dan was dead.',
+        'From what I was told, he had been driving on a rural road in California at night. There was construction ahead, visibility wasn’t good, and something went wrong with the car — possibly the brakes. He swerved.',
+        'The car crashed.',
+        'Dan was thrown from the vehicle.',
+        'He died at the scene.',
+        'And immediately, my mind went back to that Volvo.',
+        'The chewed-through seat belt.',
+        'Me telling him to fix it.',
+        'Dan shrugging it off.',
+        'I don’t know whether it was the same car. I don’t know exactly what happened in those final seconds, and I certainly don’t know whether a seat belt would have changed anything.',
+        'For a long time, though, I couldn’t stop wondering.',
+        'What if he’d had one?',
+        'Maybe he’d still be here.',
+        'But there are questions in life that have no answers, and eventually you have to stop asking them.',
+
+        { kind: 'heading', text: 'One More Night at Williams' },
+        { text: 'Dan’s memorial was held at Williams Tavern.', at: 'williams' },
+        'Of course it was.',
+        'The place was packed.',
+        'And looking around that room, I finally saw something I had understood about Dan for years but had never really quantified.',
+        'He had touched an unbelievable number of people.',
+        'People from different periods of his life, different jobs, different social circles — all there because somehow this wandering hairstylist, lift operator, snowboard bum, occasional van-dweller and professional maker-of-questionable-decisions had made their lives a little brighter.',
+        'It wasn’t really a funeral atmosphere.',
+        'It was a Dank Style atmosphere.',
+        'People told stories.',
+        'People laughed.',
+        'People cried.',
+        'People drank.',
+        'And people celebrated him.',
+        'One moment in particular has stayed with me.',
+        'Dan had a friend who played guitar. He wasn’t particularly good at it and was always nervous about playing in front of people.',
+        'But Dan had encouraged him.',
+        'That was something Dan did.',
+        'He made people believe they could do things.',
+        'So at Dan’s memorial, this guy picked up his guitar and played a song for him.',
+        'Technically?',
+        'It wasn’t great.',
+        'But nobody cared.',
+        'Because he played.',
+        'He stood in front of that room and did something he had been afraid to do because his friend Dan Kelly had once made him believe he could.',
+        'And I can’t think of a better demonstration of who Dan was.',
+
+        { kind: 'heading', text: 'Never a Bad Memory' },
+        { text: 'After Dan died, I wrote a poem about him.', at: 'never-bad' },
+        'For years, I thought I had lost it.',
+        'I remembered writing it. I remembered sharing it with his mother and how much her response meant to me. But somewhere in the years that followed, I lost track of the actual words.',
+        'Then I found them again.',
+        'On January 27, 2016, I had posted the poem directly to Dan’s Facebook page.',
+        'There it was.',
+        'A little time capsule from a version of me who had only just lost his friend.',
+        'And the first line said something that, all these years later, may still describe Dan better than anything else I’ve written:',
+        '“I miss you, my friend...never a bad memory.”',
+        {
+          kind: 'image',
+          src: 'img/trails/dan-poem-post.jpg',
+          width: 960,
+          height: 2142,
+          alt: 'A screenshot of a Facebook post from Utkarsh Pandey to Dan Kelley, dated 27 January 2016, carrying the four stanzas of the poem printed below. Underneath the text is a photograph of the two of them together at night in a red-lit room: Dan on the left in a blue and grey striped hooded top, Karsh on the right in a grey polo and sunglasses, arm around him. The post has twenty-nine reactions and two comments.',
+          caption: 'The post, still on Dan’s page.',
+          stamp: '27 January 2016'
+        },
+        {
+          kind: 'poem',
+          title: 'For Dan — January 27, 2016',
+          stanzas: [
+            [
+              'I miss you, my friend...never a bad memory',
+              'All the good times we had, I felt a pure energy',
+              'Emerging from you, it was surely the remedy',
+              'You shall be remembered for many a century'
+            ],
+            [
+              'Dan, together we listened to Jon Gomm',
+              'Together we enjoyed the storm so calm',
+              'Something about you, a kind of charm',
+              'You’d never hurt a soul, never bring harm'
+            ],
+            [
+              'It feels weird to say good bye to you today',
+              'It seems like yesterday, you were ready to play',
+              'And style while you listened to what I had to say',
+              'You’ll live in our thoughts as together we pray'
+            ],
+            [
+              'We miss you friend, never a bad memory',
+              'Your smile told us you felt our energy',
+              'Your laughter was always a true remedy',
+              'You shall be remembered for many a century'
+            ]
+          ]
+        },
+        'Reading it again brought back things I hadn’t thought about in years.',
+        'Apparently Dan and I listened to Jon Gomm together.',
+        'I had almost forgotten that.',
+        'But that’s one of the strange things about losing someone. Memories don’t necessarily disappear. Sometimes they just get buried until a photograph, a song, or a few words written by your younger self suddenly brings them back.',
+        'For years, I thought I’d lost the poem.',
+        'But I never lost Dan.',
+        'I still tell stories about him.',
+        'I still think about those Fridays at Loveland.',
+        'I still remember disappearing into the trees looking for hidden shacks.',
+        'I remember the downtown apartment.',
+        'Williams Tavern.',
+        'The lamb chop.',
+        'The ridiculous Volvo.',
+        'Listening to music together.',
+        'The confidence with which he moved through the world.',
+        'And every time I get a haircut, I still think:',
+        'Dan would have done this better.',
+        'And he would have.',
+        'But sometimes I wonder whether his haircuts were actually as good as I remember.',
+        'Maybe they were.',
+        'Or maybe part of the magic was simply having Dank Style standing behind you, finishing the cut, looking at you like he’d just created a masterpiece and telling you how fucking good you looked.',
+        'And because Dan believed it, for a little while, you believed it too.',
+        'That was his real *talent*.',
+        'Dan cut hair.',
+        'But he made people feel better about themselves.',
+        'He made shy people play guitar.',
+        'He made strangers feel like friends.',
+        'He made a kid far from his family feel like Colorado was becoming home.',
+        'And he somehow made an entire bar full of people feel lucky that, however briefly, their lives had crossed paths with his.',
+        'Some people enter your life quietly.',
+        'Dank Style certainly didn’t.',
+        { kind: 'landing', text: 'And I don’t think he ever really left.' }
+      ],
+      artifact: {
+        label: 'Memory artifact',
+        title: 'A poem posted to a dead man’s Facebook page',
+        lines: [
+          { label: 'Written', text: '27 January 2016, days after he died.' },
+          { label: 'Lost, then found', text: 'It had been sitting on his page the whole time.' }
+        ]
+      },
+      source: 'Karsh',
+      relatedStories: ['helen', 'gin-joints'],
+      dateAdded: '2026-08-20'
+    },
+
+    {
+      id: 'too-short-to-stop',
+      title: 'Too Short to Stop',
+      hook: 'Sixteen years old, ninety pounds, four hundred pounds of Royal Enfield, and two classmates on the back.',
+      year: 1975,
+      approximateDate: 'Circa 1975',
+      strand: 'amma',
+      location: 'Lucknow, India',
+      place: 'lucknow',
+      category: 'family-lore',
+      tags: [
+        'india', 'lucknow', 'motorcycles', 'teenagers', 'family',
+        'growing up', 'funny memories'
+      ],
+      people: [
+        { name: 'Amma', relation: 'the rider, aged sixteen' },
+        { name: 'Her father', relation: '“Dad” — who knew everyone in Lucknow' },
+        { name: 'Her mother', relation: 'whose blood pressure did not survive it' },
+        { name: 'Her brother', relation: 'whose friend owned the bike' }
+      ],
+      story: [
+        'I was born into that dangerous combo: upper-middle class + Dad’s favorite + zero chill.',
+        'Did I want it? I got it.',
+        'Did I need it? Irrelevant.',
+        'Did my wish require a genie? Nope. Just “Dad” and puppy eyes.',
+        'It probably didn’t hurt that my dad was also a very well-connected man in Lucknow. He seemed to know everyone, and everyone seemed to know him — including the police. At the time, I didn’t fully appreciate just how useful that particular family perk could become.',
+        'I was also that rare unicorn among my friends — the girl who could actually ride a scooter and a motorcycle. Main character energy, zero survival instincts.',
+        'Then came The Day.',
+        'My brother’s friend owned a Royal Enfield. For context: this bike is 80% metal, 20% ego, and 100% taller than me.',
+        'I’m petite.',
+        'My feet had to file a separate travel visa just to reach the ground.',
+        'Did that stop me? Absolutely not. I was a teenager. We were basically invincible and also very bad at risk assessment.',
+        'So, being the responsible adult I was not, I borrowed — okay, borrowed is a strong word — I commandeered the Enfield.',
+        'And because one act of bad judgment is never enough, I picked up two classmates too.',
+        'Triple seating.',
+        'On a Royal Enfield.',
+        'In the middle of a crowded Lucknow.',
+        'Me on the seat, tiptoes doing ballet just to balance. My classmates behind me, holding on like their lives depended on it.',
+        'Because they did.',
+        'There was, however, one small logistical problem with this entire adventure: stopping.',
+        'As long as the motorcycle was moving, I was fine. But whenever we stopped, my feet barely reached the ground. Every traffic signal therefore became a small negotiation between me, gravity, and several hundred pounds of Royal Enfield.',
+        'And then came perhaps the most ridiculous example of my dad’s influence.',
+        'At one point, a police officer recognized me. More importantly, he knew who my parents were.',
+        'Instead of stopping us — or perhaps asking why a tiny 16-year-old girl was riding a massive Royal Enfield through town with two classmates hanging off the back — the officer prioritized giving us the right of way through traffic.',
+        'Not because we were in a hurry.',
+        'Not because there was an emergency.',
+        'But because he knew I was too short to comfortably put my feet down.',
+        {
+          kind: 'reveal',
+          text: 'The police were essentially helping me keep the motorcycle moving so I wouldn’t fall over.'
+        },
+        'Somehow we made it through traffic, through stares, through physics.',
+        'I’m pretty sure I could’ve gotten away with anything that day.',
+        'Jaywalking? Fine.',
+        'Littering? Fine.',
+        'Grand theft motorcycle? Also probably fine.',
+        'Dad’s favorite privilege card was absolutely maxed out.',
+        'Looking back: I was 16 years old, about 90 pounds, riding a roughly 400-pound motorcycle, carrying two passengers, with the confidence of a *Bollywood hero*.',
+        'The only thing heavier than that Royal Enfield was my dad’s heart when he eventually found out.',
+        'Moral of the story:',
+        'I survived.',
+        'My brother’s friend’s bike survived.',
+        'My classmates survived.',
+        'And somewhere in Lucknow, there was probably a police officer wondering whether helping a teenage girl on a triple-seated Royal Enfield avoid putting her feet down was technically part of his job description.',
+        'As for my mom?',
+        { kind: 'landing', text: 'Her blood pressure — and her anger — were unimaginable.' }
+      ],
+      artifact: {
+        label: 'Memory artifact',
+        title: 'A commandeered Royal Enfield',
+        lines: [
+          { label: 'Weight', text: 'Roughly four hundred pounds. I was ninety.' },
+          { label: 'Returned', text: 'Intact. So were both classmates.' }
+        ]
+      },
+      source: 'Amma',
+      relatedStories: ['the-gto', 'confidence-curve'],
+      dateAdded: '2026-08-20'
     }
   ];
 
@@ -4090,6 +4560,9 @@
           if (!p.src) out.push(at + ': paragraph ' + pi + ' is an image with no src');
           if (!p.alt) out.push(at + ': paragraph ' + pi + ' is an image with no alt text');
         }
+        if (p.kind === 'poem' && !(p.stanzas && p.stanzas.length)) {
+          out.push(at + ': paragraph ' + pi + ' is a poem with no stanzas');
+        }
       });
       /* kinds whose content is `text` */
       var SPOKEN = ['shout', 'beat', 'landing', 'heading', 'sound', 'reveal',
@@ -4097,7 +4570,7 @@
       (s.story || []).forEach(function (p, pi) {
         if (typeof p === 'string' || !p) return;
         var where = at + ': paragraph ' + pi;
-        if (p.kind === 'figure' || p.kind === 'image') return;
+        if (p.kind === 'figure' || p.kind === 'image' || p.kind === 'poem') return;
         if (p.kind && LISTED.indexOf(p.kind) < 0 && SPOKEN.indexOf(p.kind) < 0) {
           out.push(where + ' has an unknown kind "' + p.kind + '"');
         }
