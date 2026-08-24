@@ -200,7 +200,8 @@
     mauritius: 'isles', pereybere: 'isles', chamarel: 'isles',
     denver: 'range', ptarmigan: 'range', trestle: 'range', 'lookout-mountain': 'range',
     'ken-caryl': 'range', chatfield: 'range', lakewood: 'range', centennial: 'range',
-    'emerald-mountain': 'range', haverford: 'range',
+    'emerald-mountain': 'range', haverford: 'range', loveland: 'range',
+    'idaho-springs': 'range', california: 'range',
     livingstone: 'falls', avani: 'falls', 'livingstone-island': 'falls',
     'victoria-falls-bridge': 'falls',
     america: 'near', china: 'near'
@@ -223,6 +224,7 @@
     { place: 'ptarmigan', region: 'range', dx: -60, dy: -110 },
     { place: 'trestle', region: 'range', dx: -110, dy: 20 },
     { place: 'lookout-mountain', region: 'range', dx: 105, dy: -70 },
+    { place: 'loveland', region: 'range', dx: 30, dy: -160 },
     { place: 'livingstone', region: 'falls', dx: -30, dy: -30 }
   ];
 
