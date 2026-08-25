@@ -16,6 +16,9 @@ export function runShow(step, ctx) {
     h('h3', { class: 'showcard__title' }, ctx.fill(step.title)),
     h('p', { class: 'showcard__text' }, ctx.fill(step.text)));
   ctx.bodyEl.appendChild(panel);
+  // The explainer is pure text on screen; without this it is silent to a
+  // child who cannot read, which is precisely who it is written for.
+  ctx.say('narrator', `${ctx.fill(step.title)}. ${ctx.fill(step.text)}`);
   sfx.select();
 
   ctx.bodyEl.appendChild(h('button', {

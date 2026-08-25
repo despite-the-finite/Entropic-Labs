@@ -87,7 +87,9 @@
 /* ------------------------------------------------------------------ panel */
 .case-panel {
   flex: none;
-  max-height: 52vh;
+  max-height: 52vh;   /* fallback for browsers without dynamic viewport units */
+  max-height: 52dvh;  /* `vh` on a phone is the URL-bar-hidden height, which
+                         let the panel run off the bottom of the screen */
   overflow-y: auto;
   padding: 4px 16px calc(26px + var(--safe));
   display: flex; flex-direction: column; gap: 12px; align-items: center;
@@ -388,7 +390,13 @@
 .scan-caption { font-family: var(--font-display); font-weight: 700; font-size: var(--step-1); text-align: center; }
 .art--xray .scanline { animation: scansweep 2.4s linear infinite; }
 @keyframes scansweep { from { transform: translateY(-30px) } to { transform: translateY(200px) } }
-.art-flag { animation: twinkle 1.6s ease-in-out infinite; }
+/* Pulse the marker with opacity only.
+   `twinkle` also animates `transform`, and a CSS transform on an SVG element
+   overrides its transform="..." attribute — which threw any positioned group
+   (the swallowed duck) off the plate. It also dipped to opacity .25, far too
+   faint to find on a dark X-ray. */
+.art-flag { animation: flag-pulse 1.8s ease-in-out infinite; }
+@keyframes flag-pulse { 0%, 100% { opacity: .72 } 50% { opacity: 1 } }
 
 /* ------------------------------------------------------------- show card */
 .showcard {
@@ -398,7 +406,7 @@
   padding: 12px 20px 20px; text-align: center;
   animation: pop-in .42s cubic-bezier(.2,1.3,.4,1.1) both;
 }
-.showcard__art svg { width: 100%; height: auto; max-height: 30vh; }
+.showcard__art svg { width: 100%; height: auto; max-height: 30vh; max-height: 30dvh; }
 .showcard__title { font-size: var(--step-2); margin: 4px 0 6px; }
 .showcard__text { font-size: var(--step-0); color: var(--ink-soft); line-height: 1.45; margin: 0; }
 .art-beat { animation: art-beat 1.1s ease-in-out infinite; transform-origin: center; }
@@ -484,7 +492,7 @@
 }
 
 @media (max-height: 560px) and (orientation: landscape) {
-  .case-panel { max-height: 60vh; }
+  .case-panel { max-height: 60vh; max-height: 60dvh; }
   .case-patient { height: 88%; }
 }
 
@@ -492,7 +500,37 @@
 @media (max-width: 620px) {
   .bubble-lane { max-width: 66%; }
   .bubble-lane .bubble { padding: 12px 16px; }
-  .case-panel { max-height: 46vh; }
+  .case-panel { max-height: 52vh; max-height: 52dvh; }
   .case-nametag { padding: 6px 14px 6px 8px; }
   .case-nametag__emoji { font-size: 22px; }
+}
+
+/* On any screen where the panel is tight — a narrow phone in portrait OR a
+   short one in landscape — the tool tray becomes a single side-scrolling
+   strip. Wrapped onto a second row it pushed tools past the bottom of the
+   panel, and because every tool sets `touch-action: none` a child could not
+   scroll them back into reach: the tools were simply gone off the screen.
+   A strip always shows the first tools and keeps the rest one swipe away. */
+@media (max-width: 620px), (max-height: 620px) {
+  .tool-tray {
+    flex-wrap: nowrap;
+    /* `safe` keeps a tray that overflows left-aligned rather than centring it
+       and cutting off the first tool. */
+    justify-content: safe center;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    /* room for the tools' drop shadow, which would otherwise be clipped */
+    padding: 4px 2px 14px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .tool-tray::-webkit-scrollbar { height: 0; }
+  .tool {
+    flex: 0 0 auto;
+    scroll-snap-align: center;
+    /* Sideways swipes scroll the strip; an upward drag still picks the tool
+       up and carries it to the patient, which is the gesture the game asks
+       for and the one that must keep working. */
+    touch-action: pan-x;
+  }
 }

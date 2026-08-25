@@ -8,6 +8,13 @@
  *
  * It is a separate toggle from the sound effects on purpose: a parent may
  * want the bleeps without the talking, or the talking without the bleeps.
+ *
+ * Lines are QUEUED rather than interrupted. A step routinely says several
+ * things in a row — "Good spotting!", then what was actually found, then the
+ * fun fact — and cancelling on every call meant a child only ever heard the
+ * last one, usually the generic praise. Anything that genuinely replaces what
+ * came before (a new screen, a new step) calls `say(..., { interrupt: true })`
+ * or `stop()`.
  */
 import { getState, setVoice } from './state.js';
 
@@ -46,31 +53,99 @@ export function toggleVoice() {
   const next = !voiceOn();
   setVoice(next);
   if (!next) stop();
-  else say('Hello!');
+  else say('Hello!', { interrupt: true });
   return next;
 }
 
-/** Speak a line, replacing anything currently being said. */
-export function say(text, { rate = 0.94, pitch = 1.12 } = {}) {
-  if (!voiceOn() || !text) return;
-  const clean = strip(text);
-  if (!clean) return;
+/* ----------------------------------------------------------------- queue */
+
+/** Lines waiting to be spoken, oldest first. */
+let queue = [];
+let speaking = false;
+/** Resolvers waiting for the queue to drain — see `whenDone()`. */
+let idleWaiters = [];
+
+function flushIdle() {
+  const waiters = idleWaiters;
+  idleWaiters = [];
+  waiters.forEach((resolve) => resolve());
+}
+
+function pump() {
+  if (speaking) return;
+  const item = queue.shift();
+  if (!item) { speaking = false; flushIdle(); return; }
+
+  speaking = true;
   try {
-    synth.cancel();
-    const utter = new SpeechSynthesisUtterance(clean);
+    const utter = new SpeechSynthesisUtterance(item.text);
     const voice = ready ? pickVoice() : null;
     if (voice) { utter.voice = voice; utter.lang = voice.lang; }
-    utter.rate = rate;
-    utter.pitch = pitch;
+    utter.rate = item.rate;
+    utter.pitch = item.pitch;
     utter.volume = 0.9;
+    // `onend` does not fire if the utterance errors or is cancelled, so both
+    // paths have to release the queue or the voice would stop for good.
+    utter.onend = () => { speaking = false; pump(); };
+    utter.onerror = () => { speaking = false; pump(); };
     synth.speak(utter);
   } catch (err) {
     console.warn('[voice] could not speak', err);
+    speaking = false;
+    pump();
   }
 }
 
-export function stop() {
+/**
+ * Speak a line.
+ *
+ * By default it waits its turn behind whatever is already queued, so a run of
+ * lines is heard in the order the game said them. `interrupt: true` clears
+ * the queue first — for a new screen or a new step, where the previous line
+ * is no longer about anything on screen.
+ */
+export function say(text, { rate = 0.94, pitch = 1.12, interrupt = false } = {}) {
+  if (!voiceOn() || !text) return;
+  const clean = strip(text);
+  if (!clean) return;
+  if (interrupt) hardStop();
+  queue.push({ text: clean, rate, pitch });
+  pump();
+}
+
+/** Speak several lines in order, with a short breath between each. */
+export function sayAll(lines, opts = {}) {
+  (Array.isArray(lines) ? lines : [lines])
+    .filter(Boolean)
+    .forEach((line, i) => say(line, i === 0 ? opts : { ...opts, interrupt: false }));
+}
+
+/**
+ * Resolves once everything queued has been spoken.
+ *
+ * Always resolves: it gives up after `timeout` so a browser that never fires
+ * `onend` (or has speech switched off entirely) can never wedge the game on a
+ * screen the child cannot leave.
+ */
+export function whenDone({ timeout = 12000 } = {}) {
+  if (!voiceOn() || (!speaking && !queue.length)) return Promise.resolve();
+  return new Promise((resolve) => {
+    let settled = false;
+    const done = () => { if (settled) return; settled = true; resolve(); };
+    idleWaiters.push(done);
+    setTimeout(done, timeout);
+  });
+}
+
+function hardStop() {
+  queue = [];
+  speaking = false;
   try { synth?.cancel(); } catch { /* ignore */ }
+}
+
+export function stop() {
+  hardStop();
+  flushIdle();
 }
 
 /** Emoji and asterisked stage directions read terribly out loud. */
@@ -79,5 +154,9 @@ function strip(text) {
     .replace(/\*[^*]*\*/g, ' ')
     .replace(/[\p{Extended_Pictographic}️‍]/gu, ' ')
     .replace(/\s+/g, ' ')
+    // Removing a stage direction can strand its punctuation ("glug… . That"),
+    // which a screen reader voice pronounces as an audible stumble.
+    .replace(/\s+([.,!?;:…])/g, '$1')
+    .replace(/([.!?…])[.,;:]+/g, '$1')
     .trim();
 }

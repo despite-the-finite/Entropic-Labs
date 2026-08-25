@@ -15,7 +15,11 @@ import { ROOMS } from '../../data/rooms.js';
 import { patientMarkup } from '../patients.js';
 import { modal } from '../components.js';
 import { confetti, sparkle, flash } from '../../core/fx.js';
+import { sayAll } from '../../core/voice.js';
 import { BADGES } from './bag.js';
+
+/** "1 kindness star", "3 kindness stars" — it is read aloud, so it must scan. */
+function plural(n, word) { return `${n} ${word}${n === 1 ? '' : 's'}`; }
 
 export function resultsScreen({ career, caseDef, result, newTools = [], newRooms = [], progress, replay }) {
   const el = h('div', { class: 'screen screen--results' });
@@ -112,6 +116,18 @@ export function resultsScreen({ career, caseDef, result, newTools = [], newRooms
     sfx.fanfare();
     confetti({ intensity: result.perfect ? 2 : 1.3, duration: 3000 });
     flash('rgba(255,255,255,.55)', 500);
+
+    // Read the celebration out. This is the payoff screen, and it was silent.
+    sayAll([
+      heading,
+      firstEver
+        ? 'You helped your first patient. Well done!'
+        : `You helped ${result.patient.name} feel much better!`,
+      `You earned ${plural(result.stars, 'hero star')}`,
+      result.kindness ? `and ${plural(result.kindness, 'kindness star')}` : null,
+      `and ${plural(result.coins, 'hospital coin')}.`,
+    ], { interrupt: true });
+
     await wait(500);
     sparkle(card, { count: 20 });
 

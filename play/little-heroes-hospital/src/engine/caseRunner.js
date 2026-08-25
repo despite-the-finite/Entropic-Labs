@@ -14,7 +14,7 @@ import { patientElement, setMood, patientSound } from '../ui/patients.js';
 import { SPECIES } from '../ui/creature.js';
 import { isLittle } from '../core/state.js';
 import { fill } from './text.js';
-import { say as speak, stop as stopSpeaking } from '../core/voice.js';
+import { say as speak, sayAll, whenDone as speechDone, stop as stopSpeaking } from '../core/voice.js';
 import { STEP_RUNNERS } from './steps/index.js';
 
 export function createCaseRunner(caseDef, { onFinish, onQuit }) {
@@ -65,7 +65,9 @@ export function createCaseRunner(caseDef, { onFinish, onQuit }) {
   function say(who, text, { translate = null, mood = null, sfxName = null, hold = false } = {}) {
     const spoken = fill(text, patient);
     const bubble = h('div', { class: `bubble bubble--${who}` }, spoken);
-    speak(translate ? `${spoken}. ${fill(translate, patient)}` : spoken);
+    // Animal patients get their line then the translation. Join them without
+    // doubling punctuation — "Woof!." is a stumble when it is read aloud.
+    speak(translate ? `${spoken.replace(/[\s.]+$/, '')}. ${fill(translate, patient)}` : spoken);
     if (who === 'narrator' || who === 'nurse') bubble.classList.add('bubble--thought');
     bubbleLane.appendChild(bubble);
     if (translate) {
@@ -119,6 +121,24 @@ export function createCaseRunner(caseDef, { onFinish, onQuit }) {
     // Younger players get the fun fact; explorers get it too, with vocabulary.
     teachEl.innerHTML = `<span class="panel__teach-icon">💡</span><span>${fill(text, patient)}</span>`;
     teachEl.classList.remove('hidden');
+    // Read it out — it is the one line in the step actually worth teaching,
+    // and a child who cannot read was previously getting nothing from it.
+    speak(fill(text, patient));
+  }
+
+  /**
+   * Read the answers aloud.
+   *
+   * A child who cannot read can see the icons but has no idea what any option
+   * says, which turns every question into a guess. Saying them in order —
+   * "You can pick: a bandage. Or: a plaster." — is what makes the choice a
+   * real one. The labels are spoken after the prompt, so the queue keeps them
+   * in the order they appear on screen.
+   */
+  function speakOptions(labels, { lead = 'You can pick:' } = {}) {
+    const clean = labels.map((l) => fill(String(l), patient)).filter(Boolean);
+    if (!clean.length) return;
+    sayAll([lead, ...clean.map((l, i) => (i === 0 ? l : `Or: ${l}`))]);
   }
 
   function noteMistake() { tally.mistakes++; }
@@ -147,7 +167,7 @@ export function createCaseRunner(caseDef, { onFinish, onQuit }) {
     caseDef, patient,
     stage, scene, overlay, panel, bodyEl, promptEl, patientWrap, patientEl,
     say, clearBubbles, setMood: setPatientMood, react, hotspot, award, teach,
-    setPrompt, noteMistake, continueButton, fill: (t) => fill(t, patient),
+    setPrompt, speakOptions, noteMistake, continueButton, fill: (t) => fill(t, patient),
     little: isLittle(),
     patientSound: patientSound(patient),
     next: () => advance(),
@@ -193,6 +213,9 @@ export function createCaseRunner(caseDef, { onFinish, onQuit }) {
   function advance() {
     try { cleanupStep?.(); } catch (e) { console.error(e); }
     cleanupStep = null;
+    // Tapping Next means "I am done listening to this" — drop the rest of the
+    // queue so the new step is not read out behind the old one.
+    stopSpeaking();
     index++;
     runStep();
   }
@@ -215,7 +238,11 @@ export function createCaseRunner(caseDef, { onFinish, onQuit }) {
     sfx.fanfare();
     flash('rgba(255,255,255,.5)', 500);
 
-    await wait(1500);
+    // Let the patient's last line land. A flat delay used to cut the outro off
+    // mid-word and whip the screen away before a child had read — or heard —
+    // what their patient just said. Wait for the voice to finish, with a floor
+    // so the moment still registers when the voice is switched off entirely.
+    await Promise.all([wait(2200), speechDone()]);
     if (destroyed) return;
 
     onFinish?.({

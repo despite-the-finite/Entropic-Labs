@@ -24,6 +24,7 @@ export function runEmpathy(step, ctx) {
   });
 
   ctx.bodyEl.appendChild(grid);
+  ctx.speakOptions(options.map((o) => o.label), { lead: 'You could say:' });
 
   let done = false;
   async function choose(opt, card) {
