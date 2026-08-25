@@ -92,13 +92,13 @@ export const ACCESSORY_LABELS = {
 
 /** Fun, easy names a child can tap instead of typing. */
 export const NAME_SUGGESTIONS = [
-  'Robin', 'Sunny', 'Pip', 'Nova', 'Bo', 'Kit', 'Ash', 'Juno',
-  'Rio', 'Sam', 'Ziggy', 'Coco', 'Milo', 'Ivy', 'Rain', 'Bear',
+  'Indra', 'Robin', 'Sunny', 'Pip', 'Nova', 'Bo', 'Kit', 'Ash',
+  'Juno', 'Rio', 'Sam', 'Ziggy', 'Coco', 'Milo', 'Ivy', 'Rain',
 ];
 
 export function defaultHero() {
   return {
-    name: 'Robin',
+    name: 'Indra',
     skin: 'skin2',
     hair: 'curly',
     hairColor: 'hair-brown',

@@ -77,15 +77,28 @@
   overflow: hidden;
 }
 .doorglow { position: absolute; inset: 0; background: radial-gradient(circle at 50% 90%, rgba(255,220,140,.6), transparent 65%); }
-.walker { position: absolute; bottom: 6%; font-size: clamp(18px, 3.4vw, 30px); }
-.walker--1 { animation: walkout 11s ease-in-out infinite; }
-.walker--2 { animation: walkout 14s ease-in-out infinite 5s; }
-@keyframes walkout {
-  0% { transform: translateX(-40px) scale(.9); opacity: 0 }
-  12% { opacity: 1 }
-  50% { transform: translateX(120px) scale(1); opacity: 1 }
-  62% { opacity: 0 }
-  100% { opacity: 0 }
+/* Visitors on the forecourt. These sit on .building, NOT inside .doorway —
+   the doorway clips (overflow:hidden) and sliced-off figures read as
+   disembodied heads. Every glyph here is a whole body for the same reason. */
+.walker {
+  position: absolute; bottom: 3%;
+  font-size: clamp(18px, 3.4vw, 30px);
+  filter: drop-shadow(0 4px 5px rgba(44,51,80,.22));
+}
+/* The walking emoji faces left, so only the one heading right is mirrored. */
+.walker--1 { animation: walk-away-left 13s ease-in-out infinite; }
+.walker--2 { transform: scaleX(-1); animation: walk-away-right 17s ease-in-out infinite 6s; }
+@keyframes walk-away-left {
+  0%   { left: 24%; opacity: 0 }
+  10%  { opacity: .95 }
+  80%  { opacity: .95 }
+  100% { left: 1%; opacity: 0 }
+}
+@keyframes walk-away-right {
+  0%   { left: 26%; opacity: 0 }
+  10%  { opacity: .95 }
+  80%  { opacity: .95 }
+  100% { left: 66%; opacity: 0 }
 }
 
 .road { position: absolute; left: 0; right: 0; bottom: 0; height: 22%; background: linear-gradient(180deg,#8d99ad,#6f7c92); }
@@ -98,12 +111,14 @@
   animation: ambulance 16s ease-in-out infinite;
   filter: drop-shadow(0 6px 8px rgba(0,0,0,.25));
 }
+/* The ambulance glyph faces left on every major platform, so it drives
+   right-to-left: it pulls up at the hospital and then carries on. Animating
+   it the other way made it look like it was reversing the whole way. */
 @keyframes ambulance {
-  0%   { left: -18%; transform: scaleX(1) }
-  30%  { left: 30%;  transform: scaleX(1) }
-  45%  { left: 32%;  transform: scaleX(1) }
-  60%  { left: 32%;  transform: scaleX(1) }
-  100% { left: 112%; transform: scaleX(1) }
+  0%   { left: 108% }
+  30%  { left: 34% }
+  60%  { left: 34% }
+  100% { left: -22% }
 }
 .paws { position: absolute; bottom: 24%; left: 0; width: 100%; height: 30px; }
 .paws span { position: absolute; font-size: 15px; opacity: 0; animation: pawstep 6s ease-in-out infinite; }
@@ -113,7 +128,7 @@
 .patient-walk { position: absolute; font-size: clamp(22px, 4vw, 38px); }
 .patient-walk--1 { animation: stroll 24s linear infinite; }
 .patient-walk--2 { animation: stroll 30s linear infinite 9s; }
-@keyframes stroll { from { left: -8% } to { left: 106% } }
+@keyframes stroll { from { left: 106% } to { left: -8% } }
 
 .flutter { position: absolute; top: var(--y); font-size: 20px; animation: flutter-path 20s linear infinite; }
 @keyframes flutter-path {
@@ -518,7 +533,7 @@
   width: min(560px, 94vw); text-align: center;
   background: rgba(255,255,255,.96); border-radius: var(--r-xl);
   box-shadow: var(--lift-3); padding: 20px 22px calc(26px + var(--safe));
-  max-height: 94vh; overflow-y: auto; overscroll-behavior: contain;
+  max-height: 94vh; max-height: 94dvh; overflow-y: auto; overscroll-behavior: contain;
   animation: pop-in .5s cubic-bezier(.2,1.3,.4,1.1) both;
 }
 .results-card h2 { font-size: clamp(21px, 5vw, 36px); margin-bottom: 4px; text-wrap: balance; }

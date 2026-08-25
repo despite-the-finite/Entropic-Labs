@@ -44,6 +44,12 @@ export function runTool(step, ctx) {
   positionMarker();
   const onResize = () => positionMarker();
   window.addEventListener('resize', onResize);
+  /* The stage shrinks as the panel below it fills up — the tray, then a
+     readout card — and the marker was placed against the taller stage, so the
+     glowing target ended up ~50px below the hotspot it was supposed to mark.
+     Watching the overlay keeps the glow on the spot the drop actually tests. */
+  const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(onResize) : null;
+  ro?.observe(ctx.overlay);
 
   /* --- the tool tray ---------------------------------------------------- */
   const tray = h('div', { class: 'tool-tray' });
@@ -75,6 +81,8 @@ export function runTool(step, ctx) {
   });
 
   ctx.bodyEl.appendChild(tray);
+  // On a short screen the panel can open already scrolled past the tray.
+  requestAnimationFrame(() => tray.scrollIntoView({ block: 'nearest' }));
 
   // A nudge if nothing happens for a while — never blocking, just helpful.
   const idleTimer = setTimeout(() => {
@@ -142,6 +150,9 @@ export function runTool(step, ctx) {
     if (step.readout) {
       const card = readout(step.readout, tool, ctx);
       ctx.bodyEl.appendChild(card);
+      requestAnimationFrame(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }));
+      // Say what the tool actually found, not just "well done".
+      ctx.say('narrator', readoutLine(step.readout, tool, ctx));
     }
 
     ctx.setPrompt(praise());
@@ -157,11 +168,22 @@ export function runTool(step, ctx) {
 
   return () => {
     clearTimeout(idleTimer);
+    ro?.disconnect();
     window.removeEventListener('resize', onResize);
     cleaners.forEach((c) => c());
     marker.remove();
     ctx.overlay.querySelectorAll('.tool-stuck').forEach((s) => s.remove());
   };
+}
+
+/** What the readout card says, as a sentence a child can hear. */
+function readoutLine(spec, tool, ctx) {
+  const label = spec.label || tool.readout?.label || tool.name;
+  const value = spec.kind === 'number' || spec.kind === 'heartbeat'
+    ? `${spec.value}${spec.unit ? ` ${spec.unit}` : ''}`
+    : ctx.fill(spec.value || '');
+  const head = `${label}: ${value}`.replace(/[\s.]+$/, '');
+  return [head, spec.text ? ctx.fill(spec.text) : null].filter(Boolean).join('. ');
 }
 
 /**
