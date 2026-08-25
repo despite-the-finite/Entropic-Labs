@@ -405,7 +405,7 @@
   var erasEl = $('#eras');
   var storyEl = $('#story');
   var essayEl = $('#essay');
-  var whatIsBtn = $('#what-is');
+  var gateEssay = $('#gate-essay');
   var gateMark = $('#gate-mark');
   var lightboxEl = $('#lightbox');
   var keynavEl = $('#keynav');
@@ -2483,11 +2483,16 @@
     essayEl.appendChild(scroll);
   }
 
-  if (whatIsBtn) {
-    if (ESSAY && ESSAY.trigger) whatIsBtn.textContent = ESSAY.trigger;
-    whatIsBtn.hidden = !ESSAY;
-    whatIsBtn.addEventListener('click', function () {
-      lastFocus = whatIsBtn;
+  /* The premise is offered at the door. Pressing it is also a way in — it
+     takes the lens the visitor last chose and opens the essay on arrival,
+     so nobody has to answer the door question twice to read one page. */
+  if (gateEssay) {
+    gateEssay.textContent = (ESSAY && ESSAY.trigger) || 'What is the butterfly effect?';
+    gateEssay.hidden = !ESSAY;
+    gateEssay.addEventListener('click', function () {
+      if (!ESSAY) return;
+      lastFocus = null;
+      enterRoom();
       go('#' + ESSAY.id);
     });
   }
@@ -2791,10 +2796,11 @@
       b.appendChild(t);
 
       /* Marked, not chosen for them: the door they came out of last time
-         still has to be pushed. */
+         still has to be pushed. It says what it means — a one-word chip
+         reading LAST is a label only the person who wrote it understands. */
       if (marked && last === L.id) {
         b.setAttribute('data-last', '1');
-        b.appendChild(el('span', 'gate-door-last', 'Last'));
+        t.appendChild(el('span', 'gate-door-last', 'Recently selected'));
       }
 
       b.addEventListener('click', function () { enterRoom(L.id); });

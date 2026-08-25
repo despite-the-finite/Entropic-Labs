@@ -372,22 +372,21 @@ h1, h2, h3, h4{
 /* The door they came out of last time. Marked, not chosen for them — and
    marked in the corner rather than in the row, so the two doors stay the
    same size whichever one carries it. */
-/* Room for the corner marker, reserved on both doors so they read as a
-   pair — and only when one of them actually carries it. */
-.gate-doors[data-marked] .gate-door{ padding-right: 3.6rem; }
+/* The door they came out of last time says so in words, under its own
+   copy rather than crammed into a corner — the grid keeps both doors the
+   same size, so the extra line costs the pair nothing. */
 .gate-door[data-last]{
   border-color: rgba(255,196,107,0.42);
   background: rgba(255,196,107,0.05);
 }
 .gate-door-last{
-  position: absolute;
-  top: 0.72rem;
-  right: 0.85rem;
+  display: block;
+  margin-top: 0.34rem;
   font-family: var(--font-mono);
-  font-size: 0.54rem;
-  letter-spacing: 0.2em;
+  font-size: 0.52rem;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: rgba(255,196,107,0.66);
+  color: rgba(255,196,107,0.72);
 }
 @media (min-width: 34rem){
   .gate-doors{
@@ -474,14 +473,6 @@ body[data-gate="1"] .beginning{
   letter-spacing: 0.03em;
   line-height: 1.05;
 }
-.plate .sub{
-  font-family: var(--font-mono);
-  font-size: clamp(0.6rem, 1.3vw, 0.72rem);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--ash);
-  margin: 0.85rem 0 0;
-}
 .plate .hint{
   font-family: var(--font-mono);
   font-size: 0.6rem;
@@ -492,9 +483,11 @@ body[data-gate="1"] .beginning{
 }
 
 /* The one thing in the plate that can be clicked. */
-.what-is{
+/* The premise, asked at the door. It was `.what-is` on the plate inside the
+   room; the rule set is the same because it is the same control, moved. */
+.gate-essay{
   pointer-events: auto;
-  margin-top: 0.85rem;
+  margin-top: 0.3rem;
   background: none;
   border: 0;
   border-bottom: 1px solid rgba(47,224,199,0.35);
@@ -508,12 +501,10 @@ body[data-gate="1"] .beginning{
   min-height: 2.4rem;
   transition: color .16s ease, border-color .16s ease;
 }
-.what-is:hover{ color: var(--paper); border-bottom-color: var(--paper); }
-.what-is[hidden]{ display: none; }
+.gate-essay:hover{ color: var(--paper); border-bottom-color: var(--paper); }
+.gate-essay[hidden]{ display: none; }
 
-body[data-panel="1"] .plate,
-body[data-view="constellation"] .plate .sub,
-body[data-view="map"] .plate .sub{
+body[data-panel="1"] .plate{
   opacity: 0;
   transform: translateY(-8px);
 }
@@ -1867,7 +1858,6 @@ body[data-panel="1"] .plate{ pointer-events: none; }
   body[data-panel="1"] .dock{
     left: calc((100vw - min(38rem, 47vw)) / 2);
   }
-  body[data-panel="1"] .what-is{ opacity: 0; }
   /* The dock moves into the lane the readout was using, so the readout
      stands down rather than sitting underneath it. */
   body[data-panel="1"] .readout{ opacity: 0; }
@@ -2029,9 +2019,8 @@ body[data-panel="1"] .plate{ pointer-events: none; }
 @media (max-width: 900px), (pointer: coarse) and (max-width: 1100px){
   .plate{ top: calc(var(--bar-h) + 0.3rem); }
   .plate h1{ font-size: 1.5rem; }
-  .plate .sub{ margin-top: 0.5rem; }
   .plate .hint{ margin-top: 0.4rem; }
-  .what-is{ margin-top: 0.35rem; font-size: 0.56rem; min-height: 2.2rem; padding-bottom: 0.3rem; }
+  .gate-essay{ font-size: 0.56rem; min-height: 2.2rem; padding-bottom: 0.3rem; }
 
   /* view switch moves under the title, where a thumb can reach it */
   .views{
@@ -2137,7 +2126,7 @@ body[data-panel="1"] .plate{ pointer-events: none; }
   }
   .essay{ border-left-color: var(--trace); }
   .panel-head{ padding-top: calc(var(--bar-h) + 0.3rem); }
-  .plate .sub, .plate .hint{ display: none; }
+  .plate .hint{ display: none; }
   .navlinks li:not(.nav-exit){ display: none; }
   .navlinks .nav-exit{ display: block; }
   .beginning{ display: none; }
@@ -2334,15 +2323,12 @@ body[data-lens="atlas"] .navlinks a{ color: #6B5B49; }
 body[data-lens="atlas"] .plate h1{ color: #33281E; text-shadow: 0 1px 0 rgba(255,252,240,0.7); }
 /* The room's own words now sit over paint rather than over a dark room, so
    they carry a paper-coloured halo instead of relying on the ground. */
-body[data-lens="atlas"] .plate .sub,
 body[data-lens="atlas"] .plate .hint,
 body[data-lens="atlas"] .counts,
 body[data-lens="atlas"] .whisper{
   text-shadow: 0 0 4px rgba(246,240,225,0.95), 0 0 9px rgba(246,240,225,0.85);
 }
-body[data-lens="atlas"] .plate .sub{ color: #6B5B49; }
 body[data-lens="atlas"] .plate .hint{ color: rgba(107,91,73,0.78); }
-body[data-lens="atlas"] .what-is{ color: #2F6F63; border-bottom-color: rgba(47,111,99,0.4); }
 body[data-lens="atlas"] .counts{ color: rgba(74,59,44,0.78); }
 body[data-lens="atlas"] .counts b{ color: #9A5A1E; }
 body[data-lens="atlas"] .whisper{ color: #4A3B2C; }
@@ -2534,52 +2520,84 @@ body[data-lens="atlas"] button:focus-visible{ outline-color: #B4432E; }
 /* --- whose line is whose ------------------------------------------------
    Written where a line is still going, in that life's own colour, and
    pressable: a name is how you follow somebody. */
-.atlas-name{
-  position: absolute;
-  transform: translate(-50%, -50%) scale(calc(1 / var(--z, 1)));
-  pointer-events: auto;
-  background: none;
-  border: 0;
-  border-bottom: 1.5px solid color-mix(in srgb, var(--tone, #B4432E) 70%, transparent);
-  color: #3E3125;
-  font-family: var(--font-mono);
-  font-size: 0.56rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  padding: 0.5rem 0.3rem 0.28rem;
-  min-height: 2.4rem;
-  cursor: pointer;
-  white-space: nowrap;
-  /* a halo rather than a box: this is a name written on the paper, not a
-     control sitting on top of it */
-  text-shadow: 0 0 4px rgba(250,245,232,0.98), 0 0 9px rgba(250,245,232,0.9);
-  transition: color .18s ease, opacity .3s ease;
-}
-.atlas-name:hover{ color: #17110B; border-bottom-color: var(--tone, #B4432E); }
-.atlas-name[aria-pressed="true"]{
-  color: #17110B;
-  border-bottom-color: var(--tone, #B4432E);
-  border-bottom-width: 3px;
-}
-.atlas-name[data-off="1"]{ opacity: 0.34; }
-.atlas-name:focus-visible{ outline: 2px solid #B4432E; outline-offset: 2px; }
-
-/* --- the joints of the braid: a life starting, two becoming one ---------- */
+/* Both a name and a joint are the same object: a mark pinned to the braid,
+   and a piece of type hung off it at an offset the collision list worked
+   out. The element sits on the anchor; only `--dx`/`--dy` move, so a
+   diamond can never drift away from the two lines it marks, and a name can
+   never end up nearer somebody else's line than its own. */
+.atlas-name,
 .atlas-joint{
   position: absolute;
+  width: 0; height: 0;
   transform: translate(-50%, -50%) scale(calc(1 / var(--z, 1)));
-  display: flex;
-  align-items: center;
-  gap: 0.3em;
+  display: block;
   background: none;
   border: 0;
-  padding: 0.4rem 0.3rem;
-  min-height: 2.2rem;
+  padding: 0;
   pointer-events: none;
   transition: opacity .3s ease;
 }
-/* A birth names somebody, so it is pressable; a marriage names no one new. */
+.atlas-name-mark,
+.atlas-joint-mark{
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 7px; height: 7px;
+  margin: -3.5px 0 0 -3.5px;
+  border: 1.5px solid color-mix(in srgb, var(--tone, #B4432E) 75%, #4A3B2C);
+  background: rgba(255,252,242,0.9);
+}
+.atlas-name-text,
+.atlas-joint-text{
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(calc(-50% + var(--dx, 0px)), calc(-50% + var(--dy, 0px)));
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  white-space: nowrap;
+  /* a halo rather than a box: this is written on the paper, not a control
+     sitting on top of it */
+  text-shadow: 0 0 4px rgba(250,245,232,0.98), 0 0 9px rgba(250,245,232,0.9);
+  transition: color .18s ease;
+}
+/* The pressable ones need a finger-sized target, which the 7px mark is not.
+   It is centred on the mark and invisible, so the hit area cannot drag the
+   label's own position around with it. */
+button.atlas-name,
 button.atlas-joint{ pointer-events: auto; cursor: pointer; }
+button.atlas-name::after,
+button.atlas-joint::after{
+  content: "";
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 26px; height: 26px;
+  margin: -13px 0 0 -13px;
+}
+
+/* --- whose line is whose ------------------------------------------------
+   Written where a line is still going, in that life's own colour, and
+   pressable: a name is how you follow somebody. */
+.atlas-name-mark{ border-radius: 50%; }
+.atlas-name-text{
+  color: #3E3125;
+  font-size: 0.56rem;
+  letter-spacing: 0.16em;
+}
+.atlas-name:hover .atlas-name-text{ color: #17110B; }
+.atlas-name[aria-pressed="true"] .atlas-name-text{
+  color: #17110B;
+  text-decoration: underline;
+  text-decoration-color: var(--tone, #B4432E);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+.atlas-name[aria-pressed="true"] .atlas-name-mark{
+  background: var(--tone, #B4432E);
+  transform: scale(1.3);
+}
+.atlas-name[data-off="1"]{ opacity: 0.34; }
+button.atlas-name:focus-visible{ outline: 2px solid #B4432E; outline-offset: 2px; }
+
+/* --- the joints of the braid: a life starting, two becoming one ---------- */
 button.atlas-joint:hover .atlas-joint-text{ color: #17110B; }
 button.atlas-joint[aria-pressed="true"] .atlas-joint-text{ color: #17110B; }
 button.atlas-joint[aria-pressed="true"] .atlas-joint-mark{
@@ -2591,24 +2609,15 @@ button.atlas-joint[data-kind="union"][aria-pressed="true"] .atlas-joint-mark{
 }
 .atlas-joint[data-off="1"]{ opacity: 0.34; }
 button.atlas-joint:focus-visible{ outline: 2px solid #B4432E; outline-offset: 2px; }
-.atlas-joint-mark{
-  width: 7px; height: 7px;
-  flex: none;
-  border: 1.5px solid color-mix(in srgb, var(--tone, #B4432E) 75%, #4A3B2C);
-  background: rgba(255,252,242,0.9);
-}
 /* A birth is a fork in the line; a marriage is a diamond where two arrive.
    The shapes differ so the two never rely on their colour to be told apart. */
 .atlas-joint[data-kind="birth"] .atlas-joint-mark{ border-radius: 50%; }
 .atlas-joint[data-kind="union"] .atlas-joint-mark{ transform: rotate(45deg); }
 .atlas-joint-text{
-  font-family: var(--font-mono);
   font-size: 0.5rem;
   letter-spacing: 0.16em;
-  text-transform: uppercase;
   color: rgba(62,49,37,0.62);
   text-shadow: 0 0 3px rgba(250,245,232,0.95);
-  white-space: nowrap;
 }
 
 /* --- where it starts, and where the paint gives out --------------------- */
@@ -2742,7 +2751,7 @@ button.atlas-joint:focus-visible{ outline: 2px solid #B4432E; outline-offset: 2p
 
   /* the country gets the whole screen behind the furniture */
   .atlas-wp-cap{ display: none; }
-  .atlas-name{ font-size: 0.54rem; }
+  .atlas-name-text{ font-size: 0.54rem; }
   .atlas-joint-text{ font-size: 0.48rem; }
 }
 

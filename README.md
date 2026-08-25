@@ -320,7 +320,11 @@ view switch, is keyboard-walkable with the arrow keys, and is remembered in
 
 **The question is asked at the door.** Which lens is not a setting to be found
 later; it is the last thing the way in says, and the gate holds two doors
-rather than one button. They are built from `LENSES`, so a third lens gets a
+rather than one button. The tagline and the essay link belong to the door too:
+both used to sit on the plate inside the room, over the archive, on every
+screen, in both lenses — two lines of furniture between the visitor and the
+memories. They are said once, on the way in, and the room keeps its name and
+how to move around it and nothing else. They are built from `LENSES`, so a third lens gets a
 third door with nothing in the markup changing, and a build with only the
 canvas engine present falls back to the single FOLLOW THE TRAIL door it had
 before — a choice of one is not a choice. The door a returning visitor came
@@ -448,6 +452,30 @@ way, further out, which makes the country an island shaped like the life it
 carries — and means the map can never fall out of step with the family's
 layout, because both are derived from the same line.
 
+**The swell.** Four bands following the coast at increasing distance, each
+fainter than the last, the way water stacks up against a shore. It replaced a
+scatter of short wave ticks that collected along the coastline at a fitted
+zoom and read as a second scribbled border. Offsetting outward is the safe
+direction — a curve offset away from itself cannot fold — so the swell needs
+none of the care the coastline does.
+
+**North is on the paper, not on the glass.** A scale bar has to be on the
+glass: one that zooms with the map stops being a scale bar. North does not
+change with the zoom, so it belongs on the sheet — where a phone gets one too,
+which the old HUD rose never managed, having been hidden wherever there was no
+spare corner.
+
+**The ground the chapters have no wash for.** Six washes and a wood was the
+whole country, and at a fitted zoom that read as six coloured blobs with trees
+on. So: standing water (five tarns, placed wherever they land on the island and
+kept off the braid, because a pond over a trail is a trail that looks broken),
+pasture lying the way the ground does in the open chapters, scree where the
+range is steepest, wet sand just inside the shore. And the woods stopped being
+one green — each chapter has a short list of leaf colours and every tree picks
+one, which is enough to make a wood look like a wood. All of it is quiet and
+none of it is saturated: a backdrop that competes with the braid has failed,
+and the braid is the only strong colour on the sheet.
+
 **Why the shore is a line and not a scribble.** An offset curve is a trap, and
 this one fell into three of them at once. Its width came from a step function —
 the widest chapter reaching each moment — so a chapter boundary put a
@@ -465,6 +493,25 @@ travelled rather than by index, and the shore takes only the room the paper has
 where it is rather than being clamped flat against the edge. Zero
 self-intersections, which is checked rather than hoped.
 
+**The braid is inked, not tinted.** On a dark plane a thin bright line is the
+only thing on the screen; the same line over woods, terrain and a chapter wash
+goes to nothing. So each life gets a bloom in its own colour, a core in a
+deepened version of it, and a hairline of trail-ink inside that — which is what
+makes a printed route sit on top of a map rather than in it.
+
+Two things about the pale casing under the lines were wrong, and between them
+they were the breaks visible wherever the trails divide and come together.
+It compounded: nine translucent casings stroked one after another, and
+everywhere two or three lines ran together — which is exactly at a birth and at
+a marriage — the paper went from just-there to nearly opaque and a fat cream
+ribbon swallowed the coloured cores. It is now stroked opaque into a scratch
+sheet and laid down once: a union, which is what a casing was always meant to
+be. And it did not fade: a line that begins mid-braid had its ink faded up over
+its first sixth and its casing drawn at full strength, so that sixth was a bare
+pale stripe with no colour in it. Both the casing and the ink now fade on the
+same ramp — a gradient, not three stacked partial strokes, which banded where
+they overlapped and left two visible steps in every head.
+
 **A memory is a light on the ground**, in the category tone the whole room
 uses, with its year under it once there is room to print one. It carried a number for a while, the way a trail map numbers its
 segments — but a life is not a set of segments, and the number only told you
@@ -474,11 +521,16 @@ to lift it off the ground and a ring of ink outside that, which is the part
 that does not depend on the colour being seen. A chaos event keeps the slow
 breath it has in every other view.
 
-**Everything written on the paper goes through one collision list.** The
-names and the joints of the braid check against the memories first and then
-against each other, each stepping off in a direction that suits it — a name
-steps the way its own line already leans, so it never crosses the braid to
-find room. Add a story and every label re-negotiates.
+**Everything written on the paper goes through one collision list**, and every
+label on it is two things: a mark that stays exactly where the braid put it,
+and a piece of type hung off it at an offset the collision list worked out.
+The whole label used to move, so a marriage diamond could end up sixty pixels
+from the two lines it marked. What is negotiable is where the words go; where
+the mark goes never was. The type is kept on a short leash as well — five steps
+of eleven pixels, against sixteen of twenty-two for a memory's caption —
+because a label that walks three hundred pixels to avoid a collision has not
+solved anything, it has moved the confusion somewhere else. Add a story and
+every label re-negotiates.
 
 **The braid's joints are map furniture, and they name people.** A birth is a
 circle on the line carrying the child's name and year; a marriage is a diamond
@@ -527,13 +579,34 @@ animals standing on it together.
 
 They are painted rather than drawn, because a line-art animal sits on a
 watercolour country like a sticker. What separates a creature from a cut-out
-shape is cheap and there is not much of it: a body lit along the back and
-shadowed underneath, a soft shadow on the ground it is standing on, a wet dark
-edge at a fifth strength instead of an outline, legs that taper from shoulder
-to hoof, and an eye with a speck of sky in it. The two in the water get none
-of that and something else instead — the line of the surface drawn across
-them and a wake behind, which is the only way a painted animal reads as being
-in something rather than on it.
+shape is cheap and there is not much of it: a soft shadow on the ground it is
+standing on, a wet dark edge at a fifth strength instead of an outline, legs
+that taper from shoulder to hoof, an eye with a speck of sky in it — and a body
+lit in four bands rather than two. Two stops give a smooth ramp and a smooth
+ramp is what plastic looks like; an animal lit from above has a bright line
+along its back where the light grazes it, a broad midtone, a dark under the
+belly, and a little light coming back up off the ground into that dark. Over
+that goes a coat of short hair with longer hair lying across it, because one
+hair length at one weight is hatching. The two in the water get none of it and
+something else instead — the line of the surface drawn across them and a wake
+behind, which is the only way a painted animal reads as being in something
+rather than on it.
+
+The elk is the one that had to be redrawn rather than reshaded. An elk is a
+wedge: high at the withers, falling away to the rump, deep through the chest,
+tucked at the flank, with a short thick neck coming off the chest and a head
+big enough to carry the antlers. It was an oval with a stalk out of the top,
+and no amount of shading rescues a silhouette that is wrong.
+
+**Nothing an animal does moves it.** A hare used to hop across the ground on a
+sawtooth and then vanish back to where it started when the loop turned over,
+and a fish was swept sideways the same way. An animal on a map has a *place*,
+and a place it walks away from is a place it is no longer marking — so every
+term in every animal is a full sine now, with no net travel and no wrap for the
+eye to catch, and every amplitude is roughly halved. An ear turns, a hare
+settles on its haunches and comes back up, a heron's neck folds and strikes
+once in a while. The butterflies are the exception and are meant to be: they
+are on errands, and an errand has somewhere to be.
 
 They are also drawn about a third smaller than they first were. At the old
 size they were the largest things on the paper and the country was their
