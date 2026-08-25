@@ -4488,6 +4488,64 @@
       source: 'Karsh',
       relatedStories: ['momo', 'no-futon'],
       dateAdded: '2026-08-24'
+    },
+
+    {
+      id: 'miscalculated-touchdown',
+      title: 'Miscalculated Touchdown',
+      hook: 'The Cessna hit the runway sideways. The only casualty I cared about was strapped to my wrist.',
+      year: 2001,
+      approximateDate: 'Circa 2001',
+      strand: 'kush',
+      location: 'Chingola, Zambia',
+      place: 'chingola',
+      /* Named as Kush named it. Chingola's airfield is Kasompe (CGJ / FLKE),
+         three kilometres south-east of town, but nothing in the record ties
+         the club to it, so the map link points at the town. */
+      landmark: {
+        name: 'The Chingola flying club',
+        query: 'Chingola Zambia'
+      },
+      category: 'chaos',
+      tags: [
+        'zambia', 'chingola', 'copperbelt', 'flying', 'aircraft',
+        'childhood', 'friendship', 'near miss', 'funny memories'
+      ],
+      people: [
+        { name: 'Kush', relation: 'me, going up for the second time that day' },
+        { name: 'Stefan', relation: 'my best friend, going up for the first' },
+        { name: 'The pilot', relation: 'who let me tag along for free' },
+        { name: 'Amma', relation: 'my mom, running toward the runway' }
+      ],
+      story: [
+        'The low hum of single-engine aircraft vibrated through the warm air at the Chingola flying club, where the local family fun day was in full swing around 2001. The main event was an irresistible offer: 20 Thousand Kwacha for a spin over the open-pit copper mines in a Cessna. I had already gone up earlier that morning, captivated by the red-earth geometry of the mines far below, touching down effortlessly on the sun-baked runway without a single hitch.',
+        'By late afternoon, my best friend, Stefan, unexpectedly showed up. Eager to see the town from the clouds, he wanted to head up too. The pilot was preparing for the final flight of the day and generously offered to let me tag along with Stefan for free.',
+        'The takeoff was effortless, lifting us into a picture-perfect Zambian sky. From the window, the vast landscape glinted beneath us, and the weather couldn’t have been better. Everything about the ride was smooth and idyllic — right up until our final approach.',
+        'We were barely 20 to 30 feet above the tarmac, lining up for a routine landing, when a sudden, violent gust of wind shear caught us. The Cessna veered sharply to the right, dropping out of the sky and slamming into the ground with terrifying force.',
+        { kind: 'beat', text: 'Dust everywhere.' },
+        'The impact jarred through the cabin. I lurched sideways, cracking my head against the window glass and wrenching my wrist. Outside, my mom frantically rushed toward the runway expecting the worst. But as the dust settled, my deep distress had nothing to do with the hard landing or surviving a plane crash.',
+        {
+          kind: 'reveal',
+          text: 'Strapped to my bruised wrist was my most prized possession: a *calculator watch* I had bought entirely with my own saved money.'
+        },
+        'The digital face was ruined.',
+        {
+          kind: 'landing',
+          text: 'While my mom stood there overwhelmed with maternal relief, I stood on the tarmac utterly heartbroken, mourning the tragic loss of my favorite gadget on an otherwise unforgettable family fun day.'
+        }
+      ],
+      artifact: {
+        label: 'Memory artifact',
+        title: 'A calculator watch',
+        lines: [
+          { label: 'Bought with', text: 'My own money. All of it.' },
+          { label: 'Condition', text: 'Digital face ruined. Never the same.' },
+          { label: 'Also aboard', text: 'One bruised wrist, one cracked head, two intact boys.' }
+        ]
+      },
+      source: 'Kush',
+      relatedStories: ['the-gto'],
+      dateAdded: '2026-08-25'
     }
   ];
 
