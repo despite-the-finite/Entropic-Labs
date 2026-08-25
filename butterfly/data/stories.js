@@ -4499,12 +4499,12 @@
       strand: 'kush',
       location: 'Chingola, Zambia',
       place: 'chingola',
-      /* Named as Kush named it. Chingola's airfield is Kasompe (CGJ / FLKE),
-         three kilometres south-east of town, but nothing in the record ties
-         the club to it, so the map link points at the town. */
+      /* Kasompe (CGJ / FLKE), three kilometres south-east of Chingola —
+         which everybody called the flying club, and which is what Kush
+         calls it in the telling. Both names, so the reader can find it. */
       landmark: {
-        name: 'The Chingola flying club',
-        query: 'Chingola Zambia'
+        name: 'Kasompe Airfield — “the flying club”',
+        query: 'Kasompe Airport Chingola Zambia'
       },
       category: 'chaos',
       tags: [
