@@ -78,9 +78,10 @@
     };
   }
 
-  function el(tag, cls) {
+  function el(tag, cls, text) {
     var n = document.createElement(tag);
     if (cls) n.className = cls;
+    if (text !== undefined && text !== null) n.textContent = text;
     return n;
   }
 
@@ -110,15 +111,32 @@
   }
 
   /* A brush does not follow a ruler. Every outline in here gets pushed off
-     course by a slow seeded wander before it is drawn. */
-  function waver(pts, amp, seed) {
+     course by a slow seeded wander before it is drawn.
+
+     Slow is the word that matters, and it used to be a lie: the wander
+     stepped once per point, so on a spline resampled every two or three
+     pixels a five-pixel amplitude turned a full circle inside one short
+     run and the outline sawed back over itself, dozens of times along the
+     shore. That is what made the coast read as a scribble. The wander now
+     advances by the distance actually travelled — one full wave every
+     `wave` pixels of path, whatever the points are spaced at — so the
+     displacement can never change faster than the path itself moves and a
+     roughened outline cannot cross itself. */
+  function waver(pts, amp, seed, wave) {
     var r = rng(seed);
     var ph = r() * TAU, ph2 = r() * TAU;
-    return pts.map(function (p, i) {
-      var a = i * 0.7 + ph, b = i * 0.31 + ph2;
-      return { x: p.x + (Math.sin(a) * 0.6 + Math.sin(b) * 0.4) * amp,
-               y: p.y + (Math.cos(a * 1.13) * 0.6 + Math.cos(b * 0.87) * 0.4) * amp };
-    });
+    var per = (wave || 110) / TAU;
+    var d = 0, out = [], i;
+    for (i = 0; i < pts.length; i++) {
+      if (i) {
+        var dx = pts[i].x - pts[i - 1].x, dy = pts[i].y - pts[i - 1].y;
+        d += Math.sqrt(dx * dx + dy * dy);
+      }
+      var a = d / per + ph, b = d / (per * 2.3) + ph2;
+      out.push({ x: pts[i].x + (Math.sin(a) * 0.6 + Math.sin(b) * 0.4) * amp,
+                 y: pts[i].y + (Math.cos(a * 1.13) * 0.6 + Math.cos(b * 0.87) * 0.4) * amp });
+    }
+    return out;
   }
 
   function ring(cx, cy, rx, ry, n, rough, seed) {
@@ -167,8 +185,34 @@
     forest:     '#6E8F62',
     forestDeep: '#4E6E4A',
     hide:       '#8A5A3C',
-    hideDark:   '#5F3A25'
+    hideDark:   '#5F3A25',
+    /* Ground the chapters do not have a wash for: standing water, bare
+       rock, wet sand, reeds. A country is not six colours. */
+    tarn:       '#8ABCC4',
+    scree:      '#B2ADB5',
+    sand:       '#E6DAB4',
+    marsh:      '#9DB77E'
   };
+
+  /* One green was doing all the work. Woods read as a single flat mass when
+     every tree in them is the same colour, so each chapter gets a short list
+     to pick from and every tree picks once — which is enough variety to make
+     a wood look like a wood without any of it competing with the braid. */
+  var LEAF = {
+    peak:    ['#5B7A55', '#456A46', '#6E8F62', '#3E5F41'],
+    hill:    ['#63855A', '#4E6E4A', '#7C9A66', '#456A46'],
+    bush:    ['#8A9E62', '#6E8F62', '#9CAA6C', '#7A8E58'],
+    plain:   ['#8FA168', '#A2AE76', '#7C9A66', '#B0864A'],
+    prairie: ['#9BAA70', '#AEB77E', '#849B63', '#B89457'],
+    coast:   ['#7FA06A', '#94AE72', '#6E8F62', '#A6B87E'],
+    isle:    ['#69A183', '#7FB18C', '#5C8F73', '#8CBE97'],
+    falls:   ['#5F8A72', '#4E7A63', '#79A184', '#9DB77E'],
+    soft:    ['#88A06B', '#9CAE76', '#749162', '#AF8B52']
+  };
+  function leafOf(terrain, r) {
+    var list = LEAF[terrain] || LEAF.plain;
+    return list[Math.min(list.length - 1, Math.floor(r * list.length))];
+  }
 
   /* ------------------------------------------------------------------------
      THE COUNTRY
@@ -199,7 +243,7 @@
      `at` is the year they sit beside, `side` which bank of the spine. */
   var FEATURES = [
     { id: 'hills', at: 1999, side: -1,
-      out: 250, rx: 165, ry: 118, wash: PIG.pine, terrain: 'hill' },
+      out: 188, rx: 158, ry: 98, wash: PIG.pine, terrain: 'hill' },
     { id: 'isles', at: 2007, side: 1,
       out: 265, rx: 132, ry: 96, wash: PIG.lagoon, terrain: 'isle', island: true }
   ];
@@ -252,7 +296,7 @@
     var trunkId = null, marriedWord = 'Married';
     var joints = [];                           /* births and marriages */
     var trees = [], fauna = [];
-    var placeById = {}, eras = [];
+    var eras = [];
     var emphasis = { category: null, person: null, era: null, ids: null };
     var focusedId = null;
     var inset = { top: 0, bottom: 0 };
@@ -292,18 +336,31 @@
 
        which at these numbers is about 290 map units against a widest lane
        of some 170: enough room, and the reason it stays a braid. */
-    var SPINE = { x0: 1552, x1: 128, y0: 500, amp: 158, waves: 1.05, drift: 42 };
+    /* West to east, because that is the way the canvas trail runs and the
+       way anybody reads. It also settles which bank is which: the normal of
+       a line running rightward points down, so a strand at side -1 sits
+       above the trunk here exactly as it does there. */
+    /* Shallow on purpose. The canvas trail is a level ribbon, and the
+       whole of its readability comes from that: the eye follows a line that
+       stays where it was. A map wants some wander in it, so there is some —
+       but a fraction of what a landscape would take, because the moment the
+       braid climbs and dives across the sheet it stops being followable. */
+    var SPINE = { x0: 128, x1: 1552, y0: 500, amp: 58, drift: 18 };
     var spinePts = [], spineLen = [];
 
     function buildSpine() {
+      /* Both waves complete a whole number of turns across the sheet, so the
+         line comes back to the height it started at. A spine that drifts —
+         1.05 turns, say — reads as one long diagonal, and the braid slides
+         off two corners of the paper however wide the country is drawn. */
       var pts = [], n = 170;
       for (var i = 0; i <= n; i++) {
         var k = i / n;
         pts.push({
           x: SPINE.x0 + (SPINE.x1 - SPINE.x0) * k,
           y: SPINE.y0
-             + Math.sin(k * TAU * SPINE.waves + 0.55) * SPINE.amp
-             + Math.sin(k * TAU * 0.4 + 2.1) * SPINE.drift
+             + Math.sin(k * TAU + 0.9) * SPINE.amp
+             + Math.sin(k * TAU * 2 + 2.4) * SPINE.drift
         });
       }
       spinePts = waver(pts, 2.2, 'spine');
@@ -326,13 +383,31 @@
       var k = (want - spineLen[i - 1]) / seg;
       var dx = b.x - a.x, dy = b.y - a.y;
       var d = Math.sqrt(dx * dx + dy * dy) || 1;
+
+      /* The direction is read across a window, not off the one segment
+         under the point. The spine is a roughened line — a couple of
+         pixels of wander, which is what keeps it from looking ruled — and
+         its segments are only eight pixels long, so a two-pixel wobble
+         swings a single segment's angle by twenty-odd degrees. Anything
+         hung off that normal at a distance swings with it: the shore is
+         three hundred pixels out, so it was moving a hundred and fifty
+         pixels between neighbouring samples and folding over itself the
+         whole way along. That fold, roughened and inked, was the scribble
+         round the edge of the land. Averaged over a dozen segments the
+         direction is the line's, not the wobble's, while the position it
+         is taken at keeps every bit of the wander. */
+      var W = 6, lo = clamp(i - 1 - W, 0, spinePts.length - 1),
+          hi = clamp(i + W, 0, spinePts.length - 1);
+      var tx = spinePts[hi].x - spinePts[lo].x, ty = spinePts[hi].y - spinePts[lo].y;
+      var tl = Math.sqrt(tx * tx + ty * ty) || 1;
+
       /* Off the ends the spine keeps going straight, so a line that runs in
          from before the record still has somewhere to run in from. */
       var over = want < 0 ? want : (want > total ? want - total : 0);
       return {
-        x: a.x + dx * k + (over ? dx / d * over : 0),
-        y: a.y + dy * k + (over ? dy / d * over : 0),
-        nx: -dy / d, ny: dx / d
+        x: a.x + dx * k + (over ? tx / tl * over : 0),
+        y: a.y + dy * k + (over ? ty / tl * over : 0),
+        nx: -ty / tl, ny: tx / tl
       };
     }
 
@@ -347,7 +422,7 @@
        branched out of, never from zero, so a birth leaves its parent exactly
        and a marriage arrives exactly, with no seam to line up by hand. */
     var MERGE_W = 1.15, BRANCH_W = 0.95;
-    var LANE_PX = 78;                       /* one lane, in map units */
+    var LANE_PX = 104;                      /* one lane, in map units */
 
     function smoothstepL(e0, e1, x) {
       if (e1 === e0) return x < e0 ? 0 : 1;
@@ -355,11 +430,14 @@
       return t * t * (3 - 2 * t);
     }
 
+    /* Two slow sines per strand, so no two lines wander the same way — and
+       these are the canvas trail's own numbers, not larger ones. A map is a
+       bigger sheet than a screen and it is tempting to let the lines wander
+       further across it; that is exactly what made the braid hard to follow.
+       The wander stays small and the distance between lanes does the work. */
     function wobble(t, lane) {
-      var a = lane.amp, f = lane.freq;
-      return Math.sin(t * f + lane.phase * 6.283) * 0.34 * a
-           + Math.sin(t * f * 0.43 + lane.phase * 14.1) * 0.2 * a
-           + Math.sin(t * f * 2.2 + lane.phase * 3.9) * 0.06 * a;
+      return Math.sin(t * 1.45 + lane.phase) * 0.058
+           + Math.sin(t * 0.62 + lane.phase * 2.3) * 0.036;
     }
 
     function laneOffset(lane, t, depth) {
@@ -375,11 +453,12 @@
       if (lane.endKind === 'joins') {
         var target = laneById[lane.joinTarget];
         if (target) {
-          /* Two lives do not become one line. They come to travel beside
-             each other and keep a hair's width between them, which is the
-             honest drawing and the only way both stay findable. */
+          /* A line gives up its own position for the one it joins, exactly —
+             the same interpolation the canvas trail makes, wobble included,
+             so the confluence is exact by construction and there is no seam
+             to line up. Two trails become one. */
           var jn = smoothstepL(lane.to - MERGE_W, lane.to, t);
-          if (jn > 0) own = lerp(own, laneOffset(target, t, depth + 1) + lane.pairGap, jn);
+          if (jn > 0) own = lerp(own, laneOffset(target, t, depth + 1), jn);
         }
       }
       return own;
@@ -411,6 +490,7 @@
           var p = laneAt(lane, lane.from + 0.12);
           joints.push({
             kind: 'birth', id: 'b-' + lane.id, tone: lane.tone,
+            strand: lane.id, who: lane.label,
             text: lane.label + (lane.startsAt === null ? '' : ' · ' + lane.startsAt),
             x: p.x, y: p.y
           });
@@ -576,6 +656,7 @@
 
       paintPaper(g);
       paintSea(g);
+      paintSwell(g);
       paintLand(g);
 
       /* Chapters, rivers, terrain and woods all belong to the land, so they
@@ -596,8 +677,10 @@
         paintTerrain(g, F);
       });
 
+      paintCountry(g);
       paintForest(g);
       paintCoastInk(g);
+      paintNorth(g);
       paintBraid(g);
       paintEdgeOfSurvey(g);
       paintGrain(g);
@@ -671,27 +754,107 @@
       wash(g, pts, PIG.sea, 0.62, 'sea-a', false);
       wash(g, pts, PIG.seaDeep, 0.16, 'sea-b', false);
 
-      /* the ticks a cartographer uses for open water, thinning as they get
-         further from the shore so the eye still goes to the land */
-      var r = rng('waves');
-      g.save();
-      g.globalAlpha = 0.26;
-      g.strokeStyle = PIG.seaDeep;
-      g.lineWidth = 1.5;
-      for (var y = 30; y < MAP.h; y += 30) {
-        for (var b = 0; b < 5; b++) {
-          var x = r() * MAP.w;
-          var w = 34 + r() * 70;
-          g.globalAlpha = 0.12 + r() * 0.2;
-          g.beginPath();
-          g.moveTo(x, y);
-          g.bezierCurveTo(x + w * 0.3, y - 5, x + w * 0.7, y + 5, x + w, y);
-          g.stroke();
-        }
-      }
-      g.restore();
+      /* Open water and nothing else. The cartographer's wave ticks used to
+         run across it, and at a fitted zoom they collected along the coast
+         and read as a scribbled border round the land rather than as sea —
+         the one thing on the paper that looked drawn on rather than
+         painted. Two washes hold the water on their own. */
       g.restore();
       g.globalAlpha = 1;
+    }
+
+    /* The swell. Not the cartographer's wave ticks that used to be here —
+       those were short scratchy strokes scattered at random, and at a fitted
+       zoom enough of them collected along the shore to read as a scribbled
+       border. This is the same idea drawn the other way round: four bands
+       following the coast at increasing distance, each fainter than the
+       last, the way water actually stacks up against a shore. Offsetting
+       outward is the safe direction — a curve offset away from itself
+       cannot fold — so these need none of the care the coastline does. */
+    function offsetPoly(pts, d) {
+      var n = pts.length, out = [], i;
+      for (i = 0; i < n; i++) {
+        var a = pts[(i - 1 + n) % n], b = pts[(i + 1) % n];
+        var tx = b.x - a.x, ty = b.y - a.y;
+        var tl = Math.sqrt(tx * tx + ty * ty) || 1;
+        /* the coast is wound so that this normal points out to sea */
+        out.push({ x: pts[i].x + (ty / tl) * d, y: pts[i].y - (tx / tl) * d });
+      }
+      return out;
+    }
+
+    function paintSwell(g) {
+      var land = coast();
+      /* which way is out: push one point and see whether it left the land */
+      var probe = offsetPoly(land, 12);
+      var sign = inside(land, probe[0].x, probe[0].y) ? -1 : 1;
+      g.save();
+      g.strokeStyle = PIG.seaDeep;
+      g.lineJoin = 'round';
+      [[26, 0.13, 2.4], [58, 0.1, 2], [96, 0.075, 1.7], [142, 0.05, 1.5]]
+        .forEach(function (band, i) {
+          var ring = offsetPoly(land, band[0] * sign);
+          g.globalAlpha = band[1];
+          g.lineWidth = band[2];
+          tracePath(g, ring, true);
+          g.stroke();
+        });
+      g.globalAlpha = 1;
+      g.restore();
+    }
+
+    /* North, on the paper rather than on the glass. A scale bar has to live
+       on the glass — one that zooms with the map stops being a scale bar —
+       but north does not change with the zoom, so it belongs on the sheet,
+       where a phone can see it too. */
+    function paintNorth(g) {
+      var x = 232, y = 168, r = 34;
+      g.save();
+      g.translate(x, y);
+      g.globalAlpha = 0.42;
+      g.strokeStyle = PIG.ink;
+      g.lineWidth = 1.1;
+      g.beginPath(); g.arc(0, 0, r, 0, TAU); g.stroke();
+      g.globalAlpha = 0.16;
+      g.beginPath(); g.arc(0, 0, r - 4, 0, TAU); g.stroke();
+
+      /* the needle: half of it inked, half of it left as paper, which is how
+         a drawn compass says which end is north without a legend */
+      g.globalAlpha = 0.7;
+      g.beginPath();
+      g.moveTo(0, -r + 5); g.lineTo(r * 0.2, 0); g.lineTo(0, r * 0.3);
+      g.closePath();
+      g.fillStyle = PIG.ink;
+      g.fill();
+      g.beginPath();
+      g.moveTo(0, -r + 5); g.lineTo(-r * 0.2, 0); g.lineTo(0, r * 0.3);
+      g.closePath();
+      g.fillStyle = 'rgba(250,245,232,0.92)';
+      g.fill();
+      g.globalAlpha = 0.5;
+      g.strokeStyle = PIG.ink;
+      g.lineWidth = 0.9;
+      g.stroke();
+
+      /* the three quiet quarters */
+      g.globalAlpha = 0.28;
+      g.fillStyle = PIG.ink;
+      for (var q = 1; q < 4; q++) {
+        g.save(); g.rotate(q * Math.PI / 2);
+        g.beginPath();
+        g.moveTo(0, -r + 9); g.lineTo(r * 0.09, 0); g.lineTo(-r * 0.09, 0);
+        g.closePath(); g.fill();
+        g.restore();
+      }
+
+      g.globalAlpha = 0.62;
+      g.fillStyle = PIG.ink;
+      g.font = '600 13px Georgia, "Iowan Old Style", serif';
+      g.textAlign = 'center';
+      g.textBaseline = 'middle';
+      g.fillText('N', 0, -r - 9);
+      g.globalAlpha = 1;
+      g.restore();
     }
 
     /* The mainland. One irregular mass, deliberately unfinished at the
@@ -703,38 +866,78 @@
     var coastPts = null;
     function coast() {
       if (coastPts) return coastPts;
-      var n = 74, up = [], down = [], i;
+      var n = 120, ts = [], ws = [], up = [], down = [], i;
+
+      /* How far the land reaches at each step, worked out first and on its
+         own. `spanAt` answers with the widest chapter that reaches a moment,
+         which is a step function: at a chapter boundary the width jumps by
+         up to seventy pixels between one sample and the next. An offset
+         curve loops wherever its width changes faster than the curve
+         travels, so twenty passes of a three-tap average turn those cliffs
+         into slopes before anything is offset. (The scribbled shore this
+         replaced had a second and larger cause — see `onSpine`.) */
       for (i = 0; i <= n; i++) {
+        ts.push(lerp(axis.start - 1.6, axis.end + 1.6, i / n));
+        ws.push(spanAt(ts[i]));
+      }
+      for (var pass = 0; pass < 20; pass++) {
+        var next = ws.slice();
+        for (i = 1; i < n; i++) next[i] = (ws[i - 1] + ws[i] * 2 + ws[i + 1]) * 0.25;
+        ws = next;
+      }
+
+      for (i = 0; i <= n; i++) {
+        /* both ends taper, so the island has a nose */
         var k = i / n;
-        /* the widest chapter anywhere near this point decides how far the
-           land reaches, and both ends taper so the island has a nose */
-        var t = lerp(axis.start - 1.6, axis.end + 1.6, k);
-        var span = spanAt(t);
         var taper = Math.pow(Math.sin(clamp(k, 0, 1) * Math.PI), 0.42);
-        var w = span * 1.62 * taper + 26;
-        var sp = onSpine(uOf(t));
-        up.push({ x: sp.x + sp.nx * w, y: clamp(sp.y + sp.ny * w, 54, MAP.h - 54) });
-        down.push({ x: sp.x - sp.nx * w, y: clamp(sp.y - sp.ny * w, 54, MAP.h - 54) });
+        /* close enough that the country reads as the ground the braid
+           crosses, rather than a continent with the family in a stripe */
+        var sp = onSpine(uOf(ts[i]));
+        /* Whatever the chapters ask for, the shore takes only the room the
+           paper actually has at this point — measured against the spine
+           where it is, not against a number decided once. A coast that runs
+           out of paper gets clamped, and a clamped coast is a ruled line.
+
+           And never wider than the spine's own turn. An offset curve folds
+           wherever the curve it is offset from turns tighter than the
+           offset is wide; this spine bends at a radius of about five
+           hundred pixels at its sharpest, so a shore held inside two
+           thirds of that cannot cross itself on the inside of a bend. */
+        var room = Math.min(sp.y, MAP.h - sp.y) - 62;
+        var w = Math.min(ws[i] * taper + 26, room, COAST_MAX);
+        up.push({ x: sp.x + sp.nx * w, y: sp.y + sp.ny * w });
+        down.push({ x: sp.x - sp.nx * w, y: sp.y - sp.ny * w });
       }
       down.reverse();
-      coastPts = waver(spline(up.concat(down), 5), 11, 'coast');
+      /* And a light hand with the roughening: five pixels of wander over a
+         hundred-pixel wave is a coastline, eleven over nine points was a
+         saw. Checked rather than hoped — at these numbers the closed
+         outline has no self-intersections anywhere. */
+      coastPts = waver(spline(up.concat(down), 5), 5, 'coast');
       return coastPts;
     }
 
-    /* How wide the country is at a given moment — the widest chapter that
-       reaches it, so the coast never cuts a chapter in half. */
+    /* How far the land reaches at a given moment: far enough to hold the
+       widest chapter and any offshore piece of ground near it, and never
+       so far that the shore runs into the edge of the paper — a coast that
+       hits the clamp goes flat, and a flat run of shore is the one shape
+       that cannot be mistaken for a coastline. */
+    var COAST_MAX = 336;
     function spanAt(t) {
-      var w = 150;
+      var w = 150 * 1.28;
       REGIONS.forEach(function (R) {
         if (R.t0 === undefined) return;
         var pad = 1.2;
         if (t < R.t0 - pad || t > R.t1 + pad) return;
-        w = Math.max(w, R.span);
+        w = Math.max(w, R.span * 1.28);
       });
       FEATURES.forEach(function (F) {
         if (F.tAt === undefined) return;
         if (Math.abs(t - F.tAt) > 1.6) return;
-        w = Math.max(w, Math.abs(F.out) + Math.max(F.rx, F.ry) * 1.15);
+        /* a feature already carries its own extent, so it is reached, not
+           multiplied — the normal here is very nearly vertical, which makes
+           `ry` the half-height that has to fit inside the shore */
+        w = Math.max(w, Math.abs(F.out) + F.ry * 1.1 + 26);
       });
       return w;
     }
@@ -754,12 +957,16 @@
        route included, so the whole country fades together. */
     function paintEdgeOfSurvey(g) {
       g.save();
-      var grad = g.createRadialGradient(6, 812, 24, 6, 812, 300);
+      /* Wherever the trail ends up running out, rather than a corner chosen
+         by hand — so the paint gives out at the end of the record however
+         the country is laid out. */
+      var end = onSpine(1.04);
+      var grad = g.createRadialGradient(end.x, end.y, 24, end.x, end.y, 320);
       grad.addColorStop(0, 'rgba(244,237,220,0.97)');
       grad.addColorStop(0.5, 'rgba(244,237,220,0.72)');
       grad.addColorStop(1, 'rgba(244,237,220,0)');
       g.fillStyle = grad;
-      g.fillRect(0, 512, 340, 488);
+      g.fillRect(end.x - 340, end.y - 340, 680, 680);
       g.restore();
     }
 
@@ -1179,35 +1386,106 @@
       g.lineJoin = 'round';
       g.lineCap = 'round';
 
-      /* casing first, all of them, so no line is knocked out of another */
-      g.globalAlpha = 0.62;
-      g.strokeStyle = PIG.paper;
-      lanePaths.forEach(function (P) {
-        if (P.pts.length < 2) return;
-        g.lineWidth = P.lane.id === trunkId ? 9.5 : 7.5;
-        tracePath(g, P.pts, false);
-        g.stroke();
-      });
+      /* The casing goes down for every strand before any strand is inked, so
+         no line is knocked out of another where they cross. Two things about
+         it were wrong, and between them they are the breaks people saw
+         wherever the trails divide and come together.
 
+         It compounded. Nine translucent casings stroked one after another
+         onto the paper, and everywhere two or three lines ran together —
+         which is precisely at a birth and at a marriage — the paper under
+         them went from just-there to nearly opaque, and a fat cream ribbon
+         swallowed the thin coloured cores running down the middle of it. So
+         it is stroked opaque into a scratch sheet first and laid down once:
+         a union, which is what a casing was always meant to be.
+
+         And it did not fade. A line that begins mid-braid had its ink faded
+         up over its first sixth and its casing drawn at full strength for
+         the whole length, so that sixth was a bare pale stripe with no
+         colour in it at all. The casing now fades exactly where its own
+         line does. */
+      var cs = document.createElement('canvas');
+      cs.width = Math.round(MAP.w * sheetScale);
+      cs.height = Math.round(MAP.h * sheetScale);
+      var cg = cs.getContext('2d');
+      cg.setTransform(sheetScale, 0, 0, sheetScale, 0, 0);
+      cg.lineJoin = 'round';
+      cg.lineCap = 'round';
       lanePaths.forEach(function (P) {
         if (P.pts.length < 2) return;
-        var trunk = P.lane.id === trunkId;
-        tracePath(g, P.pts, false);
-        g.globalAlpha = 0.16;
-        g.strokeStyle = P.lane.tone;
-        g.lineWidth = trunk ? 8 : 6;
-        g.stroke();
-        g.globalAlpha = 0.92;
-        g.lineWidth = trunk ? 3.9 : 2.7;
-        g.stroke();
-        /* a hair of ink along it, so a pale strand still reads on paper */
-        g.globalAlpha = 0.3;
-        g.strokeStyle = PIG.ink;
-        g.lineWidth = 0.7;
-        g.stroke();
+        rampStroke(cg, P.pts, headCut(P), PIG.paper, 9, 1);
+      });
+      g.globalAlpha = 0.62;
+      g.drawImage(cs, 0, 0, MAP.w, MAP.h);
+      g.globalAlpha = 1;
+
+      /* Then each line: a soft bloom in its own colour and a darker core
+         inside it, which is the canvas trail's structure read onto paper —
+         and every strand at the same weight, because the line two people
+         became is not more important than either of them. */
+      lanePaths.forEach(function (P) {
+        if (P.pts.length < 2) return;
+        strokeStrand(g, P);
       });
       g.restore();
       g.globalAlpha = 1;
+    }
+
+    /* How much of a line's head fades in. A line that simply begins —
+       somebody whose own parents are not in this archive — comes up out of
+       nothing rather than switching on. */
+    function headCut(P) {
+      return P.lane.fadeIn ? Math.max(2, Math.round(P.pts.length * 0.16)) : 0;
+    }
+
+    /* One stroke, optionally fading up over its first `cut` points. Built
+       from a gradient rather than from stacked partial strokes: three
+       translucent copies of the same line, each starting a little further
+       along, band where they overlap and leave two visible steps in the
+       head. A gradient has no steps in it. */
+    function rampStroke(g, pts, cut, colour, width, alpha) {
+      var i;
+      g.lineWidth = width;
+      if (!cut || cut >= pts.length - 1) {
+        g.globalAlpha = alpha;
+        g.strokeStyle = colour;
+        tracePath(g, pts, false);
+        g.stroke();
+        return;
+      }
+      var a = pts[0], b = pts[cut];
+      var grad = g.createLinearGradient(a.x, a.y, b.x, b.y);
+      grad.addColorStop(0, tint(colour, 0));
+      grad.addColorStop(1, tint(colour, alpha));
+      g.globalAlpha = 1;
+      g.strokeStyle = grad;
+      g.beginPath();
+      g.moveTo(a.x, a.y);
+      for (i = 1; i <= cut; i++) g.lineTo(pts[i].x, pts[i].y);
+      g.stroke();
+
+      g.globalAlpha = alpha;
+      g.strokeStyle = colour;
+      g.beginPath();
+      g.moveTo(pts[cut].x, pts[cut].y);
+      for (i = cut + 1; i < pts.length; i++) g.lineTo(pts[i].x, pts[i].y);
+      g.stroke();
+    }
+
+    function strokeStrand(g, P) {
+      /* Darker than it was. On a dark plane a thin bright line is the only
+         thing on the screen; on painted paper, over woods and terrain and
+         chapter washes, the same line goes to nothing. So the bloom stays
+         the life's own colour and the core is drawn in a deepened version
+         of it, with a hairline of ink inside that — which is what makes a
+         printed route sit on top of a map rather than in it. */
+      var cut = headCut(P);
+      var tone = P.lane.tone;
+      var passes = [[8, tone, 0.2], [3.2, tone, 1], [1.7, P.lane.deep, 0.85],
+                    [0.7, PIG.trailInk, 0.4]];
+      for (var k = 0; k < passes.length; k++) {
+        rampStroke(g, P.pts, cut, passes[k][1], passes[k][0], passes[k][2]);
+      }
     }
 
     /* ============================================================ SCENERY
@@ -1242,6 +1520,7 @@
         trees.push({
           x: lx, y: ly, s: 7 + r() * 11,
           kind: r() > 0.55 ? 'round' : 'conifer',
+          col: leafOf('plain', r()),
           ph: r() * TAU, sp: 0.55 + r() * 0.8
         });
       }
@@ -1273,32 +1552,101 @@
           }
           trees.push({
             x: x, y: y, s: 8 + r() * 13, kind: kind,
+            col: leafOf(R.terrain, r()),
             ph: r() * TAU, sp: 0.55 + r() * 0.8
           });
         }
       });
       trees.sort(function (a, b) { return a.y - b.y; });
 
+      /* Seven of them, each drawn about a third smaller than the three
+         used to be. At the old size they were the largest things on the
+         paper and the country was their backdrop; at this one they are
+         wildlife you come across, which is what an animal on a map is
+         for. Every one stands in the ground it belongs to. */
       fauna = [
-        { kind: 'elk',   x: 0, y: 0, s: 1.25, ph: 0 },
-        { kind: 'eagle', x: 0, y: 0, s: 1, ph: 0 },
-        { kind: 'dodo',  x: 0, y: 0, s: 0.9, ph: 0 }
+        { kind: 'elk',    x: 0, y: 0, s: 0.86, ph: 0 },
+        { kind: 'eagle',  x: 0, y: 0, s: 0.68, ph: 0 },
+        { kind: 'dodo',   x: 0, y: 0, s: 0.6,  ph: 0 },
+        { kind: 'heron',  x: 0, y: 0, s: 0.66, ph: 1.7 },
+        { kind: 'hare',   x: 0, y: 0, s: 0.6,  ph: 0.9 },
+        { kind: 'turtle', x: 0, y: 0, s: 0.66, ph: 2.4 },
+        { kind: 'fish',   x: 0, y: 0, s: 0.58, ph: 0.35 }
       ];
-      /* Each animal stands in the country it comes from: the elk over the
-         high range, the fish eagle above the far water, the dodo on the
-         island off the crossing. */
-      placeBeast('elk', REGION_BY.range, -1, 0.95);
-      placeBeast('eagle', REGION_BY.water, -1, 1.35);
+      /* On the land: the elk over the high range, the fish eagle above the
+         far water, the dodo on the island off the crossing, a hare out on
+         the open plain — and a heron down at the shore, which is the only
+         place to put one. */
+      placeBeast('elk', REGION_BY.range, 1, 1.15);
+      placeBeast('eagle', REGION_BY.water, -1, 1.3);
+      placeShore('heron', REGION_BY.copper, 1);
+      placeBeast('hare', REGION_BY.plain, -1, 0.72);
       var isles = FEATURES.filter(function (f) { return f.id === 'isles'; })[0];
       if (isles) { fauna[2].x = isles.x + isles.rx * 0.1; fauna[2].y = isles.y + isles.ry * 0.72; }
+
+      /* And two in the water, which needs the opposite test: walk out from
+         the spine until the coast is behind you, then keep going a little,
+         so neither of them is ever beached by a change in the family's
+         dates moving the shoreline. */
+      placeSwimmer('turtle', REGION_BY.crossing, 1);
+      placeSwimmer('fish', REGION_BY.range, -1);
+    }
+
+    /* Where a beast can stand without being in the sea, the title, or the
+       room's own furniture. */
+    function beastSpot(f, x, y) {
+      f.x = clamp(x, 150, MAP.w - 210);
+      f.y = clamp(y, 175, MAP.h - 215);
+      /* the room's own view switch lives in the top right corner of the
+         screen, and at a fitted zoom that is the top right of the paper */
+      if (f.y < 470 && f.x > MAP.w - 540) f.x = MAP.w - 540;
+    }
+
+    function faunaBy(kind) {
+      return fauna.filter(function (x) { return x.kind === kind; })[0];
     }
 
     function placeBeast(kind, R, side, out) {
-      var f = fauna.filter(function (x) { return x.kind === kind; })[0];
+      var f = faunaBy(kind);
       if (!f || !R) return;
       var sp = onSpine(uOf((R.t0 + R.t1) / 2));
-      f.x = clamp(sp.x + sp.nx * (R.span || 200) * out * side, 110, MAP.w - 110);
-      f.y = clamp(sp.y + sp.ny * (R.span || 200) * out * side, 120, MAP.h - 190);
+      beastSpot(f, sp.x + sp.nx * (R.span || 200) * out * side,
+                   sp.y + sp.ny * (R.span || 200) * out * side);
+    }
+
+    /* At the water's edge: out to the coast, then a step back onto the sand.
+       Worked out from the shore rather than from a coordinate, so a change
+       in the family's dates moves the heron with the beach it is standing
+       on instead of leaving it in a field. */
+    function placeShore(kind, R, side) {
+      var f = faunaBy(kind);
+      if (!f || !R) return;
+      var sp = onSpine(uOf((R.t0 + R.t1) / 2));
+      var land = coast(), out = 60;
+      for (var i = 0; i < 60; i++) {
+        if (!inside(land, sp.x + sp.nx * out * side, sp.y + sp.ny * out * side)) break;
+        out += 12;
+      }
+      out -= 26;
+      beastSpot(f, sp.x + sp.nx * out * side, sp.y + sp.ny * out * side);
+    }
+
+    function placeSwimmer(kind, R, side) {
+      var f = faunaBy(kind);
+      if (!f || !R) return;
+      var sp = onSpine(uOf((R.t0 + R.t1) / 2));
+      var land = coast();
+      var out = (R.span || 200) * 0.9;
+      /* step out until the land is behind us, then a further 70 so the
+         wake has open water around it rather than a shoreline */
+      for (var i = 0; i < 40; i++) {
+        var x = sp.x + sp.nx * out * side, y = sp.y + sp.ny * out * side;
+        if (!inside(land, x, y)) break;
+        out += 22;
+      }
+      out += 70;
+      f.x = clamp(sp.x + sp.nx * out * side, 90, MAP.w - 110);
+      f.y = clamp(sp.y + sp.ny * out * side, 90, MAP.h - 110);
     }
 
     /* Even–odd crossing test, so a tree planted in a chapter's bounding box
@@ -1312,6 +1660,135 @@
             (x < (b.x - a.x) * (y - a.y) / ((b.y - a.y) || 1e-6) + a.x)) hit = !hit;
       }
       return hit;
+    }
+
+    /* The ground the chapters have no wash for. Six washes and a wood was
+       the whole country, and at a fitted zoom it read as six coloured
+       blobs with trees on. These are the things a real stretch of ground
+       has that a chapter is too big to describe: standing water, a run of
+       pasture, bare rock where the range is steepest, wet sand along the
+       shore. All of it is quiet and none of it is saturated — a backdrop
+       that competes with the braid is a backdrop that has failed, and the
+       braid is the only strong colour on the sheet. */
+    function paintCountry(g) {
+      var r = rng('country');
+      var land = coast();
+      g.save();
+      tracePath(g, land, true);
+      g.clip();
+
+      /* --- wet sand, just inside the shore. It reads as a beach because it
+         is exactly where a beach is, not because it is drawn like one. */
+      var beach = offsetPoly(land, -16 * (inside(land, offsetPoly(land, 12)[0].x,
+                                                 offsetPoly(land, 12)[0].y) ? -1 : 1));
+      g.globalAlpha = 0.22;
+      g.strokeStyle = PIG.sand;
+      g.lineWidth = 26;
+      g.lineJoin = 'round';
+      tracePath(g, beach, true);
+      g.stroke();
+
+      /* --- pasture. Long soft strokes lying the way the ground does, in the
+         open chapters only: a wood does not need help looking busy. */
+      REGIONS.forEach(function (R) {
+        if (R.terrain !== 'plain' && R.terrain !== 'prairie' && R.terrain !== 'soft') return;
+        var pts = R.shape;
+        if (!pts || !pts.length) return;
+        var bb = bounds(pts);
+        g.save();
+        tracePath(g, pts, true);
+        g.clip();
+        for (var f = 0; f < 14; f++) {
+          var fx = bb.minX + r() * (bb.maxX - bb.minX);
+          var fy = bb.minY + r() * (bb.maxY - bb.minY);
+          var fw = 60 + r() * 130, fh = 26 + r() * 42;
+          var tilt = (r() - 0.5) * 0.5;
+          g.save();
+          g.translate(fx, fy);
+          g.rotate(tilt);
+          g.globalAlpha = 0.09 + r() * 0.07;
+          g.strokeStyle = PIG.marsh;
+          g.lineWidth = 2.4;
+          for (var row = -fh / 2; row < fh / 2; row += 7) {
+            g.beginPath();
+            g.moveTo(-fw / 2, row);
+            g.lineTo(fw / 2 - r() * 20, row + (r() - 0.5) * 3);
+            g.stroke();
+          }
+          g.restore();
+        }
+        g.restore();
+      });
+
+      /* --- scree, where the range is steepest: bare rock coming through. */
+      var range = REGION_BY.range;
+      if (range && range.shape) {
+        var rb = bounds(range.shape);
+        g.save();
+        tracePath(g, range.shape, true);
+        g.clip();
+        for (var sc = 0; sc < 9; sc++) {
+          var sx = rb.minX + r() * (rb.maxX - rb.minX);
+          var sy = rb.minY + r() * (rb.maxY - rb.minY);
+          var pat = waver(spline(ring(sx, sy, 34 + r() * 40, 20 + r() * 24, 9, 0.5,
+                                      'scree' + sc), 6), 4, 'screew' + sc);
+          wash(g, pat, PIG.scree, 0.2, 'screewash' + sc, false);
+          g.globalAlpha = 0.24;
+          g.fillStyle = PIG.ink;
+          for (var d = 0; d < 22; d++) {
+            var dx = sx + (r() - 0.5) * 70, dy = sy + (r() - 0.5) * 40;
+            g.beginPath();
+            g.ellipse(dx, dy, 0.9 + r() * 1.4, 0.7 + r(), r() * TAU, 0, TAU);
+            g.fill();
+          }
+          g.globalAlpha = 1;
+        }
+        g.restore();
+      }
+
+      /* --- tarns. Five of them, wherever they land on the island, because
+         where water sits is not something the archive has an opinion on. */
+      var bb2 = bounds(land);
+      var made = 0;
+      for (var tries = 0; tries < 200 && made < 5; tries++) {
+        var lx = bb2.minX + r() * (bb2.maxX - bb2.minX);
+        var ly = bb2.minY + r() * (bb2.maxY - bb2.minY);
+        if (!inside(land, lx, ly)) continue;
+        /* not on top of the braid: a pond over a trail is a trail that
+           looks broken */
+        if (nearBraid(lx, ly, 46)) continue;
+        var rx = 22 + r() * 26, ry = 14 + r() * 16;
+        var pond = waver(spline(ring(lx, ly, rx, ry, 10, 0.34, 'tarn' + made), 8),
+                         3, 'tarnw' + made);
+        wash(g, pond, PIG.tarn, 0.62, 'tarnwash' + made, true);
+        made++;
+      }
+
+      g.restore();
+      g.globalAlpha = 1;
+    }
+
+    function bounds(pts) {
+      var b = { minX: Infinity, maxX: -Infinity, minY: Infinity, maxY: -Infinity };
+      pts.forEach(function (p) {
+        if (p.x < b.minX) b.minX = p.x; if (p.x > b.maxX) b.maxX = p.x;
+        if (p.y < b.minY) b.minY = p.y; if (p.y > b.maxY) b.maxY = p.y;
+      });
+      return b;
+    }
+
+    /* Is this spot on top of somebody's line? Sampled coarsely — it only has
+       to keep scenery off the braid, not measure anything. */
+    function nearBraid(x, y, d) {
+      var dd = d * d;
+      for (var i = 0; i < lanePaths.length; i++) {
+        var pts = lanePaths[i].pts;
+        for (var j = 0; j < pts.length; j += 3) {
+          var ex = pts[j].x - x, ey = pts[j].y - y;
+          if (ex * ex + ey * ey < dd) return true;
+        }
+      }
+      return false;
     }
 
     /* And a great many more that do not move, printed into the sheet: the
@@ -1408,7 +1885,7 @@
       g.lineWidth = Math.max(0.8, s * 0.1);
       g.beginPath(); g.moveTo(0, 0); g.lineTo(0, -s * 0.55); g.stroke();
       g.globalAlpha = 0.78;
-      g.fillStyle = PIG.forest;
+      g.fillStyle = t.col || PIG.forest;
       if (t.kind === 'conifer') {
         for (var i = 0; i < 3; i++) {
           var y = -s * (0.5 + i * 0.28);
@@ -1425,7 +1902,7 @@
         g.ellipse(0, -s * 0.72, s * 0.62, s * 0.24, 0, 0, TAU);
         g.fill();
       } else if (t.kind === 'palm') {
-        g.strokeStyle = PIG.forest;
+        g.strokeStyle = t.col || PIG.forest;
         g.lineWidth = Math.max(1, s * 0.09);
         for (var f = 0; f < 5; f++) {
           var a = -Math.PI / 2 + (f - 2) * 0.52;
@@ -1444,191 +1921,707 @@
       g.globalAlpha = 1;
     }
 
-    /* --- the animals. Painted shapes: a body wash, a darker edge, and one
-       part that moves. Anything more detailed would read as clip art. */
-    function paintBlob(g, pts, colour, alpha) {
-      g.globalAlpha = alpha;
-      g.fillStyle = colour;
+    /* --- the animals -------------------------------------------------------
+       Still painted rather than drawn — this is a watercolour country and a
+       line-art animal would sit on it like a sticker — but painted with the
+       three things that separate a creature from a cut-out shape: a body
+       lit from above and shadowed underneath, a soft shadow on the ground
+       it is standing on, and a broken edge instead of a hard one. Each is
+       cheap; together they are most of the difference.
+
+       They are drawn smaller than they were, too. A map animal that reads
+       as the same size as a town is a mascot; at this scale they are
+       wildlife, noticed rather than announced.
+       --------------------------------------------------------------------- */
+
+    /* One shared path builder, so a body can be filled with a gradient and
+       then edged, rather than flat-filled twice. */
+    function blobPath(g, pts) {
       g.beginPath();
       g.moveTo(pts[0][0], pts[0][1]);
-      for (var i = 1; i < pts.length; i++) {
-        var p = pts[i], q = pts[(i + 1) % pts.length];
+      for (var i = 1; i <= pts.length; i++) {
+        var p = pts[i % pts.length], q = pts[(i + 1) % pts.length];
         g.quadraticCurveTo(p[0], p[1], (p[0] + q[0]) / 2, (p[1] + q[1]) / 2);
       }
       g.closePath();
+    }
+
+    function paintBlob(g, pts, colour, alpha) {
+      g.globalAlpha = alpha;
+      g.fillStyle = colour;
+      blobPath(g, pts);
       g.fill();
       g.globalAlpha = 1;
     }
 
-    function drawElk(g, f, time) {
-      var s = f.s * 40;
-      var turn = reduceMotion ? 0 : Math.sin(time * 0.00042) * 0.13;
-      var ear = reduceMotion ? 0 : Math.sin(time * 0.0027) * 0.3;
-      var breathe = reduceMotion ? 0 : Math.sin(time * 0.0016) * 0.01;
-      g.save();
-      g.translate(f.x, f.y);
-      g.scale(s / 40, s / 40 * (1 + breathe));
+    /* A body with a top and a bottom to it, in four steps rather than two.
+       Two stops give a smooth ramp, and a smooth ramp is what plastic looks
+       like. An animal lit from above has a bright line along its back where
+       the light grazes it, a broad midtone, a dark under the belly, and then
+       a little light coming back up off the ground into that dark. Those
+       four bands are most of what separates a painted animal from a filled
+       silhouette, and they cost one gradient. */
+    function mixHex(a, b, k) {
+      var pa = /^#?([0-9a-f]{6})$/i.exec(a), pb = /^#?([0-9a-f]{6})$/i.exec(b);
+      if (!pa || !pb) return a;
+      var va = parseInt(pa[1], 16), vb = parseInt(pb[1], 16);
+      var r = Math.round(((va >> 16) & 255) * (1 - k) + ((vb >> 16) & 255) * k);
+      var gg = Math.round(((va >> 8) & 255) * (1 - k) + ((vb >> 8) & 255) * k);
+      var bl = Math.round((va & 255) * (1 - k) + (vb & 255) * k);
+      return 'rgb(' + r + ',' + gg + ',' + bl + ')';
+    }
 
-      /* Legs first, so the body sits in front of them. Short and heavy —
-         the commonest way a drawn animal goes wrong is stilts. */
-      g.globalAlpha = 0.88;
-      g.strokeStyle = PIG.hideDark;
-      g.lineCap = 'round';
-      [[-20, 12, -3], [-13, 13, 1], [15, 12, 2], [22, 11, -2]].forEach(function (p, i) {
-        g.lineWidth = i < 2 ? 4.6 : 4.2;
-        g.beginPath();
-        g.moveTo(p[0], p[1]);
-        g.quadraticCurveTo(p[0] + p[2], p[1] + 9, p[0] + p[2] * 1.8, p[1] + 19);
-        g.stroke();
-      });
-
-      /* Body: deep chest forward, higher shoulder than rump, tucked belly. */
-      paintBlob(g, [[-27, 2], [-22, -9], [-6, -14], [12, -15], [24, -9],
-                    [27, 0], [23, 10], [6, 14], [-12, 13], [-25, 9]],
-                PIG.hide, 0.95);
-      /* the pale rump patch an elk is known by */
-      g.globalAlpha = 0.5;
-      g.fillStyle = '#D8B98C';
-      g.beginPath();
-      g.ellipse(-22, 0, 8, 10, 0.2, 0, TAU);
+    function shadeBlob(g, pts, top, bottom, alpha, edge) {
+      var y0 = Infinity, y1 = -Infinity;
+      for (var i = 0; i < pts.length; i++) {
+        if (pts[i][1] < y0) y0 = pts[i][1];
+        if (pts[i][1] > y1) y1 = pts[i][1];
+      }
+      var grad = g.createLinearGradient(0, y0, 0, y1 + 0.001);
+      grad.addColorStop(0, mixHex(top, '#FFF6E4', 0.3));
+      grad.addColorStop(0.13, top);
+      grad.addColorStop(0.62, mixHex(top, bottom, 0.68));
+      grad.addColorStop(0.88, bottom);
+      /* the ground throwing a little light back up under the belly */
+      grad.addColorStop(1, mixHex(bottom, '#C9B994', 0.24));
+      g.globalAlpha = alpha;
+      g.fillStyle = grad;
+      blobPath(g, pts);
       g.fill();
-      g.globalAlpha = 1;
-
-      /* Neck, head, antlers — the part that moves. */
-      g.save();
-      g.translate(21, -10);
-      g.rotate(turn);
-      /* neck */
-      paintBlob(g, [[-6, 8], [-2, -4], [4, -16], [11, -23], [15, -20],
-                    [10, -10], [6, 0], [3, 8]], PIG.hide, 0.96);
-      /* muzzle */
-      paintBlob(g, [[9, -25], [16, -29], [22, -27], [22, -22], [15, -19], [10, -20]],
-                PIG.hideDark, 0.92);
-      g.globalAlpha = 0.95;
-      g.fillStyle = '#2C1D12';
-      g.beginPath(); g.ellipse(12, -25, 1.9, 1.9, 0, 0, TAU); g.fill();
-      /* one ear, flicking */
-      g.save();
-      g.translate(8, -24);
-      g.rotate(-0.5 + ear);
-      g.fillStyle = PIG.hide;
-      g.globalAlpha = 0.95;
-      g.beginPath(); g.ellipse(0, -4, 2.6, 5, 0, 0, TAU); g.fill();
-      g.restore();
-
-      /* Antlers: one sweep back per side with tines off the front edge.
-         Drawn as two strokes rather than a shape, because an antler is a
-         line and a filled one always reads as a plant. */
-      g.globalAlpha = 0.92;
-      g.strokeStyle = '#7A5638';
-      g.lineWidth = 2.2;
-      [[-1, 0.86], [1, 1]].forEach(function (side) {
-        var sx = side[0], depth = side[1];
-        g.save();
-        g.scale(1, 1);
-        g.beginPath();
-        g.moveTo(8, -27);
-        g.bezierCurveTo(4 + sx * 3, -40 * depth, 12 + sx * 4, -50 * depth, 26 + sx * 5, -52 * depth);
+      /* The edge is the tell. A single hard outline is cartoon; a soft dark
+         one at a fifth of the strength is a wet edge where the pigment
+         gathered. */
+      if (edge !== false) {
+        g.globalAlpha = alpha * 0.22;
+        g.strokeStyle = PIG.hideDark;
+        g.lineWidth = 1.1;
         g.stroke();
-        for (var t = 0; t < 4; t++) {
-          var k = 0.22 + t * 0.22;
-          var bx = 8 + (26 + sx * 5 - 8) * k * k;
-          var by = -27 + (-52 * depth + 27) * (k * 1.15);
+      }
+      g.globalAlpha = 1;
+    }
+
+    /* What an animal is standing on. Without it they float. */
+    function groundShadow(g, x, y, rx, ry, a) {
+      var grad = g.createRadialGradient(x, y, 0, x, y, Math.max(rx, ry));
+      grad.addColorStop(0, 'rgba(74,59,44,' + a + ')');
+      grad.addColorStop(1, 'rgba(74,59,44,0)');
+      g.fillStyle = grad;
+      g.save();
+      g.translate(x, y);
+      g.scale(1, ry / Math.max(rx, ry));
+      g.beginPath();
+      g.arc(0, 0, Math.max(rx, ry), 0, TAU);
+      g.fill();
+      g.restore();
+    }
+
+    /* A few short strokes with the lie of the coat. Not fur — the suggestion
+       of it, which at this size is all that survives anyway. */
+    function coat(g, x0, y0, x1, y1, n, len, colour, alpha, seed) {
+      var r = rng(seed);
+      g.save();
+      g.strokeStyle = colour;
+      g.lineCap = 'round';
+      /* Two lengths in two weights. One length of hair at one weight is
+         hatching; a coat is short hair with longer hair lying over it. */
+      for (var pass = 0; pass < 2; pass++) {
+        g.lineWidth = pass ? 0.55 : 0.85;
+        g.globalAlpha = alpha * (pass ? 0.65 : 1);
+        var m = pass ? Math.round(n * 1.6) : n;
+        for (var i = 0; i < m; i++) {
+          var k = (i + r() * 0.7) / m;
+          var x = lerp(x0, x1, k) + (r() - 0.5) * 4;
+          var y = lerp(y0, y1, k) + (r() - 0.5) * 6;
+          var d = len * (pass ? 0.4 : 1) * (0.6 + r() * 0.8);
           g.beginPath();
-          g.moveTo(bx, by);
-          g.quadraticCurveTo(bx + 5, by - 9, bx + 9 + t, by - 13 - t);
-          g.lineWidth = 1.8 - t * 0.2;
+          g.moveTo(x, y);
+          g.quadraticCurveTo(x - d * 0.4, y + d * 0.3, x - d, y + d * 0.55);
           g.stroke();
         }
+      }
+      g.restore();
+      g.globalAlpha = 1;
+    }
+
+    /* An eye that is looking at something: a dark ball, a lid over the top
+       of it, and one speck of the sky in it. */
+    function eye(g, x, y, r, dark) {
+      g.globalAlpha = 0.95;
+      g.fillStyle = dark || '#241708';
+      g.beginPath(); g.ellipse(x, y, r, r, 0, 0, TAU); g.fill();
+      g.globalAlpha = 0.75;
+      g.fillStyle = '#FBF6E9';
+      g.beginPath(); g.ellipse(x - r * 0.32, y - r * 0.34, r * 0.34, r * 0.3, 0, 0, TAU); g.fill();
+      g.globalAlpha = 1;
+    }
+
+    /* One cubic, sampled: the beam and the tines that spring off it read as
+       one antler only if they are worked out from the same curve. The beam
+       leaves the skull, sweeps back over the shoulders and turns up at the
+       end, which is the shape that says elk before any other detail does. */
+    var ANTLER = [[38, -50], [50, -66], [40, -86], [16, -90]];
+    function antlerAt(sx, depth, k, axis) {
+      var m = 1 - k, P = ANTLER, i = axis;
+      var v = m * m * m * P[0][i] +
+              3 * m * m * k * (P[1][i] + (i ? 0 : sx * 4)) +
+              3 * m * k * k * (P[2][i] + (i ? 0 : sx * 6)) +
+              k * k * k * (P[3][i] + (i ? 0 : sx * 7));
+      return i ? v * depth : v;
+    }
+
+    /* One leg: a tapered shape from shoulder to fetlock, with a hoof on the
+       end of it. `bend` is how far the foot lands from under the shoulder,
+       which is what makes four of them read as a standing animal rather
+       than as a table. */
+    function elkLeg(g, x, y, bend, len, wTop, wBot, colour) {
+      var mx = x + bend * 0.45, my = y + len * 0.52;
+      var ex = x + bend, ey = y + len;
+      g.globalAlpha = 0.94;
+      g.fillStyle = colour;
+      g.beginPath();
+      g.moveTo(x - wTop / 2, y);
+      g.quadraticCurveTo(mx - wBot * 0.8, my, ex - wBot / 2, ey);
+      g.lineTo(ex + wBot / 2, ey);
+      g.quadraticCurveTo(mx + wTop * 0.5, my, x + wTop / 2, y);
+      g.closePath();
+      g.fill();
+      g.globalAlpha = 0.9;
+      g.fillStyle = '#33200F';
+      g.beginPath();
+      g.ellipse(ex, ey + 0.6, wBot * 0.78, wBot * 0.62, 0, 0, TAU);
+      g.fill();
+      g.globalAlpha = 1;
+    }
+
+    /* An elk is a wedge: the shoulder is the high point, the rump falls away
+       behind it, the chest is deep and the belly tucks up. Get that line
+       wrong and no amount of shading rescues it — which is what was wrong
+       before, when the body was an oval and the neck a stalk coming out of
+       the top of it. The neck is short and thick and comes off the chest,
+       not off the withers, and the head is big enough to carry the antlers.
+       Everything is drawn about the shoulder, at (16, -16). */
+    function drawElk(g, f, time) {
+      var s = f.s * 40;
+      var turn = reduceMotion ? 0 : Math.sin(time * 0.00034) * 0.06;
+      var ear = reduceMotion ? 0 : Math.sin(time * 0.0019) * 0.16;
+      var breathe = reduceMotion ? 0 : Math.sin(time * 0.0012) * 0.006;
+      g.save();
+      g.translate(f.x, f.y);
+      g.scale(s / 46, s / 46 * (1 + breathe));
+
+      groundShadow(g, -2, 34, 36, 8, 0.26);
+
+      /* the far pair first, a shade darker for standing behind */
+      elkLeg(g, -20, 6, -2.5, 27, 7.4, 2.8, '#4E2F1D');
+      elkLeg(g, 13, 4, 2.5, 29, 6.6, 2.6, '#4E2F1D');
+
+      /* Body: high at the withers, falling to the rump, deep through the
+         chest, tucked at the flank. */
+      shadeBlob(g, [[-30, -1], [-27, -12], [-13, -17], [2, -18], [14, -17],
+                    [24, -11], [27, -3], [23, 8], [8, 14], [-9, 15], [-25, 10]],
+                '#9A6A45', '#472B1A', 0.96);
+      coat(g, -24, -12, 20, -14, 11, 6, '#5A3722', 0.24, 'elk-coat');
+
+      /* the pale rump patch an elk is known by */
+      g.globalAlpha = 0.4;
+      g.fillStyle = '#DCC098';
+      g.beginPath();
+      g.ellipse(-25, -1, 7.5, 10, 0.18, 0, TAU);
+      g.fill();
+      g.globalAlpha = 0.85;
+      g.fillStyle = '#3E2415';
+      g.beginPath(); g.ellipse(-31, -3, 2.4, 5.4, 0.35, 0, TAU); g.fill();
+      g.globalAlpha = 1;
+
+      /* the near pair, in front of the body */
+      elkLeg(g, -14, 7, 1.5, 27, 7.8, 3.0, '#6A4128');
+      elkLeg(g, 20, 3, -1.5, 30, 7.0, 2.8, '#6A4128');
+
+      /* Neck, head, antlers — the part that moves, hinged at the chest. */
+      g.save();
+      g.translate(16, -14);
+      g.rotate(turn);
+
+      /* neck: thick where it leaves the chest, narrowing to the skull */
+      shadeBlob(g, [[-8, 6], [-6, -6], [0, -18], [9, -28], [20, -35],
+                    [25, -30], [16, -21], [8, -10], [3, 2]],
+                '#95673F', '#4E2F1D', 0.97);
+      /* the dark mane down the throat, which is where an elk's colour
+         changes and the single most recognisable thing about the animal
+         after the antlers */
+      g.globalAlpha = 0.42;
+      g.fillStyle = '#341F11';
+      g.beginPath();
+      g.moveTo(-5, 5); g.quadraticCurveTo(3, -10, 16, -25);
+      g.quadraticCurveTo(9, -12, 1, 6);
+      g.closePath(); g.fill();
+      g.globalAlpha = 1;
+      coat(g, 2, -10, 18, -28, 7, 5, '#4A2C19', 0.28, 'elk-mane');
+
+      /* head */
+      shadeBlob(g, [[16, -34], [22, -40], [30, -40], [35, -35], [33, -28], [22, -26]],
+                '#8E6039', '#4A2C19', 0.97);
+      /* muzzle, long and squared off */
+      shadeBlob(g, [[31, -38], [40, -38], [44, -34], [41, -29], [32, -28]],
+                '#6B452C', '#33200F', 0.95);
+      g.globalAlpha = 0.9;
+      g.fillStyle = '#241708';
+      g.beginPath(); g.ellipse(42, -34, 1.6, 1.4, 0, 0, TAU); g.fill();
+      g.globalAlpha = 1;
+      eye(g, 28, -36, 1.7);
+
+      /* two ears, the near one flicking */
+      [[-0.7, 1, ear], [-0.35, 0.86, ear * 0.6]].forEach(function (e) {
+        g.save();
+        g.translate(20, -38);
+        g.rotate(e[0] + e[2]);
+        g.globalAlpha = 0.95;
+        g.fillStyle = '#875839';
+        g.beginPath(); g.ellipse(0, -5, 2.6, 5.6 * e[1], 0, 0, TAU); g.fill();
+        g.globalAlpha = 0.45;
+        g.fillStyle = '#3E2415';
+        g.beginPath(); g.ellipse(0.4, -5, 1.2, 3.8 * e[1], 0, 0, TAU); g.fill();
         g.restore();
       });
+      g.globalAlpha = 1;
+
+      /* Antlers: one sweep back per side with tines off the front edge.
+         Drawn as strokes rather than as a shape, because an antler is a line
+         and a filled one always reads as a plant — and in four narrowing
+         pieces per beam, because a constant-width antler reads as wire. */
+      g.strokeStyle = '#7A5638';
+      g.lineCap = 'round';
+      [[-1, 0.88, 0.72], [1, 1, 0.95]].forEach(function (side) {
+        var sx = side[0], depth = side[1];
+        g.globalAlpha = side[2];
+        var b, k0, k1;
+        for (b = 0; b < 4; b++) {
+          k0 = b / 4; k1 = (b + 1) / 4;
+          g.lineWidth = 3.6 - b * 0.66;
+          g.beginPath();
+          g.moveTo(antlerAt(sx, depth, k0, 0), antlerAt(sx, depth, k0, 1));
+          g.quadraticCurveTo(antlerAt(sx, depth, (k0 + k1) / 2, 0),
+                             antlerAt(sx, depth, (k0 + k1) / 2, 1),
+                             antlerAt(sx, depth, k1, 0), antlerAt(sx, depth, k1, 1));
+          g.stroke();
+        }
+        /* five tines off the front of the beam, shortening towards the tip */
+        for (var t = 0; t < 5; t++) {
+          var k = 0.12 + t * 0.19;
+          var bx = antlerAt(sx, depth, k, 0), by = antlerAt(sx, depth, k, 1);
+          g.lineWidth = 2.3 - t * 0.3;
+          g.beginPath();
+          g.moveTo(bx, by);
+          g.quadraticCurveTo(bx + 7, by - 7, bx + 11 - t * 1.2, by - 14 + t * 1.6);
+          g.stroke();
+        }
+      });
+      g.globalAlpha = 1;
       g.restore();
 
-      /* tail */
-      g.globalAlpha = 0.9;
-      g.fillStyle = PIG.hideDark;
-      g.beginPath(); g.ellipse(-27, -2, 2.4, 5, 0.3, 0, TAU); g.fill();
-
-      g.globalAlpha = 1;
       g.restore();
     }
 
     function drawEagle(g, f, time) {
       var s = f.s * 38;
-      var beat = reduceMotion ? 0.55 : (0.5 + 0.5 * Math.sin(time * 0.0022));
-      var glide = reduceMotion ? 0 : Math.sin(time * 0.00035) * 26;
+      var beat = reduceMotion ? 0.5 : (0.5 + 0.5 * Math.sin(time * 0.0014));
+      var glide = reduceMotion ? 0 : Math.sin(time * 0.00035) * 7;
       g.save();
-      g.translate(f.x + glide, f.y + Math.cos(time * 0.0004) * 14);
+      g.translate(f.x + glide, f.y + Math.cos(time * 0.0004) * 4);
       g.scale(s / 38, s / 38);
-      /* body */
-      paintBlob(g, [[-6, -18], [4, -14], [8, 4], [4, 22], [-4, 24], [-8, 4]],
-                PIG.hideDark, 0.9);
-      /* wings, which are all anybody sees of a bird at this distance */
-      [-1, 1].forEach(function (side) {
+
+      /* tail, behind everything */
+      shadeBlob(g, [[-7, 14], [-4, 27], [0, 30], [4, 27], [7, 14]],
+                '#5E3823', '#3A2314', 0.9, false);
+      g.globalAlpha = 0.94;
+      g.fillStyle = '#F3EDDD';
+      g.beginPath();
+      g.moveTo(-6.5, 17); g.quadraticCurveTo(0, 31, 6.5, 17);
+      g.quadraticCurveTo(0, 21, -6.5, 17); g.closePath(); g.fill();
+      g.globalAlpha = 1;
+
+      /* Wings. The far one is a shade darker for being the far one. */
+      [[-1, 0], [1, 1]].forEach(function (side) {
+        var sx = side[0], near = side[1];
         g.save();
-        g.scale(side, 1);
-        g.rotate(-0.3 + beat * 0.5);
-        paintBlob(g, [[4, -10], [30, -22], [58, -18], [66, -6], [44, 2], [18, 2]],
-                  PIG.hideDark, 0.86);
+        g.scale(sx, 1);
+        g.rotate(-0.18 + beat * 0.2);
+        shadeBlob(g, [
+          /* leading edge, shoulder to tip */
+          [5, -13], [21, -20], [39, -22], [54, -19], [63, -13],
+          /* and back along the trailing edge, notched into primaries */
+          [61, -5], [54, -6], [55, 1], [47, -1], [46, 6], [38, 3],
+          [35, 9], [26, 5], [14, 5], [6, 2]
+        ], near ? '#6E4429' : '#553220', near ? '#3E2614' : '#2E1B0D', 0.92, false);
+        /* the pale band along the covert line */
+        g.globalAlpha = 0.16;
+        g.fillStyle = '#E7D9B8';
+        g.beginPath();
+        g.moveTo(8, -12); g.quadraticCurveTo(30, -17, 52, -17);
+        g.quadraticCurveTo(30, -12, 9, -8); g.closePath(); g.fill();
+        g.globalAlpha = 1;
         g.restore();
       });
-      /* the white head and tail of a fish eagle */
-      g.globalAlpha = 0.95;
+
+      /* body between them */
+      shadeBlob(g, [[-6, -16], [0, -19], [6, -16], [8, 2], [4, 16], [-4, 16], [-8, 2]],
+                '#6E4429', '#3A2314', 0.95);
+
+      /* the white head of a fish eagle, and the bill */
+      g.globalAlpha = 0.96;
       g.fillStyle = '#F6F1E4';
-      g.beginPath(); g.ellipse(0, -20, 7, 8, 0, 0, TAU); g.fill();
-      g.beginPath(); g.ellipse(0, 25, 8, 6, 0, 0, TAU); g.fill();
-      g.globalAlpha = 0.95;
+      g.beginPath(); g.ellipse(0, -20, 6, 7.2, 0, 0, TAU); g.fill();
+      g.globalAlpha = 0.2;
+      g.fillStyle = '#A3987C';
+      g.beginPath(); g.ellipse(0, -16.5, 5.6, 3.4, 0, 0, TAU); g.fill();
+      g.globalAlpha = 0.96;
       g.fillStyle = '#D9A03C';
-      g.beginPath(); g.moveTo(4, -22); g.lineTo(13, -19); g.lineTo(4, -16); g.closePath(); g.fill();
+      g.beginPath();
+      g.moveTo(2.6, -24); g.quadraticCurveTo(10, -22.5, 3.4, -18.5);
+      g.closePath(); g.fill();
+      eye(g, 2.4, -22.2, 1.15, '#1E1408');
       g.globalAlpha = 1;
       g.restore();
     }
 
+    /* Facing west, because everything on this paper does. Heavy in the body,
+       short in the leg, and carrying the two things a dodo is recognised by:
+       the hooked bill and the curl of plumes where a tail should be. */
     function drawDodo(g, f, time) {
       var s = f.s * 40;
-      var bob = reduceMotion ? 0 : Math.sin(time * 0.0013) * 2.2;
-      var peck = reduceMotion ? 0 : Math.max(0, Math.sin(time * 0.0005)) * 0.32;
+      var bob = reduceMotion ? 0 : Math.sin(time * 0.0009) * 1;
+      var peck = reduceMotion ? 0 : Math.max(0, Math.sin(time * 0.00042)) * 0.16;
       g.save();
       g.translate(f.x, f.y + bob);
       g.scale(s / 40, s / 40);
-      /* legs */
-      g.globalAlpha = 0.9;
-      g.strokeStyle = '#B08A4E';
-      g.lineWidth = 3.4;
-      [[-6, 18], [6, 18]].forEach(function (p) {
-        g.beginPath(); g.moveTo(p[0], p[1]); g.lineTo(p[0], p[1] + 14); g.stroke();
-      });
-      /* body */
-      paintBlob(g, [[-26, 0], [-18, -18], [0, -24], [18, -16], [24, 2],
-                    [14, 18], [-8, 20], [-24, 12]], '#A9A290', 0.92);
-      g.save();
-      g.translate(-20, -14);
-      g.rotate(peck);
-      paintBlob(g, [[-10, 2], [-8, -10], [0, -16], [8, -10], [8, 2], [0, 8]],
-                '#A9A290', 0.94);
-      g.globalAlpha = 0.95;
-      g.fillStyle = '#8A7A5E';
-      g.beginPath();
-      g.moveTo(-8, -6); g.quadraticCurveTo(-24, -2, -20, 8);
-      g.quadraticCurveTo(-12, 4, -6, 2); g.closePath(); g.fill();
-      g.fillStyle = PIG.ink;
-      g.beginPath(); g.ellipse(1, -8, 2.2, 2.2, 0, 0, TAU); g.fill();
-      g.restore();
-      /* the plume it is famous for */
-      g.globalAlpha = 0.7;
-      g.strokeStyle = '#C6BEA8';
-      g.lineWidth = 2.6;
-      for (var i = 0; i < 4; i++) {
+      groundShadow(g, -1, 32, 24, 6, 0.2);
+
+      /* the plumes, behind the body */
+      g.globalAlpha = 0.66;
+      g.strokeStyle = '#D2CAB4';
+      g.lineCap = 'round';
+      for (var i = 0; i < 5; i++) {
+        g.lineWidth = 2.6 - i * 0.3;
         g.beginPath();
-        g.moveTo(20, 4);
-        g.quadraticCurveTo(32 + i * 2, -4 - i * 3, 30 + i * 5, 6 - i * 4);
+        g.moveTo(16, -2);
+        g.quadraticCurveTo(30 + i * 2.5, -6 - i * 4, 24 + i * 5, 4 - i * 5);
         g.stroke();
       }
+      g.globalAlpha = 1;
+
+      /* legs, stout, with toes */
+      g.globalAlpha = 0.94;
+      g.strokeStyle = '#A07C44';
+      g.lineWidth = 3.6;
+      [[-5, 15], [6, 16]].forEach(function (p) {
+        g.beginPath(); g.moveTo(p[0], p[1]); g.lineTo(p[0] - 1, p[1] + 14); g.stroke();
+        g.lineWidth = 2.1;
+        g.beginPath();
+        g.moveTo(p[0] - 5.5, p[1] + 15); g.lineTo(p[0] - 1, p[1] + 14);
+        g.lineTo(p[0] + 3.5, p[1] + 15); g.stroke();
+        g.lineWidth = 3.6;
+      });
+      g.globalAlpha = 1;
+
+      /* body */
+      shadeBlob(g, [[-20, -4], [-14, -16], [0, -20], [14, -14], [20, 0],
+                    [15, 13], [0, 18], [-16, 10]], '#C2BAA6', '#7C7360', 0.95);
+      coat(g, -14, -12, 14, -10, 9, 5, '#6E6552', 0.2, 'dodo-coat');
+      /* the folded wing, which on a dodo is barely there */
+      g.globalAlpha = 0.28;
+      g.fillStyle = '#6E6552';
+      g.beginPath();
+      g.moveTo(-2, -4); g.quadraticCurveTo(11, -6, 16, 2);
+      g.quadraticCurveTo(6, 3, -2, 0); g.closePath(); g.fill();
+      g.globalAlpha = 1;
+
+      /* neck and head, which dip and come back up */
+      g.save();
+      g.translate(-15, -13);
+      g.rotate(peck);
+      shadeBlob(g, [[2, 6], [-2, -3], [-4, -11], [1, -14], [5, -8], [6, 2]],
+                '#C2BAA6', '#8A8069', 0.95, false);
+      shadeBlob(g, [[-13, -14], [-10, -22], [-2, -24], [3, -19], [2, -12], [-7, -10]],
+                '#CAC2AE', '#8F856E', 0.96);
+      /* the hooked bill */
+      g.globalAlpha = 0.95;
+      g.fillStyle = '#93835F';
+      g.beginPath();
+      g.moveTo(-11, -20); g.quadraticCurveTo(-27, -18, -25, -8);
+      g.quadraticCurveTo(-19, -11, -9, -13); g.closePath(); g.fill();
+      g.globalAlpha = 0.4;
+      g.fillStyle = '#645941';
+      g.beginPath();
+      g.moveTo(-11, -20); g.quadraticCurveTo(-24, -18.5, -24, -13);
+      g.quadraticCurveTo(-17, -14.5, -10, -16); g.closePath(); g.fill();
+      g.globalAlpha = 1;
+      eye(g, -6, -19, 2);
+      g.restore();
+
       g.globalAlpha = 1;
       g.restore();
     }
 
-    var FAUNA_DRAW = { elk: drawElk, eagle: drawEagle, dodo: drawDodo };
+    /* A heron at the shallow end. Standing still is what a heron does, so
+       almost nothing about it moves: the head shifts, and once in a while
+       the whole neck folds and strikes. */
+    function drawHeron(g, f, time) {
+      var s = f.s * 40;
+      var cycle = reduceMotion ? 0 : (Math.sin(time * 0.00025) + 1) / 2;
+      var strike = reduceMotion ? 0 : Math.pow(Math.max(0, Math.sin(time * 0.00048)), 18);
+      var lean = cycle * 0.06 + strike * 0.45;
+      g.save();
+      g.translate(f.x, f.y);
+      g.scale(s / 40, s / 40);
+
+      /* Standing in water, so what it casts is a reflection, not a shadow. */
+      g.globalAlpha = 0.16;
+      g.fillStyle = '#6F9AA1';
+      g.beginPath(); g.ellipse(0, 30, 15, 3.4, 0, 0, TAU); g.fill();
+      g.globalAlpha = 1;
+
+      /* One leg in the water and one folded up against the body, which is
+         how a heron waits. Long, and jointed backwards at the hock — get
+         that joint the wrong way and it stops being a wading bird. */
+      g.globalAlpha = 0.9;
+      g.strokeStyle = '#8A6A3E';
+      g.lineCap = 'round';
+      g.lineWidth = 2;
+      g.beginPath();
+      g.moveTo(1, 9); g.lineTo(4, 19); g.lineTo(0, 30);
+      g.stroke();
+      g.lineWidth = 1.7;
+      g.beginPath(); g.moveTo(-3, 9); g.lineTo(-9, 18); g.lineTo(-2, 22); g.stroke();
+
+      /* body: a long wedge, tail high, breast low */
+      shadeBlob(g, [[-18, 4], [-13, -5], [-1, -9], [9, -5], [12, 2], [5, 10], [-8, 11]],
+                '#CBD3DA', '#8A98A4', 0.94);
+      /* the folded wing, a shade darker than the breast */
+      g.globalAlpha = 0.42;
+      g.fillStyle = '#7C8A98';
+      g.beginPath();
+      g.moveTo(-15, 1); g.quadraticCurveTo(-4, -6, 8, -2);
+      g.quadraticCurveTo(-2, 5, -14, 5); g.closePath(); g.fill();
+      g.globalAlpha = 1;
+
+      /* neck and head, folded into an S and unfolding to strike */
+      g.save();
+      g.translate(7, -6);
+      g.rotate(lean);
+      g.globalAlpha = 0.94;
+      g.strokeStyle = '#C3CCD4';
+      g.lineWidth = 3.4;
+      g.lineCap = 'round';
+      g.beginPath();
+      g.moveTo(0, 2);
+      g.bezierCurveTo(6, -4, 2 + strike * 5, -12, 8 + strike * 9, -18 + strike * 7);
+      g.stroke();
+      g.save();
+      g.translate(8 + strike * 9, -18 + strike * 7);
+      g.rotate(strike * 0.6);
+      g.globalAlpha = 0.95;
+      g.fillStyle = '#CBD3DA';
+      g.beginPath(); g.ellipse(0, 0, 4.2, 3.1, -0.2, 0, TAU); g.fill();
+      /* the black crown plume */
+      g.globalAlpha = 0.62;
+      g.strokeStyle = '#4A4F55';
+      g.lineWidth = 1.3;
+      g.beginPath(); g.moveTo(-1, -2.4); g.quadraticCurveTo(-7, -4, -10, -1); g.stroke();
+      /* the dagger */
+      g.globalAlpha = 0.95;
+      g.fillStyle = '#D6A93F';
+      g.beginPath();
+      g.moveTo(3, -0.8); g.lineTo(15, 1.4); g.lineTo(3, 2.2); g.closePath(); g.fill();
+      eye(g, 1.2, -0.9, 1.05, '#2A2118');
+      g.restore();
+      g.restore();
+      g.globalAlpha = 1;
+      g.restore();
+    }
+
+    /* A hare on the open ground. Sits, listens, and every so often takes
+       two hops and sits again — which is the whole of a hare. */
+    function drawHare(g, f, time) {
+      var s = f.s * 40;
+      /* It used to hop across the ground and then vanish back to where it
+         started, because the loop was a sawtooth and the animal was tied to
+         it. Nothing here travels any more: an animal on a map has a place,
+         and a place it walks away from is a place it is no longer marking.
+         What is left is what a hare does while it is sitting — the ears
+         turn, and it settles on its haunches and comes back up. Every term
+         is a full sine, so there is no wrap for the eye to catch. */
+      var settle = reduceMotion ? 0 : (Math.sin(time * 0.00042 + f.ph) * 0.5 + 0.5);
+      var ear = reduceMotion ? 0 : Math.sin(time * 0.0016 + f.ph) * 0.13;
+      var ear2 = reduceMotion ? 0 : Math.sin(time * 0.0011 + f.ph * 2.1) * 0.1;
+      g.save();
+      g.translate(f.x, f.y + settle * 1.4);
+      g.scale(s / 40, s / 40);
+
+      groundShadow(g, 0, 15, 15, 4, 0.19);
+
+      /* haunch, then body in front of it: a hare is mostly back legs */
+      shadeBlob(g, [[-13, 2], [-14, -6], [-8, -10], [-2, -6], [-2, 4], [-8, 8]],
+                '#B08A5E', '#6E4E30', 0.95, false);
+      g.globalAlpha = 0.9;
+      g.strokeStyle = '#5C3F26';
+      g.lineCap = 'round';
+      g.lineWidth = 2;
+      g.beginPath(); g.moveTo(-11, 6); g.quadraticCurveTo(-4, 11, 2, 10); g.stroke();
+      g.beginPath(); g.moveTo(7, 4); g.lineTo(8, 10); g.stroke();
+      shadeBlob(g, [[-11, -2], [-5, -9], [4, -10], [10, -5], [10, 3], [2, 8], [-8, 6]],
+                '#BE9668', '#775635', 0.96);
+      coat(g, -9, -7, 8, -8, 6, 3.4, '#63462B', 0.26, 'hare-coat');
+      /* head, up and listening */
+      shadeBlob(g, [[6, -6], [12, -10], [17, -8], [18, -3], [13, 1], [7, 0]],
+                '#C29B6C', '#7C5A38', 0.96);
+      g.globalAlpha = 0.94;
+      g.fillStyle = '#4A3520';
+      g.beginPath(); g.ellipse(18.4, -4.6, 1.3, 1.1, 0, 0, TAU); g.fill();
+      eye(g, 14, -6.4, 1.25);
+      /* the ears, which is where a hare keeps its attention */
+      [[-0.18, 1], [0.1, 0.92]].forEach(function (e, i) {
+        g.save();
+        g.translate(9.5, -8);
+        g.rotate(e[0] + (i ? ear2 : ear));
+        g.globalAlpha = 0.95;
+        g.fillStyle = '#B58F62';
+        g.beginPath(); g.ellipse(0, -8, 2.1, 8.4 * e[1], 0.05, 0, TAU); g.fill();
+        g.globalAlpha = 0.45;
+        g.fillStyle = '#7A4F35';
+        g.beginPath(); g.ellipse(0.2, -8, 1, 6.4 * e[1], 0.05, 0, TAU); g.fill();
+        g.restore();
+      });
+      /* the scut */
+      g.globalAlpha = 0.85;
+      g.fillStyle = '#EDE4CE';
+      g.beginPath(); g.ellipse(-14, -2, 3, 3.4, 0.3, 0, TAU); g.fill();
+      g.globalAlpha = 1;
+      g.restore();
+    }
+
+    /* --- and two in the water ---------------------------------------------
+       Sea animals get no ground shadow and no cast: what they get is the
+       water closing over them. Both are drawn half-submerged, with the line
+       of the surface across them and a wake behind, which is the only way a
+       painted animal reads as being *in* something rather than on it. */
+    function waterLine(g, w, a) {
+      g.globalAlpha = a;
+      g.strokeStyle = '#EFE7D2';
+      g.lineCap = 'round';
+      g.lineWidth = 1.4;
+      g.beginPath();
+      g.moveTo(-w, 0);
+      g.quadraticCurveTo(-w * 0.4, -2.2, 0, 0);
+      g.quadraticCurveTo(w * 0.4, 2.2, w, 0);
+      g.stroke();
+      g.globalAlpha = 1;
+    }
+
+    function drawTurtle(g, f, time) {
+      var s = f.s * 40;
+      var swim = reduceMotion ? 0 : Math.sin(time * 0.00042 + f.ph);
+      var flip = reduceMotion ? 0.2 : Math.sin(time * 0.001 + f.ph) * 0.26;
+      g.save();
+      g.translate(f.x + swim * 5, f.y + Math.cos(time * 0.00041) * 2);
+      g.rotate(swim * 0.05);
+      g.scale(s / 40, s / 40);
+
+      /* what is under the surface, seen through it */
+      g.globalAlpha = 0.22;
+      g.fillStyle = '#4E7C79';
+      g.beginPath(); g.ellipse(-2, 5, 20, 9, 0, 0, TAU); g.fill();
+      g.globalAlpha = 1;
+
+      /* front flippers, the far one dimmer for being through more water */
+      [[-1, 0.42], [1, 0.92]].forEach(function (side, i) {
+        g.save();
+        g.scale(1, side[0]);
+        g.rotate(flip * (i ? 1 : -0.7));
+        g.globalAlpha = side[1];
+        g.fillStyle = '#5E7F5A';
+        g.beginPath();
+        g.moveTo(4, 1);
+        g.quadraticCurveTo(18, -4, 25, 4);
+        g.quadraticCurveTo(15, 5, 4, 4);
+        g.closePath(); g.fill();
+        g.restore();
+      });
+      g.globalAlpha = 1;
+
+      /* the shell, and the plates on it */
+      shadeBlob(g, [[-17, 0], [-11, -8], [2, -10], [13, -6], [15, 2], [6, 8], [-9, 7]],
+                '#7D9A66', '#3F5A44', 0.95);
+      g.globalAlpha = 0.3;
+      g.strokeStyle = '#2F4634';
+      g.lineWidth = 0.9;
+      [-8, -1, 6].forEach(function (x) {
+        g.beginPath(); g.moveTo(x, -8.6); g.quadraticCurveTo(x - 1.5, -1, x - 0.5, 7); g.stroke();
+      });
+      g.beginPath(); g.moveTo(-15, -1.5); g.quadraticCurveTo(0, -4, 14, 0); g.stroke();
+      g.globalAlpha = 1;
+
+      /* head, just up for air */
+      shadeBlob(g, [[14, -3], [20, -6], [25, -4], [25, 1], [19, 3], [14, 2]],
+                '#7E9765', '#4A6349', 0.95);
+      eye(g, 21.5, -3, 1.05, '#1F2A1B');
+      waterLine(g, 26, 0.4);
+      g.restore();
+    }
+
+    /* One fish, out of the water for about a second at a time. It spends the
+       rest of the loop as a shadow and a ring, which is what you actually
+       see of a fish from a boat. */
+    function drawFish(g, f, time) {
+      var s = f.s * 40;
+      /* The rise is a sine, so it comes back to nothing before the loop
+         turns over — but the fish used to be swept sideways by a sawtooth as
+         well, and that snapped back to the start every time round. It breaks
+         the surface where it is now. */
+      var k = reduceMotion ? 0.28 : ((time * 0.00018 + f.ph) % 1);
+      var air = Math.max(0, Math.sin(k * Math.PI * 2 - 1.2));
+      var rise = Math.pow(air, 0.7);
+      g.save();
+      g.translate(f.x, f.y);
+
+      /* the ring it left, still opening */
+      if (rise > 0.02) {
+        g.globalAlpha = 0.3 * (1 - rise);
+        g.strokeStyle = '#EFE7D2';
+        g.lineWidth = 1.3;
+        g.beginPath(); g.ellipse(0, 2, 10 + rise * 26, 3 + rise * 8, 0, 0, TAU); g.stroke();
+        g.globalAlpha = 1;
+      }
+      /* the fish itself, under the surface or over it */
+      g.save();
+      g.translate(0, -rise * 11);
+      g.rotate(-0.42 + rise * 0.6);
+      g.scale(s / 40, s / 40);
+      g.globalAlpha = 0.35 + rise * 0.6;
+      shadeBlob(g, [[-15, 0], [-6, -6], [6, -6], [14, -1], [6, 5], [-6, 6]],
+                '#8FA9AE', '#41615F', 1, false);
+      g.globalAlpha = 0.3 + rise * 0.55;
+      g.fillStyle = '#41615F';
+      g.beginPath();
+      g.moveTo(-13, 0); g.lineTo(-23, -7); g.lineTo(-20, 0); g.lineTo(-23, 7);
+      g.closePath(); g.fill();
+      g.beginPath();
+      g.moveTo(-2, -5); g.lineTo(2, -12); g.lineTo(7, -4); g.closePath(); g.fill();
+      if (rise > 0.35) eye(g, 9, -1.4, 1.1, '#22322F');
+      g.globalAlpha = 1;
+      g.restore();
+
+      /* and the surface it is coming through */
+      g.save();
+      g.scale(s / 40, s / 40);
+      waterLine(g, 16 + rise * 10, 0.28 + rise * 0.3);
+      g.restore();
+      g.restore();
+    }
+
+    var FAUNA_DRAW = {
+      elk: drawElk, eagle: drawEagle, dodo: drawDodo,
+      heron: drawHeron, hare: drawHare, turtle: drawTurtle, fish: drawFish
+    };
 
     /* ========================================================= BUTTERFLIES
        The room's own, over the country. There are four reasons one appears
@@ -1936,42 +2929,14 @@
        a scale bar that zooms with the map stops being a scale bar. The bar
        is in years: this is a map of a life, and that is its distance. */
     function drawHud() {
-      /* The instrument needs a spare corner, and there are two ways not to
-         have one: a phone, whose bottom the room's own furniture already
-         owns, and an open memory, which leaves the map a strip. A compass
-         rose is the first thing a map can do without. */
+      /* North used to be drawn here, on the glass, and hidden on a phone for
+         want of a spare corner. It is on the paper now — north does not
+         change with the zoom, so it has no business being on the glass, and
+         on the sheet every device gets one. What is left here is the scale,
+         which does have to be on the glass: a scale bar that zooms with the
+         map stops being a scale bar. */
       if (coarse || vw < 700 || inset.top || inset.bottom) return;
       var pad = 20;
-      var size = 54;
-      var cx = vw - pad - size / 2;
-      var cy = vh - pad - size / 2 - 30 - inset.bottom;
-      ctx.save();
-      ctx.globalAlpha = 0.75;
-      ctx.translate(cx, cy);
-      ctx.strokeStyle = PIG.ink;
-      ctx.fillStyle = PIG.ink;
-      ctx.lineWidth = 1.1;
-      ctx.beginPath(); ctx.arc(0, 0, size / 2, 0, TAU); ctx.stroke();
-      ctx.beginPath(); ctx.arc(0, 0, size / 2 - 4, 0, TAU);
-      ctx.globalAlpha = 0.2; ctx.stroke(); ctx.globalAlpha = 0.75;
-      for (var q = 0; q < 4; q++) {
-        ctx.save(); ctx.rotate(q * Math.PI / 2);
-        ctx.beginPath();
-        ctx.moveTo(0, -size / 2 + 3);
-        ctx.lineTo(size * 0.1, 0);
-        ctx.lineTo(0, size * 0.16);
-        ctx.lineTo(-size * 0.1, 0);
-        ctx.closePath();
-        ctx.globalAlpha = q === 0 ? 0.85 : 0.3;
-        ctx.fill();
-        ctx.restore();
-      }
-      ctx.globalAlpha = 0.85;
-      ctx.font = '600 ' + Math.round(size * 0.2) + 'px Georgia, "Iowan Old Style", serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('N', 0, -size * 0.34);
-      ctx.restore();
 
       /* the scale, in years */
       var ypp = yearsPerPixel();
@@ -2036,8 +3001,16 @@
       var taken = waypoints.map(function (w) {
         return { x: w.x, y: w.y, w: 40, h: 26 };
       });
-      function clear(p, w, h, dirx, diry) {
-        for (var g = 0; g < 16; g++) {
+      /* Step and tries are arguments because the two things using this want
+         different amounts of freedom. A memory's caption may wander a long
+         way to find room; a label tied to a mark on the braid may not — it
+         has to stay near the thing it is labelling, and a label that walks
+         three hundred pixels to avoid a collision has not solved anything,
+         it has just moved the confusion somewhere else. */
+      function clear(p, w, h, dirx, diry, step, tries) {
+        step = step || 22;
+        tries = tries || 16;
+        for (var g = 0; g < tries; g++) {
           var hit = false;
           for (var i = 0; i < taken.length; i++) {
             var q = taken[i];
@@ -2045,78 +3018,67 @@
                 Math.abs(q.y - p.y) < (q.h + h) / 2) { hit = true; break; }
           }
           if (!hit) break;
-          p = { x: p.x + dirx * 22, y: p.y + diry * 22 };
+          p = { x: p.x + dirx * step, y: p.y + diry * step };
         }
         taken.push({ x: p.x, y: p.y, w: w, h: h });
         return p;
       }
 
-      /* The chapters are not named. They still decide the landscape — which
-         ground is savanna, which is alpine, where the water is — but an
-         invented place name on a map of real memories does the archive a
-         disservice: it makes a true story look like a made-up one. The only
-         names on this paper are the ones the archive itself supplies.
+      /* Nothing on this paper is named. The chapters never were — they
+         decide the landscape, which ground is savanna, which is alpine,
+         where the water is, and an invented name over a real memory only
+         makes a true story look made up. The towns went the same way for
+         the opposite reason: fifteen real place names, printed at fifteen
+         lights, and the map became a page of type with a country behind
+         it. Where a memory happened is in the memory, which is one press
+         away. The paper keeps the ground, the braid and the lights. */
 
-      /* --- the towns. Every place a memory actually happened in gets its
-         name on the paper, at the memory that happened there — so the map's
-         settlements come out of the archive rather than out of a list kept
-         here that would drift the moment a story was added. */
-      var townAt = {};
-      waypoints.forEach(function (w) {
-        if (!w.place || townAt[w.place] || !placeById[w.place]) return;
-        townAt[w.place] = w;
-      });
-      Object.keys(townAt).forEach(function (id, i) {
-        var w = townAt[id];
-        var n = el('div', 'atlas-town');
-        /* alternate which side of its memory a town writes itself, so two
-           near neighbours do not print over one another */
-        n.dataset.side = (i % 2) ? 'left' : 'right';
-        n.style.left = w.x + 'px';
-        n.style.top = (w.y + (i % 4 < 2 ? -22 : 22)) + 'px';
-        var dot = el('span', 'atlas-town-dot');
-        var name = el('span', 'atlas-town-name');
-        name.textContent = placeById[id].name;
-        n.appendChild(dot);
-        n.appendChild(name);
-        layer.appendChild(n);
-      });
+      /* --- whose line is whose. A name goes where a line is still going,
+         and nowhere else. The lines that run in from before the record used
+         to be named at their western end too, and that was the one label on
+         the map with nothing under it: a name in blank ground, at the edge
+         of the paper, marking a beginning nobody wrote down. The braid runs
+         in colour and the rail of names is the key to it, so those two have
+         a name without needing it printed on empty country. */
+      /* Every label on the paper is now two things: a mark that stays exactly
+         where the braid put it, and a piece of type that is allowed to move
+         out of the way. Before, the whole label moved — so a marriage
+         diamond could end up sixty pixels from the two lines it marked, and
+         a name could drift off the line it named. What the collision list
+         negotiates is where the words go; where the mark goes was never
+         negotiable. */
+      function labelOffset(anchor, w, h, dirx, diry, reach) {
+        var p = clear({ x: anchor.x + dirx * reach, y: anchor.y + diry * reach },
+                      w, h, dirx, diry, 11, 5);
+        return { dx: p.x - anchor.x, dy: p.y - anchor.y };
+      }
 
-      /* --- whose line is whose. Written at whichever end of a life stays
-         open — the lines that run in from before the record are named in
-         the east, the lines still going are named in the west — and
-         pressable, because a name is how you follow somebody. */
-      /* The canvas trail names a line only at whichever end of it stays
-         open, and lets its markers name the rest. A map cannot do that: a
-         name here is the thing you press to follow somebody, so every life
-         gets one, written on its own line — at the start for a line running
-         in from before the record, near the end for one still going, and in
-         the middle of a life that both begins and joins inside the braid. */
-      var nameN = 0;
       lanes.forEach(function (lane) {
         if (!lane.label) return;
-        var openStart = lane.startKind === 'origin';
-        var openEnd = lane.endKind === 'open';
-        var t = openStart ? lane.from + 0.2 + nameN * 0.34
-              : (openEnd ? lane.to - 0.4 - nameN * 1.5
-                         : lane.from + (lane.to - lane.from) * 0.42);
-        nameN++;
-        var p = laneAt(lane, t);
-        /* Every line still going ends at the same moment, so their names
-           would otherwise be written on the same row. Each steps off its own
-           line until it is clear — the way its line already leans, so a name
-           never crosses the braid to find room. */
+        if (lane.endKind !== 'open') return;
+        /* On its own line, near the end of it, where the eye already is when
+           it runs out of trail. Not staggered back down the braid: that put
+           four names across the middle of the country, each of them nearer
+           somebody else's line than its own. */
+        /* Far enough back from the end that the name is not written under
+           the decade rail, which is fixed to the right of the glass and does
+           not move when the paper does. */
+        var t = lane.to - 1.7;
+        var anchor = laneAt(lane, t);
         var away = laneOffset(lane, t) >= 0 ? 1 : -1;
         var sp0 = onSpine(uOf(t));
-        p = clear(p, Math.max(70, lane.label.length * 8), 28,
-                  sp0.nx * away, sp0.ny * away);
+        var off = labelOffset(anchor, Math.max(70, lane.label.length * 7.4), 22,
+                              sp0.nx * away, sp0.ny * away, 18);
         var b = el('button', 'atlas-name');
         b.type = 'button';
         b.dataset.strand = lane.id;
         b.style.setProperty('--tone', lane.tone);
-        b.style.left = clamp(p.x, 60, MAP.w - 60) + 'px';
-        b.style.top = clamp(p.y, 30, MAP.h - 30) + 'px';
-        b.textContent = lane.label;
+        b.style.left = clamp(anchor.x, 40, MAP.w - 60) + 'px';
+        b.style.top = clamp(anchor.y, 24, MAP.h - 24) + 'px';
+        b.style.setProperty('--dx', off.dx.toFixed(1) + 'px');
+        b.style.setProperty('--dy', off.dy.toFixed(1) + 'px');
+        b.appendChild(el('span', 'atlas-name-mark'));
+        b.appendChild(el('span', 'atlas-name-text', lane.label));
         b.setAttribute('aria-pressed', 'false');
         b.setAttribute('aria-label', 'Follow ' + lane.label + '’s trail');
         b.addEventListener('click', function () { emit('person', lane.id); });
@@ -2125,18 +3087,30 @@
 
       /* --- the joints of the braid: a life starting, two becoming one */
       joints.forEach(function (j) {
-        var n = el('div', 'atlas-joint');
-        var jp = clear({ x: j.x, y: j.y }, Math.max(80, j.text.length * 6), 24, 0, -1);
+        /* A birth is where a life is named, so it is also where you press to
+           follow it — the mark and the name are one thing. A marriage names
+           no one new, so it stays a mark on the paper. */
+        var follows = j.kind === 'birth' && j.strand;
+        var n = el(follows ? 'button' : 'div', 'atlas-joint');
+        var off = labelOffset({ x: j.x, y: j.y },
+                              Math.max(84, j.text.length * 6.2), 20, 0, -1, 15);
         n.dataset.kind = j.kind;
         n.style.setProperty('--tone', j.tone);
-        n.style.left = jp.x + 'px';
-        n.style.top = jp.y + 'px';
-        n.setAttribute('aria-hidden', 'true');
-        var mark = el('span', 'atlas-joint-mark');
-        var text = el('span', 'atlas-joint-text');
-        text.textContent = j.text;
-        n.appendChild(mark);
-        n.appendChild(text);
+        n.style.left = j.x + 'px';
+        n.style.top = j.y + 'px';
+        n.style.setProperty('--dx', off.dx.toFixed(1) + 'px');
+        n.style.setProperty('--dy', off.dy.toFixed(1) + 'px');
+        n.appendChild(el('span', 'atlas-joint-mark'));
+        n.appendChild(el('span', 'atlas-joint-text', j.text));
+        if (follows) {
+          n.type = 'button';
+          n.dataset.strand = j.strand;
+          n.setAttribute('aria-pressed', 'false');
+          n.setAttribute('aria-label', 'Follow ' + j.who + '’s trail');
+          n.addEventListener('click', function () { emit('person', j.strand); });
+        } else {
+          n.setAttribute('aria-hidden', 'true');
+        }
         layer.appendChild(n);
       });
 
@@ -2162,6 +3136,9 @@
 
         b.appendChild(el('span', 'atlas-wp-glow'));
         b.appendChild(el('span', 'atlas-wp-disc'));
+        var year = el('span', 'atlas-wp-year');
+        year.textContent = w.year || '';
+        if (w.year) b.appendChild(year);
         var cap = el('span', 'atlas-wp-cap');
         cap.textContent = w.title;
         b.appendChild(cap);
@@ -2190,16 +3167,20 @@
          the country carries on past the last thing anybody has written. */
       var first = waypoints[0];
       var start = el('div', 'atlas-mark');
-      var sp = clear({ x: first.x, y: first.y - 34 }, 108, 26, -0.6, -0.8);
+      var sp = clear({ x: first.x - 58, y: first.y - 30 }, 108, 26, -0.7, -0.7);
       start.style.left = clamp(sp.x, 70, MAP.w - 70) + 'px';
       start.style.top = sp.y + 'px';
       start.textContent = 'Start · ' + (first.year || '');
       layer.appendChild(start);
 
-      var last = onSpine(1.05);
+      /* And it goes through the collision list like everything else — it was
+         the one label that did not, which is how it ended up printed under
+         the name of the line it was meant to be following. */
+      var last = onSpine(1.0);
+      var op = clear({ x: last.x - 30, y: last.y + 96 }, 150, 24, -0.3, 1);
       var on = el('div', 'atlas-mark onward');
-      on.style.left = clamp(last.x - 40, 80, MAP.w - 80) + 'px';
-      on.style.top = clamp(last.y + 86, 40, MAP.h - 40) + 'px';
+      on.style.left = clamp(op.x, 80, MAP.w - 230) + 'px';
+      on.style.top = clamp(op.y, 40, MAP.h - 40) + 'px';
       on.textContent = 'The trail continues';
       layer.appendChild(on);
 
@@ -2268,11 +3249,12 @@
       /* The name of whoever is being followed is marked as chosen, and the
          other lives step back — the same gesture the people rail makes, so
          pressing either one shows the same thing. */
-      [].slice.call(layer.querySelectorAll('.atlas-name')).forEach(function (n) {
-        var mine = n.dataset.strand === emphasis.person;
-        n.setAttribute('aria-pressed', mine ? 'true' : 'false');
-        n.dataset.off = (emphasis.person && !mine) ? '1' : '';
-      });
+      [].slice.call(layer.querySelectorAll('.atlas-name, .atlas-joint[data-strand]'))
+        .forEach(function (n) {
+          var mine = n.dataset.strand === emphasis.person;
+          n.setAttribute('aria-pressed', mine ? 'true' : 'false');
+          n.dataset.off = (emphasis.person && !mine) ? '1' : '';
+        });
       drawWanted = true;
     }
     function markFocus() {
@@ -2463,8 +3445,9 @@
          canvas lens is handed, so the two cannot disagree about the family —
          plus the archive's places and its decades. */
       setWorld: function (spec) {
-        placeById = {};
-        (spec.places || []).forEach(function (p) { placeById[p.id] = p; });
+        /* `spec.places` is still handed over — it is the archive's, and both
+           lenses are given the same world — but the paper no longer prints
+           any of it. */
         eras = spec.decades || [];
         laneW = spec.laneW || 0.55;
         trunkId = spec.trunk || null;
@@ -2475,22 +3458,21 @@
           var seed = hash01(l.id);
           return {
             id: l.id, label: l.label || '', tone: l.tone || PIG.trail,
+            /* the same colour with the light taken out of it, for the core
+               of the line — a life's tone reads on a dark plane and washes
+               out on paper, so on paper it is inked as well as bloomed */
+            deep: deepen(l.tone || PIG.trail),
             side: l.side || 0, base: l.base || null,
             startKind: l.startKind || 'union', endKind: l.endKind || 'open',
             joinTarget: l.joinTarget || null,
             from: l.from, to: l.to,
             startsAt: l.startsAt === undefined ? null : l.startsAt,
             endsAt: l.endsAt === undefined ? null : l.endsAt,
-            phase: seed,
-            /* How much a life wanders. A line the archive has a lot to say
-               about wanders visibly; one it barely knows keeps closer to its
-               lane, because there is less of it to wander with. */
-            amp: 0.5 + (l.weight || 0) * 0.42 + seed * 0.26,
-            freq: 0.74 + seed * 0.4,
-            /* Two lines that marry travel side by side rather than fusing.
-               Which side is decided by where each came from, so neither
-               crosses over its partner to get there. */
-            pairGap: (l.side < 0 ? -1 : 1) * 0.2
+            /* One number per strand, and the same wander for every life:
+               how much the archive happens to say about somebody is not a
+               reason to draw their line differently. */
+            phase: seed * TAU,
+            fadeIn: !!l.fadeIn
           };
         });
         laneById = {};
@@ -2508,13 +3490,12 @@
         return api;
       },
 
-      /* waypoints: [{ id, place, year, era, strand, tone, title, when,
+      /* waypoints: [{ id, year, era, strand, tone, title, when,
                        location, label, weight, chaos, classified, ref }] */
       setLights: function (list) {
         waypoints = (list || []).map(function (w) {
           return {
             id: w.id,
-            place: w.place || null,
             year: w.year || null,
             t: (w.t === undefined || w.t === null) ? axis.start : w.t,
             era: w.era || null,
@@ -2672,6 +3653,22 @@
     /* The archive's tones were mixed for a black room. On paper they need
        taking down a stop or they read as highlighter — so the disc is the
        deepened tone and the halo around it keeps the original light. */
+    /* The same colour at a given alpha, for gradient stops — which cannot
+       use globalAlpha. Handles the two forms the room's tones come in. */
+    function tint(colour, a) {
+      var m = /^#?([0-9a-f]{6})$/i.exec(colour);
+      if (m) {
+        var v = parseInt(m[1], 16);
+        return 'rgba(' + ((v >> 16) & 255) + ',' + ((v >> 8) & 255) + ',' + (v & 255) + ',' + a + ')';
+      }
+      m = /^rgba?\(([^)]+)\)$/i.exec(colour);
+      if (m) {
+        var parts = m[1].split(',');
+        return 'rgba(' + parts[0] + ',' + parts[1] + ',' + parts[2] + ',' + a + ')';
+      }
+      return colour;
+    }
+
     function deepen(hex) {
       var m = /^#?([0-9a-f]{6})$/i.exec(hex);
       if (!m) return hex;

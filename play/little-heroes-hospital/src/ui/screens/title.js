@@ -111,18 +111,18 @@ function townMarkup() {
     </div>
     <div class="doorway">
       <span class="doorglow"></span>
-      <span class="walker walker--1">🧑‍⚕️</span>
-      <span class="walker walker--2">👩‍⚕️</span>
     </div>
+    <span class="walker walker--1">🚶</span>
+    <span class="walker walker--2">🚶</span>
   </div>
 
   <div class="road"></div>
   <div class="ambulance">🚑</div>
   <div class="paws">
-    ${Array.from({ length: 6 }, (_, i) => `<span style="left:${8 + i * 15}%;animation-delay:${i * 0.45}s">🐾</span>`).join('')}
+    ${Array.from({ length: 6 }, (_, i) => `<span style="left:${8 + i * 15}%;animation-delay:${(5 - i) * 0.45}s">🐾</span>`).join('')}
   </div>
   <div class="patients">
-    <span class="patient-walk patient-walk--1">🧒</span>
+    <span class="patient-walk patient-walk--1">🚶</span>
     <span class="patient-walk patient-walk--2">🐕</span>
   </div>
   ${butterflies}

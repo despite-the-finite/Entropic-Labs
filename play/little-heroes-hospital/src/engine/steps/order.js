@@ -30,6 +30,9 @@ export function runOrder(step, ctx) {
   });
 
   ctx.bodyEl.appendChild(queue);
+  // Who is waiting, and what is wrong with each of them.
+  ctx.speakOptions(items.map((i) => `${ctx.fill(i.label)} — ${ctx.fill(i.note)}`),
+    { lead: 'Here is who is waiting:' });
 
   async function tap(item, card) {
     if (solved || card.dataset.done) return;

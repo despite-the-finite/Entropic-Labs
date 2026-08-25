@@ -42,7 +42,15 @@ export function runScan(step, ctx) {
     ctx.overlay.append(marker, frame);
     placeMarker();
     window.addEventListener('resize', placeMarker);
-    cleanups.push(() => { window.removeEventListener('resize', placeMarker); marker.remove(); });
+    // Same as the tool step: the panel grows under the stage, so the target
+    // has to be re-placed rather than measured once and left behind.
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(placeMarker) : null;
+    ro?.observe(ctx.overlay);
+    cleanups.push(() => {
+      ro?.disconnect();
+      window.removeEventListener('resize', placeMarker);
+      marker.remove();
+    });
 
     // Start away from the target — but low, clear of the speech bubbles.
     let pos = { x: 20, y: 66 };
@@ -135,6 +143,7 @@ export function runScan(step, ctx) {
     const plate = h('div', { class: `scan-plate scan-plate--${step.mode}`, html: scanArt(step.revealArt) });
     machine.appendChild(plate);
     machine.appendChild(h('div', { class: 'scan-caption' }, ctx.fill(step.revealCaption || 'Look at that!')));
+    ctx.say('narrator', step.revealCaption || 'Look at that!');
     sparkle(plate, { count: 12, glyphs: ['✨', '💫'] });
 
     await wait(700);
@@ -155,6 +164,7 @@ export function runScan(step, ctx) {
       row.appendChild(card);
     });
     machine.appendChild(row);
+    ctx.speakOptions(options.map((o) => o.label), { lead: 'Is it:' });
 
     async function pickFinding(opt, card) {
       if (solved) return;
@@ -176,6 +186,7 @@ export function runScan(step, ctx) {
       ctx.award({ stars: step.stars ?? 2 }, card);
       ctx.setPrompt(praise());
       if (opt.say) ctx.say('narrator', opt.say);
+      else ctx.say('narrator', `You found it — ${ctx.fill(opt.label)}.`);
       ctx.teach(step.teach || null);
       ctx.react('happy');
       await wait(600);

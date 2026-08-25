@@ -32,6 +32,9 @@ export function runChoose(step, ctx) {
   });
 
   ctx.bodyEl.appendChild(grid);
+  // Read the answers out after the question — otherwise a child who cannot
+  // read is choosing between pictures with no idea what either one says.
+  ctx.speakOptions(options.map((o) => o.label));
 
   const idle = setTimeout(() => {
     if (!solved && step.nudge) toast(ctx.fill(step.nudge), { icon: '💡' });
@@ -68,6 +71,7 @@ export function runChoose(step, ctx) {
     }
     ctx.setPrompt(praise());
     if (opt.say) ctx.say('narrator', opt.say);
+    else ctx.say('narrator', `Yes — ${ctx.fill(opt.label)}.`);
     ctx.react('happy');
     ctx.teach(step.teach || null);
 

@@ -41,10 +41,17 @@
     <h1 class="gate-title">Butterfly Trails</h1>
     <p class="gate-tagline">Small moments. Different choices. Entirely different lives.</p>
     <p class="gate-line" id="gate-line" aria-live="polite"></p>
+    <!-- The way in is also the first choice. Both doors open the same
+         archive; they differ only in how it is drawn, and either can be
+         changed from inside. The doors themselves are built from LENSES,
+         so a third lens gets a third door without anything here changing. -->
     <div class="gate-actions">
-      <button class="bt-btn" id="gate-enter" type="button">
-        <span class="mark" aria-hidden="true"></span> Follow the trail →
-      </button>
+      <p class="gate-choose" id="gate-choose" hidden></p>
+      <div class="gate-doors" id="gate-doors" role="group"
+           aria-label="Choose how the archive is drawn"></div>
+      <!-- The room's own premise, asked at the door rather than carried
+           around inside. It goes in with you and opens on arrival. -->
+      <button class="gate-essay" id="gate-essay" type="button" hidden></button>
     </div>
   </div>
   <p class="gate-mark" id="gate-mark"></p>
@@ -52,11 +59,13 @@
 </div>
 
 <!-- ======================================================== THE ROOM ===== -->
+<!-- Inside the room the plate says the name of the place and how to move
+     around it, and nothing else. The tagline and the essay are both asked at
+     the door now: they are the way in, and repeating them over the archive
+     was two lines of furniture between the visitor and the memories. -->
 <div class="plate" id="plate">
   <h1>Butterfly Trails</h1>
-  <p class="sub">Small moments. Different choices. Entirely different lives.</p>
   <p class="hint" id="plate-hint"></p>
-  <button class="what-is" id="what-is" type="button">What is the butterfly effect?</button>
 </div>
 
 <div class="readout" aria-hidden="true">

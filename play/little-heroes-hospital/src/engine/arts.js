@@ -209,15 +209,19 @@ export const SCAN_ART = {
     'chest — front view'),
 
   'tummy-duck': () => xrayFrame(`
-    <ellipse cx="150" cy="104" rx="106" ry="66" fill="#dbe9ff" opacity=".12"/>
-    <g stroke="#dbe9ff" stroke-width="6" fill="none" opacity=".7">
-      ${[0, 1, 2].map((i) => `<path d="M 60 ${70 + i * 28} q 90 14 180 0"/>`).join('')}</g>
-    <g class="art-flag" transform="translate(150 104)">
-      <ellipse cx="0" cy="6" rx="30" ry="22" fill="#eaf4ff"/>
-      <circle cx="-18" cy="-12" r="15" fill="#eaf4ff"/>
-      <path d="M -30 -14 l -16 5 l 16 6 z" fill="#eaf4ff"/>
-      <circle cx="-21" cy="-15" r="3" fill="#0f1c38"/>
-      <ellipse cx="0" cy="6" rx="44" ry="34" fill="none" stroke="#ff6b6b" stroke-width="3" stroke-dasharray="6 6"/>
+    <ellipse cx="150" cy="104" rx="112" ry="70" fill="#dbe9ff" opacity=".10"/>
+    <g stroke="#dbe9ff" stroke-width="6" fill="none" opacity=".45">
+      ${[0, 1, 2].map((i) => `<path d="M 54 ${64 + i * 30} q 96 14 192 0"/>`).join('')}</g>
+    <g transform="translate(146 104)">
+      <ellipse cx="4" cy="10" rx="42" ry="30" fill="#f2f8ff"/>
+      <path d="M 34 2 q 26 -6 30 10 q -14 10 -30 4 z" fill="#f2f8ff"/>
+      <circle cx="-26" cy="-20" r="21" fill="#f2f8ff"/>
+      <path d="M -44 -22 l -24 8 l 24 9 z" fill="#f2f8ff"/>
+      <circle cx="-30" cy="-25" r="4" fill="#0f1c38"/>
+      <path d="M -6 8 q 16 12 32 4" stroke="#c8dcf5" stroke-width="3" fill="none" opacity=".7"/>
+    </g>
+    <g class="art-flag">
+      <ellipse cx="150" cy="108" rx="70" ry="48" fill="none" stroke="#ff6b6b" stroke-width="3" stroke-dasharray="7 7"/>
     </g>`,
     'tummy — is that… a duck?'),
 
