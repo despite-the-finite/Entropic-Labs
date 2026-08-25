@@ -318,6 +318,18 @@ map of an invented country. The choice sits in a segmented control near the
 view switch, is keyboard-walkable with the arrow keys, and is remembered in
 `localStorage` between visits (`el-bt-lens`). `V` cycles it.
 
+**The question is asked at the door.** Which lens is not a setting to be found
+later; it is the last thing the way in says, and the gate holds two doors
+rather than one button. They are built from `LENSES`, so a third lens gets a
+third door with nothing in the markup changing, and a build with only the
+canvas engine present falls back to the single FOLLOW THE TRAIL door it had
+before — a choice of one is not a choice. The door a returning visitor came
+out of last time is marked, not pushed for them: nothing auto-enters while
+there is a question on the screen. SKIP INTRO skips the lines, not the
+question — it brings the doors forward and then retires itself. Arriving on a
+link to a memory still bypasses the gate entirely, because you came for the
+story and not the doorway.
+
 The distinction the architecture rests on: a **lens** is which experience you
 are having; a **view** — trail, whole trail, places — is a layout inside the
 trails lens, so the view switch goes away while the map is up and comes back

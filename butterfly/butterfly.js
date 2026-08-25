@@ -388,7 +388,8 @@
 
   var gate = $('#gate');
   var gateLine = $('#gate-line');
-  var gateEnter = $('#gate-enter');
+  var gateChoose = $('#gate-choose');
+  var gateDoors = $('#gate-doors');
   var gateSkip = $('#gate-skip');
   var plate = $('#plate');
   var plateHint = $('#plate-hint');
@@ -1043,13 +1044,18 @@
       id: 'trails',
       label: 'Trails',
       glyph: '✦',
-      line: 'The braid, drawn on one dark plane.'
+      line: 'The braid, drawn on one dark plane.',
+      /* What the door says. Shorter than `line` and written to sit beside
+         the others, because at the gate the two are read against each
+         other rather than one at a time. */
+      door: 'The braid, on one dark plane.'
     },
     {
       id: 'atlas',
       label: 'Map',
       glyph: '✤',
-      line: 'A trail map of one life. Every waypoint is a memory.'
+      line: 'A trail map of one life. Every waypoint is a memory.',
+      door: 'The same braid, on painted ground.'
     }
   ];
   var LENS_KEY = 'el-bt-lens';
@@ -2753,16 +2759,93 @@
   var SEEN_KEY = 'el-bt-seen';
   var gateFly = null;
 
+  /* The doors. Which lens you arrive in is the first thing the room asks,
+     because it is a real choice and not a setting: the same archive, drawn
+     two ways, and either can be swapped for the other from inside. Built
+     from LENSES so the question stays true if a third one is ever added,
+     and skipped entirely when there is only one way in — a choice of one
+     is not a choice. */
+  function renderDoors() {
+    gateDoors.textContent = '';
+    var many = LENSES.length > 1;
+    gateChoose.hidden = !many;
+    if (many) gateChoose.textContent = 'Two ways in. The same archive either way.';
+
+    var last = store(LENS_KEY);
+    var marked = many && lensOk(last);
+    if (marked) gateDoors.setAttribute('data-marked', '1');
+    else gateDoors.removeAttribute('data-marked');
+
+    LENSES.forEach(function (L) {
+      var b = el('button', 'gate-door');
+      b.type = 'button';
+      b.setAttribute('data-lens', L.id);
+
+      var g = el('span', 'gate-door-glyph', L.glyph);
+      g.setAttribute('aria-hidden', 'true');
+      b.appendChild(g);
+
+      var t = el('span', 'gate-door-text');
+      t.appendChild(el('span', 'gate-door-name', many ? L.label : 'Follow the trail'));
+      t.appendChild(el('span', 'gate-door-line', L.door || L.line));
+      b.appendChild(t);
+
+      /* Marked, not chosen for them: the door they came out of last time
+         still has to be pushed. */
+      if (marked && last === L.id) {
+        b.setAttribute('data-last', '1');
+        b.appendChild(el('span', 'gate-door-last', 'Last'));
+      }
+
+      b.addEventListener('click', function () { enterRoom(L.id); });
+      b.addEventListener('keydown', function (e) {
+        var d = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1
+              : (e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0);
+        if (!d) return;
+        e.preventDefault();
+        var all = [].slice.call(gateDoors.querySelectorAll('.gate-door'));
+        var i = all.indexOf(b);
+        var to = all[(i + d + all.length) % all.length];
+        if (to) to.focus();
+      });
+      gateDoors.appendChild(b);
+    });
+  }
+
+  /* Opening the doors is the end of the intro, so the way past the intro
+     goes away with it. */
+  function openDoors(settleLine) {
+    /* Skipping ahead settles the line as well, so nothing arrives from
+       behind once the doors are up. A returning visitor gets no line at
+       all, and does not want one produced for them here. */
+    if (settleLine && !gateLine.textContent && ARCHIVE.openingLines[0]) {
+      gateLine.textContent = ARCHIVE.openingLines[0];
+      gateLine.classList.add('on');
+    }
+    gate.querySelector('.gate-actions').classList.add('on');
+    /* Hiding the button the keyboard is standing on would drop focus to the
+       document, so where SKIP INTRO was the thing being used, the doors it
+       opened take the focus it had. Nothing is stolen otherwise: on the
+       timer, the doors simply appear. */
+    var hadFocus = doc.activeElement === gateSkip;
+    gateSkip.hidden = true;
+    if (!hadFocus) return;
+    var first = gateDoors.querySelector('.gate-door[data-last]')
+             || gateDoors.querySelector('.gate-door');
+    if (first) first.focus();
+  }
+
   function runGate(full) {
     body.setAttribute('data-gate', '1');
     gate.hidden = false;
+    renderDoors();
 
     if (trails.isReduced()) {
       /* Nothing moves. Everything is said at once, and the visitor decides
          when to go in. */
       gateLine.textContent = ARCHIVE.openingLines[0] || '';
       gateLine.classList.add('on');
-      gate.querySelector('.gate-actions').classList.add('on');
+      openDoors();
       return;
     }
 
@@ -2781,13 +2864,13 @@
     gateFly.aim({ x: vp.w + 70, y: vp.h * 0.28 });
 
     if (!full) {
-      /* A returning visitor gets the title, one butterfly, and the door
-         already open: no lines to sit through and no click to make. It
-         lands, and the room is there. Anything they do gets them in
-         sooner. */
+      /* A returning visitor gets the title, one butterfly, and the doors
+         already open: no lines to sit through. With one lens there is
+         nothing to answer and the room simply arrives; with two, the
+         question is worth the tap, and their last door is marked. */
       gateLine.textContent = '';
-      gate.querySelector('.gate-actions').classList.add('on');
-      global.setTimeout(enterRoom, 1500);
+      openDoors();
+      if (LENSES.length < 2) global.setTimeout(enterRoom, 1500);
       return;
     }
 
@@ -2795,18 +2878,26 @@
       gateLine.textContent = ARCHIVE.openingLines[0] || '';
       gateLine.classList.add('on');
     }, 2400);
-    global.setTimeout(function () {
-      gate.querySelector('.gate-actions').classList.add('on');
-    }, 4200);
+    global.setTimeout(openDoors, 4200);
   }
 
   var entered = false;
-  function enterRoom() {
+  /* `pick` is the door that was pushed. The lens is set while the gate is
+     still up, so whichever world was chosen is already drawn behind it and
+     the room is there the moment the gate clears. Set before `entered`, so
+     setLens leaves the arrival — the fit, the ambient butterflies, the
+     word of welcome — to the branch below rather than doing half of it
+     early. */
+  function enterRoom(pick) {
     if (entered || gate.hidden) return;
+    /* The gate's butterfly is let go first: choosing the map puts the canvas
+       world down, and a butterfly still holding a flight path when that
+       happens would freeze in place on a fading gate. */
+    if (gateFly) { trails.release(gateFly, 900); gateFly = null; }
+    if (typeof pick === 'string' && lensOk(pick)) setLens(pick, { silent: true });
     entered = true;
     gate.classList.add('leaving');
     store(SEEN_KEY, '1');
-    if (gateFly) { trails.release(gateFly, 900); gateFly = null; }
     global.setTimeout(function () {
       gate.hidden = true;
       body.removeAttribute('data-gate');
@@ -2835,10 +2926,13 @@
     }, 1400);
   }
 
-  gateEnter.addEventListener('click', enterRoom);
-  gateSkip.addEventListener('click', enterRoom);
+  /* Skipping the intro is skipping the lines, not the question: it brings
+     the doors forward rather than picking one. */
+  gateSkip.addEventListener('click', function () { openDoors(true); });
   gate.addEventListener('click', function (e) {
-    if (e.target === gate) enterRoom();
+    if (e.target !== gate) return;
+    if (gateSkip.hidden) enterRoom();
+    else openDoors(true);
   });
 
   /* ============================================================== EVENTS */

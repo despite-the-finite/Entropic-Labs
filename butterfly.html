@@ -41,10 +41,14 @@
     <h1 class="gate-title">Butterfly Trails</h1>
     <p class="gate-tagline">Small moments. Different choices. Entirely different lives.</p>
     <p class="gate-line" id="gate-line" aria-live="polite"></p>
+    <!-- The way in is also the first choice. Both doors open the same
+         archive; they differ only in how it is drawn, and either can be
+         changed from inside. The doors themselves are built from LENSES,
+         so a third lens gets a third door without anything here changing. -->
     <div class="gate-actions">
-      <button class="bt-btn" id="gate-enter" type="button">
-        <span class="mark" aria-hidden="true"></span> Follow the trail →
-      </button>
+      <p class="gate-choose" id="gate-choose" hidden></p>
+      <div class="gate-doors" id="gate-doors" role="group"
+           aria-label="Choose how the archive is drawn"></div>
     </div>
   </div>
   <p class="gate-mark" id="gate-mark"></p>
