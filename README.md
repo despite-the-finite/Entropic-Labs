@@ -392,9 +392,10 @@ year, plus the strand the two become. Nothing else in the room needs editing.
 Names are drawn once each, at whichever end of a line stays open — so the
 lines that run in are named on the left, the lines still going are named on
 the right, and a line that both starts and ends inside the braid is named by
-its markers instead. On a phone, where the whole braid is framed to fit and
-the lanes end up about a thumb's width apart, the markers show years only and
-the names arrive as you zoom in or pass over them.
+its markers instead. (The map keeps the right-hand half of that rule only;
+see below.) On a phone, where the whole braid is framed to fit and the lanes
+end up about a thumb's width apart, the markers show years only and the names
+arrive as you zoom in or pass over them.
 
 **The map is the braid, walked across a country.** It is the same layout the
 canvas trail draws — one line per life, lives running alongside each other,
@@ -433,18 +434,36 @@ wears the landscape of wherever that chapter mostly happened: plains before
 years of leaving, alpine country for Colorado, water at the far end, and then
 the paper stops.
 
-Not one of them carries an invented name. These are real memories, and a
-made-up place name printed over them makes a true story look like a made-up
-one — the map ends up doing the archive a disservice by decorating it. The
-only names on this paper are the archive's own: the towns where the memories
-actually happened, set at the memories that happened there, and the names of
-the people whose lines they are.
+Nothing on this paper is named. The chapters never were: a made-up place name
+printed over a real memory makes a true story look like a made-up one, and the
+map ends up doing the archive a disservice by decorating it. The towns went
+the same way for the opposite reason. Every place a memory happened in used to
+print its real name at the light — fifteen names, all of them true, and the
+country disappeared behind a page of type. Where a memory happened is in the
+memory, one press away. The paper keeps the ground, the braid and the lights.
 
 A chapter's outline is cut from the spine rather than placed: sample the years
 it covers, walk out to either bank, close the loop. The coast is cut the same
-way, one arm's length further out, which makes the country an island shaped
-like the life it carries — and means the map can never fall out of step with
-the family's layout, because both are derived from the same line.
+way, further out, which makes the country an island shaped like the life it
+carries — and means the map can never fall out of step with the family's
+layout, because both are derived from the same line.
+
+**Why the shore is a line and not a scribble.** An offset curve is a trap, and
+this one fell into three of them at once. Its width came from a step function —
+the widest chapter reaching each moment — so a chapter boundary put a
+seventy-pixel cliff in the outline; it was offset from a normal read off a
+single eight-pixel segment of an already-roughened spine, so a two-pixel wobble
+in the line swung the normal twenty degrees and the shore, three hundred pixels
+out, swung a hundred and fifty with it; and the roughening that went on top
+stepped once per point, on a spline resampled every two pixels, so five pixels
+of amplitude sawed the line back over itself. The outline crossed itself
+sixty-five times, and the ink drawn along it read as pencil scribble round the
+edge of the land. It is now none of those: the widths are smoothed before
+anything is offset, the direction is averaged across a dozen segments while the
+position keeps every bit of the wander, the wander advances by distance
+travelled rather than by index, and the shore takes only the room the paper has
+where it is rather than being clamped flat against the edge. Zero
+self-intersections, which is checked rather than hoped.
 
 **A memory is a light on the ground**, in the category tone the whole room
 uses, with its year under it once there is room to print one. It carried a number for a while, the way a trail map numbers its
@@ -455,19 +474,25 @@ to lift it off the ground and a ring of ink outside that, which is the part
 that does not depend on the colour being seen. A chaos event keeps the slow
 breath it has in every other view.
 
-**Everything written on the paper goes through one collision list.** Towns,
-names, trailheads and the joints of the braid all check against the
-memories first and then against each other, each stepping off in a direction
-that suits it — a name steps the way its own line already leans, so it never
-crosses the braid to find room. Add a story and every label re-negotiates.
+**Everything written on the paper goes through one collision list.** The
+names and the joints of the braid check against the memories first and then
+against each other, each stepping off in a direction that suits it — a name
+steps the way its own line already leans, so it never crosses the braid to
+find room. Add a story and every label re-negotiates.
 
 **The braid's joints are map furniture, and they name people.** A birth is a
 circle on the line carrying the child's name and year; a marriage is a diamond
 where two lines arrive. Different shapes as well as different colours, so
 neither depends on being seen in colour — and because a birth is where a life
 is named, it is also what you press to follow that life. A name is otherwise
-written only at whichever end of a line stays open, which is the canvas
-trail's rule: no name is ever drawn twice.
+written only where a line is still going, and no name is ever drawn twice.
+
+The two lines that run in from before the record used to be named at their
+western end as well, and that was the one label on the map with nothing under
+it: a name in blank ground, at the edge of the paper, marking a beginning
+nobody wrote down. The braid runs in colour and the rail of names is its key,
+so those two are identified without being printed on empty country. It is the
+one place the map deliberately says less than the canvas trail.
 
 **The butterflies are the room's own, and there are four reasons one appears.**
 You followed a category, and its butterfly crosses the country in that
@@ -490,11 +515,29 @@ island, not only where the archive has a name for the ground. All of it is
 seeded from strings, so the same country comes back on every visit and on
 every device.
 
-**Three animals, and they are the places.** An elk for Colorado over the high
-range, an African fish eagle for the Zambezi above the far water, and a dodo
-for Mauritius on the island off the crossing — painted as silhouettes rather
-than portraits, because a map illustration is not a field guide. Each has one
-part that moves.
+**Seven animals, and they are the places.** An elk for Colorado over the high
+range, an African fish eagle for the Zambezi above the far water, a dodo for
+Mauritius on the island off the crossing, a hare out on the open plain, a
+heron down at the shore, and in the water a sea turtle and a fish that breaks
+the surface about once a loop. Each has one part that moves, and each is
+placed by the ground rather than by a coordinate — the heron walks out from
+the spine until it finds the beach, the swimmers walk out until the land is
+behind them — so a change in the family's dates moves the shoreline and the
+animals standing on it together.
+
+They are painted rather than drawn, because a line-art animal sits on a
+watercolour country like a sticker. What separates a creature from a cut-out
+shape is cheap and there is not much of it: a body lit along the back and
+shadowed underneath, a soft shadow on the ground it is standing on, a wet dark
+edge at a fifth strength instead of an outline, legs that taper from shoulder
+to hoof, and an eye with a speck of sky in it. The two in the water get none
+of that and something else instead — the line of the surface drawn across
+them and a wake behind, which is the only way a painted animal reads as being
+in something rather than on it.
+
+They are also drawn about a third smaller than they first were. At the old
+size they were the largest things on the paper and the country was their
+backdrop; at this one they are wildlife you come across.
 
 **How it performs.** The whole static map is painted once into an offscreen
 canvas at map resolution and blitted under the camera; only the trees, the
@@ -504,7 +547,7 @@ a single transform and one custom property rather than a hundred style writes,
 and the labels counter-scale off that property so type stays type at every
 zoom. How much is said is decided by how much country is on the screen, not by
 how far from a fit the camera is — otherwise a phone, whose fit is tiny, opens
-shouting every town name it has.
+saying everything it knows at once.
 
 **Getting around.** Drag or scroll to move, pinch or wheel to zoom, double tap
 to go in — or, once you are already in, back out to the whole country. Arrow
