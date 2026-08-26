@@ -103,6 +103,10 @@
       tags: arr(s.tags),
       story: arr(s.story),
       images: arr(s.images),
+      /* The picture this memory is known by. Optional: a memory without one
+         is a light on the map exactly as it always was. Listed here because
+         a story-level field that is not copied here is silently dropped. */
+      medallion: s.medallion || null,
       audio: s.audio || null,
       source: s.source || '',
       notes: arr(s.notes),
@@ -1338,11 +1342,34 @@
     return clamp(w, 0, 1);
   }
 
+  /* The one picture a memory is known by, in order of how deliberate it is:
+     the medallion the archive named for it, then the first of its own
+     photographs, then the first photograph inside the prose. A memory with
+     no picture anywhere gets none, and stays a light. */
+  function faceOf(s) {
+    if (s.medallion) return s.medallion;
+    for (var i = 0; i < s.images.length; i++) {
+      if (s.images[i] && s.images[i].src) return s.images[i].src;
+    }
+    for (var j = 0; j < s.story.length; j++) {
+      var b = s.story[j];
+      if (b && b.kind === 'image' && b.src) return b.src;
+      if (b && b.paragraphs) {
+        for (var k = 0; k < b.paragraphs.length; k++) {
+          var q = b.paragraphs[k];
+          if (q && q.kind === 'image' && q.src) return q.src;
+        }
+      }
+    }
+    return null;
+  }
+
   function lensLights() {
     return ordered.map(function (s) {
       var where = [whenOf(s), s.location].filter(Boolean).join(' · ');
       return {
         id: s.id,
+        face: faceOf(s),
         place: s.place || null,
         year: s.year,
         t: storyT(s),

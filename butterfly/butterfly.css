@@ -2456,6 +2456,58 @@ body[data-lens="atlas"] button:focus-visible{ outline-color: #B4432E; }
     0 0 9px color-mix(in srgb, var(--tone, #FFC46B) 95%, transparent),
     0 0 18px color-mix(in srgb, var(--tone, #FFC46B) 60%, transparent);
 }
+/* --- a memory that has a photograph of itself ---------------------------
+   The picture, held in a ring on the paper: the found-object treatment is on
+   the mount and never on the picture, so the photograph is cropped and
+   nothing else — no sepia, no grain, no age put on it that it did not have.
+   The ring carries the memory's own category colour, which is what keeps a
+   plate and a light legible as the same kind of thing.
+
+   The plate replaces the bead rather than sitting behind it; the bead comes
+   back the moment the picture fails to load, so a missing file is a light,
+   never a hole. */
+.atlas-wp[data-plate="1"]{
+  width: 78px; height: 78px;
+  margin: -39px 0 0 -39px;
+}
+.atlas-wp-plate{
+  position: relative;
+  width: 58px; height: 58px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: rgba(250,245,232,0.9);
+  box-shadow:
+    0 0 0 2.5px rgba(255,252,242,0.96),
+    0 0 0 4px color-mix(in srgb, var(--tone, #FFC46B) 74%, #4A3B2C),
+    0 3px 10px rgba(74,59,44,0.3);
+  transition: width .25s ease, height .25s ease, box-shadow .25s ease;
+}
+.atlas-wp-plate img{
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+/* Zoomed out, a plate is a bead again: fifty of them at full size is a
+   contact sheet, not a map. */
+.atlas-layer[data-lod="far"] .atlas-wp-plate{ width: 26px; height: 26px; }
+.atlas-layer[data-lod="mid"] .atlas-wp-plate{ width: 42px; height: 42px; }
+.atlas-wp[data-plate="1"] .atlas-wp-disc{ display: none; }
+.atlas-wp[data-plate="1"] .atlas-wp-glow{
+  width: calc(76px * var(--w, 1)); height: calc(76px * var(--w, 1));
+}
+.atlas-wp[data-plate="1"] .atlas-wp-year{ bottom: 62px; }
+.atlas-wp[data-plate="1"] .atlas-wp-cap{ top: 62px; }
+.atlas-wp[data-plate="1"]:hover .atlas-wp-plate,
+.atlas-wp[data-plate="1"]:focus-visible .atlas-wp-plate{
+  box-shadow:
+    0 0 0 2.5px rgba(255,252,242,1),
+    0 0 0 5px var(--tone, #FFC46B),
+    0 5px 16px rgba(74,59,44,0.38);
+}
+@media (prefers-reduced-motion: reduce){
+  .atlas-wp-plate{ transition: none; }
+}
+
 .atlas-wp-year{
   position: absolute;
   bottom: 26px;

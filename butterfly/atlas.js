@@ -3146,10 +3146,16 @@
         layer.appendChild(n);
       });
 
-      /* --- the memories. A light on the ground, in its category's colour.
-         It carried a number for a while, the way a trail map numbers its
-         segments — but a life is not a set of segments and the numbers only
-         told you the order, which the trail itself already tells you. */
+      /* --- the memories. A light on the ground, in its category's colour —
+         or, where the archive has a photograph of the moment, the
+         photograph itself, held in a ring on the paper.
+
+         A plate is not a decoration on a light: it is the memory, and it is
+         the whole reason to put a photographic archive on a map rather than
+         a list. Where there is no photograph there is a light, which is the
+         archive saying so rather than reaching for a stock picture of
+         somebody else's life. The two sit at the same point on the same
+         line and open the same memory. */
       waypoints.forEach(function (w) {
         var b = el('button', 'atlas-wp');
         b.type = 'button';
@@ -3167,6 +3173,23 @@
         b.setAttribute('aria-label', w.label);
 
         b.appendChild(el('span', 'atlas-wp-glow'));
+        if (w.face) {
+          b.dataset.plate = '1';
+          var plate = el('span', 'atlas-wp-plate');
+          var img = document.createElement('img');
+          img.src = w.face;
+          img.alt = '';
+          img.loading = 'lazy';
+          img.decoding = 'async';
+          /* A picture that does not arrive is not a hole in the map: the
+             plate stands down and the memory is a light again. */
+          img.addEventListener('error', function () {
+            b.removeAttribute('data-plate');
+            plate.remove();
+          });
+          plate.appendChild(img);
+          b.appendChild(plate);
+        }
         b.appendChild(el('span', 'atlas-wp-disc'));
         var year = el('span', 'atlas-wp-year');
         year.textContent = w.year || '';
@@ -3525,12 +3548,15 @@
         return api;
       },
 
-      /* waypoints: [{ id, year, era, strand, tone, title, when,
+      /* waypoints: [{ id, face, year, era, strand, tone, title, when,
                        location, label, weight, chaos, classified, ref }] */
       setLights: function (list) {
         waypoints = (list || []).map(function (w) {
           return {
             id: w.id,
+            /* the photograph this memory is known by, if the archive has
+               one for it — the map draws a plate instead of a light */
+            face: w.face || null,
             year: w.year || null,
             t: (w.t === undefined || w.t === null) ? axis.start : w.t,
             era: w.era || null,
