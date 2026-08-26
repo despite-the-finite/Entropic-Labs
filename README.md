@@ -457,6 +457,19 @@ way, further out, which makes the country an island shaped like the life it
 carries — and means the map can never fall out of step with the family's
 layout, because both are derived from the same line.
 
+**The sheet is sized to the island, not the other way round.** The paper was
+1600 across and the island printed on it ran from −52 to 1730: the country was
+wider than the sheet it was drawn on. Everything painted *into* the sheet is
+clipped by its edges, so the coast simply stopped at both sides — and the
+trees, which are planted inside the coast but drawn live rather than printed,
+carried on past the paper onto the bare table. The island is derived from the
+spine and is the right size; the sheet was the wrong one. It is 1860 now, with
+the spine centred in it, and the whole country sits inside with a margin of sea.
+Two things keep it that way: the live layer is clipped to the sheet, so nothing
+can ever be drawn off the paper again whatever the geometry does next; and the
+camera has no overscroll, so the sheet's own edge can never be dragged inside
+the viewport to leave a band of bare table down one side.
+
 **The swell.** Four bands following the coast at increasing distance, each
 fainter than the last, the way water stacks up against a shore. It replaced a
 scatter of short wave ticks that collected along the coastline at a fitted
@@ -580,7 +593,8 @@ the surface about once a loop. Each has one part that moves, and each is
 placed by the ground rather than by a coordinate — the heron walks out from
 the spine until it finds the beach, the swimmers walk out until the land is
 behind them — so a change in the family's dates moves the shoreline and the
-animals standing on it together.
+animals standing on it together — and off the braid, because an animal drawn over a
+trail hides the one thing the map is for.
 
 They are painted rather than drawn, because a line-art animal sits on a
 watercolour country like a sticker. What separates a creature from a cut-out
