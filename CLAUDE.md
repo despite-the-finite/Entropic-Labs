@@ -5,7 +5,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## What this is
 
 A static site for **Entropic Labs** (studio, games, observatory, family archive), served
-by GitHub Pages from `main` at https://despite-the-finite.github.io/Entropic-Labs/.
+by GitHub Pages from `main` at https://theentropic.studio/ (the custom domain in
+`CNAME`; the old `despite-the-finite.github.io/Entropic-Labs/` address forwards to it).
 `.nojekyll` means every file is served exactly as committed.
 
 **There is no build step, no package manager, no dependencies, no test suite and no

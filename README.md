@@ -7,7 +7,11 @@ recording and production studio, an observatory of things worth wondering
 about, a game room, and a family archive. `index.html` is the foyer you come
 in through; everything else is a room off it.
 
-**Live site:** https://despite-the-finite.github.io/Entropic-Labs/
+**Live site:** https://theentropic.studio/
+
+The old Pages address, `despite-the-finite.github.io/Entropic-Labs/`, still
+resolves — GitHub forwards it to the custom domain — so links people already
+have keep working.
 
 ## Contents
 
@@ -22,6 +26,7 @@ in through; everything else is a room off it.
 - `play/meridian/` — a hosted copy of *Donnell and McBurns: An EPC Epic*, so it's playable straight from the site. Read-only; see `play/meridian/UPSTREAM.md` for the source commit and how to refresh it.
 - `play/wandering-words/` — a hosted copy of *Indra and the Wandering Words*, same arrangement; see `play/wandering-words/UPSTREAM.md`.
 - `entropic-labs-banner.svg` — the banner at the top of this README.
+- `CNAME` — the custom domain, `theentropic.studio`. GitHub Pages reads it on every deploy; delete it and the site falls back to the `github.io` address.
 - `.nojekyll` — tells GitHub Pages to serve every file as-is, without running the content through Jekyll.
 
 ## Editing
@@ -200,8 +205,8 @@ buttons at it — the form provider holds the address, so the page never publish
 
 `games.html` covers the studio's game design work, in order:
 
-1. **Donnell and McBurns: An EPC Epic** — playable at [`/play/meridian/`](https://despite-the-finite.github.io/Entropic-Labs/play/meridian/)
-2. **Indra and the Wandering Words** — playable at [`/play/wandering-words/`](https://despite-the-finite.github.io/Entropic-Labs/play/wandering-words/)
+1. **Donnell and McBurns: An EPC Epic** — playable at [`/play/meridian/`](https://theentropic.studio/play/meridian/)
+2. **Indra and the Wandering Words** — playable at [`/play/wandering-words/`](https://theentropic.studio/play/wandering-words/)
 3. **Live Trivia**
 
 The site no longer links to any game's source. Each hosted copy still records where
