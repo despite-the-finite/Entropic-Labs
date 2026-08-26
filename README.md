@@ -7,7 +7,11 @@ recording and production studio, an observatory of things worth wondering
 about, a game room, and a family archive. `index.html` is the foyer you come
 in through; everything else is a room off it.
 
-**Live site:** https://despite-the-finite.github.io/Entropic-Labs/
+**Live site:** https://theentropic.studio/
+
+The old Pages address, `despite-the-finite.github.io/Entropic-Labs/`, still
+resolves — GitHub forwards it to the custom domain — so links people already
+have keep working.
 
 ## Contents
 
@@ -22,6 +26,7 @@ in through; everything else is a room off it.
 - `play/meridian/` — a hosted copy of *Donnell and McBurns: An EPC Epic*, so it's playable straight from the site. Read-only; see `play/meridian/UPSTREAM.md` for the source commit and how to refresh it.
 - `play/wandering-words/` — a hosted copy of *Indra and the Wandering Words*, same arrangement; see `play/wandering-words/UPSTREAM.md`.
 - `entropic-labs-banner.svg` — the banner at the top of this README.
+- `CNAME` — the custom domain, `theentropic.studio`. GitHub Pages reads it on every deploy; delete it and the site falls back to the `github.io` address.
 - `.nojekyll` — tells GitHub Pages to serve every file as-is, without running the content through Jekyll.
 
 ## Editing
@@ -200,8 +205,8 @@ buttons at it — the form provider holds the address, so the page never publish
 
 `games.html` covers the studio's game design work, in order:
 
-1. **Donnell and McBurns: An EPC Epic** — playable at [`/play/meridian/`](https://despite-the-finite.github.io/Entropic-Labs/play/meridian/)
-2. **Indra and the Wandering Words** — playable at [`/play/wandering-words/`](https://despite-the-finite.github.io/Entropic-Labs/play/wandering-words/)
+1. **Donnell and McBurns: An EPC Epic** — playable at [`/play/meridian/`](https://theentropic.studio/play/meridian/)
+2. **Indra and the Wandering Words** — playable at [`/play/wandering-words/`](https://theentropic.studio/play/wandering-words/)
 3. **Live Trivia**
 
 The site no longer links to any game's source. Each hosted copy still records where
@@ -679,9 +684,11 @@ moment in the same life, so they spread perpendicular to their own strand —
 moving them along it would slide them in time and claim a year nobody wrote
 down.
 
-**A join can carry the day, not just the year.** `start`/`end` take an
-optional `on` — "8 December 1984" — beside the `year`. The year does the
-geometry; `on` is what the reader is told, in the index and on the marker.
+**A birth or a join can carry the day, not just the year.** `start`/`end`
+take an optional `on` — "8 December 1984", "21 November 2021" — beside the
+`year`. The year does the geometry; `on` is what the reader is told, in the
+index and on the marker. The canvas label stays the year either way, because
+a marker on the trail is a date stamp and not a sentence.
 
 **An undated confluence sits after the last dated memory before the earliest
 branch, and before the branch itself.** This only applies while a join has no

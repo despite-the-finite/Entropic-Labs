@@ -371,7 +371,8 @@
     {
       id: 'indra', label: 'Indra', tone: '#FFE9B8',
       base: 'us', side: -0.75,
-      start: { kind: 'born', year: 2021 }, end: { kind: 'open' }
+      start: { kind: 'born', year: 2021, on: '21 November 2021' },
+      end: { kind: 'open' }
     }
   ];
 
@@ -529,6 +530,14 @@
       country: 'United States',
       lat: 39.58,
       lon: -105.08
+    },
+    {
+      id: 'aqua-tots',
+      name: 'Aqua-Tots Swim School',
+      region: 'Littleton, Colorado',
+      country: 'United States',
+      lat: 39.60,
+      lon: -105.11
     },
     {
       id: 'kansas-city',
@@ -4488,6 +4497,215 @@
       source: 'Karsh',
       relatedStories: ['momo', 'no-futon'],
       dateAdded: '2026-08-24'
+    },
+
+    {
+      id: 'miscalculated-touchdown',
+      title: 'Miscalculated Touchdown',
+      hook: 'The Cessna hit the runway sideways. The only casualty I cared about was strapped to my wrist.',
+      year: 2001,
+      approximateDate: 'Circa 2001',
+      strand: 'kush',
+      location: 'Chingola, Zambia',
+      place: 'chingola',
+      /* Kasompe (CGJ / FLKE), three kilometres south-east of Chingola —
+         which everybody called the flying club, and which is what Kush
+         calls it in the telling. Both names, so the reader can find it. */
+      landmark: {
+        name: 'Kasompe Airfield — “the flying club”',
+        query: 'Kasompe Airport Chingola Zambia'
+      },
+      category: 'chaos',
+      tags: [
+        'zambia', 'chingola', 'copperbelt', 'flying', 'aircraft',
+        'childhood', 'friendship', 'near miss', 'funny memories'
+      ],
+      people: [
+        { name: 'Kush', relation: 'me, going up for the second time that day' },
+        { name: 'Stefan', relation: 'my best friend, going up for the first' },
+        { name: 'The pilot', relation: 'who let me tag along for free' },
+        { name: 'Amma', relation: 'my mom, running toward the runway' }
+      ],
+      story: [
+        'The low hum of single-engine aircraft vibrated through the warm air at the Chingola flying club, where the local family fun day was in full swing around 2001. The main event was an irresistible offer: 20 Thousand Kwacha for a spin over the open-pit copper mines in a Cessna. I had already gone up earlier that morning, captivated by the red-earth geometry of the mines far below, touching down effortlessly on the sun-baked runway without a single hitch.',
+        'By late afternoon, my best friend, Stefan, unexpectedly showed up. Eager to see the town from the clouds, he wanted to head up too. The pilot was preparing for the final flight of the day and generously offered to let me tag along with Stefan for free.',
+        'The takeoff was effortless, lifting us into a picture-perfect Zambian sky. From the window, the vast landscape glinted beneath us, and the weather couldn’t have been better. Everything about the ride was smooth and idyllic — right up until our final approach.',
+        'We were barely 20 to 30 feet above the tarmac, lining up for a routine landing, when a sudden, violent gust of wind shear caught us. The Cessna veered sharply to the right, dropping out of the sky and slamming into the ground with terrifying force.',
+        { kind: 'beat', text: 'Dust everywhere.' },
+        'The impact jarred through the cabin. I lurched sideways, cracking my head against the window glass and wrenching my wrist. Outside, my mom frantically rushed toward the runway expecting the worst. But as the dust settled, my deep distress had nothing to do with the hard landing or surviving a plane crash.',
+        {
+          kind: 'reveal',
+          text: 'Strapped to my bruised wrist was my most prized possession: a *calculator watch* I had bought entirely with my own saved money.'
+        },
+        'The digital face was ruined.',
+        {
+          kind: 'landing',
+          text: 'While my mom stood there overwhelmed with maternal relief, I stood on the tarmac utterly heartbroken, mourning the tragic loss of my favorite gadget on an otherwise unforgettable family fun day.'
+        }
+      ],
+      artifact: {
+        label: 'Memory artifact',
+        title: 'A calculator watch',
+        lines: [
+          { label: 'Bought with', text: 'My own money. All of it.' },
+          { label: 'Condition', text: 'Digital face ruined. Never the same.' },
+          { label: 'Also aboard', text: 'One bruised wrist, one cracked head, two intact boys.' }
+        ]
+      },
+      source: 'Kush',
+      relatedStories: ['the-gto'],
+      dateAdded: '2026-08-25'
+    },
+
+    /* Told to Indra, about Indra, but the afternoon is her father's: she was
+       eight or nine months old and remembers none of it. */
+    {
+      id: 'nungu',
+      title: 'The Nungu Drive Home',
+      hook: 'She was silent the entire way there. I thought she was growing up.',
+      year: 2022,
+      approximateDate: 'Circa 2022 · Indra, about eight or nine months old',
+      strand: 'karsh',
+      location: 'Littleton, Colorado',
+      place: 'aqua-tots',
+      landmark: {
+        name: 'Aqua-Tots Swim School',
+        query: 'Aqua-Tots Swim School 8996 W Bowles Ave Littleton CO'
+      },
+      journey: [
+        {
+          id: 'aquatots',
+          place: 'aqua-tots',
+          flag: '🏊',
+          label: 'Aqua-Tots Swim School, Littleton',
+          note: 'We got as far as the door.',
+          url: 'https://www.google.com/maps/search/?api=1&query=Aqua-Tots+Swim+School+8996+W+Bowles+Ave+Littleton+CO'
+        },
+        {
+          id: 'lot',
+          place: 'aqua-tots',
+          flag: '👕',
+          label: 'The parking lot',
+          note: 'Shirt and pants into the trunk. No third option.'
+        },
+        {
+          id: 'door',
+          arrival: true,
+          flag: '✦',
+          label: 'Mama, waiting at the front door',
+          note: '“Huh?! What are you doing?”'
+        }
+      ],
+      category: 'chaos',
+      tags: [
+        'colorado', 'littleton', 'indra', 'colleen', 'parenting',
+        'swim lessons', 'fatherhood', 'funny memories', 'nungu'
+      ],
+      people: [
+        { name: 'Karsh', relation: 'Daddy — collateral damage' },
+        { name: 'Indra', relation: 'aged about eight or nine months, and entirely responsible' },
+        { name: 'Colleen', relation: 'Mama, at the door' },
+        { name: 'Another dad at Aqua-Tots', relation: 'who said nothing, and said everything' }
+      ],
+      story: [
+        { text: 'When Indra was about eight or nine months old, Daddy and Indra had a little routine: swim lessons at Aqua-Tots.', at: 'aquatots' },
+        'Indra usually loved making noise in the car. Talking, babbling, singing, yelling — whatever an eight-month-old does when she has an audience trapped in the front seat.',
+        'But this particular day?',
+        { kind: 'beat', text: 'Silence.' },
+        'Daddy was driving and eventually noticed just how unusually quiet it was back there. So I glanced around at you.',
+        'And there you were.',
+        'Just sitting quietly in your car seat with a huge smile on your face.',
+        'I remember thinking, *Wow.*',
+        'Look at this little girl. She’s growing up. She’s becoming so patient and calm. What a beautiful little girl she’s turning into.',
+        'I was having a genuine proud-dad moment.',
+        'Little did I know…',
+        'You knew something I didn’t.',
+        { text: 'We arrived at Aqua-Tots ready for swim lessons. You already had your swim diaper on, so this was supposed to be easy. Grab the bag. Grab Indra. Walk inside. Swim.', at: 'aquatots' },
+        'There was, however, one minor detail.',
+        'Your swim diapers were getting a little small.',
+        'We knew this.',
+        'But we still had some left, and Daddy and Mama had decided, *We’re finishing this pack.*',
+        'Waste not, want not.',
+        'So you were zipped and squeezed into that swim diaper, everything seemingly contained and ready to go.',
+        'Daddy got you out of the car, picked you up, grabbed the swim bag, and carried you toward Aqua-Tots.',
+        'We opened the door.',
+        'Walked inside.',
+        'And then…',
+        'I felt something wet on my arm.',
+        'Then I felt something wet on my shirt.',
+        'Huh.',
+        'I looked down.',
+        'Poopoo.',
+        'Poopoo on my arm.',
+        'Poopoo on my shirt.',
+        'Poopoo…',
+        { kind: 'shout', text: 'EVERYWHERE.' },
+        'The undersized swim diaper had failed spectacularly.',
+        'Daddy’s beautiful little silent angel in the back seat hadn’t suddenly discovered patience and inner peace.',
+        { kind: 'reveal', text: 'She had been pooping.' },
+        'I looked around in horror.',
+        'At that exact moment, another dad inside Aqua-Tots caught my eye.',
+        'He looked at me.',
+        'I looked at him.',
+        'He looked at Indra.',
+        'Then back at me.',
+        'Neither of us said a single word.',
+        'But his eyes said:',
+        { kind: 'found', items: ['Don’t worry, man. I totally get it.'] },
+        'And my eyes responded:',
+        { kind: 'found', items: ['Thank you.'] },
+        'It was one of those beautiful moments of unspoken communication between parents.',
+        'There would be no swim lesson that day.',
+        { text: 'I carried you — very carefully — back to the car while realizing the full extent of the disaster.', at: 'lot' },
+        'Poopoo on my shirt.',
+        'Poopoo on my pants.',
+        'Poopoo on my arm.',
+        'Poopoo on you.',
+        'Daddy had become collateral damage.',
+        'I cleaned you up as best I could, took off the offending diaper, threw it away, and then assessed myself.',
+        'There was no saving this situation.',
+        'So off came the shirt.',
+        'Off came the pants.',
+        'Into the trunk they went.',
+        'And that is how Daddy found himself sitting in the driver’s seat, preparing to drive home nungu.',
+        { kind: 'verse', text: 'Nungu', meaning: 'Naked.' },
+        'So there I was, driving home from Aqua-Tots basically nungu, with my freshly cleaned daughter strapped happily into the back seat.',
+        'I tried calling Mama.',
+        'No answer.',
+        'Called again.',
+        'Nothing.',
+        'Meanwhile, you thought the entire situation was hilarious.',
+        { text: 'By the time we finally made it home, Mama was waiting for us at the door.', at: 'door' },
+        'Daddy pulled up.',
+        'The car door opened.',
+        'And out stepped Daddy…',
+        { kind: 'beat', text: 'nungu.' },
+        'Mama stared at me.',
+        '“Huh?! What are you doing?”',
+        'And all I could say was:',
+        '“I’ve got poopoo all over me.”',
+        'Meanwhile, Indra was laughing.',
+        'Of course she was.',
+        'And looking back, I finally understood that mysterious little smile I’d seen in the rearview mirror on the way to swim lessons.',
+        'That wasn’t the smile of a little girl discovering patience.',
+        {
+          kind: 'landing',
+          text: 'That was the smile of a little girl who had just absolutely destroyed her swim diaper — and knew Daddy hadn’t figured it out yet.'
+        },
+        { kind: 'dedication', text: 'The End.' }
+      ],
+      artifact: {
+        label: 'Memory artifact',
+        title: 'One undersized swim diaper',
+        lines: [
+          { label: 'Kept', text: 'Because there were still some left in the pack.' },
+          { label: 'Disposed of', text: 'In the Aqua-Tots parking lot, along with a shirt and a pair of pants.' },
+          { label: 'Swim lesson', text: 'Cancelled.' }
+        ]
+      },
+      source: 'Karsh',
+      relatedStories: ['the-little-heart', 'momo'],
+      dateAdded: '2026-08-26'
     }
   ];
 
