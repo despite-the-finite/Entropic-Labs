@@ -665,9 +665,11 @@ moment in the same life, so they spread perpendicular to their own strand —
 moving them along it would slide them in time and claim a year nobody wrote
 down.
 
-**A join can carry the day, not just the year.** `start`/`end` take an
-optional `on` — "8 December 1984" — beside the `year`. The year does the
-geometry; `on` is what the reader is told, in the index and on the marker.
+**A birth or a join can carry the day, not just the year.** `start`/`end`
+take an optional `on` — "8 December 1984", "21 November 2021" — beside the
+`year`. The year does the geometry; `on` is what the reader is told, in the
+index and on the marker. The canvas label stays the year either way, because
+a marker on the trail is a date stamp and not a sentence.
 
 **An undated confluence sits after the last dated memory before the earliest
 branch, and before the branch itself.** This only applies while a join has no

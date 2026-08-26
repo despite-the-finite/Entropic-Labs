@@ -371,7 +371,8 @@
     {
       id: 'indra', label: 'Indra', tone: '#FFE9B8',
       base: 'us', side: -0.75,
-      start: { kind: 'born', year: 2021 }, end: { kind: 'open' }
+      start: { kind: 'born', year: 2021, on: '21 November 2021' },
+      end: { kind: 'open' }
     }
   ];
 

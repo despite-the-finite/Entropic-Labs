@@ -354,7 +354,7 @@
       if (s.start && s.start.on) return ' — from ' + s.start.on;
       return a === null ? ' — from an unrecorded year' : ' — from ' + a;
     }
-    var line = a === null ? '' : ' — from ' + a;
+    var line = a === null ? '' : ' — from ' + ((s.start && s.start.on) || a);
     if (b !== null && s.end && s.end.into && strandById[s.end.into]) {
       line += ', joining ' + strandById[s.end.into].label +
         ' in ' + ((s.end && s.end.on) || b);
@@ -465,9 +465,16 @@
         ref: {
           id: 'marker-' + lane.id,
           marker: true,
-          note: lane.startKind === 'born'
-            ? lane.label + (year === null ? '' : ' — born ' + year) + '. The trail divides here.'
-            : lane.label + (year === null ? '' : ' — born ' + year) + '. This trail joins the family later.'
+          /* The year does the geometry; `on` is what the reader is told —
+             the same bargain the wedding marker makes below. */
+          note: (function () {
+            var born = year === null
+              ? ''
+              : ' — born ' + (lane.startsOn || year);
+            return lane.label + born + (lane.startKind === 'born'
+              ? '. The trail divides here.'
+              : '. This trail joins the family later.');
+          })()
         }
       });
     });
