@@ -4853,6 +4853,136 @@
       source: 'Kush',
       relatedStories: ['helen', 'the-gto'],
       dateAdded: '2026-08-26'
+    },
+
+    {
+      id: 'the-songs',
+      title: 'The Songs She Gave Us',
+      hook: 'Two country songs a four-year-old chose, played until they stopped being songs.',
+      year: 2025,
+      approximateDate: '2025',
+      strand: 'karsh',
+      location: 'Littleton, Colorado',
+      place: 'front-range-christian',
+      landmark: {
+        name: 'Front Range Christian School',
+        query: 'Front Range Christian School Littleton Colorado'
+      },
+      journey: [
+        {
+          id: 'school-run',
+          place: 'front-range-christian',
+          flag: '🚗',
+          label: 'The morning drive to school',
+          note: 'Play it again. And again.',
+          url: 'https://www.google.com/maps/search/?api=1&query=Front+Range+Christian+School+Littleton+Colorado'
+        },
+        {
+          id: 'airport',
+          place: 'denver',
+          flag: '✈',
+          label: 'The drive to the airport, 2025',
+          note: 'Amma asked for the song before we said goodbye.'
+        },
+        {
+          id: 'ours',
+          arrival: true,
+          flag: '✦',
+          label: 'Two songs that stopped being songs',
+          note: 'A place. A time. A car ride.'
+        }
+      ],
+      category: 'love',
+      tags: [
+        'colorado', 'littleton', 'indra', 'colleen', 'amma', 'music',
+        'country music', 'fatherhood', 'mornings', 'airport'
+      ],
+      people: [
+        { name: 'Indra', relation: 'my daughter, who picked them' },
+        { name: 'Karsh', relation: 'me, driving' },
+        { name: 'Colleen', relation: 'pickup, as ever' },
+        { name: 'Amma', relation: 'who asked for it on the way to the airport' }
+      ],
+      story: [
+        'Some of Indra’s first favorite songs were “The Fall” and “’Til You Can’t” by Cody Johnson.',
+        'I’m not really sure why I played them for her in the first place. And I’m even less sure why, out of all the music she heard, those were the songs she gravitated toward.',
+        'It started with The Fall.',
+        'For whatever reason, she latched onto that song. She wanted to hear it again and again. So naturally, I introduced her to ’Til You Can’t.',
+        'She loved that one too.',
+        {
+          text: 'Around that time, Indra had recently started at Front Range Christian School, and I had morning duty. Colleen usually handled pickup, but getting Indra up, ready, into the car, and off to school was my job.',
+          at: 'school-run'
+        },
+        'And somewhere along the way, those songs became part of our drive.',
+        'She would ask for them by name. Then she’d ask me to play them again.',
+        { kind: 'beat', text: 'And again.' },
+        { kind: 'beat', text: 'And again.' },
+        'Those two songs played on my Spotify so many times that Spotify eventually decided they were apparently my favorite songs.',
+        'I do like country music, but I’m not exactly someone who goes searching for it all the time. For me, music is very ambiance-based. There’s a mood for everything. I’ve always imagined country music as something I’d listen to while working in the garage on a rainy day.',
+        'But Indra didn’t care about any of that.',
+        'She just loved those songs.',
+        'And because she loved them, I started listening to them differently.',
+        'Deep down, there was meaning in both songs that I related to more than I initially realized.',
+        'The Fall made me think about life’s challenges — the downs that inevitably come with the ups. There’s a phrase I’ve always liked, and I may have even come up with some version of it myself:',
+        { kind: 'found', items: ['How can you enjoy the ups without the downs?'] },
+        'The downs give the ups meaning.',
+        'Without failure, disappointment, sadness, struggle, and all the moments when life doesn’t go the way you hoped, would you really understand what happiness feels like when it arrives?',
+        'Then there was ’Til You Can’t.',
+        'That one hit me differently.',
+        'It made me think about our limited existence on this planet. About all the things we assume we’ll have time to do later. The phone call we’ll make tomorrow. The person we’ll visit next time. The thing we’ll say eventually.',
+        { kind: 'beat', text: 'Until eventually isn’t an option anymore.' },
+        'You have to make the most of the moments while you have them.',
+        'And maybe that was part of why hearing my little girl singing along from the back seat made the song so emotional for me.',
+        'She had absolutely no idea what she was doing to it.',
+        'To her, it was just a song she loved.',
+        {
+          kind: 'reveal',
+          text: 'To me, it was a song about time passing while I was literally watching time pass.'
+        },
+        'Eventually I played both songs for the rest of my family, and they fell in love with them too. I think they genuinely liked the music, but if I’m being fair, I think the real reason those songs became special to all of us was because Indra loved them first.',
+        {
+          text: 'During my parents’ visit in 2025, when it was finally time to take them back to the airport, Amma asked me to play the song on the drive before we said goodbye.',
+          at: 'airport'
+        },
+        'That changed it again.',
+        'Now it wasn’t just a song from my drives to school with Indra.',
+        { kind: 'beat', text: 'It belonged to all of us.' },
+        'A little girl had somehow taken two country songs she didn’t yet understand and woven them into our family.',
+        'Someday, Indra might listen to these songs again and actually understand the lyrics.',
+        'I hope she does.',
+        'I hope she hears The Fall and understands that the difficult parts of her life don’t diminish the beautiful ones. They give them perspective.',
+        'And I hope she hears ’Til You Can’t and remembers to do the things that matter while she still has the chance.',
+        'But I also know she may never hear these songs quite the way we did.',
+        'Because our connection to them wasn’t really about Cody Johnson.',
+        'It wasn’t even entirely about the lyrics.',
+        'It was about her.',
+        'We loved those songs because she loved them.',
+        'Maybe someday, if she becomes a mother herself, she’ll understand that. Maybe her own child will become obsessed with some completely random song and play it hundreds of times until, without anyone realizing it, that song stops being a song.',
+        { kind: 'beat', text: 'It becomes a place.', at: 'ours' },
+        'A time.',
+        'A car ride.',
+        'A goodbye at the airport.',
+        'A little voice in the back seat asking you to play it one more time.',
+        'But that’s many years away.',
+        'For now, we’ll just keep listening.',
+        'We’ll see what she falls in love with next.',
+        {
+          kind: 'landing',
+          text: 'And we’ll see all the little ways she continues to mold us without even knowing she’s doing it.'
+        }
+      ],
+      artifact: {
+        label: 'Memory artifact',
+        title: 'Two songs by Cody Johnson',
+        lines: [
+          { label: 'Chosen by', text: 'A four-year-old, for reasons never explained.' },
+          { label: 'Played', text: 'Often enough that Spotify decided they were mine.' },
+          { label: 'Belonging to', text: 'All of us, by the end of 2025.' }
+        ]
+      },
+      source: 'Karsh',
+      relatedStories: ['no-futon', 'the-little-heart'],
+      dateAdded: '2026-08-26'
     }
   ];
 
