@@ -752,7 +752,10 @@ mono face and split on the spaces, so `Bmm. Tss. Pff.` lands one syllable
 after the one before) and `heading` (a chapter break inside a long story, set
 as a real `h3` so the outline stays navigable). They fire on scroll
 rather than on open, once each, and under `prefers-reduced-motion` they keep
-their weight and spacing and simply stop moving. Use them sparingly; the
+their weight and spacing and simply stop moving. A kind that is prose given
+weight — a shout, a beat, a landing, a heading, the lines of a `found` or a
+`plan` — takes emphasis and memory links like any other sentence, because
+"inside any paragraph" has to mean all of them. Use them sparingly; the
 writing carries the rest.
 
 **Five things a story can carry besides prose.** A `warning` — a line or a

@@ -540,6 +540,22 @@
       lon: -105.11
     },
     {
+      id: 'taylorville',
+      name: 'Taylorville',
+      region: 'Illinois',
+      country: 'United States',
+      lat: 39.55,
+      lon: -89.29
+    },
+    {
+      id: 'mount-prospect',
+      name: 'Mount Prospect',
+      region: 'Illinois',
+      country: 'United States',
+      lat: 42.07,
+      lon: -87.94
+    },
+    {
       id: 'kansas-city',
       name: 'Kansas City',
       country: 'United States',
@@ -4705,6 +4721,148 @@
       },
       source: 'Karsh',
       relatedStories: ['the-little-heart', 'momo'],
+      dateAdded: '2026-08-26'
+    },
+
+    {
+      id: 'dan-the-man',
+      title: 'Dan the Man',
+      hook: 'Harper ground floor, two cars, and the friend who turned an empty summer city into a playground.',
+      warning: [
+        'This memory ends in a suicide.',
+        'If you are struggling, the 988 Suicide & Crisis Lifeline can be reached in the US by call or text, any hour of any day.'
+      ],
+      year: 2014,
+      approximateDate: 'Bradley onward · circa 2014',
+      strand: 'kush',
+      location: 'Peoria, Illinois',
+      place: 'bradley',
+      landmark: {
+        name: 'Harper Hall, Bradley University',
+        query: 'Harper Hall Bradley University Peoria Illinois'
+      },
+      journey: [
+        {
+          id: 'harper',
+          place: 'bradley',
+          flag: '🚪',
+          label: 'Harper Hall, ground floor',
+          note: 'Two doors down.',
+          url: 'https://www.google.com/maps/search/?api=1&query=Harper+Hall+Bradley+University+Peoria+Illinois'
+        },
+        {
+          id: 'backroads',
+          place: 'bradley',
+          flag: '🚗',
+          label: 'The backroads out of Peoria',
+          note: 'An empty summer city, and two sets of windows down.'
+        },
+        {
+          id: 'glenwood',
+          place: 'bradley',
+          flag: '🏠',
+          label: 'The house on Glenwood',
+          note: 'Jake, Nick, and pure brotherhood.'
+        },
+        {
+          id: 'california',
+          place: 'california',
+          flag: '🌄',
+          label: 'California',
+          note: 'Dan went west.'
+        },
+        {
+          id: 'taylorville',
+          place: 'taylorville',
+          flag: '🏡',
+          label: 'Taylorville, Illinois',
+          note: 'And then home again.',
+          url: 'https://www.google.com/maps/search/?api=1&query=Taylorville+Illinois'
+        },
+        {
+          id: 'mount-prospect',
+          place: 'mount-prospect',
+          flag: '🏙',
+          label: 'Mount Prospect, Illinois',
+          note: 'I followed Carole north.',
+          url: 'https://www.google.com/maps/search/?api=1&query=Mount+Prospect+Illinois'
+        },
+        {
+          id: 'funeral',
+          place: 'taylorville',
+          flag: '🕊',
+          label: 'Taylorville, again',
+          note: 'The drive we all made together.'
+        },
+        {
+          id: 'archived',
+          arrival: true,
+          flag: '✦',
+          label: 'One truth, archived',
+          note: 'Dan was fiercely, genuinely loved'
+        }
+      ],
+      category: 'love',
+      tags: [
+        'illinois', 'peoria', 'bradley university', 'college', 'friendship',
+        'brotherhood', 'grief', 'mental health', 'loss', 'cars'
+      ],
+      people: [
+        { name: 'Dan Thompson', relation: 'Harper ground floor, two doors down' },
+        { name: 'Kush', relation: 'me' },
+        { name: 'Jake', relation: 'Glenwood — and the one o’clock phone call' },
+        { name: 'Nick', relation: 'Glenwood' },
+        { name: 'Carole', relation: 'my wife' }
+      ],
+      story: [
+        {
+          text: 'Harper ground floor wasn’t much to look at, but to a group of self-proclaimed basement dwellers at Bradley University, it was home. That was where I met Dan Thompson, living just a couple of doors down.',
+          at: 'harper'
+        },
+        'Dan was the guy who could effortlessly pull you into an endless universe of great storytelling. He was obsessed with *Lost*, got me hooked on *Mad Men*, and served as my personal tour guide to the internet by introducing me to Reddit, patiently breaking down all of its ins and outs. Hours evaporated while we sat around dissecting plot twists, fan theories, and random web links.',
+        {
+          text: 'When summer hit Peoria, campus turned into a ghost town. Dan didn’t want to go home, and flying all the way back home while taking summer classes wasn’t an option for me. So, the empty city became our playground.',
+          at: 'backroads'
+        },
+        'We spent endless hours cruising the backroads in Dan’s trusty Pontiac Vibe and my BMW 328i, windows down, blasting *Pendulum* into the humid Illinois heat.',
+        {
+          text: 'Eventually, that sanctuary moved off-campus to the house on Glenwood with Jake and Nick. Glenwood was a glorious mess of ridiculous memories, late-night debates, chaotic good times, and pure brotherhood. Through every high and low, we just fit together.',
+          at: 'glenwood'
+        },
+        {
+          text: 'As the years passed, life pulled us into new chapters. Dan moved to California and then home to Taylorville, and I followed Carole out to Mount Prospect.',
+          at: 'california'
+        },
+        { text: 'We moved forward, but the bond remained unbroken.', at: 'mount-prospect' },
+        'Then came the phone call from Jake at 1:00 in the morning. It was the kind of late-night ring that makes your stomach drop before you even answer.',
+        { kind: 'found', items: ['Dan is gone.'] },
+        'Coming to terms with the reality that Dan had taken his own life was a heavy, agonizing weight. He was such a bright, beautiful soul, carrying an internal darkness that none of us could untangle for him.',
+        {
+          text: 'Making the drive to Taylorville for his funeral alongside Carole, Jake, Nick, and our group of friends was heartbreaking, but standing together to meet his parents was something we had to do.',
+          at: 'funeral'
+        },
+        {
+          kind: 'landing',
+          text: 'If there is one truth that deserves to be archived forever, it is that *Dan was fiercely, genuinely loved*.',
+          at: 'archived'
+        },
+        'He brought light into our lives, anchored our youth, and left an indelible mark on mine.',
+        {
+          kind: 'dedication',
+          text: 'Until we get to cruise those quiet summer roads together again somewhere down the line, rest easy, Dan. 🕊️'
+        }
+      ],
+      artifact: {
+        label: 'Memory artifact',
+        title: 'A Pontiac Vibe and a BMW 328i',
+        lines: [
+          { label: 'Route', text: 'The backroads out of Peoria, and no particular destination.' },
+          { label: 'Windows', text: 'Down.' },
+          { label: 'Playing', text: 'Pendulum, into the humid Illinois heat.' }
+        ]
+      },
+      source: 'Kush',
+      relatedStories: ['helen', 'the-gto'],
       dateAdded: '2026-08-26'
     }
   ];

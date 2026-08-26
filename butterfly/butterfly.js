@@ -1535,7 +1535,7 @@
            described — which is why they are a list and not a sentence. */
         var box = el('div', 'found');
         (p.items || []).forEach(function (item) {
-          box.appendChild(el('p', null, item));
+          box.appendChild(setText(el('p'), item));
         });
         place(box);
         return;
@@ -1543,16 +1543,16 @@
 
       if (p.kind === 'plan') {
         /* The idea, laid out with more confidence than it deserves. */
-        if (p.lead) into.appendChild(el('p', 'plan-lead', p.lead));
+        if (p.lead) into.appendChild(setText(el('p', 'plan-lead'), p.lead));
         var ol = el('ol', 'plan');
-        (p.items || []).forEach(function (item) { ol.appendChild(el('li', null, item)); });
+        (p.items || []).forEach(function (item) { ol.appendChild(setText(el('li'), item)); });
         place(ol);
         return;
       }
       if (p.kind === 'heading') {
         /* A chapter break inside a long story. A real heading, so the
            outline of a long memory is navigable and not just visual. */
-        place(el('h3', 'st-heading', p.text || ''));
+        place(setText(el('h3', 'st-heading'), p.text || ''));
         return;
       }
       if (p.kind === 'sound') {
@@ -1678,9 +1678,12 @@
         place(setText(el('p', 'reveal'), p.text || ''));
         return;
       }
-      if (p.kind === 'shout') { place(el('p', 'shout', p.text || '')); return; }
-      if (p.kind === 'beat') { place(el('p', 'beat', p.text || '')); return; }
-      if (p.kind === 'landing') { place(el('p', 'landing', p.text || '')); return; }
+      /* A shout, a beat and a landing are ordinary paragraphs that have
+         been given weight — so they take emphasis and links like any other
+         sentence in the telling. */
+      if (p.kind === 'shout') { place(setText(el('p', 'shout'), p.text || '')); return; }
+      if (p.kind === 'beat') { place(setText(el('p', 'beat'), p.text || '')); return; }
+      if (p.kind === 'landing') { place(setText(el('p', 'landing'), p.text || '')); return; }
       /* an unknown kind still has words in it */
       if (p.text) place(setText(el('p'), p.text));
     });
