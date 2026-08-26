@@ -531,6 +531,14 @@
       lon: -105.08
     },
     {
+      id: 'aqua-tots',
+      name: 'Aqua-Tots Swim School',
+      region: 'Littleton, Colorado',
+      country: 'United States',
+      lat: 39.60,
+      lon: -105.11
+    },
+    {
       id: 'kansas-city',
       name: 'Kansas City',
       country: 'United States',
@@ -4546,6 +4554,157 @@
       source: 'Kush',
       relatedStories: ['the-gto'],
       dateAdded: '2026-08-25'
+    },
+
+    /* Told to Indra, about Indra, but the afternoon is her father's: she was
+       a year and a half old and remembers none of it. */
+    {
+      id: 'nungu',
+      title: 'The Nungu Drive Home',
+      hook: 'She was silent the entire way there. I thought she was growing up.',
+      year: 2022,
+      approximateDate: 'Circa 2022 · Indra, about a year and a half old',
+      strand: 'karsh',
+      location: 'Littleton, Colorado',
+      place: 'aqua-tots',
+      landmark: {
+        name: 'Aqua-Tots Swim School',
+        query: 'Aqua-Tots Swim School 8996 W Bowles Ave Littleton CO'
+      },
+      journey: [
+        {
+          id: 'aquatots',
+          place: 'aqua-tots',
+          flag: '🏊',
+          label: 'Aqua-Tots Swim School, Littleton',
+          note: 'We got as far as the door.',
+          url: 'https://www.google.com/maps/search/?api=1&query=Aqua-Tots+Swim+School+8996+W+Bowles+Ave+Littleton+CO'
+        },
+        {
+          id: 'lot',
+          place: 'aqua-tots',
+          flag: '👕',
+          label: 'The parking lot',
+          note: 'Shirt and pants into the trunk. No third option.'
+        },
+        {
+          id: 'door',
+          arrival: true,
+          flag: '✦',
+          label: 'Mama, waiting at the front door',
+          note: '“Huh?! What are you doing?”'
+        }
+      ],
+      category: 'chaos',
+      tags: [
+        'colorado', 'littleton', 'indra', 'colleen', 'parenting',
+        'swim lessons', 'fatherhood', 'funny memories', 'nungu'
+      ],
+      people: [
+        { name: 'Karsh', relation: 'Daddy — collateral damage' },
+        { name: 'Indra', relation: 'aged about one and a half, and entirely responsible' },
+        { name: 'Colleen', relation: 'Mama, at the door' },
+        { name: 'Another dad at Aqua-Tots', relation: 'who said nothing, and said everything' }
+      ],
+      story: [
+        { text: 'When Indra was about a year and a half old, Daddy and Indra had a little routine: swim lessons at Aqua-Tots.', at: 'aquatots' },
+        'Indra usually loved making noise in the car. Talking, babbling, singing, yelling — whatever a one-and-a-half-year-old does when she has an audience trapped in the front seat.',
+        'But this particular day?',
+        { kind: 'beat', text: 'Silence.' },
+        'Daddy was driving and eventually noticed just how unusually quiet it was back there. So I glanced around at you.',
+        'And there you were.',
+        'Just sitting quietly in your car seat with a huge smile on your face.',
+        'I remember thinking, *Wow.*',
+        'Look at this little girl. She’s growing up. She’s becoming so patient and calm. What a beautiful little girl she’s turning into.',
+        'I was having a genuine proud-dad moment.',
+        'Little did I know…',
+        'You knew something I didn’t.',
+        { text: 'We arrived at Aqua-Tots ready for swim lessons. You already had your swim diaper on, so this was supposed to be easy. Grab the bag. Grab Indra. Walk inside. Swim.', at: 'aquatots' },
+        'There was, however, one minor detail.',
+        'Your swim diapers were getting a little small.',
+        'We knew this.',
+        'But we still had some left, and Daddy and Mama had decided, *We’re finishing this pack.*',
+        'Waste not, want not.',
+        'So you were zipped and squeezed into that swim diaper, everything seemingly contained and ready to go.',
+        'Daddy got you out of the car, picked you up, grabbed the swim bag, and carried you toward Aqua-Tots.',
+        'We opened the door.',
+        'Walked inside.',
+        'And then…',
+        'I felt something wet on my arm.',
+        'Then I felt something wet on my shirt.',
+        'Huh.',
+        'I looked down.',
+        'Poopoo.',
+        'Poopoo on my arm.',
+        'Poopoo on my shirt.',
+        'Poopoo…',
+        { kind: 'shout', text: 'EVERYWHERE.' },
+        'The undersized swim diaper had failed spectacularly.',
+        'Daddy’s beautiful little silent angel in the back seat hadn’t suddenly discovered patience and inner peace.',
+        { kind: 'reveal', text: 'She had been pooping.' },
+        'I looked around in horror.',
+        'At that exact moment, another dad inside Aqua-Tots caught my eye.',
+        'He looked at me.',
+        'I looked at him.',
+        'He looked at Indra.',
+        'Then back at me.',
+        'Neither of us said a single word.',
+        'But his eyes said:',
+        { kind: 'found', items: ['Don’t worry, man. I totally get it.'] },
+        'And my eyes responded:',
+        { kind: 'found', items: ['Thank you.'] },
+        'It was one of those beautiful moments of unspoken communication between parents.',
+        'There would be no swim lesson that day.',
+        { text: 'I carried you — very carefully — back to the car while realizing the full extent of the disaster.', at: 'lot' },
+        'Poopoo on my shirt.',
+        'Poopoo on my pants.',
+        'Poopoo on my arm.',
+        'Poopoo on you.',
+        'Daddy had become collateral damage.',
+        'I cleaned you up as best I could, took off the offending diaper, threw it away, and then assessed myself.',
+        'There was no saving this situation.',
+        'So off came the shirt.',
+        'Off came the pants.',
+        'Into the trunk they went.',
+        'And that is how Daddy found himself sitting in the driver’s seat, preparing to drive home nungu.',
+        { kind: 'verse', text: 'Nungu', meaning: 'Naked.' },
+        'So there I was, driving home from Aqua-Tots basically nungu, with my freshly cleaned daughter strapped happily into the back seat.',
+        'I tried calling Mama.',
+        'No answer.',
+        'Called again.',
+        'Nothing.',
+        'Meanwhile, you thought the entire situation was hilarious.',
+        { text: 'By the time we finally made it home, Mama was waiting for us at the door.', at: 'door' },
+        'Daddy pulled up.',
+        'The car door opened.',
+        'And out stepped Daddy…',
+        { kind: 'beat', text: 'nungu.' },
+        'Mama stared at me.',
+        '“Huh?! What are you doing?”',
+        'And all I could say was:',
+        '“I’ve got poopoo all over me.”',
+        'Meanwhile, Indra was laughing.',
+        'Of course she was.',
+        'And looking back, I finally understood that mysterious little smile I’d seen in the rearview mirror on the way to swim lessons.',
+        'That wasn’t the smile of a little girl discovering patience.',
+        {
+          kind: 'landing',
+          text: 'That was the smile of a little girl who had just absolutely destroyed her swim diaper — and knew Daddy hadn’t figured it out yet.'
+        },
+        { kind: 'dedication', text: 'The End.' }
+      ],
+      artifact: {
+        label: 'Memory artifact',
+        title: 'One undersized swim diaper',
+        lines: [
+          { label: 'Kept', text: 'Because there were still some left in the pack.' },
+          { label: 'Disposed of', text: 'In the Aqua-Tots parking lot, along with a shirt and a pair of pants.' },
+          { label: 'Swim lesson', text: 'Cancelled.' }
+        ]
+      },
+      source: 'Karsh',
+      relatedStories: ['the-little-heart', 'momo'],
+      dateAdded: '2026-08-26'
     }
   ];
 
