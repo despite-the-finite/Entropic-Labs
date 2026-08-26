@@ -4728,10 +4728,6 @@
       id: 'dan-the-man',
       title: 'Dan the Man',
       hook: 'Harper ground floor, two cars, and the friend who turned an empty summer city into a playground.',
-      warning: [
-        'This memory ends in a suicide.',
-        'If you are struggling, the 988 Suicide & Crisis Lifeline can be reached in the US by call or text, any hour of any day.'
-      ],
       year: 2014,
       approximateDate: 'Bradley onward · circa 2014',
       strand: 'kush',
@@ -4765,18 +4761,11 @@
           note: 'Jake, Nick, and pure brotherhood.'
         },
         {
-          id: 'california',
-          place: 'california',
-          flag: '🌄',
-          label: 'California',
-          note: 'Dan went west.'
-        },
-        {
           id: 'taylorville',
           place: 'taylorville',
           flag: '🏡',
           label: 'Taylorville, Illinois',
-          note: 'And then home again.',
+          note: 'Dan moved back home.',
           url: 'https://www.google.com/maps/search/?api=1&query=Taylorville+Illinois'
         },
         {
@@ -4805,7 +4794,7 @@
       category: 'love',
       tags: [
         'illinois', 'peoria', 'bradley university', 'college', 'friendship',
-        'brotherhood', 'grief', 'mental health', 'loss', 'cars'
+        'brotherhood', 'grief', 'loss', 'cars'
       ],
       people: [
         { name: 'Dan Thompson', relation: 'Harper ground floor, two doors down' },
@@ -4830,15 +4819,15 @@
           at: 'glenwood'
         },
         {
-          text: 'As the years passed, life pulled us into new chapters. Dan moved to California and then home to Taylorville, and I followed Carole out to Mount Prospect.',
-          at: 'california'
+          text: 'As the years passed, life pulled us into new chapters. Dan moved back home to Taylorville, and I followed Carole out to Mount Prospect.',
+          at: 'taylorville'
         },
         { text: 'We moved forward, but the bond remained unbroken.', at: 'mount-prospect' },
         'Then came the phone call from Jake at 1:00 in the morning. It was the kind of late-night ring that makes your stomach drop before you even answer.',
         { kind: 'found', items: ['Dan is gone.'] },
-        'Coming to terms with the reality that Dan had taken his own life was a heavy, agonizing weight. He was such a bright, beautiful soul, carrying an internal darkness that none of us could untangle for him.',
+        'Coming to terms with losing Dan so suddenly was a heavy, agonizing weight. He was such a bright, beautiful soul, and losing him left a silence none of us were prepared for.',
         {
-          text: 'Making the drive to Taylorville for his funeral alongside Carole, Jake, Nick, and our group of friends was heartbreaking, but standing together to meet his parents was something we had to do.',
+          text: 'Making the drive to Taylorville for his service alongside Carole, Jake, Nick, and our group of friends was heartbreaking, but standing together to meet his parents was something we had to do.',
           at: 'funeral'
         },
         {
