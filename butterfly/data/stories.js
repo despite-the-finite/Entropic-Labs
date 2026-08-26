@@ -4557,13 +4557,13 @@
     },
 
     /* Told to Indra, about Indra, but the afternoon is her father's: she was
-       a year and a half old and remembers none of it. */
+       eight or nine months old and remembers none of it. */
     {
       id: 'nungu',
       title: 'The Nungu Drive Home',
       hook: 'She was silent the entire way there. I thought she was growing up.',
       year: 2022,
-      approximateDate: 'Circa 2022 · Indra, about a year and a half old',
+      approximateDate: 'Circa 2022 · Indra, about eight or nine months old',
       strand: 'karsh',
       location: 'Littleton, Colorado',
       place: 'aqua-tots',
@@ -4602,13 +4602,13 @@
       ],
       people: [
         { name: 'Karsh', relation: 'Daddy — collateral damage' },
-        { name: 'Indra', relation: 'aged about one and a half, and entirely responsible' },
+        { name: 'Indra', relation: 'aged about eight or nine months, and entirely responsible' },
         { name: 'Colleen', relation: 'Mama, at the door' },
         { name: 'Another dad at Aqua-Tots', relation: 'who said nothing, and said everything' }
       ],
       story: [
-        { text: 'When Indra was about a year and a half old, Daddy and Indra had a little routine: swim lessons at Aqua-Tots.', at: 'aquatots' },
-        'Indra usually loved making noise in the car. Talking, babbling, singing, yelling — whatever a one-and-a-half-year-old does when she has an audience trapped in the front seat.',
+        { text: 'When Indra was about eight or nine months old, Daddy and Indra had a little routine: swim lessons at Aqua-Tots.', at: 'aquatots' },
+        'Indra usually loved making noise in the car. Talking, babbling, singing, yelling — whatever an eight-month-old does when she has an audience trapped in the front seat.',
         'But this particular day?',
         { kind: 'beat', text: 'Silence.' },
         'Daddy was driving and eventually noticed just how unusually quiet it was back there. So I glanced around at you.',
