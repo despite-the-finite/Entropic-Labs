@@ -51,7 +51,15 @@
   'use strict';
 
   var TAU = Math.PI * 2;
-  var MAP = { w: 1600, h: 1000 };
+  /* The paper. It used to be 1600 across, and the island printed on it ran
+     from −52 to 1730 — the country was wider than the sheet it was drawn on.
+     Everything painted into the sheet was clipped at its edge, so the coast
+     simply stopped at both sides; and the trees, which are planted inside the
+     coast and drawn live rather than printed, carried on past the paper onto
+     the bare table. The island is derived from the spine and is the right
+     size; the sheet was the wrong one. It is now wide enough to hold the
+     country with a margin, and the spine is centred in it. */
+  var MAP = { w: 1860, h: 1000 };
 
   function clamp(v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); }
   function lerp(a, b, t) { return a + (b - a) * t; }
@@ -345,7 +353,7 @@
        stays where it was. A map wants some wander in it, so there is some —
        but a fraction of what a landscape would take, because the moment the
        braid climbs and dives across the sheet it stops being followable. */
-    var SPINE = { x0: 128, x1: 1552, y0: 500, amp: 58, drift: 18 };
+    var SPINE = { x0: 218, x1: 1642, y0: 500, amp: 58, drift: 18 };
     var spinePts = [], spineLen = [];
 
     function buildSpine() {
@@ -534,7 +542,12 @@
        stays centred while it is smaller. */
     function clampCam() {
       cam.z = clamp(cam.z, zMin, zMax);
-      var padX = MAP.w * 0.08, padY = MAP.h * 0.08;
+      /* No overscroll. There used to be eight per cent of slack each way,
+         which meant the sheet could be dragged far enough that its own edge
+         came inside the viewport and a band of bare table sat down one side
+         of the map. When the paper is bigger than the window it fills the
+         window; when it is smaller, it is centred. */
+      var padX = 0, padY = 0;
 
       var halfW = vw / (2 * cam.z);
       if (halfW * 2 > MAP.w + padX * 2) cam.x = MAP.w / 2;
@@ -808,7 +821,7 @@
        but north does not change with the zoom, so it belongs on the sheet,
        where a phone can see it too. */
     function paintNorth(g) {
-      var x = 232, y = 168, r = 34;
+      var x = SPINE.x0 + 16, y = 168, r = 34;
       g.save();
       g.translate(x, y);
       g.globalAlpha = 0.42;
@@ -960,13 +973,17 @@
       /* Wherever the trail ends up running out, rather than a corner chosen
          by hand — so the paint gives out at the end of the record however
          the country is laid out. */
-      var end = onSpine(1.04);
-      var grad = g.createRadialGradient(end.x, end.y, 24, end.x, end.y, 320);
-      grad.addColorStop(0, 'rgba(244,237,220,0.97)');
-      grad.addColorStop(0.5, 'rgba(244,237,220,0.72)');
+      /* Tighter and thinner than it was. On the wider sheet the old radius
+         reached back over the last three memories and the ends of four
+         lines, and a wash that erases the thing it is supposed to be
+         trailing off from is not a soft edge, it is a hole. */
+      var end = onSpine(1.06);
+      var grad = g.createRadialGradient(end.x, end.y, 18, end.x, end.y, 210);
+      grad.addColorStop(0, 'rgba(244,237,220,0.9)');
+      grad.addColorStop(0.5, 'rgba(244,237,220,0.5)');
       grad.addColorStop(1, 'rgba(244,237,220,0)');
       g.fillStyle = grad;
-      g.fillRect(end.x - 340, end.y - 340, 680, 680);
+      g.fillRect(end.x - 220, end.y - 220, 440, 440);
       g.restore();
     }
 
@@ -1006,11 +1023,11 @@
       /* One river out of the hills, through the veld, over the falls. The
          country needs a reason for its towns to be where they are. */
       var r1 = waver(spline([
-        { x: 1215, y: 250 }, { x: 1120, y: 350 }, { x: 1000, y: 400 },
-        { x: 900, y: 470 }, { x: 860, y: 610 }, { x: 828, y: 742 }, { x: 796, y: 862 }
+        { x: 1305, y: 250 }, { x: 1210, y: 350 }, { x: 1090, y: 400 },
+        { x: 990, y: 470 }, { x: 950, y: 610 }, { x: 918, y: 742 }, { x: 886, y: 862 }
       ], 14), 4, 'river1');
       var r2 = waver(spline([
-        { x: 400, y: 330 }, { x: 520, y: 420 }, { x: 640, y: 470 }, { x: 760, y: 500 }
+        { x: 490, y: 330 }, { x: 610, y: 420 }, { x: 730, y: 470 }, { x: 850, y: 500 }
       ], 12), 4, 'river2');
       [r1, r2].forEach(function (pts, i) {
         g.save();
@@ -1025,7 +1042,7 @@
         g.restore();
       });
       /* a lake in the hills */
-      var lake = waver(spline(ring(1272, 232, 52, 33, 9, 0.2, 'lake'), 8), 3, 'lakew');
+      var lake = waver(spline(ring(1362, 232, 52, 33, 9, 0.2, 'lake'), 8), 3, 'lakew');
       wash(g, lake, PIG.river, 0.9, 'lakewash');
     }
 
@@ -1592,14 +1609,21 @@
       placeSwimmer('fish', REGION_BY.range, -1);
     }
 
-    /* Where a beast can stand without being in the sea, the title, or the
-       room's own furniture. */
+    /* Where a beast can stand without being in the sea, the title, the room's
+       own furniture, or on top of somebody's line. */
     function beastSpot(f, x, y) {
       f.x = clamp(x, 150, MAP.w - 210);
       f.y = clamp(y, 175, MAP.h - 215);
       /* the room's own view switch lives in the top right corner of the
          screen, and at a fitted zoom that is the top right of the paper */
       if (f.y < 470 && f.x > MAP.w - 540) f.x = MAP.w - 540;
+      /* And off the braid. An animal drawn over a trail hides the one thing
+         the map is for — it steps away from the spine, the direction it was
+         already heading, until the nearest line is clear of it. */
+      var away = f.y < 500 ? -1 : 1;
+      for (var i = 0; i < 14 && nearBraid(f.x, f.y, 62); i++) {
+        f.y = clamp(f.y + away * 16, 175, MAP.h - 215);
+      }
     }
 
     function faunaBy(kind) {
@@ -2891,6 +2915,14 @@
       ctx.scale(cam.z, cam.z);
       ctx.translate(-cam.x, -cam.y);
 
+      /* Everything from here on is clipped to the sheet. What is printed
+         into the sheet was always clipped by its edges; the trees and the
+         animals are planted in map space and drawn live, so without this
+         they carry on past the paper and stand on the bare table. */
+      ctx.beginPath();
+      ctx.rect(0, 0, MAP.w, MAP.h);
+      ctx.clip();
+
       if (sheet) {
         ctx.imageSmoothingQuality = 'high';
         ctx.drawImage(sheet, 0, 0, MAP.w, MAP.h);
@@ -3177,9 +3209,12 @@
          the one label that did not, which is how it ended up printed under
          the name of the line it was meant to be following. */
       var last = onSpine(1.0);
-      var op = clear({ x: last.x - 30, y: last.y + 96 }, 150, 24, -0.3, 1);
+      var op = clear({ x: last.x - 40, y: last.y + 132 }, 158, 26, -0.35, 1);
       var on = el('div', 'atlas-mark onward');
-      on.style.left = clamp(op.x, 80, MAP.w - 230) + 'px';
+      /* Room enough that the clamp cannot undo what the collision list just
+         worked out — pull it back inside the paper and the label lands on
+         top of the name it had stepped away from. */
+      on.style.left = clamp(op.x, 80, MAP.w - 130) + 'px';
       on.style.top = clamp(op.y, 40, MAP.h - 40) + 'px';
       on.textContent = 'The trail continues';
       layer.appendChild(on);
