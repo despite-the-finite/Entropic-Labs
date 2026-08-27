@@ -540,6 +540,14 @@
       lon: -105.11
     },
     {
+      id: 'chicago',
+      name: 'Chicago',
+      region: 'Illinois',
+      country: 'United States',
+      lat: 41.88,
+      lon: -87.63
+    },
+    {
       id: 'taylorville',
       name: 'Taylorville',
       region: 'Illinois',
@@ -4988,6 +4996,180 @@
       source: 'Karsh',
       relatedStories: ['no-futon', 'the-little-heart'],
       dateAdded: '2026-08-26'
+    },
+
+    {
+      id: 'brown-jacket',
+      title: 'My Brown Jacket',
+      hook: 'Bought in a Chicago mall by a kid from Zambia who had never owned a winter coat. Still worn every winter.',
+      year: 2005,
+      approximateDate: 'Winter 2005, and every winter since',
+      strand: 'karsh',
+      location: 'Chicago, Illinois',
+      place: 'chicago',
+      landmark: {
+        name: 'O’Hare International Airport',
+        query: 'O’Hare International Airport Chicago Illinois'
+      },
+      journey: [
+        {
+          id: 'zambia',
+          place: 'chingola',
+          flag: '🇿🇲',
+          label: 'Chingola, Zambia',
+          note: 'Home for the break. No winter here to prepare for.'
+        },
+        {
+          id: 'ohare',
+          place: 'chicago',
+          flag: '✈',
+          label: 'O’Hare, and a missed bus',
+          note: 'Several hours to kill, and no jacket.',
+          url: 'https://www.google.com/maps/search/?api=1&query=O%27Hare+International+Airport+Chicago'
+        },
+        {
+          id: 'mall',
+          place: 'chicago',
+          flag: '🧥',
+          label: 'A mall somewhere off the Blue Line',
+          note: 'Found by asking strangers, with a suitcase in tow.'
+        },
+        {
+          id: 'peoria',
+          place: 'bradley',
+          flag: '🎓',
+          label: 'Bradley University, Peoria',
+          note: 'The only jacket I owned for the rest of undergrad.'
+        },
+        {
+          id: 'colorado',
+          place: 'denver',
+          flag: '🏔',
+          label: 'Colorado, 2011',
+          note: 'No practical reason to bring it. Brought it.'
+        },
+        {
+          id: 'zipper',
+          arrival: true,
+          flag: '✦',
+          label: 'A brand-new YKK zipper',
+          note: 'Fitted by Colleen, without being asked'
+        }
+      ],
+      category: 'love',
+      tags: [
+        'zambia', 'chicago', 'illinois', 'peoria', 'bradley university',
+        'colorado', 'colleen', 'immigration', 'winter', 'things kept'
+      ],
+      people: [
+        { name: 'Karsh', relation: 'me, underdressed' },
+        { name: 'The shopkeeper', relation: 'who gave a discount he did not have to give' },
+        { name: 'Colleen', relation: 'who understood why I kept it' }
+      ],
+      story: [
+        { text: 'Growing up in Zambia, I never really experienced winter.', at: 'zambia' },
+        'I had seen snow once, a long time ago when I was a kid in Nainital, but I don’t have many memories of it. So when I decided to move to the United States for college, one of the things that actually attracted me to Peoria, Illinois, was that it had all four seasons.',
+        'I wanted to experience snow.',
+        'I wanted a real winter.',
+        'Apparently, I had no idea what I was asking for.',
+        { text: 'I made it through my first semester without even owning a proper winter jacket. I basically survived by layering sweatshirts and convincing myself that this was adequate winter clothing.', at: 'peoria' },
+        { text: 'After that first semester, I went home to Zambia for the break. When I returned to the United States, I flew into Chicago.', at: 'zambia' },
+        { text: 'That was when I learned what bitter cold actually meant.', at: 'ohare' },
+        'To get from Chicago to Peoria, I had to take the Peoria Charter bus from O’Hare. It only ran a few times a day, and my flight timing was just bad enough that I barely missed the second bus.',
+        'The next one wasn’t leaving for several hours.',
+        'So there I was: newly returned from Zambia, standing in Chicago in the middle of winter, wearing inadequate clothing, with several hours to kill and one very obvious realization:',
+        { kind: 'beat', text: 'I needed a winter jacket.' },
+        'I decided I was going to buy one.',
+        'There were a couple of complications.',
+        'First, I had a giant suitcase with me.',
+        'Second, this was 2005. I didn’t have a smartphone. There was no Google Maps in my pocket telling me where to go. No little blue dot reassuring me that I was walking in the right direction.',
+        'I had to do something ancient.',
+        { kind: 'beat', text: 'Ask people for directions.' },
+        { text: 'Somehow, through a combination of asking strangers questions, dragging my suitcase around Chicago, and figuring out the Blue Line, I made my way to a mall.', at: 'mall' },
+        'I wandered around for quite a while until I found a store selling leather jackets.',
+        'Now, I had always wanted a leather jacket.',
+        'So obviously I decided that my first real winter jacket should be leather.',
+        'Then I looked at the prices.',
+        { kind: 'beat', text: 'Absolutely not.' },
+        'I was a college student. I did not have leather-jacket money.',
+        'But I started talking to the shopkeeper, made small talk, and shared a little about my background. Somehow, he felt sympathy for me and worked out a deal. He gave me a really good discount on a brown leather jacket.',
+        'My first winter jacket.',
+        { kind: 'beat', text: 'My brown jacket.' },
+        'When I bought it, it was pristine. Clean brown leather. No scuffs. No scratches.',
+        'And, importantly for later in this story, a perfectly functioning zipper.',
+        'The shopkeeper was incredibly kind, too. He let me leave my giant suitcase at his store while I wandered around the mall and killed the rest of the time before my bus.',
+        { text: 'Eventually, I went back to the store to pick up my suitcase. I thanked him, made my way back to O’Hare, and caught the Peoria Charter to university.', at: 'peoria' },
+        'From that point forward, I wore that jacket everywhere.',
+        'It wasn’t just my winter jacket that year.',
+        'It was basically the jacket I owned throughout undergrad.',
+        'Illinois winters. Walking to class. Going out with friends. College life.',
+        'Year after year, the jacket came with me.',
+        'By the end of undergrad, it didn’t look anything like the jacket I had bought in Chicago.',
+        'The leather was scratched and scuffed. It had creases everywhere. It looked worn.',
+        'And I loved it even more.',
+        'There was only one problem.',
+        { kind: 'beat', text: 'The zipper broke.' },
+        'By then, though, throwing the jacket away wasn’t really an option. I remembered how much money that jacket had felt like when I bought it. I remembered dragging my suitcase through Chicago. I remembered that freezing day and that shopkeeper.',
+        'So I kept it.',
+        'And occasionally, I still wore it.',
+        'Broken zipper and all.',
+        { text: 'In 2011, when I moved to Colorado, the brown jacket came with me.', at: 'colorado' },
+        'I had absolutely no practical reason to move a broken old leather jacket halfway across the country.',
+        'But I wasn’t getting rid of it.',
+        'It spent a lot of time hanging in closets, waiting for the hypothetical day when I would finally fix it.',
+        'And apparently it still had some work to do.',
+        'Because in 2014, when I met Colleen, I was still occasionally wearing that beat-up brown leather jacket with the broken zipper.',
+        'And I would like the historical record to reflect that I firmly believe the jacket played a significant role in attracting her to me.',
+        'You’d have to ask Colleen for independent verification.',
+        'A couple of years later, we were married and early into our marriage. By this point, Colleen had become familiar with my wardrobe.',
+        'And had opinions.',
+        'Then one day I came home.',
+        'There was my brown jacket.',
+        'Except something was different.',
+        { kind: 'reveal', text: 'It had a brand-new YKK zipper.', at: 'zipper' },
+        'Without telling me, Colleen had taken it to a tailor and had the zipper completely replaced.',
+        'She hadn’t bought me a new jacket.',
+        'She had understood why I wanted to keep the old one.',
+        'And she fixed it.',
+        'That meant the world to me.',
+        { kind: 'heading', text: 'It’s 2026 now.' },
+        'More than twenty years have passed since that freezing day in Chicago.',
+        'I own plenty of winter jackets now. Jackets that are warmer. Jackets that are newer. Jackets that are objectively better at being jackets.',
+        'But every winter, I still wear the brown one.',
+        'It has even more scratches now.',
+        'More scuffs.',
+        'More wrinkles.',
+        'More years.',
+        'And somehow, it looks damn good.',
+        'Maybe that’s what I love about it.',
+        'When I look at that jacket, I don’t see an old piece of clothing.',
+        'I see a kid from Zambia standing in Chicago, completely unprepared for winter, dragging a giant suitcase around a city he barely knew.',
+        'I see college.',
+        'I see Peoria.',
+        'I see the move to Colorado.',
+        'I see the jacket I happened to be wearing when I met the woman I would marry.',
+        'And every time I pull that YKK zipper up, there’s a little piece of Colleen in the story too.',
+        'The jacket didn’t stay beautiful because I protected it.',
+        { kind: 'landing', text: 'It became beautiful because I used it.' },
+        'The scratches are supposed to be there.',
+        'The scuffs are supposed to be there.',
+        'They’re proof that it came along for the ride.',
+        'And if you ask me, that old brown jacket still looks pretty damn good.',
+        'Then again, I’m biased.',
+        'It did help me get my girl.'
+      ],
+      artifact: {
+        label: 'Memory artifact',
+        title: 'One brown leather jacket',
+        lines: [
+          { label: 'Bought', text: 'Chicago, winter 2005, at a discount the shopkeeper did not have to give.' },
+          { label: 'Zipper', text: 'Original, broken by the end of undergrad. Replaced with a YKK, without being asked.' },
+          { label: 'Condition', text: 'Scratched, scuffed, creased. Worn every winter since.' }
+        ]
+      },
+      source: 'Karsh',
+      relatedStories: ['no-futon', 'dan-the-man'],
+      dateAdded: '2026-08-27'
     }
   ];
 
