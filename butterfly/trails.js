@@ -432,22 +432,33 @@
         n.ptr = (braid && n.t !== null) ? braidPos(n.strand, n.t) : trailPos(n, i, total);
       });
 
-      /* Two memories on the same line in the same year land on exactly the
-         same point: one draws over the other, only one label survives, and
-         the one underneath cannot be clicked at all.
+      /* Two memories that land on the same point: one draws over the other,
+         only one label survives, and the one underneath cannot be clicked
+         at all.
 
-         They are the same moment in the same life, so they fan out ACROSS
-         their own line rather than along it. Moving them along it would slide
-         them in time and claim a year nobody wrote down; moving them across
-         it says what is true — these happened together. */
-      var together = {};
+         The test is distance on the trail rather than a shared strand and
+         year, because two lives that have already merged are one line from
+         then on — a memory on Amma's strand in 2026 and one on Dad's sit at
+         the same place, and keying on the strand would call them strangers
+         and stack them anyway. Anything closer together than a third of a
+         lane is in the same spot as far as a reader's eye or thumb is
+         concerned.
+
+         They fan out ACROSS the line rather than along it. Moving them along
+         it would slide them in time and claim a year nobody wrote down;
+         moving them across it says what is true — these happened together. */
+      var NEAR_T = 0.3;
+      var together = [];
       story.forEach(function (n) {
         if (!braid || n.t === null) return;
-        var key = (n.strand || '') + '@' + n.t.toFixed(3);
-        (together[key] || (together[key] = [])).push(n);
+        for (var g = 0; g < together.length; g++) {
+          var lead = together[g][0];
+          var ndx = n.ptr.x - lead.ptr.x, ndy = n.ptr.y - lead.ptr.y;
+          if (ndx * ndx + ndy * ndy < NEAR_T * NEAR_T) { together[g].push(n); return; }
+        }
+        together.push([n]);
       });
-      Object.keys(together).forEach(function (key) {
-        var group = together[key];
+      together.forEach(function (group) {
         if (group.length < 2) return;
         var head = group[0];
         var ahead = braidPos(head.strand, head.t + 0.02);

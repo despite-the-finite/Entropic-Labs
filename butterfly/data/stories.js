@@ -4304,8 +4304,11 @@
       id: 'too-short-to-stop',
       title: 'Too Short to Stop',
       hook: 'Sixteen years old, ninety pounds, four hundred pounds of Royal Enfield, and two classmates on the back.',
-      year: 1975,
-      approximateDate: 'Circa 1975',
+      /* She was sixteen here and nineteen when her father died in 1977, so
+         this sits around 1974. Both ends of that sum are hers; the year in
+         between is arithmetic, and the dateline says circa because of it. */
+      year: 1974,
+      approximateDate: 'Circa 1974',
       strand: 'amma',
       location: 'Lucknow, India',
       place: 'lucknow',

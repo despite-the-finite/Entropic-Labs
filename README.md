@@ -677,12 +677,18 @@ set 0.62rem uppercase mono on, and colour-coding is not worth a contrast
 failure. A category with nothing in it keeps its colour and loses its light,
 because an empty category is waiting rather than broken.
 
-**Two memories on one line in one year fan across it, not along it.** They
-land on the same point otherwise: one draws over the other, one label
-survives, and the one underneath cannot be clicked at all. They are the same
-moment in the same life, so they spread perpendicular to their own strand —
-moving them along it would slide them in time and claim a year nobody wrote
-down.
+**Memories that land on the same point fan across the line, not along it.**
+Otherwise one draws over the other, one label survives, and the one
+underneath cannot be clicked at all. They spread perpendicular to the line
+they are on — moving them along it would slide them in time and claim a year
+nobody wrote down.
+
+The test is distance on the trail, not a shared strand and year. Two lives
+that have already merged are *one line* from then on, so a 2026 memory on
+Amma's strand and a 2026 memory on Dad's occupy the same spot while carrying
+different strand names; keying on the strand called them strangers and
+stacked them anyway. That was live — Amma's letter to her father spent its
+first day buried underneath Dad's letter to his sons.
 
 **A birth or a join can carry the day, not just the year.** `start`/`end`
 take an optional `on` — "8 December 1984", "21 November 2021" — beside the
