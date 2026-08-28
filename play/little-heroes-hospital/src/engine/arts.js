@@ -116,6 +116,21 @@ export const SHOW_ART = {
     <text x="150" y="186" text-anchor="middle" font-size="14" fill="#5d6688" font-family="Baloo 2, sans-serif">arm • elbow • wrist — just like yours</text>
   </svg>`,
 
+  stitches: () => `<svg ${VB} class="art">
+    <rect x="0" y="0" width="300" height="200" rx="14" fill="#fbeee2"/>
+    <g transform="translate(150 96)">
+      <path d="M -110 0 q 40 -18 60 0" fill="none" stroke="#d7b48c" stroke-width="16" stroke-linecap="round"/>
+      <path d="M 50 0 q 20 -18 60 0" fill="none" stroke="#d7b48c" stroke-width="16" stroke-linecap="round"/>
+      <g stroke="#c1485c" stroke-width="5" stroke-linecap="round">
+        ${[0, 1, 2, 3, 4].map((i) => `<path d="M ${-44 + i * 22} -12 L ${-32 + i * 22} 12">
+          <animate attributeName="opacity" values="0;1;1" dur="2.6s" begin="${i * 0.35}s" repeatCount="indefinite"/>
+        </path>`).join('')}
+      </g>
+      <text x="66" y="-18" font-size="24">🪡</text>
+    </g>
+    <text x="150" y="182" text-anchor="middle" font-size="14" fill="#8a6a48" font-family="Baloo 2, sans-serif">in, out, in, out — and the gap is gone</text>
+  </svg>`,
+
   flea: () => `<svg ${VB} class="art">
     <rect x="0" y="150" width="300" height="50" fill="#e4c9a0"/>
     ${[[60, 0], [150, .6], [230, 1.2]].map(([x, d]) => `<g>
@@ -224,6 +239,23 @@ export const SCAN_ART = {
       <ellipse cx="150" cy="108" rx="70" ry="48" fill="none" stroke="#ff6b6b" stroke-width="3" stroke-dasharray="7 7"/>
     </g>`,
     'tummy — is that… a duck?'),
+
+  'toy-inside': () => xrayFrame(`
+    <ellipse cx="150" cy="104" rx="112" ry="70" fill="#dbe9ff" opacity=".10"/>
+    <g fill="#cfe0f7" opacity=".55">
+      ${[[96, 78, 20], [150, 66, 24], [204, 84, 21], [112, 132, 22], [176, 136, 24], [150, 108, 18]]
+        .map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}"/>`).join('')}
+    </g>
+    <g transform="translate(196 124)">
+      <circle r="17" fill="#f2f8ff"/>
+      <circle r="17" fill="none" stroke="#0f1c38" stroke-width="2"/>
+      <g fill="#0f1c38"><circle cx="-4" cy="-4" r="2"/><circle cx="4" cy="-4" r="2"/>
+        <circle cx="-4" cy="4" r="2"/><circle cx="4" cy="4" r="2"/></g>
+    </g>
+    <g class="art-flag">
+      <circle cx="196" cy="124" r="34" fill="none" stroke="#ff6b6b" stroke-width="3" stroke-dasharray="7 7"/>
+    </g>`,
+    'inside the tummy — all soft… except one bit'),
 
   bacteria: () => microFrame(`
     ${[[110, 60], [140, 74], [168, 62], [96, 116], [126, 132], [156, 122], [196, 96], [214, 122]]

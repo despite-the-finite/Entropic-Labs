@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Screens: title, creator, career picker, hub, level select, bag, shop,
+   Screens: title, creator, hub, level select, bag, shop,
    results. Shared layout helpers live at the bottom.
    ========================================================================== */
 
@@ -271,43 +271,6 @@
 .diff-card p { margin: 4px 0 0; font-size: 14px; color: var(--ink-soft); line-height: 1.35; }
 
 /* ══════════════════════════════════════════════════════ CAREER ══════════ */
-.screen--career { background: linear-gradient(160deg, #cfeeff 0%, #e7fbf3 100%); }
-.career-grid {
-  flex: 1; display: grid; gap: 18px; padding: 0 18px calc(24px + var(--safe));
-  grid-template-columns: 1fr; align-content: center;
-}
-@media (min-width: 760px) { .career-grid { grid-template-columns: 1fr 1fr; } }
-
-.career-card {
-  position: relative; overflow: hidden;
-  border: none; border-radius: var(--r-xl); cursor: pointer;
-  padding: 22px 20px; min-height: min(38vh, 320px);
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
-  box-shadow: 0 10px 0 rgba(44,51,80,.16), 0 22px 44px rgba(44,51,80,.2);
-  transition: transform .18s cubic-bezier(.3,1.4,.5,1);
-}
-.career-card:hover, .career-card:focus-visible { transform: translateY(-6px) scale(1.02); }
-.career-card--doctor { background: linear-gradient(170deg, #86d7ff, #3ba7e8); }
-.career-card--vet    { background: linear-gradient(170deg, #8ce8c6, #33bf94); }
-.career-card__icon { font-size: clamp(52px, 11vw, 96px); filter: drop-shadow(0 8px 10px rgba(0,0,0,.2)); animation: bob 3s ease-in-out infinite; }
-.career-card__title { font-family: var(--font-display); font-weight: 800; font-size: clamp(26px,5.4vw,44px); color: #fff; text-shadow: 0 4px 0 rgba(44,51,80,.28); }
-.career-card__sub { font-family: var(--font-display); font-weight: 700; font-size: var(--step-1); color: rgba(255,255,255,.95); }
-.career-card__peek {
-  display: flex; gap: 8px; margin-top: 10px; font-size: clamp(24px, 5vw, 40px);
-  opacity: .55; transform: translateY(10px); transition: all .3s;
-}
-.career-card:hover .career-card__peek, .career-card:focus-visible .career-card__peek { opacity: 1; transform: translateY(0); }
-.career-card__peek span { animation: bob 2.4s ease-in-out infinite; }
-.career-card__badge {
-  position: absolute; top: 12px; right: 12px;
-  padding: 6px 14px; border-radius: var(--r-pill);
-  background: rgba(255,255,255,.92); font-family: var(--font-display); font-weight: 800; font-size: 14px;
-}
-.career-note {
-  text-align: center; font-family: var(--font-display); font-weight: 700;
-  color: var(--ink-soft); padding: 0 20px 10px; font-size: var(--step-0);
-}
-
 /* ══════════════════════════════════════════════════════ HUB ═════════════ */
 .screen--hub { background: linear-gradient(180deg, #8fd8ff 0%, #cfeeff 50%, #b6e39a 100%); }
 .hub-scroll { display: flex; flex-direction: column; align-items: center; gap: 10px; }

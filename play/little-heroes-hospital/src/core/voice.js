@@ -158,5 +158,8 @@ function strip(text) {
     // which a screen reader voice pronounces as an audible stumble.
     .replace(/\s+([.,!?;:…])/g, '$1')
     .replace(/([.!?…])[.,;:]+/g, '$1')
+    // A line that was ONLY a stage direction ("*rattle*") strips to nothing,
+    // leaving the joined translation to start with stray punctuation.
+    .replace(/^[\s.,;:!?…]+/, '')
     .trim();
 }

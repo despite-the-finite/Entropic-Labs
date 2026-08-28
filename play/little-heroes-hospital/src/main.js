@@ -15,7 +15,6 @@ import { on } from './core/events.js';
 
 import { titleScreen } from './ui/screens/title.js';
 import { creatorScreen } from './ui/screens/creator.js';
-import { careerScreen } from './ui/screens/career.js';
 import { hubScreen } from './ui/screens/hub.js';
 import { levelsScreen } from './ui/screens/levels.js';
 import { caseScreen } from './ui/screens/casescreen.js';
@@ -26,7 +25,6 @@ import { shopScreen } from './ui/screens/shop.js';
 const SCREENS = {
   title: titleScreen,
   creator: creatorScreen,
-  career: careerScreen,
   hub: hubScreen,
   levels: levelsScreen,
   case: caseScreen,

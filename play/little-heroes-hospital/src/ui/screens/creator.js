@@ -177,7 +177,10 @@ export function creatorScreen() {
     setDifficulty(difficulty);
     sfx.fanfare();
     sparkle(art, { count: 22 });
-    setTimeout(() => go(editing ? 'hub' : 'career', {}, { replace: true }), 320);
+    // Straight to the hospital. Asking "doctor or vet?" up front was a choice
+    // with no consequence — every track is a room you can walk into, and the
+    // level list is where the real picking happens.
+    setTimeout(() => go('hub', {}, { replace: true }), 320);
   }
 
   rebuild();
