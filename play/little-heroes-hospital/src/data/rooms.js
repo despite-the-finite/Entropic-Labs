@@ -52,6 +52,16 @@ export const ROOMS = {
       { emoji: '🦴', x: 84, y: 70, size: 22 },
     ],
   },
+  toyshop: {
+    id: 'toyshop', name: 'Toy Workshop', icon: '🧸', tint: '#ffd8e8', wall: '#ffecf4',
+    blurb: 'Where much-loved toys are mended and sent home.',
+    action: 'levels:toy', wide: true,
+    props: [
+      { emoji: '🧸', x: 26, y: 66, size: 32, anim: 'bob' },
+      { emoji: '🪡', x: 58, y: 58, size: 24, anim: 'sway' },
+      { emoji: '🧶', x: 82, y: 68, size: 26 },
+    ],
+  },
   xray: {
     id: 'xray', name: 'X-Ray Room', icon: '🩻', tint: '#d9cdf7', wall: '#ebe3ff',
     blurb: 'Take a photo of the bones inside!',
@@ -133,6 +143,7 @@ export const FLOORS = [
   { id: 'f2',   rooms: ['xray', 'lab'] },
   { id: 'f1b',  rooms: ['imaging', 'supply'] },
   { id: 'f1',   rooms: ['doctor', 'vet'] },
+  { id: 'f0',   rooms: ['toyshop'] },
   { id: 'g',    rooms: ['reception'] },
 ];
 

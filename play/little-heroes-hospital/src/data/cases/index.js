@@ -6,6 +6,7 @@
  */
 import { DOCTOR_CASES } from './doctor.js';
 import { VET_CASES } from './vet.js';
+import { TOY_CASES } from './toy.js';
 
 export const TRACKS = {
   doctor: {
@@ -19,6 +20,12 @@ export const TRACKS = {
     blurb: 'Help animals feel better.', tint: '#3fd0a6',
     room: 'vet', cases: VET_CASES,
     previewPatients: ['🐶', '🐱', '🐰', '🐦', '🦊', '🐢'],
+  },
+  toy: {
+    id: 'toy', name: 'Toy Doctor', verb: 'Toy Doctor', icon: '🧸',
+    blurb: 'Mend much-loved toys.', tint: '#ff9ec4',
+    room: 'toyshop', cases: TOY_CASES,
+    previewPatients: ['🧸', '🐰', '🪆', '🐘', '🦕', '🐧'],
   },
 };
 

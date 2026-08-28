@@ -161,6 +161,47 @@ export const TOOLS = {
     demo: 'Beep… beep… the line hops across the screen.',
     sound: 'heartbeat', readout: { kind: 'ecg', label: 'Heart rhythm' },
   },
+
+  /* ---------------------------------------------------- the toy repair kit
+     Toys are mended, not medicated. These belong to the Toy Doctor track and
+     are unlocked by it, but the bag makes no distinction — a child who has
+     earned the needle can see it next to the stethoscope. */
+  needle: {
+    id: 'needle', name: 'Needle and Thread', icon: '🪡', tint: '#ff9ec4',
+    blurb: 'Sews a split seam shut with tiny neat stitches.',
+    demo: 'In, out, in, out — the gap closes up.',
+    sound: 'select', readout: { kind: 'text', label: 'The mend' },
+  },
+  stuffing: {
+    id: 'stuffing', name: 'Soft Stuffing', icon: '🧶', tint: '#a97bf0',
+    blurb: 'Fluffy filling for a toy that has gone flat and floppy.',
+    demo: 'Tuck it in and the squashy bit puffs back up.',
+    sound: 'good',
+  },
+  button: {
+    id: 'button', name: 'Button Box', icon: '🔘', tint: '#39b5f0',
+    blurb: 'Spare eyes and noses. Never quite matching, always loved.',
+    demo: 'Choose one, sew it on, and a face is whole again.',
+    sound: 'select',
+  },
+  ribbon: {
+    id: 'ribbon', name: 'Ribbon Roll', icon: '🎀', tint: '#ffc844',
+    blurb: 'A bow to finish a mend — or a sling for a floppy arm.',
+    demo: 'Loop, loop, pull — and a very smart bow appears.',
+    sound: 'good',
+  },
+  washtub: {
+    id: 'washtub', name: 'Bubble Bath', icon: '🫧', tint: '#39b5f0',
+    blurb: 'A warm soapy soak for a toy that has been very well loved.',
+    demo: 'Swish it about and years of adventures wash away.',
+    sound: 'whoosh',
+  },
+  fluffbrush: {
+    id: 'fluffbrush', name: 'Fluff Brush', icon: '🪥', tint: '#3fd0a6',
+    blurb: 'Teases flattened fur back into a proper fluff.',
+    demo: 'Brush, brush — squashed fur springs up again.',
+    sound: 'whoosh',
+  },
 };
 
 export const TOOL_ORDER = Object.keys(TOOLS);

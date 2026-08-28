@@ -4,7 +4,7 @@ This directory is a copy of the game, served from this site so the **Play it now
 button on `games.html` works in a browser with no setup.
 
 - **Source:** https://github.com/despite-the-finite/Doctor-and-vet-game
-- **Copied at commit:** `d958598` (branch `claude/little-heroes-hospital-wniai3`)
+- **Copied at commit:** `9eb39d3` (branch `claude/little-heroes-hospital-wniai3`)
 - **Played at:** https://despite-the-finite.github.io/Entropic-Labs/play/little-heroes-hospital/
 
 The game is entirely static — no build step and no dependencies. Every

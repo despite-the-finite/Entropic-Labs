@@ -14,7 +14,7 @@ import {
 } from '../../core/state.js';
 import { FLOORS, ROOMS } from '../../data/rooms.js';
 import { placedItemsFor } from '../../data/shop.js';
-import { TRACKS } from '../../data/cases/index.js';
+import { TRACKS, CAREERS } from '../../data/cases/index.js';
 import { hud, heroSVG, modal } from '../components.js';
 import { confetti, sparkle, toast, flash } from '../../core/fx.js';
 
@@ -29,14 +29,20 @@ export function hubScreen({ build = null, highlight = null } = {}) {
   el.appendChild(scroll);
 
   /* ------------------------------------------------------- hero + status */
-  const doctorProgress = careerCompletion('doctor');
-  const vetProgress = careerCompletion('vet');
+  // One line per track, built from the registry so a new career shows up here
+  // without anybody remembering to add it.
+  const trackLine = CAREERS
+    .map((id) => {
+      const { done, total } = careerCompletion(id);
+      return `${TRACKS[id].icon} ${TRACKS[id].verb} ${done}/${total}`;
+    })
+    .join('   •   ');
 
   scroll.appendChild(h('div', { class: 'hub-hero' },
     h('div', { class: 'hub-hero__art', html: heroSVG({ mood: 'happy' }) }),
     h('div', { class: 'hub-hero__text' },
       h('h3', {}, heroTitle()),
-      h('p', {}, `🩺 Doctor ${doctorProgress.done}/${doctorProgress.total}   •   🐾 Vet ${vetProgress.done}/${vetProgress.total}`)),
+      h('p', {}, trackLine)),
     h('button', { class: 'iconbtn', 'aria-label': 'Change my hero', onClick: () => go('creator') }, '🎨')));
 
   /* ------------------------------------------------------------ building */
@@ -54,11 +60,10 @@ export function hubScreen({ build = null, highlight = null } = {}) {
 
   /* ------------------------------------------------------------ actions */
   scroll.appendChild(h('div', { class: 'hub-actions' },
-    h('button', { class: 'btn btn--sun', onClick: () => go('career', { fromHub: true }) }, '🔁 Swap job'),
     h('button', { class: 'btn btn--ghost', onClick: () => go('bag') }, '🎒 Doctor Bag'),
     h('button', { class: 'btn btn--ghost', onClick: () => go('shop') }, '🛒 Supply Room')));
 
-  if (isCareerFinished('doctor') && isCareerFinished('vet')) {
+  if (CAREERS.every(isCareerFinished)) {
     scroll.appendChild(h('p', { class: 'empty-note' },
       '🏆 You have helped every single patient. You are a true Little Hero!'));
   }

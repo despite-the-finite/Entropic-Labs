@@ -10,6 +10,7 @@ import { h } from '../core/dom.js';
 const SCENES = {
   doctor:    { wall: '#dff2ff', wall2: '#bfe4ff', floor: '#f4dfc4', props: ['🪴', '🧸', '📋'], poster: '🌈', sky: 'day' },
   vet:       { wall: '#dffaf0', wall2: '#bdf0dd', floor: '#f6e3c8', props: ['🦴', '🐾', '🧺'], poster: '🐕', sky: 'day' },
+  toyshop:   { wall: '#ffe6f1', wall2: '#ffc9e0', floor: '#f0dcc4', props: ['🧶', '🪡', '🎀'], poster: '🧸', sky: 'day' },
   xray:      { wall: '#e6e0ff', wall2: '#cdbff7', floor: '#dcd6ea', props: ['🖥️', '🩻'], poster: '🦴', sky: 'none' },
   lab:       { wall: '#ddf9ec', wall2: '#bdefd8', floor: '#e2eee8', props: ['🧪', '🧫', '📗'], poster: '🔬', sky: 'none' },
   emergency: { wall: '#ffe6e2', wall2: '#ffcac1', floor: '#f0dcd8', props: ['🚑', '🩺', '⏱️'], poster: '❤️', sky: 'night' },

@@ -8,7 +8,7 @@
  */
 
 const KEY = 'littleHeroesHospital.save.v1';
-export const SCHEMA = 4;
+export const SCHEMA = 5;
 
 /** The canonical empty save. Every field the game reads must exist here. */
 export function freshSave() {
@@ -26,13 +26,14 @@ export function freshSave() {
     progress: {
       doctor: { level: 1, completed: [] }, // completed = array of case ids
       vet:    { level: 1, completed: [] },
+      toy:    { level: 1, completed: [] },
     },
 
     wallet: { stars: 0, kindness: 0, coins: 0 },
 
     unlocked: {
       tools: ['stethoscope', 'thermometer'], // starter kit
-      rooms: ['reception', 'doctor', 'vet', 'supply'],
+      rooms: ['reception', 'doctor', 'vet', 'toyshop', 'supply'],
     },
 
     /** purchased shop item ids -> quantity (decor can be bought once) */
@@ -68,6 +69,15 @@ function migrate(save) {
     if (save.settings.voice === undefined) save.settings.voice = save.difficulty !== 'explorer';
     save.schema = 4;
   }
+  if (save.schema < 5) {
+    // The Toy Doctor track arrived in schema 5. reconcile() fills in the
+    // progress row and the room from the fresh save, so there is nothing to
+    // copy here — but an existing player should not have to earn a room that
+    // new players are simply given.
+    save.unlocked = save.unlocked || {};
+    save.unlocked.rooms = [...new Set([...(save.unlocked.rooms || []), 'toyshop'])];
+    save.schema = 5;
+  }
   return save;
 }
 
@@ -75,10 +85,10 @@ function migrate(save) {
 function reconcile(save) {
   const base = freshSave();
   const merged = { ...base, ...save };
-  merged.progress = {
-    doctor: { ...base.progress.doctor, ...(save.progress?.doctor || {}) },
-    vet: { ...base.progress.vet, ...(save.progress?.vet || {}) },
-  };
+  // Every track in the fresh save gets a progress row, so adding a career
+  // never needs a line here again.
+  merged.progress = Object.fromEntries(Object.keys(base.progress).map((career) =>
+    [career, { ...base.progress[career], ...(save.progress?.[career] || {}) }]));
   merged.wallet = { ...base.wallet, ...(save.wallet || {}) };
   merged.unlocked = {
     tools: [...new Set([...base.unlocked.tools, ...(save.unlocked?.tools || [])])],

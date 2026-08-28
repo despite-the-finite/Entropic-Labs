@@ -2,15 +2,15 @@
 
 Every level in Little Heroes Hospital is **data**, not code. A case is a plain
 object with a list of steps; `src/engine/caseRunner.js` plays them in order.
-To add a patient you add an object to `doctor.js` or `vet.js` (or a new track
-file registered in `index.js`) — you never touch the engine.
+To add a patient you add an object to `doctor.js`, `vet.js` or `toy.js` (or a
+new track file registered in `index.js`) — you never touch the engine.
 
 ## Case shape
 
 ```js
 {
   id: 'doc-01',            // stable, stored in the save file — never rename
-  career: 'doctor',        // 'doctor' | 'vet'
+  career: 'doctor',        // 'doctor' | 'vet' | 'toy'
   level: 1,                // position in the track (1-based, no gaps)
   title: 'The Checkup',
   tagline: 'Maya is here to see how much she has grown.',
@@ -52,7 +52,11 @@ Any `{name}` token inside step text is replaced with the patient's name, and
 
 `target` is a hotspot name defined by the character renderer:
 humans → `head eye ear mouth chest tummy arm hand back knee foot`
-animals → `head eye ear mouth nose chest tummy back paw leg wing tail fur`
+animals *and toys* → `head eye ear mouth nose chest tummy back paw leg wing tail fur`
+
+Soft toys are rendered by the same parametric creature as the animals (they are
+flagged `toy: true` in `ui/creature.js`, which swaps the eyes for sewn-on
+buttons and adds a seam and a patch), so they use the animal hotspots.
 
 ## Difficulty
 
