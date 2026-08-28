@@ -548,6 +548,13 @@
       lon: -87.63
     },
     {
+      id: 'new-jersey',
+      name: 'New Jersey',
+      country: 'United States',
+      lat: 40.06,
+      lon: -74.41
+    },
+    {
       id: 'taylorville',
       name: 'Taylorville',
       region: 'Illinois',
@@ -5169,6 +5176,169 @@
       },
       source: 'Karsh',
       relatedStories: ['no-futon', 'dan-the-man'],
+      dateAdded: '2026-08-27'
+    },
+
+    {
+      id: 'first-haircut',
+      title: 'My First American Haircut',
+      hook: 'Six feet tall, 125 pounds, glasses, a moustache and unintentional bangs. The floor took a vote.',
+      year: 2004,
+      approximateDate: 'Circa 2004',
+      strand: 'karsh',
+      location: 'Peoria, Illinois',
+      place: 'bradley',
+      landmark: {
+        name: 'University Hall, Bradley University',
+        query: 'University Hall Bradley University Peoria Illinois'
+      },
+      journey: [
+        {
+          id: 'new-jersey',
+          place: 'new-jersey',
+          flag: '🇺🇸',
+          label: 'New Jersey',
+          note: 'Two sets of relatives I had never met in my life.'
+        },
+        {
+          id: 'bradley',
+          place: 'bradley',
+          flag: '🎓',
+          label: 'Bradley University, Peoria',
+          note: 'My parents dropped me off. Then they left.',
+          url: 'https://www.google.com/maps/search/?api=1&query=Bradley+University+Peoria+Illinois'
+        },
+        {
+          id: 'hallway',
+          place: 'bradley',
+          flag: '✂',
+          label: 'The hallway of Floor 2B',
+          note: 'No barber. No stylist. No supervision.'
+        },
+        {
+          id: 'after',
+          arrival: true,
+          flag: '✦',
+          label: 'A terrible haircut, and a little more confidence',
+          note: 'Adam and Jeff, still friends all these years later'
+        }
+      ],
+      category: 'beginnings',
+      chaosEvent: true,
+      tags: [
+        'zambia', 'illinois', 'peoria', 'bradley university', 'immigration',
+        'college', 'friendship', 'belonging', 'growing up', 'funny memories'
+      ],
+      people: [
+        { name: 'Karsh', relation: 'me, seventeen, six feet and 125 pounds of it' },
+        { name: 'Adam Bradley', relation: 'Floor 2B — still a close friend' },
+        { name: 'Jeff Whiteside', relation: 'Floor 2B — still a close friend' },
+        { name: 'The rest of Floor 2B', relation: 'unqualified, unsupervised, undeterred' }
+      ],
+      story: [
+        'I was 17 years old when I first moved to the United States.',
+        {
+          text: 'I had finished my AS Levels and was headed off to Bradley University in Peoria, Illinois. My parents came with me to help me make the move, and before we went to Peoria to actually see the university and drop me off, we spent some time in New Jersey.',
+          at: 'new-jersey'
+        },
+        'My mom had two different sets of relatives there. I had never met any of them in my life, although my parents knew them from their earlier years.',
+        'It was actually really nice.',
+        'I got to see their houses, see their lives, and get a small glimpse of what life in America looked like. There was something comforting about being around family, even if they were family I was meeting for the first time.',
+        'And I needed that comfort.',
+        'Because despite everything, I was scared shitless.',
+        'I’d been through the experience of leaving home before when I went to boarding school. That had been incredibly difficult, but I was much younger then.',
+        'This time I was 17.',
+        'I was practically a grown man.',
+        'At least, that’s what I thought.',
+        'In reality, I was so anxious about this enormous change in my life that I wasn’t eating properly. I’d lost a bunch of weight. I was about six feet tall and weighed somewhere around 125 pounds.',
+        'Essentially, I was skin and bones.',
+        'And aesthetically?',
+        'Things weren’t going particularly well there either.',
+        'I had absolutely no idea what American college was going to be like. Back in high school in Zambia, I’d come from a small school where everybody basically knew everybody. I wasn’t exactly the popular guy, but the classes were so small that popularity didn’t really work the same way. We were all around each other constantly. I had my friends. I was well liked. I was comfortable.',
+        'I had never really thought about changing the way I looked to fit in.',
+        'So I arrived at an American university as a six-foot-tall, 125-pound, nerdy-looking Indian kid from Zambia with glasses who had never shaved his mustache.',
+        'And yes, I had a mustache.',
+        'I couldn’t grow a beard yet, obviously, but puberty had provided me with something considerably more substantial than peach fuzz, and apparently I had just decided to let it live there.',
+        'But the masterpiece of the entire look was my hair.',
+        { kind: 'beat', text: 'I had bangs.' },
+        'Not intentional bangs.',
+        'There had been no stylistic decision where I looked in a mirror and thought, *Yes. This is the look.*',
+        'I simply hadn’t gotten a haircut in a very long time.',
+        'There was so much happening in my life — leaving Zambia, moving to another country, starting university, saying goodbye to my family — that somehow getting a haircut never made it particularly high on anyone’s priority list.',
+        { text: 'So eventually my parents dropped me off at Bradley.', at: 'bradley' },
+        { kind: 'beat', text: 'Then they left.' },
+        'And suddenly there I was.',
+        'Seventeen years old.',
+        { kind: 'beat', text: 'Alone.' },
+        'In a new country, surrounded by a new culture, feeling completely intimidated and very aware that I didn’t quite look like everybody else.',
+        'But something good happened pretty quickly.',
+        'I started making friends.',
+        'I lived in University Hall on Floor 2B — or not 2B.',
+        'Yes, apparently my freshman floor had a Shakespeare reference.',
+        'I hated Shakespeare.',
+        'But I loved that floor.',
+        'Some of the guys I became closest with were Adam Bradley and Jeff Whiteside, along with several others. We were all freshmen. Just a bunch of kids who had suddenly been released into the world and were trying to figure out adulthood together.',
+        'And I was the international kid at a relatively small private university that didn’t have a huge international population.',
+        'It didn’t take my new American friends very long to assess the situation.',
+        'They saw the glasses.',
+        'They saw the mustache.',
+        'And most importantly…',
+        'They saw the bangs.',
+        { kind: 'beat', text: 'Something had to be done.' },
+        {
+          text: 'So Adam and Jeff, along with some of the other guys, decided that they were going to give me my first American haircut.',
+          at: 'hallway'
+        },
+        'Why I trusted these fools, I will never know.',
+        'We staged the entire operation right there in the hallway of our freshman floor.',
+        'There was no barber.',
+        'There was no stylist.',
+        'There was certainly no professional supervision.',
+        'Just a bunch of 17- and 18-year-old boys, some hair-cutting equipment, and an international student who apparently had decided these people were qualified to perform a complete aesthetic intervention.',
+        'First came the mustache.',
+        'They convinced me it had to go.',
+        'That was actually the first time I had ever shaved in my life.',
+        'Seventeen years old, standing in a dorm at Bradley University, learning how to shave my teenage mustache because a group of American freshmen had collectively decided it was time.',
+        'Then came the bangs.',
+        'Those had to go too.',
+        'The haircut they gave me was objectively terrible.',
+        'But here’s the incredible part:',
+        'It was somehow still better than what I had before.',
+        'The whole thing became a scene. People were hanging around. Everyone was laughing. I was laughing. They were making fun of me. I was probably making fun of them. It was exactly the kind of ridiculous thing that happens when a bunch of freshmen live together for the first time.',
+        'But somewhere in the middle of all that stupidity, something changed.',
+        'I walked away from that terrible hallway haircut with a little more confidence than I’d had before it.',
+        'Maybe I looked slightly more American.',
+        'Maybe losing the bangs and the mustache genuinely helped.',
+        'But I think it was something more than that.',
+        'For the first few weeks in America, I had been so worried about whether I would fit in.',
+        'And here were these guys treating me exactly the way teenage boys treat their friends.',
+        'They weren’t carefully welcoming the international student anymore.',
+        {
+          kind: 'reveal',
+          text: 'They were giving their buddy a terrible haircut because his bangs looked ridiculous.',
+          at: 'after'
+        },
+        'And somehow, that made America feel a little less intimidating.',
+        'I didn’t stay in touch with the other guys after my first year at Bradley. Life took us in different directions.',
+        'But Adam Bradley and Jeff Whiteside are still close friends of mine all these years later.',
+        'And every once in a while, we still laugh about the day they gave a skinny, terrified, bespectacled Indian kid from Zambia his first American haircut.',
+        'They got rid of my mustache.',
+        'They got rid of my bangs.',
+        'And in their own completely ridiculous freshman-year way, they helped make me a little more American.',
+        'Or at least made me look a little more American.',
+        { kind: 'landing', text: 'The rest would take a few more years.' }
+      ],
+      artifact: {
+        label: 'Memory artifact',
+        title: 'One teenage moustache and a set of unintentional bangs',
+        lines: [
+          { label: 'Removed', text: 'In a freshman hallway, by committee.' },
+          { label: 'Equipment', text: 'Whatever was to hand. No barber, no stylist, no supervision.' },
+          { label: 'Result', text: 'Objectively terrible. Still an improvement.' }
+        ]
+      },
+      source: 'Karsh',
+      relatedStories: ['brown-jacket', 'no-futon'],
       dateAdded: '2026-08-27'
     }
   ];
