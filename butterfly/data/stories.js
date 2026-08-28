@@ -5340,6 +5340,106 @@
       source: 'Karsh',
       relatedStories: ['brown-jacket', 'no-futon'],
       dateAdded: '2026-08-27'
+    },
+
+    /* A memorial rather than an anecdote, so the room stays out of its way:
+       one landing, one dedication, and no other effect anywhere in it. */
+    {
+      id: 'for-my-daddy',
+      title: 'For My Daddy',
+      hook: 'Dr. Prakash Chandra Bajpai — a life of healing, wisdom, and love.',
+      year: 1976,
+      approximateDate: 'Circa 1976',
+      strand: 'amma',
+      location: 'Lucknow, India',
+      place: 'lucknow',
+      landmark: {
+        name: 'King George’s Medical College',
+        query: "King George's Medical University Lucknow"
+      },
+      journey: [
+        {
+          id: 'kgmc',
+          place: 'lucknow',
+          flag: '⚕',
+          label: 'King George Medical College, Lucknow',
+          note: 'Newborn jaundice, when the science was still learning to breathe.',
+          url: "https://www.google.com/maps/search/?api=1&query=King+George's+Medical+University+Lucknow"
+        },
+        {
+          id: 'home',
+          place: 'lucknow',
+          flag: '📚',
+          label: 'Home',
+          note: 'Books stacked like promises.'
+        },
+        {
+          id: 'legacy',
+          arrival: true,
+          flag: '✦',
+          label: 'Every child who got to go home',
+          note: 'The part of it that is not in the textbooks'
+        }
+      ],
+      category: 'love',
+      tags: [
+        'india', 'lucknow', 'family', 'medicine', 'paediatrics',
+        'teaching', 'grief', 'loss', 'fathers'
+      ],
+      people: [
+        { name: 'Dr. Prakash Chandra Bajpai', relation: 'my Daddy' },
+        { name: 'Amma', relation: 'his daughter' },
+        { name: 'My Mom', relation: 'who gave me everything alongside him' }
+      ],
+      story: [
+        'My beloved father. My Daddy. The hero of my life.',
+        'He and my Mom didn’t just give me life. They gave me *everything*. Every dream, every answer, every safe place to land. I was only 19 when the earth took my most loved soul from me. And some days, it still feels like I’m 19 and looking for him.',
+        'Dr. Prakash Chandra Bajpai was a pediatrician. But to call him “just a doctor” would be like calling the sky “just blue.”',
+        {
+          text: 'At King George Medical College in Lucknow, he was known for his mind. He studied newborn jaundice when pediatric science in India was still learning how to breathe. He wrote, he researched, he taught. His name earned respect in journals and lecture halls.',
+          at: 'kgmc'
+        },
+        'But the people who knew him knew something else.',
+        'They knew his hands. Gentle.',
+        'They knew his voice. Calm, even in a crisis.',
+        'They knew that he didn’t just treat illnesses. He sat with fear and turned it into hope. Parents left his room lighter than they came in. Children who were too small to remember him still grew up because of him.',
+        {
+          text: 'Outside the hospital, he was discipline and devotion. An ardent reader with books stacked like promises. A man of God with quiet strength. He believed in doing the right thing when no one was watching. He believed in learning until the very end.',
+          at: 'home'
+        },
+        'At home, he was my world.',
+        'A remarkable son. A caring brother. A loyal friend.',
+        'But to me — he was everything.',
+        'He was the bedtime stories and the stern talks and the pride in his eyes when I tried.',
+        'He made our home feel like warmth. Like values. Like unconditional love that didn’t need to be said out loud.',
+        'He was my pillar. My guiding light.',
+        {
+          kind: 'landing',
+          text: 'And even though I was 19 when I lost him, his love never left. It grew up with me.'
+        },
+        'Dr. Bajpai’s legacy lives on in medical textbooks, yes.',
+        { text: 'But more than that, it lives on in every child who got to go home.', at: 'legacy' },
+        'In every student he taught.',
+        'In every heart he touched without asking for anything back.',
+        'I remember him with respect. With love. With a gratitude so deep it aches.',
+        {
+          kind: 'dedication',
+          text: 'My Daddy. Forever.',
+          line: 'A life truly well lived. A soul deeply cherished.'
+        }
+      ],
+      artifact: {
+        label: 'Memory artifact',
+        title: 'Books stacked like promises',
+        lines: [
+          { label: 'Read', text: 'Until the very end. He believed in learning until the very end.' },
+          { label: 'Written', text: 'On newborn jaundice, when paediatric science in India was still learning how to breathe.' },
+          { label: 'Left behind', text: 'In the textbooks. And in every child who got to go home.' }
+        ]
+      },
+      source: 'Amma',
+      relatedStories: ['too-short-to-stop', 'sunil'],
+      dateAdded: '2026-08-27'
     }
   ];
 
