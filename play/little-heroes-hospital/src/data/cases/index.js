@@ -25,7 +25,7 @@ export const TRACKS = {
     id: 'toy', name: 'Toy Doctor', verb: 'Toy Doctor', icon: '🧸',
     blurb: 'Mend much-loved toys.', tint: '#ff9ec4',
     room: 'toyshop', cases: TOY_CASES,
-    previewPatients: ['🧸', '🐰', '🪆', '🐘', '🦕', '🐧'],
+    previewPatients: ['🧸', '🤖', '🦸', '🪆', '🏎️', '🩰'],
   },
 };
 

@@ -198,8 +198,26 @@ export const TOOLS = {
   },
   fluffbrush: {
     id: 'fluffbrush', name: 'Fluff Brush', icon: '🪥', tint: '#3fd0a6',
-    blurb: 'Teases flattened fur back into a proper fluff.',
+    blurb: 'Teases flattened fur back into a proper fluff — and doll hair too.',
     demo: 'Brush, brush — squashed fur springs up again.',
+    sound: 'whoosh',
+  },
+  screwdriver: {
+    id: 'screwdriver', name: 'Little Screwdriver', icon: '🪛', tint: '#8fa6c4',
+    blurb: 'Opens a battery hatch, and tightens a joint that has gone wobbly.',
+    demo: 'Half a turn one way opens it, half a turn back closes it.',
+    sound: 'select', readout: { kind: 'text', label: 'Inside the hatch' },
+  },
+  battery: {
+    id: 'battery', name: 'Fresh Batteries', icon: '🔋', tint: '#5fe3c0',
+    blurb: 'Most toys that have "stopped working" have simply run out.',
+    demo: 'Old ones out, new ones in the right way round — and the lights come on.',
+    sound: 'good', readout: { kind: 'text', label: 'Power' },
+  },
+  oil: {
+    id: 'oil', name: 'Oil Can', icon: '🛢️', tint: '#ffc844',
+    blurb: 'One drop frees a stiff joint or a wheel that has stopped spinning.',
+    demo: 'A single drop, a wiggle, and it turns freely again.',
     sound: 'whoosh',
   },
 };

@@ -54,9 +54,21 @@ Any `{name}` token inside step text is replaced with the patient's name, and
 humans → `head eye ear mouth chest tummy arm hand back knee foot`
 animals *and toys* → `head eye ear mouth nose chest tummy back paw leg wing tail fur`
 
-Soft toys are rendered by the same parametric creature as the animals (they are
-flagged `toy: true` in `ui/creature.js`, which swaps the eyes for sewn-on
-buttons and adds a seam and a patch), so they use the animal hotspots.
+Toys are their own thing. `ui/toy.js` holds every toy the game knows about and
+routes each to one of five body plans — **plush** (the parametric creature with
+`toy: true`, which swaps in sewn-on button eyes, a seam and a patch),
+**figure**, **robot**, **doll** and **car**. A toy car has no `paw` and an
+action figure has no `wheel`, so each entry in `TOYS` declares the hotspots its
+body plan actually has, and the validator checks a case's `target` against that
+list rather than one shared vocabulary:
+
+| family | hotspots |
+|---|---|
+| `plush` | `head eye ear mouth nose chest tummy back paw leg wing tail fur` |
+| `figure` | `head eye mouth chest tummy back arm hand leg foot joint` |
+| `robot` | `head eye mouth chest panel back arm hand leg foot antenna` |
+| `doll` | `head eye mouth hair chest tummy back arm hand leg foot` |
+| `car` | `roof eye mouth chest back wheel light` |
 
 ## Difficulty
 

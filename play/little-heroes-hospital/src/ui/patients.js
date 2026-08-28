@@ -7,11 +7,17 @@
  */
 import { humanSVG } from './human.js';
 import { creatureSVG, SPECIES } from './creature.js';
+import { toySVG, TOYS, isToy } from './toy.js';
 import { raw } from '../core/dom.js';
 
 export function patientMarkup(patient, mood = 'happy') {
   if (patient.kind === 'human') {
     return humanSVG({ ...(patient.look || {}), mood });
+  }
+  // Toys come in five body plans — plush, action figure, robot, doll and car —
+  // so they route through their own renderer rather than the animal one.
+  if (isToy(patient.kind)) {
+    return toySVG({ kind: patient.kind, mood, ...(patient.look || {}) });
   }
   return creatureSVG({ species: patient.kind, mood, ...(patient.look || {}) });
 }
@@ -31,10 +37,12 @@ export function setMood(el, patient, mood) {
 /** The noise this patient makes — used for reactions. */
 export function patientSound(patient) {
   if (patient.kind === 'human') return 'squeak';
+  if (isToy(patient.kind)) return TOYS[patient.kind].sound || 'squeak';
   return SPECIES[patient.kind]?.sound || 'squeak';
 }
 
 export function patientEmoji(patient) {
   if (patient.kind === 'human') return patient.emoji || '🧒';
+  if (isToy(patient.kind)) return TOYS[patient.kind].emoji || '🧸';
   return SPECIES[patient.kind]?.emoji || '🐾';
 }

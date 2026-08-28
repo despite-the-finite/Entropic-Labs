@@ -57,9 +57,10 @@ export const ROOMS = {
     blurb: 'Where much-loved toys are mended and sent home.',
     action: 'levels:toy', wide: true,
     props: [
-      { emoji: '🧸', x: 26, y: 66, size: 32, anim: 'bob' },
-      { emoji: '🪡', x: 58, y: 58, size: 24, anim: 'sway' },
-      { emoji: '🧶', x: 82, y: 68, size: 26 },
+      { emoji: '🧸', x: 22, y: 66, size: 30, anim: 'bob' },
+      { emoji: '🤖', x: 46, y: 62, size: 26 },
+      { emoji: '🚗', x: 68, y: 68, size: 26 },
+      { emoji: '🪛', x: 88, y: 60, size: 22, anim: 'sway' },
     ],
   },
   xray: {
