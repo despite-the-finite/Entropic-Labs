@@ -5438,7 +5438,51 @@
         ]
       },
       source: 'Amma',
+      consequences: ['my-dearest-daddy'],
       relatedStories: ['too-short-to-stop', 'sunil'],
+      dateAdded: '2026-08-27'
+    },
+
+    /* The letter itself, fifty years on. Kept as its own memory rather than
+       folded into the one above, so a reader can tell what she wrote to him
+       from what she wrote about him. No place: nobody has recorded where it
+       was written, and the room would rather say so. */
+    {
+      id: 'my-dearest-daddy',
+      title: 'My Dearest Daddy',
+      hook: 'A letter to a father who has been gone since she was nineteen.',
+      year: 2026,
+      approximateDate: '2026',
+      strand: 'amma',
+      category: 'love',
+      tags: [
+        'family', 'fathers', 'grief', 'loss', 'letters', 'faith', 'india'
+      ],
+      people: [
+        { name: 'Dr. Prakash Chandra Bajpai', relation: 'her Daddy' },
+        { name: 'Amma', relation: 'his little girl' }
+      ],
+      story: [
+        'My dearest Daddy',
+        'Not a day goes by when I don’t feel your presence in my heart.',
+        'You were not just my father — you were my strength, my guide, my greatest blessing. The love you gave me, the values you instilled in me, and the warmth of your presence are treasures I carry with me every single day.',
+        'I was always your little girl, your most loved one, and that is my greatest pride. The bond we shared is something words can never fully express — it lives quietly and deeply within me.',
+        'I remember your discipline, your wisdom, your love for reading, and your unwavering faith in God. You taught me not just how to live, but how to live with dignity, kindness, and purpose.',
+        'To the world, you were a renowned and respected doctor.',
+        'To so many, you were a healer and a guiding light.',
+        {
+          kind: 'landing',
+          text: 'But to me… you were simply my Daddy — my safe place, my biggest support, my everything.'
+        },
+        'I still feel your guidance in my life, your blessings in my journey, and your love surrounding me always.',
+        'Thank you for loving me the way you did.',
+        'Thank you for being the father that you were.',
+        'I hope I continue to make you proud.',
+        'You will forever live in my heart, in my thoughts, and in every prayer I say.',
+        { kind: 'dedication', text: 'Love you Daddy' }
+      ],
+      source: 'Amma',
+      relatedStories: ['my-dearest-sons'],
       dateAdded: '2026-08-27'
     }
   ];
