@@ -562,6 +562,14 @@
       lon: -107.29
     },
     {
+      id: 'mumbai',
+      name: 'Mumbai',
+      region: 'Maharashtra',
+      country: 'India',
+      lat: 19.08,
+      lon: 72.88
+    },
+    {
       id: 'taylorville',
       name: 'Taylorville',
       region: 'Illinois',
@@ -5599,6 +5607,204 @@
       },
       source: 'Amma',
       relatedStories: ['gin-joints', 'damn-google'],
+      dateAdded: '2026-09-04'
+    },
+
+    {
+      id: 'patient-zero-ish',
+      title: 'Patient Zero-ish',
+      hook: 'A work trip to Mumbai in early March 2020, a man coughing on the flight home, and a theory that does not survive contact with a calendar.',
+      year: 2020,
+      approximateDate: 'March 2020',
+      strand: 'karsh',
+      location: 'Mumbai, India',
+      place: 'mumbai',
+      landmark: {
+        name: 'Powai, Mumbai',
+        query: 'Powai Mumbai Maharashtra India'
+      },
+      journey: [
+        {
+          id: 'denver',
+          place: 'denver',
+          flag: '🏢',
+          label: 'Denver, early March 2020',
+          note: 'The trip was already booked. So we went.'
+        },
+        {
+          id: 'powai',
+          place: 'mumbai',
+          flag: '🇮🇳',
+          label: 'A hotel in Powai, Mumbai',
+          note: 'Musicians, dancers, and a buffet the size of a small country.',
+          url: 'https://www.google.com/maps/search/?api=1&query=Powai+Mumbai+Maharashtra+India'
+        },
+        {
+          id: 'buffet',
+          place: 'mumbai',
+          flag: '🍽',
+          label: 'The same buffet, one week later',
+          note: 'Two tables occupied. Ours was one of them.'
+        },
+        {
+          id: 'home',
+          place: 'denver',
+          flag: '✈',
+          label: 'A direct flight home',
+          note: 'Somewhere in front of me, a man hacking his lungs out.'
+        },
+        {
+          id: 'test',
+          arrival: true,
+          flag: '✦',
+          label: 'One antibody test, June 2020',
+          note: 'Negative. The title is being kept anyway.'
+        }
+      ],
+      category: 'adventure',
+      tags: [
+        'colorado', 'denver', 'india', 'mumbai', 'travel', 'covid',
+        'pandemic', 'work', 'timing', 'funny memories'
+      ],
+      people: [
+        { name: 'Karsh', relation: 'me, holding my breath' },
+        { name: 'A few coworkers from Denver', relation: 'routed home through Germany' },
+        { name: 'The gentleman two rows up', relation: 'the world’s most unfortunately timed cough' }
+      ],
+      story: [
+        'I’m not saying I was Colorado’s Patient Zero.',
+        'I’m just saying I have a story.',
+        'In early March 2020, COVID still somehow felt like something happening somewhere else.',
+        'We were hearing more about this strange new virus spreading around the world. Europe was becoming increasingly concerning, and every day brought another headline, another country, another warning.',
+        'But there was still optimism that maybe it wouldn’t become as bad as everyone feared.',
+        {
+          text: 'Right in the middle of all this, a few coworkers from Denver and I had a pre-planned work trip to Mumbai to visit our office in India.',
+          at: 'denver'
+        },
+        { kind: 'beat', text: 'So we went.' },
+        'Looking back, that feels insane.',
+        'But this was a very particular moment in history. COVID existed. We knew about it. We talked about it.',
+        'We just hadn’t changed our lives around it yet.',
+        'This was pre-lockdown. Pre-masks. Pre-standing six feet apart. Pre-Zoom meetings. Pre-hand sanitizer becoming a form of currency.',
+        'The signs were there.',
+        'We just didn’t know how quickly everything was about to change.',
+        {
+          text: 'When we arrived in Mumbai, we stayed at a beautiful hotel in Powai. The place was absolutely alive.',
+          at: 'powai'
+        },
+        'The lobby bustled with travelers from all over the world. There were cultural exhibits, musicians, dancers, and a state-of-the-art gym with a personal trainer available for guests.',
+        'And then there was the buffet.',
+        'This wasn’t some sad hotel breakfast with scrambled eggs sitting under a heat lamp.',
+        'This thing was enormous.',
+        'There were stations serving Indian food and cuisines from around the world, with talented chefs preparing dishes right in front of you. Every morning and evening, the restaurant was packed with people talking, eating, laughing, and moving between stations.',
+        'It felt like the world was completely normal.',
+        'Then, over the course of one week, we watched it change.',
+        'Every day there seemed to be fewer people. The news became more alarming. Europe was becoming a major hotspot and countries were beginning to impose serious restrictions.',
+        'India and the U.S. still had relatively few known cases, so somehow it still felt distant.',
+        'We remained optimistic.',
+        'Mostly.',
+        {
+          text: 'Because by the end of our stay, that enormous hotel buffet — the one that had been packed when we arrived — was almost empty.',
+          at: 'buffet'
+        },
+        'One evening, I looked around and realized there were basically two tables occupied in the entire restaurant.',
+        'Ours was one of them.',
+        'That was the moment it started feeling different.',
+        { kind: 'beat', text: 'This was not good.' },
+        'There was another complication.',
+        'My coworkers and I weren’t taking the same route home. Their flights connected through Germany, but because I was traveling as an Indian national, I needed a transit visa that I didn’t have. The trip had been booked too late for me to get one.',
+        'So they went through Germany.',
+        { text: 'I booked a direct flight home.', at: 'home' },
+        'And that flight is where my Patient Zero theory begins.',
+        'Somewhere in front of me was a gentleman who was coughing.',
+        'Not a little cough.',
+        'Not the polite ahem-ahem, excuse me kind of cough.',
+        'This man was hacking his lungs out.',
+        'And remember: this was early March 2020.',
+        'Nobody around us was wearing masks. There wasn’t widespread COVID testing. Hand sanitizer hadn’t yet become something everyone carried everywhere.',
+        'We knew enough about the virus to be terrified of someone coughing — but not enough to know what we were supposed to do about it.',
+        'So everyone around this poor guy basically adopted the same medical strategy:',
+        { kind: 'beat', text: 'Hold your breath for the entire flight.' },
+        'Obviously, that wasn’t particularly effective.',
+        'But emotionally?',
+        'It felt like our best option.',
+        'We made it back to Colorado just in time.',
+        'Not because ours were literally the last flights into the country, but because almost immediately afterward, international travel began collapsing around us.',
+        'On March 11, COVID-19 was officially declared a pandemic. Major U.S. restrictions on travel from Europe were announced that same day. Flights disappeared. Borders tightened. Offices emptied. Schools closed. Restaurants shut down.',
+        'The world we had just traveled through began closing its doors.',
+        'My coworkers and I kept talking about how lucky we had been with the timing. We had traveled during this bizarre little window when international travel was still functioning somewhat normally and returned just before everything changed.',
+        'It felt like we had slipped through a rapidly closing door.',
+        'Soon everyone at work was working from home.',
+        'And then I got sick.',
+        'Really sick.',
+        'I had a terrible fever.',
+        'A cough.',
+        'And, most strangely, I lost my sense of smell.',
+        'At the time, losing your sense of smell wasn’t yet the giant flashing neon sign for COVID that it would later become. Testing wasn’t readily available either.',
+        'So I didn’t go to urgent care or a hospital.',
+        'I stayed home, quarantined myself, and rode it out.',
+        'Eventually, I got better.',
+        'But I kept thinking about that flight.',
+        'The man coughing his lungs out.',
+        'The timing.',
+        'The fever. The cough. The loss of smell.',
+        'I became convinced I’d had COVID before anybody really knew how widely it was spreading around Colorado.',
+        'In my head, the evidence was overwhelming.',
+        'I was Patient Zero.',
+        'There was just one minor problem with my theory.',
+        {
+          kind: 'reveal',
+          text: 'Colorado announced its first confirmed COVID cases on March 5, 2020.'
+        },
+        'While I was still on my trip.',
+        { kind: 'beat', text: 'Well, shit.' },
+        'Still, I wasn’t going to let a minor inconvenience like chronological reality completely ruin a good theory.',
+        {
+          text: 'A few months later, around June, my company began slowly bringing people back into the office. I volunteered to be part of the second wave returning.',
+          at: 'test'
+        },
+        {
+          kind: 'plan',
+          lead: 'They gave us the full 2020 survival kit:',
+          items: [
+            'A cloth mask.',
+            'Hand sanitizer.',
+            'An N95.',
+            'And an antibody testing kit.'
+          ]
+        },
+        'It felt incredibly futuristic at the time.',
+        'I took the antibody test.',
+        { kind: 'beat', text: 'Negative.' },
+        { kind: 'beat', text: 'Well, shit.' },
+        'There went the rest of my Patient Zero story.',
+        'Maybe I never had COVID.',
+        'Maybe I just happened to get another illness immediately after international travel during the beginning of a global pandemic — one that somehow also made me lose my sense of smell.',
+        'Maybe I did have COVID and the antibodies weren’t detectable by the time I tested.',
+        'Maybe that guy on the airplane just had the world’s most unfortunately timed cough.',
+        'There’s no way for me to know.',
+        'And there probably never will be.',
+        'So, for the historical record, I’d like to make one thing very clear:',
+        'I have zero medical evidence that I was Colorado’s first COVID patient.',
+        'In fact, I now have fairly compelling chronological evidence that I definitely wasn’t.',
+        'But deep down inside?',
+        'I still think I was Patient Zero-ish.',
+        {
+          kind: 'landing',
+          text: 'And until somebody builds a time machine and sticks a swab up my nose, I’m keeping the title.'
+        }
+      ],
+      artifact: {
+        label: 'Memory artifact',
+        title: 'One antibody test, June 2020',
+        lines: [
+          { label: 'Issued with', text: 'A cloth mask, hand sanitizer and an N95. It felt futuristic.' },
+          { label: 'Result', text: 'Negative.' },
+          { label: 'Standing', text: 'Chronologically impossible. Emotionally unresolved.' }
+        ]
+      },
+      source: 'Karsh',
+      relatedStories: ['damn-google', 'brown-jacket'],
       dateAdded: '2026-09-04'
     }
   ];
