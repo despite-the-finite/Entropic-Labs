@@ -10,20 +10,33 @@ import { h, clear, wait, pick } from '../core/dom.js';
 import { sfx, play } from '../core/audio.js';
 import { confetti, sparkle, floatText, hearts, toast, flash } from '../core/fx.js';
 import { backdrop } from '../ui/backdrop.js';
-import { patientElement, setMood, patientSound } from '../ui/patients.js';
-import { SPECIES } from '../ui/creature.js';
+import { patientElement, setMood, patientSound, patientEmoji } from '../ui/patients.js';
+import { TOYS, isToy } from '../ui/toy.js';
 import { isLittle } from '../core/state.js';
 import { fill } from './text.js';
 import { say as speak, sayAll, whenDone as speechDone, stop as stopSpeaking } from '../core/voice.js';
 import { STEP_RUNNERS } from './steps/index.js';
+
+/** What {species} reads as in a case's text. */
+function speciesLabelFor(patient) {
+  if (patient.kind === 'human') return 'child';
+  if (isToy(patient.kind)) return TOY_LABELS[TOYS[patient.kind].family] || 'toy';
+  return patient.kind;
+}
+
+const TOY_LABELS = {
+  plush: 'soft toy', figure: 'action figure', robot: 'robot', doll: 'doll', car: 'toy car',
+};
 
 export function createCaseRunner(caseDef, { onFinish, onQuit }) {
   /* --- resolve the patient (some cases pick from a pool at random) ------ */
   const chosen = caseDef.patientPool ? pick(caseDef.patientPool) : caseDef.patient;
   const patient = {
     ...chosen,
-    speciesLabel: chosen.kind === 'human' ? 'child' : chosen.kind,
-    emoji: chosen.emoji || SPECIES[chosen.kind]?.emoji || '🧒',
+    speciesLabel: speciesLabelFor(chosen),
+    // patientEmoji knows about people, animals and all five toy families —
+    // looking it up in SPECIES alone left every robot and toy car labelled 🧒.
+    emoji: chosen.emoji || patientEmoji(chosen),
   };
 
   /* --- running tally ---------------------------------------------------- */

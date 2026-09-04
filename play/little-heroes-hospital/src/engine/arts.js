@@ -257,6 +257,27 @@ export const SCAN_ART = {
     </g>`,
     'inside the tummy — all soft… except one bit'),
 
+  'robot-inside': () => xrayFrame(`
+    <rect x="52" y="44" width="196" height="118" rx="10" fill="#dbe9ff" opacity=".10"/>
+    <g stroke="#8fc4ff" stroke-width="3" fill="none" opacity=".7">
+      <path d="M 74 132 q 30 -22 62 -6 q 34 16 62 -14"/>
+      <path d="M 74 108 q 40 -28 76 -6 q 30 18 56 -8"/>
+    </g>
+    <g fill="#cfe0f7" opacity=".7">
+      <rect x="82" y="60" width="26" height="18" rx="3"/>
+      <rect x="196" y="62" width="22" height="16" rx="3"/>
+      <circle cx="150" cy="70" r="10"/>
+    </g>
+    <g transform="translate(150 116)">
+      <rect x="-34" y="-15" width="68" height="30" rx="5" fill="#f2f8ff"/>
+      <rect x="34" y="-6" width="7" height="12" rx="2" fill="#f2f8ff"/>
+      <text x="-18" y="6" font-size="15" fill="#0f1c38" font-family="Baloo 2, sans-serif">+ —</text>
+    </g>
+    <g class="art-flag">
+      <rect x="106" y="94" width="88" height="44" rx="8" fill="none" stroke="#ff6b6b" stroke-width="3" stroke-dasharray="7 7"/>
+    </g>`,
+    'inside the hatch — one battery, and it has leaked'),
+
   bacteria: () => microFrame(`
     ${[[110, 60], [140, 74], [168, 62], [96, 116], [126, 132], [156, 122], [196, 96], [214, 122]]
       .map(([x, y], i) => `<g>
