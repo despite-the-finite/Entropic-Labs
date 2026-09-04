@@ -555,6 +555,13 @@
       lon: -74.41
     },
     {
+      id: 'wyoming',
+      name: 'Wyoming',
+      country: 'United States',
+      lat: 43.08,
+      lon: -107.29
+    },
+    {
       id: 'taylorville',
       name: 'Taylorville',
       region: 'Illinois',
@@ -5487,6 +5494,112 @@
       source: 'Amma',
       relatedStories: ['my-dearest-sons'],
       dateAdded: '2026-08-27'
+    },
+
+    {
+      id: 'bridging-the-gap',
+      title: 'Bridging the Gap',
+      hook: 'Lusaka to Wyoming, by way of a woman all three of us turned out to know.',
+      year: 2026,
+      approximateDate: 'A Friday morning in 2026',
+      strand: 'amma',
+      location: 'Lusaka, Zambia',
+      place: 'lusaka',
+      landmark: {
+        name: 'Lusaka Golf Club',
+        query: 'Lusaka Golf Club Lusaka Zambia'
+      },
+      journey: [
+        {
+          id: 'lusaka',
+          place: 'lusaka',
+          flag: '♠',
+          label: 'Lusaka Golf Club, Friday morning',
+          note: 'The cards, the coffee, the familiar faces.',
+          url: 'https://www.google.com/maps/search/?api=1&query=Lusaka+Golf+Club+Lusaka+Zambia'
+        },
+        {
+          id: 'wyoming',
+          place: 'wyoming',
+          flag: '🇺🇸',
+          label: 'Wyoming',
+          note: 'Where the two new faces had come from.'
+        },
+        {
+          id: 'denver',
+          place: 'denver',
+          flag: '🃏',
+          label: 'The Denver Tech Centre',
+          note: 'Twice, with a lovely lady named Robin.',
+          url: 'https://www.google.com/maps/search/?api=1&query=Denver+Tech+Center+Denver+Colorado'
+        },
+        {
+          id: 'table',
+          arrival: true,
+          flag: '✦',
+          label: 'One bridge table',
+          note: 'Reached from both sides of the world'
+        }
+      ],
+      category: 'beginnings',
+      tags: [
+        'zambia', 'lusaka', 'bridge', 'cards', 'denver', 'wyoming',
+        'serendipity', 'friendship', 'small world'
+      ],
+      people: [
+        { name: 'Amma', relation: 'Friday mornings, without fail' },
+        { name: 'Dianne', relation: 'visiting from Wyoming' },
+        { name: 'Joe', relation: 'visiting from Wyoming' },
+        { name: 'Robin', relation: 'the partner in Denver none of us had mentioned yet' }
+      ],
+      story: [
+        { text: 'Friday mornings at the Lusaka Golf Club are sacred to me. The cards, the coffee, the familiar faces, and the gentle rhythm of a bridge game. But this Friday was different.', at: 'lusaka' },
+        'I walked in and spotted two new faces at the tables. New faces are always an invitation in my book, so my curiosity got the better of me. I introduced myself.',
+        '“Hi, I’m…”',
+        { text: '“I’m Dianne, and this is Joe,” they smiled. “We’re visiting from Wyoming.”', at: 'wyoming' },
+        '“Wyoming!” I said. “That’s close to Denver, isn’t it?”',
+        { text: 'Dianne nodded. “Yes, just a few hours away. Have you heard of Denver?”', at: 'denver' },
+        'I lit up. “Heard of it? I *love* Denver! That’s where my son lives with his family.”',
+        'That’s when their eyes widened. Suddenly we weren’t strangers from opposite sides of the world anymore. We were parents, bridge players, people with a shared love for a city 14,000 km away.',
+        'The conversation flowed. I told them, “You know, I’ve even played bridge at the Denver Tech Centre. Twice! With a lovely lady named Robin. We’d never met before, but we clicked and played so well together.”',
+        'Joe and Dianne looked at each other. “We play at the Tech Centre too,” Dianne said.',
+        'A little spark went off in my head. “Wait… I think I have a photo of Robin!”',
+        'I dove into my phone — through the “zillions” of photos we all have — scrolling, searching, hoping. And there she was. Robin, smiling back at me from a Denver tournament.',
+        'I held my phone out.',
+        {
+          kind: 'reveal',
+          text: 'Dianne and Joe leaned in, then burst out laughing. “We know her! We’ve played with Robin so many times!”'
+        },
+        { text: 'In that moment, Lusaka and Wyoming collapsed into one small room. A game of cards in Zambia had led me straight back to a game of cards in Colorado, through a woman we all knew.', at: 'table' },
+        {
+          kind: 'image',
+          src: 'img/trails/lusaka-bridge.jpg',
+          alt: 'Amma, Dianne and Joe standing together and smiling in front of a glass cabinet of golf trophies, with a wooden honours board on the wall behind them.',
+          caption: 'Amma, Dianne and Joe — Lusaka Golf Club.',
+          width: 1249,
+          height: 885,
+          mount: 'photo'
+        },
+        'We exchanged numbers, made promises, and laughed about how tiny the world really is. “Next time you’re in the US, we’re playing bridge again,” they said. “And next time you’re here,” I replied, “you’ll have a partner at Lusaka Golf Club.”',
+        'Some days the world feels very big.',
+        { kind: 'landing', text: 'Other days, like today, it feels like one big bridge table.' },
+        {
+          kind: 'dedication',
+          text: 'It really does show how bridge — and kindness — can bridge countries too ❤️'
+        }
+      ],
+      artifact: {
+        label: 'Memory artifact',
+        title: 'A photograph of Robin, on a phone in Lusaka',
+        lines: [
+          { label: 'Found', text: 'Among the zillions, after some scrolling.' },
+          { label: 'Taken', text: 'At a tournament in Denver, 14,000 km away.' },
+          { label: 'Recognised', text: 'Instantly, by two people from Wyoming.' }
+        ]
+      },
+      source: 'Amma',
+      relatedStories: ['gin-joints', 'damn-google'],
+      dateAdded: '2026-09-04'
     }
   ];
 
