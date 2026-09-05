@@ -1,0 +1,131 @@
+/* ==========================================================================
+   Little Heroes Hospital — reset, layout primitives & shared motion
+   Every colour, font, radius and shadow now lives in tokens.css, which is
+   loaded first. This file carries only the things a token cannot express:
+   the reset, the screen shell, the fluid sizing ramp, and the motion this
+   game needs on top of the design's library.
+   ========================================================================== */
+
+:root {
+  /* The design fixes a 1280x800 stage; the game also has to hold up on a
+     phone. Each step is a clamp between the design's label floor and the
+     design's size for that role, so nothing ever renders below 14px. */
+  --step-0: clamp(var(--lh-size-label), 0.6vw + 12px, var(--lh-size-body));
+  --step-1: clamp(var(--lh-size-body), 1.1vw + 13px, var(--lh-size-body-lg));
+  --step-2: clamp(21px, 2.2vw + 12px, var(--lh-size-h3));
+  --step-3: clamp(28px, 3.4vw + 14px, var(--lh-size-h1));
+  --step-4: clamp(36px, 6.4vw + 12px, var(--lh-size-hero));
+
+  --safe: env(safe-area-inset-bottom, 0px);
+
+  /* The game commits to one bright, sunny world rather than following the
+     host's theme. Declaring the scheme keeps built-in controls — the
+     microscope's focus dial, chiefly — light to match, wherever it is
+     embedded. Every colour is painted explicitly for the same reason. */
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  min-height: 100dvh;   /* holds up when embedded in someone else's document */
+  overscroll-behavior: none;
+}
+
+/* tokens.css already sets the family, weight, colour and ground. */
+body {
+  font-size: var(--step-0);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  overflow: hidden;
+}
+
+h1, h2, h3, h4, .lh-display {
+  font-family: var(--lh-font-display);
+  font-weight: 800;
+  letter-spacing: .2px;
+  margin: 0;
+  line-height: var(--lh-lh-tight);
+}
+
+p { text-wrap: pretty; }
+
+button { font-family: inherit; }
+
+#app {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+#fx {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 900;
+  overflow: hidden;
+}
+
+/* Every screen fills the viewport and scrolls internally, so a child can
+   never end up on a page with no way back. */
+.lh-screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: lh-screen-in .38s cubic-bezier(.2,.9,.3,1.15) both;
+}
+
+.lh-screen__scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: calc(24px + var(--safe));
+}
+
+@keyframes lh-screen-in {
+  from { opacity: 0; transform: translateY(18px) scale(.985); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* --- motion this game needs on top of the design's library --------------- */
+/* tokens.css owns lh-bob, lh-breathe, lh-sway, lh-blink, lh-wag, lh-twinkle,
+   lh-drift, lh-pulse, lh-pop, lh-shine, lh-rise, lh-spin and lh-letter. */
+@keyframes lh-bob-slow  { 0%,100% { transform: translateY(0) }   50% { transform: translateY(-5px) } }
+@keyframes lh-wiggle    { 0%,100% { transform: rotate(0) } 25% { transform: rotate(-6deg) } 75% { transform: rotate(6deg) } }
+@keyframes lh-glow-ring { 0%,100% { box-shadow: 0 0 0 0 rgba(255,216,77,.85) } 50% { box-shadow: 0 0 0 16px rgba(255,216,77,0) } }
+
+/* The design's lh-drift moves a prop across its own box; scenery that
+   crosses the whole scene — clouds, birds, the helicopter — uses this. */
+@keyframes lh-drift-vw  { from { transform: translateX(-20vw) } to { transform: translateX(120vw) } }
+
+/* The sun's halo breathing. */
+@keyframes lh-halo      { 0%,100% { opacity: .5 } 50% { opacity: 1 } }
+
+/* A vehicle that pulls up, waits, and is gone again. */
+@keyframes lh-drive-in  { 0% { transform: translateX(-60%) } 22%, 100% { transform: translateX(0) } }
+
+.lh-bob { animation: lh-bob 2.6s ease-in-out infinite; }
+
+/* Respect reduced-motion: keep the game readable, drop the ambience.
+   tokens.css stills the animations; transitions are this file's to calm. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: .05s !important; }
+}
+
+/* Utility */
+.lh-center { display: flex; align-items: center; justify-content: center; }
+.lh-col { display: flex; flex-direction: column; }
+.lh-row { display: flex; align-items: center; }
+.lh-gap-s { gap: 8px } .lh-gap-m { gap: 16px } .lh-gap-l { gap: 26px }
+.lh-wrap { flex-wrap: wrap; }
+.lh-hidden { display: none !important; }
+.lh-sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
