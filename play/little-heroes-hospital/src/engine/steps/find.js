@@ -54,7 +54,7 @@ export function runFind(step, ctx) {
       sfx.nudge();
       node.classList.add('find-spot--wobble');
       setTimeout(() => node.classList.remove('find-spot--wobble'), 500);
-      toast(DECOY_QUIPS[Math.floor(Math.random() * DECOY_QUIPS.length)], { icon: item.icon });
+      toast(DECOY_QUIPS[Math.floor(Math.random() * DECOY_QUIPS.length)], {});
       return;
     }
 
@@ -64,7 +64,7 @@ export function runFind(step, ctx) {
     play('select');
     found++;
     numEl.textContent = String(found);
-    counter.classList.remove('chip--bump'); void counter.offsetWidth; counter.classList.add('chip--bump');
+    counter.classList.remove('is-bumping'); void counter.offsetWidth; counter.classList.add('is-bumping');
 
     if (item.label) ctx.say('narrator', `${step.found || 'Found it!'} ${item.label}`);
 

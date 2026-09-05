@@ -8,9 +8,10 @@
  */
 import { h, clear, wait, pick } from '../core/dom.js';
 import { sfx, play } from '../core/audio.js';
-import { confetti, sparkle, floatText, hearts, toast, flash } from '../core/fx.js';
+import { confetti, sparkle, floatText, hearts, toast, flash, starBurst } from '../core/fx.js';
 import { backdrop } from '../ui/backdrop.js';
-import { patientElement, setMood, patientSound, patientEmoji } from '../ui/patients.js';
+import { icon } from '../ui/icons.js';
+import { patientElement, patientMarkup, setMood, patientSound, patientEmoji } from '../ui/patients.js';
 import { TOYS, isToy } from '../ui/toy.js';
 import { isLittle } from '../core/state.js';
 import { fill } from './text.js';
@@ -51,18 +52,18 @@ export function createCaseRunner(caseDef, { onFinish, onQuit }) {
   patientWrap.appendChild(patientEl);
 
   const overlay = h('div', { class: 'case-overlay' });
-  const bubbleLane = h('div', { class: 'bubble-lane' });
+  const bubbleLane = h('div', { class: 'lh-bubble-lane' });
   const scene = h('div', { class: 'case-scene' }, patientWrap, overlay, bubbleLane);
   stage.appendChild(scene);
 
   const nameTag = h('div', { class: 'case-nametag' },
-    h('span', { class: 'case-nametag__emoji' }, patient.emoji),
+    h('span', { class: 'case-nametag__art', html: patientMarkup(patient, 'happy') }),
     h('span', {}, patient.name));
   stage.appendChild(nameTag);
 
   const promptEl = h('div', { class: 'panel__prompt' });
   const bodyEl = h('div', { class: 'panel__body' });
-  const teachEl = h('div', { class: 'panel__teach hidden' });
+  const teachEl = h('div', { class: 'panel__teach lh-hidden' });
   const panel = h('div', { class: 'case-panel' }, promptEl, bodyEl, teachEl);
 
   const dots = h('div', { class: 'case-dots' });
@@ -77,21 +78,21 @@ export function createCaseRunner(caseDef, { onFinish, onQuit }) {
 
   function say(who, text, { translate = null, mood = null, sfxName = null, hold = false } = {}) {
     const spoken = fill(text, patient);
-    const bubble = h('div', { class: `bubble bubble--${who}` }, spoken);
+    const bubble = h('div', { class: `lh-bubble lh-bubble--${who}` }, spoken);
     // Animal patients get their line then the translation. Join them without
     // doubling punctuation — "Woof!." is a stumble when it is read aloud.
     speak(translate ? `${spoken.replace(/[\s.]+$/, '')}. ${fill(translate, patient)}` : spoken);
-    if (who === 'narrator' || who === 'nurse') bubble.classList.add('bubble--thought');
+    if (who === 'narrator' || who === 'nurse') bubble.classList.add('lh-bubble--thought');
     bubbleLane.appendChild(bubble);
     if (translate) {
-      bubbleLane.appendChild(h('div', { class: 'bubble bubble--translate' },
-        h('span', { class: 'bubble__tkey' }, '🗣️ '), fill(translate, patient)));
+      bubbleLane.appendChild(h('div', { class: 'lh-bubble lh-bubble--translate' },
+        h('span', { class: 'lh-bubble__tkey' }, ''), fill(translate, patient)));
     }
     if (mood) setPatientMood(mood);
     if (sfxName) play(sfxName);
     // Keep the lane readable — only the current line and the one before it.
     while (bubbleLane.children.length > 2) bubbleLane.firstChild.remove();
-    if (!hold) setTimeout(() => bubble.classList.add('bubble--settled'), 40);
+    if (!hold) setTimeout(() => bubble.classList.add('lh-bubble--settled'), 40);
     return bubble;
   }
 
@@ -100,9 +101,9 @@ export function createCaseRunner(caseDef, { onFinish, onQuit }) {
   function setPatientMood(mood) { setMood(patientEl, patient, mood); }
 
   function react(kind = 'happy') {
-    patientEl.classList.remove('react-happy', 'react-wiggle', 'react-shy');
+    patientEl.classList.remove('lh-react--happy', 'lh-react--wiggle', 'lh-react--shy');
     void patientEl.offsetWidth; // restart the animation
-    patientEl.classList.add(`react-${kind}`);
+    patientEl.classList.add(`lh-react--${kind}`);
   }
 
   function hotspot(name) {
@@ -112,28 +113,30 @@ export function createCaseRunner(caseDef, { onFinish, onQuit }) {
   function award({ stars = 0, kindness = 0, coins = 0 }, from = null) {
     if (stars) {
       tally.stars += stars;
-      floatText(from || patientWrap, `+${stars} ⭐`, '#ffd75e');
-      sparkle(from || patientWrap, { count: 8 + stars * 2 });
+      // One celebration language everywhere: a burst from the patient, then
+      // the stars stamping in, then the chip bumping as it counts up.
+      starBurst(from || patientWrap, stars);
+      floatText(from || patientWrap, `+${stars} Hero Stars`, '#6B4300');
       sfx.star();
     }
     if (kindness) {
       tally.kindness += kindness;
-      floatText(from || patientWrap, `+${kindness} ❤️`, '#ff8fa6');
+      floatText(from || patientWrap, `+${kindness} Kindness`, '#D8558C');
       hearts(from || patientWrap, 7);
     }
     if (coins) {
       tally.coins += coins;
-      floatText(from || patientWrap, `+${coins} 🪙`, '#ffd75e');
+      floatText(from || patientWrap, `+${coins} Coins`, '#6B4300');
       sfx.coin();
     }
     renderTally();
   }
 
   function teach(text) {
-    if (!text) { teachEl.classList.add('hidden'); return; }
+    if (!text) { teachEl.classList.add('lh-hidden'); return; }
     // Younger players get the fun fact; explorers get it too, with vocabulary.
-    teachEl.innerHTML = `<span class="panel__teach-icon">💡</span><span>${fill(text, patient)}</span>`;
-    teachEl.classList.remove('hidden');
+    teachEl.innerHTML = `<span class="panel__teach-icon">${icon('hint', { size: 26 })}</span><span>${fill(text, patient)}</span>`;
+    teachEl.classList.remove('lh-hidden');
     // Read it out — it is the one line in the step actually worth teaching,
     // and a child who cannot read was previously getting nothing from it.
     speak(fill(text, patient));
@@ -169,8 +172,9 @@ export function createCaseRunner(caseDef, { onFinish, onQuit }) {
    * the same and always scrolls itself into view — on a phone the panel is
    * short and a freshly appended button can otherwise sit below the fold.
    */
-  function continueButton(label = 'Next 👉', host = bodyEl) {
-    const btn = h('button', { class: 'btn btn--mint btn--wide', onClick: () => advance() }, label);
+  function continueButton(label = 'Next', host = bodyEl) {
+    const btn = h('button', { class: 'lh-btn lh-btn--primary lh-btn--wide', onClick: () => advance() },
+      label, h('span', { class: 'lh-btn__mark', html: icon('play', { size: 22, color: '#fff' }) }));
     host.appendChild(btn);
     requestAnimationFrame(() => btn.scrollIntoView({ behavior: 'smooth', block: 'nearest' }));
     return btn;
@@ -190,14 +194,28 @@ export function createCaseRunner(caseDef, { onFinish, onQuit }) {
   const tallyEl = h('div', { class: 'case-tally' });
   function renderTally() {
     tallyEl.innerHTML =
-      `<span class="chip chip--tiny"><span class="chip__icon">⭐</span>${tally.stars}</span>` +
-      `<span class="chip chip--tiny"><span class="chip__icon">❤️</span>${tally.kindness}</span>`;
-    tallyEl.querySelectorAll('.chip').forEach((c) => {
-      c.classList.remove('chip--bump'); void c.offsetWidth; c.classList.add('chip--bump');
+      `<span class="lh-chip lh-chip--tiny"><span class="lh-chip__icon">${icon('star', { size: 24 })}</span>${tally.stars}</span>` +
+      `<span class="lh-chip lh-chip--tiny"><span class="lh-chip__icon">${icon('kindness', { size: 24 })}</span>${tally.kindness}</span>`;
+    tallyEl.querySelectorAll('.lh-chip').forEach((c) => {
+      c.classList.remove('is-bumping'); void c.offsetWidth; c.classList.add('is-bumping');
     });
   }
   renderTally();
   stage.appendChild(tallyEl);
+
+  /* --- the five beats ---------------------------------------------------
+     Each step type belongs to one beat of the loop, and the beat sets the
+     accent, so a child reads where they are in the case from its colour:
+       1 who needs help · 2 what is wrong · 3 which tool
+       4 what happens   · 5 better, and rewarded                          */
+  const BEATS = {
+    talk: 1, empathy: 1,
+    find: 2, order: 2, choose: 2,
+    tool: 3,
+    scan: 4, readout: 4, show: 4,
+  };
+  function setBeat(n) { el.dataset.beat = String(n); }
+  setBeat(1);
 
   /* --- step machine ----------------------------------------------------- */
   function markDots() {
@@ -214,6 +232,7 @@ export function createCaseRunner(caseDef, { onFinish, onQuit }) {
     teach(null);
     const step = caseDef.steps[index];
     if (!step) return finish();
+    setBeat(BEATS[step.type] || 1);
 
     const runner = STEP_RUNNERS[step.type];
     if (!runner) {
@@ -234,6 +253,7 @@ export function createCaseRunner(caseDef, { onFinish, onQuit }) {
   }
 
   async function finish() {
+    setBeat(5);
     markDots();
     clear(bodyEl);
     clearBubbles();

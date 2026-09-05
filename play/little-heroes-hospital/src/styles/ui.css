@@ -1,251 +1,389 @@
 /* ==========================================================================
-   Reusable UI parts: buttons, cards, HUD, modals, toasts, tool tray
+   Little Heroes Hospital — component layer
+   The design's kit, plus the parts of this game the kit does not cover
+   (modal, toast, speech bubble, particles, character artwork), written in
+   the same idiom. Requires tokens.css first. Every value here is lifted
+   from the design references; where a number looks arbitrary it is
+   deliberate — see the reference file.
    ========================================================================== */
 
-/* --- buttons ------------------------------------------------------------ */
-.btn {
-  --btn-face: var(--sky);
-  --btn-edge: var(--sky-deep);
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  min-height: var(--tap);
-  padding: 14px 26px;
-  border: none;
-  border-radius: var(--r-pill);
-  background: linear-gradient(180deg, color-mix(in srgb, var(--btn-face) 88%, white) 0%, var(--btn-face) 100%);
-  box-shadow: 0 6px 0 var(--btn-edge), 0 12px 22px rgba(44,51,80,.22), var(--inset);
-  color: #fff;
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: var(--step-1);
-  text-shadow: 0 2px 0 rgba(0,0,0,.14);
-  cursor: pointer;
-  transition: transform .12s cubic-bezier(.3,1.4,.5,1), box-shadow .12s, filter .12s;
+/* ---------- 1. Buttons: physical objects with an edge you press ---------- */
+.lh-btn {
+  border: none; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  font-family: var(--lh-font-display); font-weight: 800;
+  border-radius: var(--lh-r-pill);
+  min-height: var(--lh-tap-min);
+  padding: 18px 34px;
+  font-size: var(--lh-size-btn);
   user-select: none;
+  transition: transform .12s cubic-bezier(.2,1.4,.4,1), box-shadow .12s ease;
 }
-.btn:hover  { transform: translateY(-2px); filter: saturate(1.06) brightness(1.03); }
-.btn:active { transform: translateY(5px); box-shadow: 0 1px 0 var(--btn-edge), 0 4px 10px rgba(44,51,80,.2), var(--inset); }
-.btn:focus-visible { outline: 4px solid var(--ink); outline-offset: 4px; }
-.btn[disabled] { filter: grayscale(.7) opacity(.65); pointer-events: none; }
+/* the press: the object travels down onto its own edge */
+.lh-btn:active { transform: translateY(5px); }
+.lh-btn:focus-visible { outline: 4px solid var(--lh-ink); outline-offset: 4px; }
+.lh-btn[disabled] { filter: grayscale(.7) opacity(.65); pointer-events: none; }
 
-.btn--coral { --btn-face: var(--coral); --btn-edge: var(--coral-deep); }
-.btn--mint  { --btn-face: var(--mint);  --btn-edge: var(--mint-deep); }
-.btn--sun   { --btn-face: var(--sun);   --btn-edge: var(--sun-deep); color: #6b4a00; text-shadow: 0 2px 0 rgba(255,255,255,.4); }
-.btn--grape { --btn-face: var(--grape); --btn-edge: var(--grape-deep); }
-.btn--ghost {
-  background: rgba(255,255,255,.94); color: var(--ink);
-  box-shadow: 0 5px 0 rgba(44,51,80,.18), 0 10px 20px rgba(44,51,80,.14);
-  text-shadow: none;
+.lh-btn--primary {                        /* teal, the go-forward action */
+  padding: 22px 44px; font-size: var(--lh-size-btn-lg);
+  background: linear-gradient(180deg, var(--lh-doc-lite), var(--lh-doc));
+  color: #fff; text-shadow: 0 2px 0 rgba(0,0,0,.14);
+  box-shadow: 0 8px 0 var(--lh-doc-deep), var(--lh-air-3), var(--lh-gloss);
 }
-.btn--huge  { padding: 22px 48px; font-size: var(--step-3); border-radius: var(--r-xl); }
-.btn--small { min-height: 46px; padding: 8px 18px; font-size: var(--step-0); }
+.lh-btn--primary:active { box-shadow: 0 3px 0 var(--lh-doc-deep), var(--lh-air-1), var(--lh-gloss); }
 
-/* round icon button — used for back / sound / help, always same spot */
-.iconbtn {
-  width: var(--tap); height: var(--tap);
+.lh-btn--secondary {                      /* marigold, the carry-on action */
+  background: linear-gradient(180deg, var(--lh-marigold-lite), var(--lh-marigold));
+  color: var(--lh-marigold-ink);
+  box-shadow: 0 7px 0 var(--lh-marigold-deep), 0 14px 24px rgba(46,42,68,.18), inset 0 3px 0 rgba(255,255,255,.55);
+}
+.lh-btn--secondary:active { box-shadow: 0 2px 0 var(--lh-marigold-deep), var(--lh-air-1), var(--lh-gloss); }
+
+.lh-btn--quiet {                          /* white, the decline / back action */
+  background: var(--lh-panel); color: var(--lh-ink-body);
+  box-shadow: 0 7px 0 rgba(46,42,68,.16), 0 14px 22px rgba(46,42,68,.14);
+}
+.lh-btn--quiet:active { box-shadow: 0 2px 0 rgba(46,42,68,.16), var(--lh-air-1); }
+
+.lh-btn--icon {                           /* audio, settings, back */
+  width: var(--lh-icon-btn); height: var(--lh-icon-btn);
+  padding: 0; border-radius: 50%;
   display: grid; place-items: center;
-  border: none; border-radius: 50%;
-  background: rgba(255,255,255,.95);
-  box-shadow: 0 4px 0 rgba(44,51,80,.16), 0 8px 18px rgba(44,51,80,.16);
-  font-size: 26px; line-height: 1; cursor: pointer;
-  transition: transform .12s;
+  background: var(--lh-panel);
+  font-size: 30px; line-height: 1;
+  box-shadow: 0 6px 0 rgba(46,42,68,.16), 0 12px 20px rgba(46,42,68,.14);
 }
-.iconbtn:hover { transform: translateY(-2px) scale(1.05); }
-.iconbtn:active { transform: translateY(3px); }
-.iconbtn:focus-visible { outline: 4px solid var(--ink); outline-offset: 3px; }
+/* icons inside are 30px strokes of --lh-ink-body at 3.4–5px, round caps */
+.lh-btn--icon:active { box-shadow: 0 2px 0 rgba(46,42,68,.16), var(--lh-air-1); }
 
-/* --- cards -------------------------------------------------------------- */
-.card {
-  background: var(--card);
-  border-radius: var(--r-lg);
-  box-shadow: var(--lift-2);
+/* Two more faces this game needs: the raspberry "start over" and the toy
+   world's grape. Both take a tinted edge, never a grey one. */
+.lh-btn--alert {
+  background: linear-gradient(180deg, var(--lh-rasp), var(--lh-rasp-deep));
+  color: #fff; text-shadow: 0 2px 0 rgba(0,0,0,.14);
+  box-shadow: 0 7px 0 var(--lh-rasp-deep), var(--lh-air-2), var(--lh-gloss);
+}
+.lh-btn--alert:active { box-shadow: 0 2px 0 var(--lh-rasp-deep), var(--lh-air-1), var(--lh-gloss); }
+.lh-btn--toy {
+  background: linear-gradient(180deg, var(--lh-toy-lite), var(--lh-toy));
+  color: #fff; text-shadow: 0 2px 0 rgba(0,0,0,.14);
+  box-shadow: 0 7px 0 var(--lh-toy-deep), var(--lh-air-2), var(--lh-gloss);
+}
+.lh-btn--toy:active { box-shadow: 0 2px 0 var(--lh-toy-deep), var(--lh-air-1), var(--lh-gloss); }
+
+/* sizes */
+.lh-btn--lg { padding: 24px 56px; font-size: var(--lh-size-btn-lg); }
+.lh-btn--sm { min-height: var(--lh-tap-min); padding: 12px 22px; font-size: var(--lh-size-body); }
+.lh-btn--wide { width: min(520px, 92%); }
+
+/* ---------- 2. HUD: floating pills over the world, never a bar ---------- */
+.lh-hud {
+  display: flex; gap: 14px; align-items: center; flex-wrap: wrap;
+  padding: 14px 16px;
+  padding-top: calc(14px + env(safe-area-inset-top, 0px));
+  z-index: 40; flex: none;
+}
+.lh-hud__spacer { flex: 1; }
+.lh-hud__title {
+  font-family: var(--lh-font-display); font-weight: 800;
+  font-size: var(--lh-size-h3); color: var(--lh-paper);
+  text-shadow: 0 3px 0 rgba(31,94,104,.4); white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+}
+.lh-hud--dark .lh-hud__title { color: var(--lh-ink); text-shadow: 0 2px 0 rgba(255,255,255,.6); }
+
+.lh-chip {
+  display: inline-flex; align-items: center; gap: 10px;
+  height: var(--lh-hud-h); padding: 0 20px 0 12px;
+  border-radius: var(--lh-r-pill); background: var(--lh-panel);
+  box-shadow: 0 5px 0 rgba(46,42,68,.14), var(--lh-air-1);
+  color: var(--lh-ink); white-space: nowrap;
+}
+.lh-chip__num { font-family: var(--lh-font-display); font-weight: 800; font-size: var(--lh-size-hud-num); }
+.lh-chip__icon { width: 30px; height: 30px; font-size: 26px; line-height: 1; display: grid; place-items: center; }
+/* on award: animate lh-pop on the chip, then count the number up */
+.is-bumping { animation: lh-pop .55s cubic-bezier(.2,1.5,.4,1); }
+
+/* On a phone the bar takes two rows so the title is never squeezed out. */
+@media (max-width: 620px) {
+  .lh-hud { row-gap: 8px; gap: 10px; }
+  .lh-hud__title { font-size: var(--lh-size-card-title); flex: 1 1 0; min-width: 0; }
+  .lh-hud__spacer { flex: 0 0 0px; }
+  .lh-hud > .lh-btn--icon { flex: none; width: var(--lh-tap-min); height: var(--lh-tap-min); font-size: 26px; }
+  .lh-chip { height: 48px; padding: 0 14px 0 10px; }
+  .lh-chip__num { font-size: var(--lh-size-body-lg); }
+
+  .lh-hud--chips > .lh-btn--icon        { order: 2; }
+  .lh-hud--chips > [data-role='back']    { order: 0; }
+  .lh-hud--chips > .lh-hud__title       { order: 1; margin-right: auto; }
+  .lh-hud--chips > .lh-hud__spacer      { order: 3; flex: 1 0 100%; height: 0; }
+  .lh-hud--chips > .lh-chip             { order: 4; }
+}
+
+.lh-meter { flex: 1; min-width: 240px; display: flex; align-items: center; gap: 14px; }
+.lh-meter__track {
+  flex: 1; height: 22px; border-radius: var(--lh-r-pill);
+  background: rgba(46,42,68,.12);
+  box-shadow: inset 0 3px 5px rgba(46,42,68,.16);
+  overflow: hidden;
+}
+.lh-meter__fill {
+  height: 100%; border-radius: var(--lh-r-pill);
+  background: linear-gradient(90deg, var(--lh-vet), var(--lh-star));
+  background-size: 200% 100%;
+  animation: lh-shine 2.6s linear infinite;
+  transition: width .6s cubic-bezier(.2,.9,.3,1);
+}
+.lh-meter__label { font-family: var(--lh-font-display); font-weight: 800; font-size: 20px; color: var(--lh-ink-soft); }
+
+/* ---------- 3. Case card / level tile ---------- */
+.lh-case {
+  position: relative; display: flex; gap: 16px; align-items: center;
+  padding: 20px; border-radius: var(--lh-r-xl);
+  border: none; text-align: left; color: var(--lh-ink); font: inherit;
+  background: var(--lh-panel);
+  box-shadow: 0 8px 0 #E7DFD2, var(--lh-air-2);
+  cursor: pointer;
+  transition: transform .16s cubic-bezier(.2,1.4,.4,1);
+}
+.lh-case:hover { transform: translateY(-4px); }
+.lh-case__art {                            /* the drawn patient/scene thumb */
+  flex: none; width: 76px; height: 76px; border-radius: var(--lh-r-md);
+  display: grid; place-items: center;
+  background: linear-gradient(180deg, var(--lh-accent-tint), var(--lh-doc-mist-2));
+  box-shadow: inset 0 -4px 0 rgba(31,94,104,.12);
+  overflow: hidden;
+  animation: lh-bob 3s ease-in-out infinite;
+}
+/* The thumb shows the case's own drawn patient, cropped to the face. */
+.lh-case__art svg { width: 185%; height: auto; display: block; transform: translateY(9%); }
+.lh-case__art > svg[viewBox='0 0 40 40'] { width: 44%; transform: none; }
+.lh-case__go { display: grid; place-items: center; width: 44px; height: 44px;
+  border-radius: 50%; background: var(--lh-star); box-shadow: 0 4px 0 var(--lh-star-deep); }
+.lh-case__done { flex: none; font-size: var(--lh-size-meta); font-weight: 800; color: #7A7599; }
+.lh-case__state { flex-direction: column; gap: 4px; }
+.lh-case__body { flex: 1; min-width: 0; }
+.lh-case__title { font-family: var(--lh-font-display); font-weight: 800; font-size: var(--lh-size-card-title); line-height: 1.1; }
+.lh-case__tagline { font-size: var(--lh-size-meta); font-weight: 700; color: #7A7599; margin-top: 4px; }
+.lh-case__teaches { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.lh-case__tag {                            /* topic chips */
+  padding: 4px 12px; border-radius: var(--lh-r-pill);
+  /* The kit file sets this at 13px, but the spec's floor for anything a
+     child reads is 14px, and the floor is the stronger rule. */
+  background: #EFEAFB; color: #6B5FA8; font-size: var(--lh-size-label); font-weight: 800;
+}
+.lh-case__flag {                           /* the PLAY NEXT ribbon */
+  position: absolute; left: 20px; top: -13px;
+  padding: 5px 14px; border-radius: var(--lh-r-pill);
+  background: var(--lh-rasp); color: var(--lh-paper);
+  font-family: var(--lh-font-display); font-weight: 800; font-size: var(--lh-size-label); letter-spacing: .6px;
+  box-shadow: 0 4px 0 var(--lh-rasp-deep);
+}
+.lh-case__state { flex: none; display: grid; place-items: center; font-size: 30px; line-height: 1; }
+.lh-case--next { background: linear-gradient(180deg,#FFFDF6,#FFF4DC); box-shadow: 0 8px 0 #E8C86A, 0 18px 28px rgba(46,42,68,.16); }
+.lh-case--done { background: linear-gradient(180deg,#FFFFFF,#F2FBF5); box-shadow: 0 8px 0 #D9E9DE, var(--lh-air-2); }
+.lh-case--locked {
+  background: var(--lh-sunk); box-shadow: var(--lh-inset);
+  cursor: default; opacity: .9;
+}
+.lh-case--locked .lh-case__art { background: var(--lh-locked-fill); animation: none; }
+.lh-case--locked .lh-case__title { color: var(--lh-ink-mute); }
+.lh-case--locked .lh-case__tagline { color: var(--lh-ink-faint); }
+/* locked copy is always the requirement, never a scold:
+   "Finish Doctor Level 7", "Buy it in the Supply Room" */
+
+/* ---------- 4. Panels ---------- */
+.lh-panel {
+  padding: 26px; border-radius: var(--lh-r-2xl);
+  background: var(--lh-panel); box-shadow: var(--lh-edge-4);
+}
+.lh-panel--float { background: rgba(255,255,255,.94); box-shadow: 0 9px 0 rgba(46,42,68,.14); }
+.lh-panel--dark  { background: var(--lh-ink); color: var(--lh-paper); }
+.lh-panel--dark p, .lh-panel--dark .lh-body { color: #C9C4E0; }
+
+/* The game's plain card is a panel with a lighter edge. */
+.lh-card {
+  background: var(--lh-panel);
+  border-radius: var(--lh-r-xl);
+  box-shadow: var(--lh-edge-2), var(--lh-air-2);
   padding: 20px;
 }
 
-/* --- top HUD ------------------------------------------------------------ */
-.hud {
-  display: flex; align-items: center; gap: 10px;
-  padding: 12px 14px calc(12px);
-  padding-top: calc(12px + env(safe-area-inset-top, 0px));
-  z-index: 40;
-  flex: none;
+/* ---------- 5. Option swatches (character creator) ---------- */
+.lh-swatch {
+  position: relative;
+  width: 46px; height: 46px; border-radius: 50%; cursor: pointer;
+  border: none; padding: 0;
+  box-shadow: 0 4px 0 rgba(46,42,68,.20);
 }
-.hud__spacer { flex: 1; }
-.hud__title {
-  font-family: var(--font-display); font-size: var(--step-2); color: #fff;
-  text-shadow: 0 3px 0 rgba(44,51,80,.28); white-space: nowrap;
-  overflow: hidden; text-overflow: ellipsis;
+/* The design draws the swatch at 46px (52 for skin) and also asks for a
+   64px tap target on everything. Both hold: the circle stays the size it is
+   drawn, and an invisible hit area around it reaches the minimum. */
+.lh-swatch::after {
+  content: ''; position: absolute; left: 50%; top: 50%;
+  width: var(--lh-tap-min); height: var(--lh-tap-min);
+  transform: translate(-50%, -50%);
 }
-.hud--dark .hud__title { color: var(--ink); text-shadow: 0 2px 0 rgba(255,255,255,.6); }
+.lh-swatch--lg { width: 52px; height: 52px; }
+.lh-swatch--square { border-radius: var(--lh-r-xs); }
+.lh-swatch--rainbow { background: linear-gradient(120deg, var(--lh-rasp), var(--lh-star), var(--lh-vet), var(--lh-sky), var(--lh-toy)); }
+.lh-swatch[aria-pressed='true'] { box-shadow: 0 4px 0 rgba(46,42,68,.20), 0 0 0 5px var(--lh-accent, var(--lh-doc)); }
+.lh-pillopt {
+  /* The kit's padding gives ~41px; every tap target is at least 64. */
+  padding: 12px 20px; min-height: var(--lh-tap-min);
+  border-radius: var(--lh-r-sm); cursor: pointer;
+  border: none;
+  background: #F1EDE4; color: var(--lh-ink-soft);
+  font-family: var(--lh-font-display); font-weight: 800; font-size: var(--lh-size-body);
+}
+.lh-pillopt[aria-pressed='true'] { background: var(--lh-accent, var(--lh-doc)); color: var(--lh-paper); }
+.lh-optgroup { padding: 16px 18px; border-radius: var(--lh-r-lg); background: var(--lh-panel); box-shadow: 0 7px 0 #E4DFD4; }
+.lh-optgroup__label { font-family: var(--lh-font-display); font-weight: 800; font-size: 19px; margin-bottom: 12px; }
+/* 46px circle + 18px gap puts swatch centres 64px apart, so each one's
+   64px hit area abuts its neighbour's instead of stealing from it. */
+.lh-optgroup__row { display: flex; gap: 18px; flex-wrap: wrap; }
 
-.chip {
-  display: inline-flex; align-items: center; gap: 7px;
-  height: 46px; padding: 0 16px 0 12px;
-  border-radius: var(--r-pill);
-  background: rgba(255,255,255,.96);
-  box-shadow: 0 4px 0 rgba(44,51,80,.14), 0 8px 16px rgba(44,51,80,.14);
-  font-family: var(--font-display); font-weight: 800; font-size: var(--step-1);
-  color: var(--ink); white-space: nowrap;
+/* ---------- 6. Scene layers: every screen is four stacked planes ---------- */
+.lh-scene { position: relative; overflow: hidden; background: var(--lh-sky-grad); }
+.lh-scene__sky, .lh-scene__far, .lh-scene__room, .lh-scene__fore { position: absolute; inset: 0; }
+.lh-scene__far  { filter: saturate(.88); opacity: .96; }   /* depth haze */
+.lh-scene__grain { position: absolute; inset: 0; pointer-events: none; opacity: .05; mix-blend-mode: multiply; }
+/* Warm key light from above left, cool shade rising from the ground. */
+.lh-scene__light {
+  position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(160deg, rgba(255,224,138,.22) 0%, rgba(255,255,255,0) 46%),
+              linear-gradient(0deg, rgba(46,42,68,.14) 0%, rgba(255,255,255,0) 55%);
 }
-.chip__icon { font-size: 22px; }
-.chip--bump { animation: chip-bump .55s cubic-bezier(.2,1.5,.4,1); }
-
-/* On a phone the title takes its own line so the chips never squeeze it out. */
-/* Phones get a two-row bar: back + title + sound, then the chips beneath —
-   so the title is never squeezed to nothing and no control wraps alone. */
-@media (max-width: 620px) {
-  .hud { flex-wrap: wrap; row-gap: 8px; }
-  /* The title absorbs the slack and truncates; the round buttons never shrink
-     and never wrap onto a line of their own. */
-  .hud__title { font-size: var(--step-1); flex: 1 1 0; min-width: 0; }
-  .hud__spacer { flex: 0 0 0px; }
-  .hud > .iconbtn { flex: none; }
-  .chip { height: 40px; padding: 0 13px 0 9px; font-size: var(--step-0); }
-  .chip__icon { font-size: 19px; }
-  .iconbtn { width: 48px; height: 48px; font-size: 22px; }
-
-  /* Row 1: back, title, then the two toggles kept together on the right.
-     Row 2: the currency chips. */
-  .hud--chips > .iconbtn       { order: 2; }
-  .hud--chips > .iconbtn--back { order: 0; }
-  .hud--chips > .hud__title    { order: 1; }
-  .hud--chips > .iconbtn:last-child { margin-left: 0; }
-  .hud--chips > .hud__spacer   { order: 3; flex: 1 0 100%; height: 0; }
-  .hud--chips > .chip          { order: 4; }
-  /* Push the toggles right when there is no back button to anchor the row. */
-  .hud--chips > .hud__title { margin-right: auto; }
+.lh-scene__vignette {
+  position: absolute; inset: 0; pointer-events: none;
+  box-shadow: inset 0 0 180px 60px rgba(46,42,68,.10);
 }
-@keyframes chip-bump {
-  0% { transform: scale(1) } 35% { transform: scale(1.28) rotate(-4deg) } 100% { transform: scale(1) }
-}
+/* Hills/canopies are half-ellipses:
+   border-radius: 50% 50% 0 0 / 100% 100% 0 0
+   Rooms and scenery are big soft organic shapes; rectangles only
+   appear inside furniture. */
 
-/* --- modal -------------------------------------------------------------- */
-.modal-veil {
+/* ---------- 7. Reward ---------- */
+.lh-star-stamp { animation: lh-pop .8s ease both; }
+.lh-star-stamp:nth-child(2) { animation-delay: .16s; }
+.lh-star-stamp:nth-child(3) { animation-delay: .32s; }
+.lh-readout { animation: lh-rise 1.1s ease forwards; }   /* floating +1 / value */
+.lh-hotspot { border-radius: 50%; background: rgba(255,216,77,.55); animation: lh-pulse 2.6s ease-out infinite; }
+
+/* ==========================================================================
+   Parts the design kit does not name, in the same language.
+   ========================================================================== */
+
+/* ---------- modal ---------- */
+.lh-modal__veil {
   position: fixed; inset: 0; z-index: 800;
-  background: rgba(29,36,64,.55);
+  background: rgba(46,42,68,.55);
   backdrop-filter: blur(6px);
   display: grid; place-items: center;
   padding: 20px;
-  animation: veil-in .25s ease both;
+  animation: lh-veil-in .25s ease both;
 }
-@keyframes veil-in { from { opacity: 0 } to { opacity: 1 } }
-.modal {
+@keyframes lh-veil-in { from { opacity: 0 } to { opacity: 1 } }
+.lh-modal {
   width: min(560px, 100%);
   max-height: 88vh; overflow-y: auto;
-  background: var(--card);
-  border-radius: var(--r-xl);
-  box-shadow: var(--lift-3);
+  background: var(--lh-panel);
+  border-radius: var(--lh-r-2xl);
+  box-shadow: var(--lh-edge-4), var(--lh-air-3);
   padding: 30px 26px calc(26px + var(--safe));
   text-align: center;
-  animation: pop-in .42s cubic-bezier(.2,1.3,.4,1.1) both;
+  animation: lh-pop .42s cubic-bezier(.2,1.3,.4,1.1) both;
 }
-.modal h2 { font-size: var(--step-3); margin-bottom: 8px; }
-.modal p  { font-size: var(--step-1); color: var(--ink-soft); margin: 0 0 18px; }
+.lh-modal h2 { font-size: var(--lh-size-h3); margin-bottom: 8px; }
+.lh-modal p  { font-size: var(--lh-size-body-lg); color: var(--lh-ink-soft); margin: 0 0 18px; max-width: 44ch; }
 
-/* --- toast (gentle nudges) ---------------------------------------------- */
-.toast-lane {
+/* ---------- toast (gentle nudges) ---------- */
+.lh-toast-lane {
   position: fixed; left: 50%; bottom: calc(26px + var(--safe));
   transform: translateX(-50%);
   z-index: 880; display: flex; flex-direction: column-reverse;
   gap: 10px; pointer-events: none; width: min(520px, 92vw);
 }
-.toast {
+.lh-toast {
   display: flex; align-items: center; gap: 12px;
-  padding: 14px 22px; border-radius: var(--r-pill);
-  background: rgba(255,255,255,.98);
-  box-shadow: var(--lift-2);
-  font-family: var(--font-display); font-weight: 700; font-size: var(--step-1);
-  color: var(--ink);
-  animation: toast-in .34s cubic-bezier(.2,1.4,.4,1) both;
+  padding: 14px 22px; border-radius: var(--lh-r-pill);
+  background: var(--lh-panel);
+  box-shadow: var(--lh-edge-2), var(--lh-air-2);
+  font-family: var(--lh-font-display); font-weight: 800; font-size: var(--lh-size-body-lg);
+  color: var(--lh-ink);
+  animation: lh-toast-in .34s cubic-bezier(.2,1.4,.4,1) both;
 }
-.toast--warm { background: linear-gradient(180deg,#fff,#fff2d9); }
-.toast--good { background: linear-gradient(180deg,#fff,#dcfbee); }
-.toast.out { animation: toast-out .3s ease forwards; }
-@keyframes toast-in  { from { opacity:0; transform: translateY(26px) scale(.9) } to { opacity:1; transform:none } }
-@keyframes toast-out { to { opacity: 0; transform: translateY(14px) scale(.94) } }
+.lh-toast--warm { background: linear-gradient(180deg, var(--lh-panel), var(--lh-butter)); }
+.lh-toast--good { background: linear-gradient(180deg, var(--lh-panel), var(--lh-vet-tint-2)); }
+.lh-toast.is-leaving { animation: lh-toast-out .3s ease forwards; }
+@keyframes lh-toast-in  { from { opacity:0; transform: translateY(26px) scale(.9) } to { opacity:1; transform:none } }
+@keyframes lh-toast-out { to { opacity: 0; transform: translateY(14px) scale(.94) } }
 
-/* --- particles ---------------------------------------------------------- */
-.confetti-bit {
+/* ---------- particles ---------- */
+.lh-confetti {
   position: absolute; width: 13px; height: 18px; border-radius: 3px;
   will-change: transform, opacity;
 }
-.spark {
+.lh-spark {
   position: absolute; font-size: 24px; will-change: transform, opacity;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,.15));
+  filter: drop-shadow(0 2px 4px rgba(46,42,68,.15));
 }
-.floater {
-  position: absolute; font-family: var(--font-display); font-weight: 800;
-  font-size: var(--step-2); color: #fff;
-  text-shadow: 0 3px 0 rgba(44,51,80,.35);
-  animation: float-up 1.25s ease-out forwards;
+.lh-floater {
+  position: absolute; font-family: var(--lh-font-display); font-weight: 800;
+  font-size: var(--lh-size-h3); color: var(--lh-paper);
+  text-shadow: 0 3px 0 rgba(46,42,68,.35);
+  animation: lh-rise 1.25s ease-out forwards;
   white-space: nowrap;
 }
 
-/* --- speech bubble ------------------------------------------------------ */
-.bubble {
+/* ---------- speech bubble ---------- */
+.lh-bubble {
   position: relative;
-  background: #fff;
-  border-radius: var(--r-lg);
+  background: var(--lh-panel);
+  border-radius: var(--lh-r-xl);
   padding: 16px 22px;
-  box-shadow: var(--lift-1);
-  font-family: var(--font-display);
+  box-shadow: var(--lh-edge-1), var(--lh-air-1);
+  font-family: var(--lh-font-display);
   font-weight: 700;
-  font-size: var(--step-1);
-  color: var(--ink);
+  font-size: var(--lh-size-body-lg);
+  color: var(--lh-ink);
   max-width: 34ch;
-  animation: pop-in .35s cubic-bezier(.2,1.3,.4,1.1) both;
+  animation: lh-pop .35s cubic-bezier(.2,1.3,.4,1.1) both;
 }
-.bubble::after {
+.lh-bubble::after {
   content: ""; position: absolute; bottom: -14px; left: 34px;
-  border: 12px solid transparent; border-top-color: #fff; border-bottom: 0;
-  filter: drop-shadow(0 3px 1px rgba(44,51,80,.1));
+  border: 12px solid transparent; border-top-color: var(--lh-panel); border-bottom: 0;
+  filter: drop-shadow(0 3px 1px rgba(46,42,68,.1));
 }
-.bubble--thought { background: var(--card-2); font-style: italic; }
-.bubble--translate {
-  background: var(--sun); color: #6b4a00; font-size: var(--step-0);
+.lh-bubble--thought { background: var(--lh-paper); font-style: italic; }
+.lh-bubble--translate {
+  background: var(--lh-marigold); color: var(--lh-marigold-ink); font-size: var(--lh-size-body);
   padding: 10px 18px; max-width: 30ch;
 }
-.bubble--translate::after { border-top-color: var(--sun); }
+.lh-bubble--translate::after { border-top-color: var(--lh-marigold); }
 
-/* --- progress ----------------------------------------------------------- */
-.bar {
-  height: 18px; border-radius: var(--r-pill);
-  background: rgba(44,51,80,.14); overflow: hidden;
-  box-shadow: inset 0 2px 4px rgba(44,51,80,.16);
-}
-.bar__fill {
-  height: 100%; border-radius: var(--r-pill);
-  background: linear-gradient(90deg, var(--mint), var(--sun));
-  background-size: 200% 100%;
-  animation: shimmer 2.4s linear infinite;
-  transition: width .5s cubic-bezier(.2,.9,.3,1.2);
-}
-
-/* --- scrollbars (chunky + friendly) ------------------------------------- */
-.screen-scroll::-webkit-scrollbar { width: 12px; }
-.screen-scroll::-webkit-scrollbar-thumb {
-  background: rgba(44,51,80,.22); border-radius: 99px; border: 3px solid transparent;
+/* ---------- scrollbars (chunky + friendly) ---------- */
+.lh-screen__scroll::-webkit-scrollbar { width: 12px; }
+.lh-screen__scroll::-webkit-scrollbar-thumb {
+  background: rgba(46,42,68,.22); border-radius: var(--lh-r-pill); border: 3px solid transparent;
   background-clip: padding-box;
 }
 
-/* --- character artwork -------------------------------------------------- */
-.charsvg { width: 100%; height: 100%; overflow: visible; display: block; }
-.patient-art { width: 100%; height: 100%; display: block; }
+/* ---------- character artwork ---------- */
+.lh-charsvg { width: 100%; height: 100%; overflow: visible; display: block; }
+.lh-patient-art { width: 100%; height: 100%; display: block; }
 
-.char-idle { animation: bob-slow 3.4s ease-in-out infinite; transform-origin: 100px 240px; }
-.char-head { animation: sway 5.2s ease-in-out infinite; transform-origin: 100px 130px; }
-.tail-wag  { animation: wiggle 1.1s ease-in-out infinite; }
-.ear-l, .ear-r { animation: sway 3.8s ease-in-out infinite; transform-origin: 100px 80px; }
-.wing-l { animation: sway 2.6s ease-in-out infinite; }
-.wing-r { animation: sway 2.6s ease-in-out infinite reverse; }
-.ear-bunny { animation: sway 4.4s ease-in-out infinite; transform-origin: 100px 110px; }
+.lh-char-idle { animation: lh-bob-slow 3.4s ease-in-out infinite; transform-origin: 100px 240px; }
+.lh-char-head { animation: lh-sway 5.2s ease-in-out infinite; transform-origin: 100px 130px; }
+.lh-tail-wag  { animation: lh-wag 0.9s ease-in-out infinite; }
+.lh-ear--l, .lh-ear--r { animation: lh-sway 3.8s ease-in-out infinite; transform-origin: 100px 80px; }
+.lh-wing--l { animation: lh-sway 2.6s ease-in-out infinite; }
+.lh-wing--r { animation: lh-sway 2.6s ease-in-out infinite reverse; }
+.lh-ear--bunny { animation: lh-sway 4.4s ease-in-out infinite; transform-origin: 100px 110px; }
 
 /* reaction states the case runner toggles on the patient wrapper */
-.patient-art.react-happy  { animation: patient-hop .7s cubic-bezier(.25,1.6,.4,1); }
-.patient-art.react-wiggle { animation: wiggle .5s ease-in-out 2; }
-.patient-art.react-shy    { animation: patient-shy .8s ease; }
-@keyframes patient-hop { 0%,100% { transform: translateY(0) scale(1) } 40% { transform: translateY(-26px) scale(1.05) } 70% { transform: translateY(0) scale(.96,1.04) } }
-@keyframes patient-shy { 0%,100% { transform: translateX(0) } 30% { transform: translateX(-10px) rotate(-3deg) } 65% { transform: translateX(6px) rotate(2deg) } }
+.lh-patient-art.lh-react--happy  { animation: lh-patient-hop .7s cubic-bezier(.25,1.6,.4,1); }
+.lh-patient-art.lh-react--wiggle { animation: lh-wiggle .5s ease-in-out 2; }
+.lh-patient-art.lh-react--shy    { animation: lh-patient-shy .8s ease; }
+@keyframes lh-patient-hop { 0%,100% { transform: translateY(0) scale(1) } 40% { transform: translateY(-26px) scale(1.05) } 70% { transform: translateY(0) scale(.96,1.04) } }
+@keyframes lh-patient-shy { 0%,100% { transform: translateX(0) } 30% { transform: translateX(-10px) rotate(-3deg) } 65% { transform: translateX(6px) rotate(2deg) } }

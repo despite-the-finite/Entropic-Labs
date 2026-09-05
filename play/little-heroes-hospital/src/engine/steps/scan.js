@@ -6,6 +6,7 @@
  *   2. fire it     (a big satisfying button, a whirr, a reveal)
  * then the child reads the picture and says what they can see.
  */
+import { icon } from '../../ui/icons.js';
 import { h, wait, shuffle } from '../../core/dom.js';
 import { sfx } from '../../core/audio.js';
 import { sparkle, toast, flash } from '../../core/fx.js';
@@ -27,7 +28,7 @@ export function runScan(step, ctx) {
     const frame = h('div', { class: 'xray-frame' },
       h('div', { class: 'xray-frame__corner tl' }), h('div', { class: 'xray-frame__corner tr' }),
       h('div', { class: 'xray-frame__corner bl' }), h('div', { class: 'xray-frame__corner br' }),
-      h('div', { class: 'xray-frame__hint' }, '🩻'));
+      h('div', { class: 'xray-frame__hint' }));
 
     // Show the child exactly where the camera needs to end up.
     const marker = h('div', { class: 'spot-marker' },
@@ -82,14 +83,14 @@ export function runScan(step, ctx) {
     document.addEventListener('pointermove', move);
     document.addEventListener('pointerup', up);
 
-    const fire = h('button', { class: 'btn btn--grape btn--wide scan-fire', onClick: () => {
-      if (!isOver()) { toast('Line the camera up with the glowing spot first!', { icon: '🎯' }); return; }
+    const fire = h('button', { class: 'lh-btn lh-btn--toy lh-btn--wide scan-fire', onClick: () => {
+      if (!isOver()) { toast('Line the camera up with the glowing spot first!', {}); return; }
       document.removeEventListener('pointermove', move);
       document.removeEventListener('pointerup', up);
       frame.classList.add('xray-frame--firing');
       marker.remove();
       shoot(() => frame.remove());
-    } }, '🩻 TAKE THE PICTURE');
+    } }, 'TAKE THE PICTURE');
     machine.appendChild(fire);
 
     cleanups.push(() => {
@@ -114,14 +115,15 @@ export function runScan(step, ctx) {
       const sharp = off < 0.09;
       view.classList.toggle('micro-view--sharp', sharp);
       fire.disabled = !sharp;
-      fire.textContent = sharp ? '🔬 LOOK CLOSER!' : 'Keep twisting the dial…';
+      fire.textContent = sharp ? 'LOOK CLOSER!' : 'Keep twisting the dial…';
     };
     dial.addEventListener('input', onInput);
 
-    const fire = h('button', { class: 'btn btn--mint btn--wide scan-fire', onClick: () => shoot(() => {}) }, 'Keep twisting the dial…');
+    const fire = h('button', { class: 'lh-btn lh-btn--primary lh-btn--wide scan-fire', onClick: () => shoot(() => {}) }, 'Keep twisting the dial…');
     machine.appendChild(view);
     machine.appendChild(h('div', { class: 'micro-dial-wrap' },
-      h('span', {}, '🔎'), dial, h('span', {}, '🔬')));
+      h('span', { class: 'micro-dial__mark', html: icon('magnify-small') }), dial,
+      h('span', { class: 'micro-dial__mark', html: icon('magnify-big') })));
     machine.appendChild(fire);
     onInput();
   }
@@ -133,7 +135,7 @@ export function runScan(step, ctx) {
     machine.innerHTML = '';
     machine.appendChild(h('div', { class: 'scan-loading' },
       h('div', { class: 'scan-loading__bar' }, h('i')),
-      h('div', {}, step.mode === 'micro' ? '🔬 zooming in…' : '🩻 taking the picture…')));
+      h('div', {}, step.mode === 'micro' ? 'zooming in…' : 'taking the picture…')));
 
     await wait(1200);
     cleanupAim();
@@ -174,7 +176,7 @@ export function runScan(step, ctx) {
         sfx.nudge();
         card.classList.add('choice--wobble');
         setTimeout(() => card.classList.remove('choice--wobble'), 520);
-        toast(ctx.fill(step.nudge || nudge()), { icon: '🔍' });
+        toast(ctx.fill(step.nudge || nudge()));
         if (tries >= TRIES_BEFORE_REVEAL) row.querySelector('[data-correct]')?.classList.add('choice--glow');
         return;
       }
@@ -190,7 +192,7 @@ export function runScan(step, ctx) {
       ctx.teach(step.teach || null);
       ctx.react('happy');
       await wait(600);
-      ctx.continueButton('Next 👉', machine);
+      ctx.continueButton('Next', machine);
     }
   }
 

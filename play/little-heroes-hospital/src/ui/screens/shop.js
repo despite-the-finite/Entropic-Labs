@@ -5,6 +5,8 @@
  * the hospital rooms, outfits appear on the hero, and the one big-ticket item
  * physically builds a new wing.
  */
+import { icon } from '../icons.js';
+import { propMarkup } from '../props.js';
 import { h, clear } from '../../core/dom.js';
 import { sfx } from '../../core/audio.js';
 import { goHome, go } from '../../core/router.js';
@@ -16,15 +18,15 @@ import { confetti, sparkle, toast } from '../../core/fx.js';
 export function shopScreen({ category = 'comfort' } = {}) {
   let active = category;
 
-  const el = h('div', { class: 'screen screen--shop' });
-  const bar = hud({ title: '🛒 Supply Room', back: () => goHome('hub'), dark: true, chips: ['coins'] });
+  const el = h('div', { class: 'lh-screen lh-screen--shop', 'data-world': 'doctor' });
+  const bar = hud({ title: 'Supply Room', back: () => goHome('hub'), dark: true, chips: ['coins'] });
   el.appendChild(bar);
 
-  const scroll = h('div', { class: 'screen-scroll' });
-  scroll.appendChild(sectionTitle('📦', 'Spend your coins', 'Everything you buy shows up in your hospital!'));
+  const scroll = h('div', { class: 'lh-screen__scroll' });
+  scroll.appendChild(sectionTitle(icon('bag', { size: 30 }), 'Spend your coins', 'Everything you buy shows up in your hospital!'));
 
   const tabs = h('div', { class: 'shop-tabs' });
-  const grid = h('div', { class: 'card-grid' });
+  const grid = h('div', { class: 'lh-card-grid' });
   scroll.append(tabs, grid);
   el.appendChild(scroll);
 
@@ -32,9 +34,11 @@ export function shopScreen({ category = 'comfort' } = {}) {
     clear(tabs);
     CATEGORIES.forEach((cat) => {
       tabs.appendChild(h('button', {
-        class: `shop-tab${cat.id === active ? ' shop-tab--on' : ''}`,
+        class: 'shop-tab',
+        role: 'tab',
+        'aria-selected': String(cat.id === active),
         onClick: () => { active = cat.id; sfx.tap(); render(); },
-      }, h('span', {}, cat.icon), h('span', {}, cat.name)));
+      }, h('span', { class: 'shop-tab__mark', html: propMarkup(cat.icon) }), h('span', {}, cat.name)));
     });
   }
 
@@ -56,10 +60,12 @@ export function shopScreen({ category = 'comfort' } = {}) {
         class: `kit buy${owned ? ' buy--owned' : ''}${!owned && !affordable ? ' buy--poor' : ''}`,
         onClick: () => buy(item, card),
       },
-        h('span', { class: 'kit__icon' }, item.icon),
+        h('span', { class: 'kit__icon', html: propMarkup(item.icon) }),
         h('span', { class: 'kit__name' }, item.name),
         h('span', { class: 'kit__blurb' }, item.blurb),
-        h('span', { class: 'buy__price' }, owned ? '✅ Bought!' : `🪙 ${item.price}`));
+        h('span', { class: 'buy__price' },
+        owned ? 'Bought!' : h('span', { class: 'buy__coin', html: icon('coin', { size: 22 }) }),
+        owned ? '' : String(item.price)));
       grid.appendChild(card);
     });
   }
@@ -68,12 +74,12 @@ export function shopScreen({ category = 'comfort' } = {}) {
     const result = buyItem(item);
     if (result === 'owned') {
       sfx.tap();
-      toast('You already own this one!', { icon: '✅', tone: 'good' });
+      toast('You already own this one!', { mark: 'tick', tone: 'good' });
       return;
     }
     if (result === 'poor') {
       sfx.nudge();
-      toast(`You need ${item.price - getState().wallet.coins} more coins — help another patient!`, { icon: '🪙' });
+      toast(`You need ${item.price - getState().wallet.coins} more coins — help another patient!`, { mark: 'coin' });
       return;
     }
 
@@ -82,14 +88,14 @@ export function shopScreen({ category = 'comfort' } = {}) {
     confetti({ intensity: 0.6, duration: 1800 });
 
     if (item.unlocksRoom) {
-      toast('A new room is being built!', { icon: '🏗️', tone: 'good', ms: 3000 });
+      toast('A new room is being built!', { tone: 'good', ms: 3000 });
       setTimeout(() => go('hub', { build: [item.unlocksRoom] }, { replace: true }), 900);
       return;
     }
     if (item.accessory) {
-      toast('Try it on in the character creator! 🎨', { icon: '👕', tone: 'good', ms: 3000 });
+      toast('Try it on in the character creator!', { tone: 'good', ms: 3000 });
     } else {
-      toast('It has been added to your hospital!', { icon: '🏥', tone: 'good' });
+      toast('It has been added to your hospital!', { tone: 'good' });
     }
     render();
   }

@@ -9,24 +9,30 @@ import { isLevelUnlocked, isLevelCompleted, careerCompletion, setCareer, getStat
 import { TRACKS } from '../../data/cases/index.js';
 import { hud, progressBar } from '../components.js';
 import { toast } from '../../core/fx.js';
+import { patientMarkup } from '../patients.js';
+import { icon, starRow } from '../icons.js';
 
 export function levelsScreen({ career = 'doctor' } = {}) {
   const track = TRACKS[career];
   if (getState().career !== career) setCareer(career);
 
-  const el = h('div', { class: `screen screen--levels${career === 'vet' ? ' is-vet' : ''}` });
+  const el = h('div', { class: 'lh-screen lh-screen--levels', 'data-world': career });
+  // The world header: its drawn mark in a chip, then the world's name.
   const bar = hud({
-    title: `${track.icon} ${track.name}`,
     back: () => goHome('hub'),
-    dark: true,
     chips: ['stars', 'coins'],
+    extra: [],
   });
+  bar.classList.add('levels-header');
+  bar.insertBefore(h('div', { class: 'levels-world' },
+    h('span', { class: 'levels-world__mark', html: icon(career, { size: 30 }) }),
+    h('div', { class: 'lh-hud__title' }, track.name)), bar.querySelector('.lh-hud__spacer'));
   el.appendChild(bar);
 
-  const scroll = h('div', { class: 'screen-scroll' });
+  const scroll = h('div', { class: 'lh-screen__scroll' });
   const { done, total } = careerCompletion(career);
 
-  scroll.appendChild(h('div', { style: { display: 'grid', placeItems: 'center', padding: '4px 16px 14px' } },
+  scroll.appendChild(h('div', { style: { padding: '4px 16px 14px', width: 'min(96vw, 760px)', margin: '0 auto' } },
     progressBar(done, total, `${track.blurb}`)));
 
   const list = h('div', { class: 'level-list' });
@@ -40,18 +46,35 @@ export function levelsScreen({ career = 'doctor' } = {}) {
     const completed = isLevelCompleted(career, caseDef.id);
     const isNext = caseDef === nextUp;
 
+    // Locked copy is the requirement, never a scold.
+    const tagline = unlocked
+      ? caseDef.tagline
+      : `Finish ${track.name} Level ${caseDef.level - 1}`;
+
     const card = h('button', {
-      class: `level-card${completed ? ' level-card--done' : ''}${isNext ? ' level-card--next' : ''}${unlocked ? '' : ' level-card--locked'}`,
+      class: `lh-case${completed ? ' lh-case--done' : ''}${isNext ? ' lh-case--next' : ''}${unlocked ? '' : ' lh-case--locked'}`,
+      'aria-disabled': String(!unlocked),
       onClick: () => start(caseDef, unlocked),
     },
-      isNext ? h('span', { class: 'level-badge' }, 'PLAY NEXT') : null,
-      h('span', { class: 'level-card__num' }, unlocked ? caseDef.icon : '🔒'),
-      h('div', { class: 'level-card__body' },
-        h('h3', {}, `${caseDef.level}. ${caseDef.title}`),
-        h('p', {}, unlocked ? caseDef.tagline : 'Finish the level before this one to meet this patient!'),
-        h('div', { class: 'level-card__teaches' },
-          ...(unlocked ? caseDef.teaches : []).map((t) => h('span', {}, t)))),
-      h('span', { class: 'level-card__state' }, completed ? '⭐' : unlocked ? '▶️' : '🔒'));
+      isNext ? h('span', { class: 'lh-case__flag' }, 'PLAY NEXT') : null,
+      h('span', {
+        class: 'lh-case__art',
+        html: unlocked
+          ? patientMarkup(caseDef.patient || caseDef.patientPool?.[0], completed ? 'happy' : 'calm')
+          : icon('lock', { size: 38 }),
+      }),
+      h('div', { class: 'lh-case__body' },
+        h('div', { class: 'lh-case__title' }, `${caseDef.level}. ${caseDef.title}`),
+        h('div', { class: 'lh-case__tagline' }, tagline),
+        h('div', { class: 'lh-case__teaches' },
+          ...(unlocked ? caseDef.teaches : []).map((t) => h('span', { class: 'lh-case__tag' }, t)))),
+      h('span', {
+        class: 'lh-case__state',
+        html: completed ? starRow(caseDef.reward?.stars ?? 3)
+          : unlocked ? `<span class="lh-case__go">${icon('play', { size: 26 })}</span>`
+          : icon('lock', { size: 26 }),
+      }),
+      completed ? h('span', { class: 'lh-case__done' }, 'Helped!') : null);
 
     list.appendChild(card);
   });
@@ -62,7 +85,7 @@ export function levelsScreen({ career = 'doctor' } = {}) {
   function start(caseDef, unlocked) {
     if (!unlocked) {
       sfx.nudge();
-      toast('Finish the level before this one first!', { icon: '🔒' });
+      toast('Finish the level before this one first!', { mark: 'lock' });
       return;
     }
     sfx.select();
