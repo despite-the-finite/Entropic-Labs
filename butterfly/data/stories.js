@@ -5806,6 +5806,127 @@
       source: 'Karsh',
       relatedStories: ['damn-google', 'brown-jacket'],
       dateAdded: '2026-09-04'
+    },
+
+    {
+      id: 'police-car-shoes',
+      title: 'The Police Car Shoes',
+      hook: 'He was four and bleeding. I was seven. Three flights of stairs.',
+      year: 1994,
+      approximateDate: 'Circa 1994',
+      strand: 'karsh',
+      location: 'Lusaka, Zambia',
+      place: 'lusaka',
+      landmark: {
+        name: 'The High Rise Flats, Nasser Road',
+        query: 'Nasser Road Lusaka Zambia'
+      },
+      journey: [
+        {
+          id: 'ditches',
+          place: 'lusaka',
+          flag: '🏗',
+          label: 'The ditches around the flats',
+          note: 'Whatever a seven-year-old and a four-year-old called an adventure.',
+          url: 'https://www.google.com/maps/search/?api=1&query=Nasser+Road+Lusaka+Zambia'
+        },
+        {
+          id: 'stairs',
+          place: 'lusaka',
+          flag: '🏢',
+          label: 'Three flights of stairs, Flat 13',
+          note: 'I don’t remember thinking about whether I could.'
+        },
+        {
+          id: 'shoes',
+          arrival: true,
+          flag: '✦',
+          label: 'One little pair of police car shoes',
+          note: 'The proof, sitting there all these years'
+        }
+      ],
+      category: 'love',
+      tags: [
+        'zambia', 'lusaka', 'childhood', 'brothers', 'kush', 'family',
+        'growing up', 'first memories'
+      ],
+      people: [
+        { name: 'Karsh', relation: 'me, seven years old' },
+        { name: 'Kush', relation: 'my little brother, four years old' }
+      ],
+      story: [
+        'I don’t have too many memories from 1994.',
+        'I was only seven years old, and most of what remains from that time comes back in little fragments — places, faces, feelings. Blurry snapshots from a life that feels very far away now.',
+        'But there is one memory of my brother that has always stayed with me.',
+        {
+          text: 'At the time, we lived in Flat 13 of the High Rise Flats on Nasser Road in Lusaka, Zambia.',
+          at: 'stairs'
+        },
+        'My brother was four. I was seven.',
+        'On weekends, we would go downstairs and play with the other kids whose families lived in the flats. My parents generally wanted us to stay somewhere they could see us from the apartment, but as kids do, we wandered around a little.',
+        {
+          text: 'That particular day, a few of us were climbing in and out of some ditches that had been dug around the perimeter of the flats. My parents were upstairs, probably getting dinner ready, while we were outside doing whatever seven-year-olds and four-year-olds considered an adventure.',
+          at: 'ditches'
+        },
+        'At some point, one of the other kids looked at my brother and said something like,',
+        { kind: 'found', items: ['There’s blood on his knee.'] },
+        'At first, I don’t think I understood what he meant. I almost shrugged it off.',
+        'Then I looked.',
+        { kind: 'beat', text: 'There was blood running down my brother’s leg.' },
+        'Looking back now, it probably wasn’t that much. Kids get cuts. Knees bleed. Everything was ultimately fine.',
+        'But seven-year-old me didn’t know that.',
+        'All I knew was that my little brother was hurt.',
+        'He was crying, and suddenly nothing else mattered.',
+        'I picked him up.',
+        'I don’t remember thinking about whether I could carry him. I don’t remember asking anyone else for help. I just knew I needed to get him back to my parents.',
+        {
+          text: 'So somehow, at seven years old, I carried my four-year-old brother all the way back to our apartment.',
+          at: 'stairs'
+        },
+        'Up three flights of stairs.',
+        'There’s one tiny detail from that day that has stuck with me more clearly than almost anything else.',
+        { kind: 'beat', text: 'His shoes.', at: 'shoes' },
+        'He had these little police car shoes that he loved. They were exactly what they sound like — little shoes designed to look like police cars. I remember thinking they were so cool.',
+        'And now there was blood in one of them.',
+        'For some reason, seeing that was the part that really got to me.',
+        'My little brother’s favorite police car shoes had blood in them.',
+        'I just wanted to get him home.',
+        'Of course, my parents took care of him. He was okay. The cut healed, and life moved on.',
+        'But I’ve thought about those stairs from time to time.',
+        'I was seven years old.',
+        'He was four.',
+        'I don’t know how heavy he was, and I don’t know how I managed to carry him all the way up three flights of stairs. Maybe it wasn’t actually some incredible physical feat. Maybe childhood has simply made the staircase taller and my brother heavier in my memory.',
+        'But I like to believe something else happened that day.',
+        { kind: 'reveal', text: 'I think love made me stronger.' },
+        'My brother and I have lived a lot of life together since those police car shoes.',
+        'We’ve been through things that don’t belong on this page. We’ve grown up. We’ve changed. We’ve fought our own battles. And like any two people who have known each other for almost their entire lives, our story is much more complicated than two little boys playing outside an apartment building in Lusaka.',
+        'But underneath all of that, there is still something incredibly simple.',
+        { kind: 'beat', text: 'He’s my little brother.' },
+        'And long before I was old enough to understand what brotherly love actually meant, apparently some part of me already knew.',
+        'When he was hurt, I picked him up.',
+        'When he couldn’t make it home by himself, I carried him.',
+        'And when I think about it now, maybe that’s one of the earliest memories I have of truly loving another person — not because anyone told me I should, but because when something happened to him, I felt it too.',
+        'So, Kush, this one’s for you.',
+        'I don’t know where that seven-year-old kid found the strength to carry you up those stairs.',
+        'But I think I know why he found it.',
+        'Sometimes love makes you do superhuman things.',
+        'And if there was ever any doubt that your big brother loved you, maybe the proof has been sitting there all these years —',
+        'in a blurry childhood memory,',
+        'three flights of stairs,',
+        { kind: 'landing', text: 'and a little pair of police car shoes.' }
+      ],
+      artifact: {
+        label: 'Memory artifact',
+        title: 'One pair of police car shoes',
+        lines: [
+          { label: 'Worn by', text: 'My brother, aged four. He loved them.' },
+          { label: 'Condition', text: 'Blood in one of them.' },
+          { label: 'Kept', text: 'In the clearest part of a year I otherwise remember in fragments.' }
+        ]
+      },
+      source: 'Karsh',
+      relatedStories: ['the-gto', 'miscalculated-touchdown'],
+      dateAdded: '2026-09-06'
     }
   ];
 
