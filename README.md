@@ -899,6 +899,18 @@ they give up. Nothing is ever populated with invented content to make a feature
 demonstrable. That state is still live: empty a category, or `STORIES` itself,
 and it comes back.
 
+**The index is a column, not a set of sentences.** *All memories* opens a real,
+focusable route through the archive, and every memory in it reads the same way:
+`1974: Too Short to Stop (by Amma)` — the bare year, the title, and who told
+it. The year is the year and not `approximateDate`, because 'Circa 1974' on one
+row and '1997, and all the years after' on the next is the same fact told at
+three lengths and a column of that cannot be scanned; the story itself still
+opens with the date as it was actually said. The name in the parenthesis is the
+front of `source`, so 'Dad — drawn from his letter of 15th August' signs the row
+*by Dad* and prints in full inside the memory. A memory whose year was never
+written down says *Undated*, or names its era where it has one, rather than
+quietly starting with the title.
+
 **No `m/` twin, on purpose** — same reasoning as the Observatory. It branches
 internally instead: portrait turns the trail from a march into a descent,
 panels become bottom sheets, hover-only affordances have tap equivalents, the
