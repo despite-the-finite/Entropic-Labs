@@ -138,6 +138,11 @@
     var morph = { t: 1, dur: 1, start: 0 };
     var focused = null, hovered = null;
 
+    /* Years that hold more than one memory: drawn as one light on the trail
+       and opened by the reader. At most one is ever open. */
+    var stacks = [];
+    var liveStack = null, stackTimer = 0;
+
     var cam = { x: 0, y: 0, z: 1 };
     var camFrom = { x: 0, y: 0, z: 1 }, camTo = { x: 0, y: 0, z: 1 };
     var camT = 1, camDur = 1, camStart = 0;
@@ -450,6 +455,7 @@
       var NEAR_T = 0.3;
       var together = [];
       story.forEach(function (n) {
+        n.stack = null; n.fan = ZERO;
         if (!braid || n.t === null) return;
         for (var g = 0; g < together.length; g++) {
           var lead = together[g][0];
@@ -458,6 +464,21 @@
         }
         together.push([n]);
       });
+
+      /* They used to fan out here and stay fanned. That is honest and it
+         reads, until a decade has two or three of them in it: the eye stops
+         following one line through time and starts picking lights out of a
+         scatter, and every memory added makes it worse.
+
+         So the trail draws the year — one light where they all are, ringed
+         in its memories' own tones and carrying the count — and opens into
+         the fan when the reader reaches it. The fan itself is unchanged:
+         across the line, never along it, because moving them along it would
+         slide them in time and claim a year nobody wrote down. */
+      stacks = [];
+      /* Whatever was being held open belonged to the last set of nodes. */
+      if (stackTimer) { global.clearTimeout(stackTimer); stackTimer = 0; }
+      liveStack = null;
       together.forEach(function (group) {
         if (group.length < 2) return;
         var head = group[0];
@@ -466,14 +487,22 @@
         var len = Math.sqrt(dx * dx + dy * dy);
         /* A lane running dead flat still has a direction; if the sample
            degenerates, fall back to straight across the axis. */
-        var px = len > 1e-6 ? -dy / len : 0;
-        var py = len > 1e-6 ? dx / len : 1;
-        var step = 0.42;
-        group.forEach(function (n, i) {
-          var off = (i - (group.length - 1) / 2) * step;
-          n.ptr = { x: n.ptr.x + px * off, y: n.ptr.y + py * off };
+        var s = {
+          x: head.ptr.x, y: head.ptr.y,
+          px: len > 1e-6 ? -dy / len : 0,
+          py: len > 1e-6 ? dx / len : 1,
+          year: head.yearLabel || '',
+          members: group, shown: group.slice(), count: group.length,
+          k: 0, open: false, pinned: false, solo: false, lit: true,
+          screen: { x: 0, y: 0 }, screenR: 4, onScreen: false, hubA: 0
+        };
+        group.forEach(function (n) {
+          n.stack = s;
+          n.ptr = { x: s.x, y: s.y };
         });
+        stacks.push(s);
       });
+      syncStacks();
 
       clusters = webLayout(story);
 
@@ -539,6 +568,80 @@
       buildSpine();
       measureBounds();
     }
+
+    /* ================================================= A YEAR THAT HOLDS MORE
+       Everything below is derived. Nothing in the archive says "these three
+       are a group"; they are a group because they share a line and a year,
+       and they stop being one the moment a filter leaves a single memory
+       standing among them. */
+    var ZERO = { x: 0, y: 0 };
+    var FAN_STEP = 0.42;
+
+    /* Which of a year's memories a filter has left standing, and where each
+       of them sits once the year is open. Evenly across the line, centred on
+       the year — so the middle of the fan is the place the archive gave. */
+    function syncStacks() {
+      for (var i = 0; i < stacks.length; i++) {
+        var s = stacks[i];
+        var shown = [];
+        for (var j = 0; j < s.members.length; j++) {
+          s.members[j].fan = ZERO;
+          if (!s.members[j].dimmed) shown.push(s.members[j]);
+        }
+        s.shown = shown;
+        /* One memory left standing is not a stack — it is that memory, in
+           its own place, drawn as any other light on the trail. None left
+           is not gone: the light stays, dim, the way a filtered memory
+           does. */
+        s.solo = shown.length === 1;
+        s.lit = shown.length > 0;
+        s.count = shown.length || s.members.length;
+        if (shown.length < 2) {
+          if (s.open) closeStack(s);
+          continue;
+        }
+        var step = shown.length > 4 ? FAN_STEP * 0.8 : FAN_STEP;
+        for (var m = 0; m < shown.length; m++) {
+          var off = (m - (shown.length - 1) / 2) * step;
+          shown[m].fan = { x: s.px * off, y: s.py * off };
+        }
+      }
+    }
+
+    function openStack(s, pin) {
+      if (!s || s.solo || !s.lit) return;
+      if (stackTimer) { global.clearTimeout(stackTimer); stackTimer = 0; }
+      if (liveStack && liveStack !== s) closeStack(liveStack);
+      if (pin) s.pinned = true;
+      if (s.open) return;
+      s.open = true;
+      liveStack = s;
+      wake();
+    }
+
+    function closeStack(s) {
+      if (!s || !s.open) return;
+      if (stackTimer) { global.clearTimeout(stackTimer); stackTimer = 0; }
+      s.open = false; s.pinned = false;
+      if (liveStack === s) liveStack = null;
+      wake();
+    }
+
+    /* Enough grace to cross the gap between the light and what it opened. */
+    function closeStackSoon(s) {
+      if (stackTimer) global.clearTimeout(stackTimer);
+      stackTimer = global.setTimeout(function () {
+        stackTimer = 0;
+        if (!s.pinned) closeStack(s);
+      }, 240);
+    }
+
+    function closeStacks() { if (liveStack) closeStack(liveStack); }
+
+    /* How open a year is right now, and how much of that counts: a fan is a
+       thing the trail does, so it folds away as the view morphs to another
+       layout and is simply not there in the other two. */
+    function stackK(s) { return s.solo ? 1 : s.k; }
 
     function layoutPos(n) {
       if (mode === 'constellation') return n.pw || n.ptr;
@@ -1400,6 +1503,112 @@
       ctx.globalAlpha = 1;
     }
 
+    /* A year that holds several memories, as one light on the trail. It is
+       paper rather than a category tone — a stack is not one of the six, and
+       giving it a colour of its own would invent a category the archive has
+       not got — and the colours it does hold are drawn as a ring of arcs
+       around it, one arc per memory, so collapsing them costs the reader
+       nothing the colour code was for.
+
+       Open, the light stays where it is and dims: it is the place all of
+       them belong to, with a thread out to each. */
+    function drawStack(s, time, trailness) {
+      s.onScreen = false;
+      s.hubA = 0;
+      if (trailness <= 0.01 || s.solo || !s.members.length) return;
+
+      var k = s.k;
+      var lead = s.members[0];
+      if (!lead.pos) return;
+      /* Where the year is right now — the light rides the same morph its
+         memories do, so it travels with them out of the trail and back. */
+      var wx = lead.pos.x - lead.fan.x * k * trailness;
+      var wy = lead.pos.y - lead.fan.y * k * trailness;
+      var p = project(wx, wy, 1);
+      s.screen = p;
+      if (p.x < -80 || p.x > W + 80 || p.y < -80 || p.y > H + 80) return;
+      s.onScreen = true;
+
+      var base = lead.alpha * trailness * (s.lit ? 1 : 0.18);
+      var r = (3.4 + (s.open ? 0 : 0.5)) * clamp(cam.z, 0.7, 1.6);
+      s.screenR = r;
+
+      /* The threads, drawn under everything: what the fan came out of. */
+      if (k > 0.02 && s.lit) {
+        ctx.save();
+        ctx.globalAlpha = 0.2 * k * base;
+        ctx.strokeStyle = palette.ash;
+        ctx.lineWidth = 0.7;
+        for (var i = 0; i < s.shown.length; i++) {
+          var m = s.shown[i];
+          if (!m.onScreen) continue;
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(m.screen.x, m.screen.y);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      /* Shut, it is a light like any other. Open, it is only the place. */
+      var a = base * (1 - k * 0.66);
+      s.hubA = base * (1 - k);
+      if (base <= 0.02) { ctx.globalAlpha = 1; return; }
+
+      tintGlow(p.x, p.y, r * 7, 0.13 * a, palette.ember);
+
+      ctx.save();
+      /* One arc per memory, in its own tone, with the paper showing between
+         them — the count is readable as a shape before it is read as a
+         number, which is the part that does not depend on the numeral being
+         large enough to print. */
+      var list = s.lit ? s.shown : s.members;
+      var seg = TAU / list.length;
+      ctx.lineWidth = Math.max(1.4, r * 0.44);
+      ctx.lineCap = 'butt';
+      for (var j = 0; j < list.length; j++) {
+        ctx.globalAlpha = (0.9 - k * 0.5) * a;
+        ctx.strokeStyle = list[j].tone || palette.ember;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, r * 1.5, -Math.PI / 2 + j * seg + seg * 0.09,
+                -Math.PI / 2 + (j + 1) * seg - seg * 0.09);
+        ctx.stroke();
+      }
+
+      /* the pale core, which is what says "several" rather than "one" */
+      ctx.globalAlpha = (0.9 - k * 0.6) * a;
+      ctx.fillStyle = palette.paper;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, r * 0.62, 0, TAU);
+      ctx.fill();
+
+      /* The count, beside the ring rather than inside it: at this size a
+         numeral in the middle of the light would be the light. */
+      if (cam.z > 0.5 && k < 0.5) {
+        ctx.globalAlpha = clamp((0.72 - k) * a, 0, 1);
+        ctx.fillStyle = palette.ash;
+        ctx.font = '9px ' + fontMono();
+        ctx.textBaseline = 'middle';
+        ctx.textAlign = 'left';
+        ctx.fillText(String(s.count), p.x + r * 2.8, p.y + 0.5);
+        ctx.textAlign = 'start';
+        ctx.textBaseline = 'alphabetic';
+      }
+
+      /* The year, where a memory prints its own. It is printed once, here,
+         open or shut — the year is the place, and three lights each saying
+         2005 is the repetition the light was drawn to end. */
+      if (s.year) {
+        ctx.globalAlpha = clamp(((cam.z > 0.7 ? 0.5 : 0.16) + 0.3) * base, 0, 1);
+        ctx.fillStyle = palette.ash;
+        ctx.font = '9.5px ' + fontMono();
+        ctx.textBaseline = 'alphabetic';
+        spacedText(ctx, s.year, p.x, p.y - r * 3 - 4, 1.2, 'center');
+      }
+      ctx.restore();
+      ctx.globalAlpha = 1;
+    }
+
     function drawNode(n, time) {
       if (n.alpha <= 0.02) return;
       var p = project(n.pos.x, n.pos.y, 1);
@@ -1410,7 +1619,11 @@
       var r = nodeRadius(n);
       n.screenR = r;
       var tone = n.tone || palette.ember;
-      var a = n.alpha;
+      /* The screen point is worked out first and kept even when nothing is
+         drawn, so a butterfly sent to a memory inside a shut year still
+         knows where to fly: to the light it is standing in. */
+      var a = n.alpha * (n.fanA === undefined ? 1 : n.fanA);
+      if (a <= 0.02) return;
 
       if (n.kind === 'marker') { drawMarker(n, time, p, a); return; }
 
@@ -1473,6 +1686,9 @@
          is no hover, so the year appears for everything at reading zoom. */
       var near = cam.z > 0.7;
       var yearAlpha = (n.selected ? 1 : (near ? 0.5 : 0.16) + n.em * 0.5) * a;
+      /* A memory fanned out of a shared year does not print the year: the
+         light it came out of is printing it, once, for all of them. */
+      if (n.stack && !n.stack.solo) yearAlpha *= 1 - n.stack.k;
       if (n.yearLabel && yearAlpha > 0.05) {
         ctx.globalAlpha = clamp(yearAlpha, 0, 1);
         ctx.fillStyle = n.em > 0.3 || n.selected ? palette.paper : palette.ash;
@@ -1569,12 +1785,36 @@
 
       var mt = reduceMotion ? 1 : easeInOutCubic(morph.t);
 
+      /* How much of what is on screen is the trail. A fan belongs to the
+         trail, so it folds away as the view morphs to another layout — and
+         in the other two layouts a shared year is nothing special, because
+         a constellation and a world map put those memories in different
+         places for reasons of their own. */
+      var trailness = mode === 'trail' ? mt : 1 - mt;
+      for (var si = 0; si < stacks.length; si++) {
+        var st = stacks[si];
+        st.k += ((st.open ? 1 : 0) - st.k) * (reduceMotion ? 1 : 0.18);
+        if (st.k < 0.002) st.k = 0;
+        if (st.k > 0.998) st.k = 1;
+      }
+
       /* resolve node positions and eased emphasis */
       var i, n;
       for (i = 0; i < nodes.length; i++) {
         n = nodes[i];
         n.pos.x = lerp(n.from.x, n.to.x, mt);
         n.pos.y = lerp(n.from.y, n.to.y, mt);
+
+        if (n.stack) {
+          var k = stackK(n.stack) * trailness;
+          n.pos.x += n.fan.x * k;
+          n.pos.y += n.fan.y * k;
+          /* A memory in a shut year is not on the trail yet: the light is
+             standing where it is, and this is what keeps it from being
+             drawn, hit or labelled underneath it. */
+          var vis = n.stack.solo ? 1 : (n.dimmed ? 0 : n.stack.k);
+          n.fanA = 1 - (1 - vis) * trailness;
+        }
 
         var wantEm = (n === hovered ? 1 : 0);
         if (n.selected) wantEm = 1;
@@ -1600,6 +1840,7 @@
       if (mode === 'constellation') drawClusterLabels(mt);
       drawGhostBranch(time);
 
+      for (i = 0; i < stacks.length; i++) drawStack(stacks[i], time, trailness);
       for (i = 0; i < nodes.length; i++) drawNode(nodes[i], time);
 
       /* butterflies fly over everything except the reticle */
@@ -1643,10 +1884,29 @@
       for (var i = 0; i < nodes.length; i++) {
         var n = nodes[i];
         if (n.kind === 'ghost' || !n.onScreen || n.alpha < 0.25) continue;
+        /* A memory standing inside a shut year cannot be reached through the
+           light that is standing in front of it. */
+        if (n.fanA !== undefined && n.fanA < 0.4) continue;
         var dx = n.screen.x - px, dy = n.screen.y - py;
         var d = Math.sqrt(dx * dx + dy * dy);
         var pad = Math.max(n.screenR * 3.6, coarse ? 32 : 22);
         if (d < pad && d < bestD) { bestD = d; best = n; }
+      }
+      return best;
+    }
+
+    /* A year is hit-tested the same way a memory is, and only while it is
+       shut: open, the light has stepped back to being the place, and one of
+       its memories may be standing exactly on it. */
+    function hitStack(px, py) {
+      var best = null, bestD = Infinity;
+      for (var i = 0; i < stacks.length; i++) {
+        var s = stacks[i];
+        if (!s.onScreen || s.hubA < 0.3 || s.solo || !s.lit) continue;
+        var dx = s.screen.x - px, dy = s.screen.y - py;
+        var d = Math.sqrt(dx * dx + dy * dy);
+        var pad = Math.max(s.screenR * 3.6, coarse ? 34 : 24);
+        if (d < pad && d < bestD) { bestD = d; best = s; }
       }
       return best;
     }
@@ -1724,9 +1984,18 @@
 
     function setHover(px, py, fine) {
       var hit = hitTest(px, py);
+      /* A shared year opens when the pointer reaches its light and shuts
+         again once the pointer has left both the light and everything it
+         opened — with enough grace to cross the gap between the two. */
+      var over = (hit && hit.stack) || hitStack(px, py);
+      if (over && !over.solo) openStack(over);
+      else if (liveStack && !liveStack.pinned) closeStackSoon(liveStack);
+      else if (stackTimer && liveStack && over === liveStack) {
+        global.clearTimeout(stackTimer); stackTimer = 0;
+      }
       if (hit !== hovered) {
         hovered = hit;
-        canvas.style.cursor = hit ? 'pointer' : (fine ? 'grab' : 'default');
+        canvas.style.cursor = (hit || over) ? 'pointer' : (fine ? 'grab' : 'default');
         emit('hover', hit ? hit.ref : null);
         wake();
       }
@@ -1753,8 +2022,16 @@
           return;
         }
         var hit = hitTest(p.x, p.y);
-        if (hit) emit('select', hit.ref);
-        else emit('empty', unproject(p.x, p.y));
+        if (hit) { emit('select', hit.ref); }
+        else {
+          /* A press on the light opens the year and holds it open, which is
+             the only way in on a touch screen; a press on open trail lets
+             go of whatever was being held. */
+          var st = hitStack(p.x, p.y);
+          if (st) { openStack(st, true); }
+          else if (liveStack && liveStack.pinned) { closeStack(liveStack); }
+          else emit('empty', unproject(p.x, p.y));
+        }
       }
       dragMoved = 0;
       dragLast = null;
@@ -1767,6 +2044,7 @@
       dragging = false; dragMoved = 0; dragLast = null; pinchDist = 0;
     });
     canvas.addEventListener('pointerleave', function () {
+      if (liveStack && !liveStack.pinned) closeStack(liveStack);
       if (hovered) { hovered = null; emit('hover', null); wake(); }
     });
 
@@ -1923,6 +2201,10 @@
       setMode: function (next, opts) {
         opts = opts || {};
         if (next === mode && !opts.force) return api;
+        /* The fan is the trail's. Leaving the trail folds it away rather
+           than carrying it into a layout that has its own reasons for
+           where those memories go. */
+        closeStacks();
         mode = next;
         nodes.forEach(function (n) {
           n.from = { x: n.pos.x, y: n.pos.y };
@@ -1946,8 +2228,16 @@
           n.selected = (n.id === id);
           if (n.selected) focused = n;
         });
+        /* An open memory is shown standing on the trail, so if it is one of
+           several in a year, that year opens to put it there — and the
+           camera goes to where it will be standing, not to the light. */
+        var fx = 0, fy = 0;
+        if (focused && focused.stack && !focused.stack.solo) {
+          openStack(focused.stack, true);
+          fx = focused.fan.x; fy = focused.fan.y;
+        } else if (liveStack && liveStack.pinned) closeStack(liveStack);
         if (focused && opts.move !== false) {
-          tweenCam(focused.pos.x, focused.pos.y,
+          tweenCam(focused.pos.x + fx, focused.pos.y + fy,
             Math.max(cam.z, opts.zoom || 1.35), opts.ms || 1000);
         }
         wake();
@@ -1957,6 +2247,8 @@
       clearFocus: function () {
         nodes.forEach(function (n) { n.selected = false; n.dimmed = false; });
         focused = null;
+        if (liveStack && liveStack.pinned) closeStack(liveStack);
+        syncStacks();
         wake();
         return api;
       },
@@ -1966,6 +2258,10 @@
         var keep = {};
         (ids || []).forEach(function (i) { keep[i] = true; });
         nodes.forEach(function (n) { n.dimmed = ids ? !keep[n.id] : false; });
+        /* A filter changes what a shared year holds, so the light has to say
+           a different number — or stop being a light and become the one
+           memory it has left. */
+        syncStacks();
         wake();
         return api;
       },

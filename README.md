@@ -539,24 +539,33 @@ to lift it off the ground and a ring of ink outside that, which is the part
 that does not depend on the colour being seen. A chaos event keeps the slow
 breath it has in every other view.
 
-**A year holding several memories is one light, and it opens.** The canvas
-trail fans them across the line and leaves them fanned (above); the map used
-to do the same, and on a sheet this size it did not hold — three discs where
-the archive has one year, printed that way whether or not anybody was looking,
-and two of those in a decade turned a stretch of trail into a scatter. It only
+**A year holding several memories is one light, and it opens.** Both lenses
+used to fan them across the line and leave them fanned, and it did not hold:
+three lights where the archive has one year, drawn that way whether or not
+anybody was looking, and two of those in a decade turned a stretch of trail
+into a scatter you pick lights out of rather than a line you follow. It only
 gets worse as the archive grows, which is the wrong direction for a room whose
 whole job is to take more.
 
-So the map draws the year: one light carrying the number of memories in it,
+So both lenses draw the year: one light carrying the number of memories in it,
 and a ring of arcs around it, one arc per memory in its category's tone, so
 stacking them does not cost the reader the thing the colours were for. Go near
 it — hover, focus, or a press on a touch screen — and it opens into exactly
-the fan that used to be printed permanently, across the line and never along
-it, each memory on a thread back to the light it came from. Leaving closes it;
-a press pins it open; Escape or a press on open country shuts it. The spread is
-measured in screen pixels rather than map ones, so a year opens the same amount
-however far in the reader has zoomed, and the offsets are paid back into map
-units on every change of scale.
+the fan that used to be drawn permanently, across the line and never along it,
+each memory on a thread back to the light it came from. Leaving closes it; a
+press pins it open; Escape or a press on open ground shuts it.
+
+They differ in two places, because the two surfaces differ. On the map the
+spread is measured in screen pixels rather than map ones, so a year opens the
+same amount however far in the reader has zoomed, and the offsets are paid back
+into map units on every change of scale; on the trail it is the fan's own world
+units, unchanged, because the trail's camera is the reading position and the
+fan is part of what is being read. And the map's light is paper with the
+category ring around it, where the trail's is the same ring around a pale core
+on a dark plane — the same idea in each room's own material. On the trail the
+fan is also the trail's: it folds away as the view morphs to the constellation
+or to places, which put those memories somewhere else for reasons of their
+own.
 
 Nothing about this is written down in the archive and nothing is hidden by it.
 A cluster is derived from what is already true — the same strand, the same year
@@ -721,10 +730,13 @@ different strand names; keying on the strand called them strangers and
 stacked them anyway. That was live — Amma's letter to her father spent its
 first day buried underneath Dad's letter to his sons.
 
-This is the canvas trail's rule. The map keeps the geometry and changes when
-it is spent: a shared year there is one light that opens (see *A year holding
-several memories is one light*, above), because the paper is a wider sheet
-with a whole country on it and permanent fans across it read as clutter.
+The geometry is still this. What changed is when it is spent: a shared year is
+now one light that opens into that fan rather than a fan that is always there
+(see *A year holding several memories is one light*, in the map section — the
+two lenses do the same thing, and the differences between them are noted
+there). The perpendicular rule is exactly why: the fan a light opens into is
+this fan, so a memory still never moves along the line and never claims a year
+nobody wrote down.
 
 **A birth or a join can carry the day, not just the year.** `start`/`end`
 take an optional `on` — "8 December 1984", "21 November 2021" — beside the
