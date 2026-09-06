@@ -2517,6 +2517,177 @@ body[data-lens="atlas"] button:focus-visible{ outline-color: #B4432E; }
   50%      { transform: scale(1.3);  opacity: 1; }
 }
 
+/* --- a year that holds more than one -------------------------------------
+   Several memories in one year used to be printed as several discs across
+   the line, permanently, and a decade with two of those in it read as a
+   scatter rather than a sequence. So the year is one light carrying its
+   own count, and it opens when the reader goes near it — hover, focus, or
+   a press on a touch screen.
+
+   Two things are kept rather than traded away for the tidiness: the count,
+   so nothing is hidden, and the colour code, as a ring of arcs around the
+   light — one arc per memory, in its category's tone. */
+.atlas-cluster{
+  position: absolute;
+  width: 0; height: 0;
+}
+.atlas-cluster[data-open="1"]{ z-index: 8; }
+
+.atlas-cluster-hub{
+  /* Its halo is lamplight rather than a category's tone — a stack is not one
+     of the categories, and the ring is where its memories' colours are. */
+  --tone: #E8C88C;
+  position: absolute;
+  left: 0; top: 0;
+  width: 44px; height: 44px;
+  margin: -22px 0 0 -22px;
+  padding: 0;
+  border: 0;
+  background: none;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
+  transform: scale(calc(1 / var(--z, 1)));
+  transition: opacity .25s ease;
+}
+.atlas-cluster-hub:focus-visible{ outline: 2px solid #B4432E; outline-offset: 3px; }
+/* A light the filter has set aside behaves exactly as a single memory does
+   under the same filter: faint, still on the paper, out of reach. */
+.atlas-cluster[data-off="1"] .atlas-cluster-hub{ opacity: 0.16; pointer-events: none; }
+.atlas-cluster[data-aside="1"] .atlas-cluster-hub{ opacity: 0.42; }
+/* Open, the light goes back to being the place rather than the thing: a
+   faint ring at the year, with the memories standing around it and their
+   threads running back to it. It stops taking the pointer, because an odd
+   number of memories puts one of them exactly here — on the spot the
+   archive actually gave — and a memory must never be unreachable behind
+   the light it came out of. */
+.atlas-cluster[data-open="1"] .atlas-cluster-hub{
+  opacity: 0.5;
+  pointer-events: none;
+}
+.atlas-cluster[data-open="1"] .atlas-cluster-disc{ opacity: 0; }
+.atlas-cluster[data-open="1"] .atlas-cluster-ring{ transform: scale(0.7); opacity: 0.5; }
+.atlas-cluster[data-open="1"] .atlas-cluster-hub .atlas-wp-cap{ opacity: 0; }
+
+.atlas-cluster-ring{
+  position: absolute;
+  width: 25px; height: 25px;
+  border-radius: 50%;
+  -webkit-mask: radial-gradient(circle closest-side, #0000 0 66%, #000 68%);
+  mask: radial-gradient(circle closest-side, #0000 0 66%, #000 68%);
+  opacity: 0.92;
+  transition: transform .25s ease;
+}
+.atlas-cluster-hub:hover .atlas-cluster-ring,
+.atlas-cluster-hub:focus-visible .atlas-cluster-ring{ transform: scale(1.12); }
+
+/* Paper rather than light: a stack is not one of the categories, and giving
+   it a colour of its own would invent a category the archive has not got.
+   The disc behind it is the second page of the stack. */
+.atlas-cluster-disc{
+  position: relative;
+  transition: opacity .22s ease;
+  width: 15px; height: 15px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 36% 30%, #FFFDF6 0%, #F7EFDC 58%, #E9DCBE 100%);
+  box-shadow:
+    0 0 0 1.4px rgba(255,252,242,0.94),
+    0 0 0 2.3px rgba(74,59,44,0.5);
+}
+.atlas-cluster-disc::before{
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 50%;
+  background: #F1E6CC;
+  box-shadow: 0 0 0 1.4px rgba(255,252,242,0.9), 0 0 0 2.2px rgba(74,59,44,0.34);
+  transform: translate(2.6px, 2.6px);
+}
+.atlas-cluster-count{
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: #3E3125;
+}
+
+/* Each memory rides a seat, and the seat is what moves. The offsets are set
+   in map units by the atlas from a spread measured in screen pixels, so a
+   year opens the same amount however far the reader has zoomed in. */
+.atlas-fan-seat{
+  position: absolute;
+  left: 0; top: 0;
+  width: 0; height: 0;
+  transform: translate(var(--fx, 0px), var(--fy, 0px));
+  transition: transform .34s cubic-bezier(.2, .85, .28, 1);
+}
+/* the ones that follow a zoom, which must not lag behind it */
+.atlas-cluster[data-snap="1"] .atlas-fan-seat{ transition: none; }
+
+.atlas-cluster .atlas-wp{
+  left: 0; top: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .22s ease;
+}
+.atlas-cluster[data-open="1"] .atlas-wp:not([data-off="1"]),
+.atlas-cluster[data-solo="1"] .atlas-wp:not([data-off="1"]){
+  opacity: 1;
+  pointer-events: auto;
+}
+.atlas-cluster[data-open="1"] .atlas-wp[data-aside="1"]:not([data-off="1"]),
+.atlas-cluster[data-solo="1"] .atlas-wp[data-aside="1"]:not([data-off="1"]){ opacity: 0.42; }
+
+/* The year is printed once, on the light, so the memories inside it do not
+   each repeat it. Their captions go alongside rather than underneath: the
+   fan runs across the line, which is mostly up and down, and a caption
+   written under one disc lands on the next.
+
+   None of that applies to a year a filter has left holding one memory —
+   that is not a stack any more, it is that memory, and it is labelled the
+   way every other single memory on the paper is. */
+.atlas-cluster:not([data-solo="1"]) .atlas-wp .atlas-wp-year{ display: none; }
+.atlas-cluster:not([data-solo="1"]) .atlas-wp .atlas-wp-cap{
+  top: 50%;
+  left: 27px;
+  transform: translateY(-50%);
+  opacity: 0;
+}
+.atlas-cluster[data-open="1"] .atlas-wp .atlas-wp-cap{ opacity: 0.94; }
+
+/* the thread back to the light it came out of */
+.atlas-cluster .atlas-wp::after{
+  content: '';
+  position: absolute;
+  left: 50%; top: 50%;
+  width: var(--lead, 0px);
+  height: 1px;
+  transform-origin: 0 50%;
+  transform: rotate(var(--ang, 0deg));
+  background: linear-gradient(to right,
+              rgba(74,59,44,0.05) 0%, rgba(74,59,44,0.3) 100%);
+  opacity: 0;
+  transition: opacity .2s ease .05s;
+  pointer-events: none;
+}
+.atlas-cluster[data-open="1"] .atlas-wp:not([data-off="1"])::after{ opacity: 1; }
+
+/* A year still opens where motion is not wanted — it simply arrives open
+   rather than travelling there. (This has to sit after the rules it turns
+   off, not up with the room's other reduced-motion rules, or the later
+   declaration wins and the fan animates anyway.) */
+@media (prefers-reduced-motion: reduce){
+  .atlas-cluster-hub, .atlas-cluster-ring, .atlas-cluster-disc,
+  .atlas-fan-seat, .atlas-cluster .atlas-wp,
+  .atlas-cluster .atlas-wp-cap, .atlas-cluster .atlas-wp::after{ transition: none; }
+}
+
 /* --- whose line is whose ------------------------------------------------
    Written where a line is still going, in that life's own colour, and
    pressable: a name is how you follow somebody. */
@@ -2751,6 +2922,15 @@ button.atlas-joint:focus-visible{ outline: 2px solid #B4432E; outline-offset: 2p
 
   /* the country gets the whole screen behind the furniture */
   .atlas-wp-cap{ display: none; }
+  /* except inside a year the reader has just opened, where the caption is
+     the only thing naming what has appeared — cut to the width of the
+     phone rather than run off the side of it */
+  .atlas-cluster[data-open="1"] .atlas-wp .atlas-wp-cap{
+    display: block;
+    max-width: 42vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   .atlas-name-text{ font-size: 0.54rem; }
   .atlas-joint-text{ font-size: 0.48rem; }
 }

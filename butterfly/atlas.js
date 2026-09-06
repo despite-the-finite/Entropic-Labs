@@ -299,6 +299,9 @@
     var sheet = null;                          /* the painted map, offscreen */
     var sheetScale = 1;
     var waypoints = [], wpById = {};
+    /* A year that holds more than one memory, drawn as one light and
+       opened by the reader. At most one is ever open. */
+    var clusters = [], openFan = null, fanTimer = 0, fanZ = 0;
     var lanes = [], laneById = {}, lanePaths = [], laneW = 0.55;
     var axis = { start: 0, end: 1 };
     var trunkId = null, marriedWord = 'Married';
@@ -1260,6 +1263,7 @@
     function placeWaypoints() {
       waypoints.forEach(function (w, i) {
         w.i = i;
+        w.cluster = null; w.fanX = 0; w.fanY = 0;
         var lane = laneById[w.strand] || laneById[trunkId] || lanes[0];
         w.lane = lane ? lane.id : null;
         var t = clamp(w.t, axis.start, axis.end);
@@ -1268,15 +1272,26 @@
       });
 
       /* Two memories in the same year on the same line land on one pixel.
-         They fan *across* their line rather than along it — the same rule
-         the canvas trail follows, because sliding them along would move
-         them in time and claim a year nobody wrote down. */
-      var groups = {};
+         They used to fan out across their line and stay fanned — three
+         discs where the archive has one year, printed that way whether or
+         not anybody was looking. Two of those in a decade and the country
+         reads as a scatter of lights rather than a sequence, and it only
+         gets worse as the archive grows.
+
+         So a shared year is one light on the paper, carrying the number of
+         memories in it, and it opens into them when the reader goes near.
+         Nothing is hidden and nothing is invented: what it opens into is
+         exactly the fan that used to be printed permanently, across the
+         line and never along it — sliding them along would move them in
+         time and claim a year nobody wrote down. */
+      clusters = [];
+      var groups = {}, order = [];
       waypoints.forEach(function (w) {
         var key = w.lane + '|' + w.t.toFixed(3);
-        (groups[key] || (groups[key] = [])).push(w);
+        if (!groups[key]) { groups[key] = []; order.push(key); }
+        groups[key].push(w);
       });
-      Object.keys(groups).forEach(function (key) {
+      order.forEach(function (key) {
         var g = groups[key];
         if (g.length < 2) return;
         var lane = laneById[g[0].lane];
@@ -1286,19 +1301,28 @@
         var p1 = lane ? laneAt(lane, t + eps) : onSpine(uOf(t + eps));
         var dx = p1.x - p0.x, dy = p1.y - p0.y;
         var d = Math.sqrt(dx * dx + dy * dy) || 1;
-        g.forEach(function (w, k) {
-          var off = (k - (g.length - 1) / 2) * 34;
-          w.x = p0.x + (-dy / d) * off;
-          w.y = p0.y + (dx / d) * off;
-        });
+        var c = {
+          key: key, x: p0.x, y: p0.y,
+          nx: -dy / d, ny: dx / d,          /* straight across the line */
+          year: g[0].year || null,
+          members: g, shown: g.slice(),
+          node: null, hub: null, count: null, ring: null,
+          open: false, pinned: false, solo: false, settleAt: 0
+        };
+        g.forEach(function (w) { w.cluster = c; w.x = c.x; w.y = c.y; });
+        clusters.push(c);
       });
 
-      /* and then nothing at all is allowed to sit on top of anything else */
+      /* and then nothing at all is allowed to sit on top of anything else.
+         A shared year is pushed around as one thing, because that is what
+         the paper draws. */
+      var pins = clusters.slice();
+      waypoints.forEach(function (w) { if (!w.cluster) pins.push(w); });
       for (var pass = 0; pass < 6; pass++) {
         var moved = false;
-        for (var i = 0; i < waypoints.length; i++) {
-          for (var j = i + 1; j < waypoints.length; j++) {
-            var A = waypoints[i], B = waypoints[j];
+        for (var i = 0; i < pins.length; i++) {
+          for (var j = i + 1; j < pins.length; j++) {
+            var A = pins[i], B = pins[j];
             var ddx = B.x - A.x, ddy = B.y - A.y;
             var dd = Math.sqrt(ddx * ddx + ddy * ddy);
             if (dd >= 34) continue;
@@ -1311,6 +1335,9 @@
         }
         if (!moved) break;
       }
+      clusters.forEach(function (c) {
+        c.members.forEach(function (w) { w.x = c.x; w.y = c.y; });
+      });
     }
 
     /* ========================================================= THE REGIONS
@@ -2792,9 +2819,15 @@
       var P = lanePathFor(strandId);
       var lane = laneById[strandId];
       if (!P || P.pts.length < 2 || !lane) return;
+      /* A year holding several memories is one light on the paper now, so
+         the one following a life rests there once rather than three times
+         in the same spot. */
       walkStops = waypoints
         .filter(function (w) { return w.lane === strandId; })
-        .sort(function (a, b) { return a.t - b.t; });
+        .sort(function (a, b) { return a.t - b.t; })
+        .filter(function (w, i, all) {
+          return i === 0 || !w.cluster || w.cluster !== all[i - 1].cluster;
+        });
       walkNext = 0;
       walker = spawnFlier({
         x: P.pts[0].x, y: P.pts[0].y, tone: lane.tone, size: 1.05,
@@ -3022,7 +3055,66 @@
        Waypoints, region names and town names, as elements inside one
        transformed layer. `--z` is written once per frame and every label
        counter-scales off it, so type never grows with the paper. */
+    /* One memory, as a button on the paper. It is made the same way whether
+       it stands alone or shares its year with others — a shared year changes
+       where it is seated, never what it is. */
+    function makeMemory(w) {
+      var b = el('button', 'atlas-wp');
+      b.type = 'button';
+      b.dataset.id = w.id;
+      b.style.setProperty('--tone', w.tone);
+      b.style.setProperty('--deep', w.deep);
+      /* Importance, where the archive has stated any — a featured memory
+         carries a wider halo, not a bigger disc, because the numbers along
+         a line have to stay one size to be read as a sequence. */
+      b.style.setProperty('--w', (0.82 + w.weight * 0.5).toFixed(2));
+      if (w.chaos) b.dataset.chaos = '1';
+      if (w.classified) b.dataset.classified = '1';
+      b.setAttribute('aria-label', w.label);
+
+      b.appendChild(el('span', 'atlas-wp-glow'));
+      b.appendChild(el('span', 'atlas-wp-disc'));
+      var year = el('span', 'atlas-wp-year');
+      year.textContent = w.year || '';
+      if (w.year) b.appendChild(year);
+      var cap = el('span', 'atlas-wp-cap');
+      cap.textContent = w.title;
+      b.appendChild(cap);
+
+      b.addEventListener('click', function () { emit('select', w.ref); });
+      b.addEventListener('pointerenter', function (e) {
+        if (e.pointerType === 'touch') return;
+        /* A year that has just opened slides its memories out from under
+           the pointer, and every one of them crosses it on the way. That is
+           the fan arriving, not the reader pointing at anything, so it does
+           not get to caption itself. */
+        if (w.cluster && now() < w.cluster.settleAt) return;
+        showTip(w, b, false);
+        emit('hover', w.ref);
+      });
+      b.addEventListener('pointerleave', function () {
+        if (!tipFor || !tipFor.viaFocus) hideTip();
+      });
+      b.addEventListener('focus', function () {
+        showTip(w, b, true);
+        emit('hover', w.ref);
+        goTo(w.x, w.y, Math.max(cam.z, zFit * 2), 520);
+      });
+      b.addEventListener('blur', hideTip);
+
+      w.node = b;
+      return b;
+    }
+
     function placeFurniture() {
+      /* Every node below is about to be thrown away, so nothing can still
+         be open on the paper afterwards. */
+      if (fanTimer) { global.clearTimeout(fanTimer); fanTimer = 0; }
+      openFan = null;
+      clusters.forEach(function (c) {
+        c.open = false; c.pinned = false;
+        c.node = null; c.hub = null; c.count = null; c.ring = null;
+      });
       layer.textContent = '';
       if (!waypoints.length) return;
 
@@ -3030,8 +3122,11 @@
          a chapter, a name, a trailhead and a memory can never be printed on
          top of one another however the family's dates move. Memories are in
          it first and never move: they are the thing being labelled. */
-      var taken = waypoints.map(function (w) {
-        return { x: w.x, y: w.y, w: 40, h: 26 };
+      var taken = [];
+      clusters.forEach(function (c) { taken.push({ x: c.x, y: c.y, w: 46, h: 30 }); });
+      waypoints.forEach(function (w) {
+        if (w.cluster) return;
+        taken.push({ x: w.x, y: w.y, w: 40, h: 26 });
       });
       /* Step and tries are arguments because the two things using this want
          different amounts of freedom. A memory's caption may wander a long
@@ -3151,48 +3246,72 @@
          segments — but a life is not a set of segments and the numbers only
          told you the order, which the trail itself already tells you. */
       waypoints.forEach(function (w) {
-        var b = el('button', 'atlas-wp');
-        b.type = 'button';
-        b.dataset.id = w.id;
+        var b = makeMemory(w);
+        if (w.cluster) return;              /* a shared year seats its own */
         b.style.left = w.x + 'px';
         b.style.top = w.y + 'px';
-        b.style.setProperty('--tone', w.tone);
-        b.style.setProperty('--deep', w.deep);
-        /* Importance, where the archive has stated any — a featured memory
-           carries a wider halo, not a bigger disc, because the numbers along
-           a line have to stay one size to be read as a sequence. */
-        b.style.setProperty('--w', (0.82 + w.weight * 0.5).toFixed(2));
-        if (w.chaos) b.dataset.chaos = '1';
-        if (w.classified) b.dataset.classified = '1';
-        b.setAttribute('aria-label', w.label);
-
-        b.appendChild(el('span', 'atlas-wp-glow'));
-        b.appendChild(el('span', 'atlas-wp-disc'));
-        var year = el('span', 'atlas-wp-year');
-        year.textContent = w.year || '';
-        if (w.year) b.appendChild(year);
-        var cap = el('span', 'atlas-wp-cap');
-        cap.textContent = w.title;
-        b.appendChild(cap);
-
-        b.addEventListener('click', function () { emit('select', w.ref); });
-        b.addEventListener('pointerenter', function (e) {
-          if (e.pointerType === 'touch') return;
-          showTip(w, b, false);
-          emit('hover', w.ref);
-        });
-        b.addEventListener('pointerleave', function () {
-          if (!tipFor || !tipFor.viaFocus) hideTip();
-        });
-        b.addEventListener('focus', function () {
-          showTip(w, b, true);
-          emit('hover', w.ref);
-          goTo(w.x, w.y, Math.max(cam.z, zFit * 2), 520);
-        });
-        b.addEventListener('blur', hideTip);
-
-        w.node = b;
         layer.appendChild(b);
+      });
+
+      /* --- and the years that hold more than one of them. The light is the
+         stack: the memories are already made and sit under it, each in its
+         own seat, waiting for the year to open. */
+      clusters.forEach(function (c) {
+        var wrap = el('div', 'atlas-cluster');
+        wrap.style.left = c.x + 'px';
+        wrap.style.top = c.y + 'px';
+        c.node = wrap;
+
+        var hub = el('button', 'atlas-cluster-hub');
+        hub.type = 'button';
+        hub.setAttribute('aria-expanded', 'false');
+        hub.appendChild(el('span', 'atlas-wp-glow'));
+        c.ring = el('span', 'atlas-cluster-ring');
+        hub.appendChild(c.ring);
+        var disc = el('span', 'atlas-cluster-disc');
+        c.count = el('span', 'atlas-cluster-count');
+        disc.appendChild(c.count);
+        hub.appendChild(disc);
+        var hy = el('span', 'atlas-wp-year');
+        hy.textContent = c.year || '';
+        if (c.year) hub.appendChild(hy);
+        c.cap = el('span', 'atlas-wp-cap');
+        hub.appendChild(c.cap);
+        c.hub = hub;
+        wrap.appendChild(hub);
+
+        c.members.forEach(function (w) {
+          var seat = el('span', 'atlas-fan-seat');
+          seat.appendChild(w.node);
+          w.seat = seat;
+          wrap.appendChild(seat);
+        });
+
+        /* The pointer opens it and letting go of it closes it, with enough
+           grace to cross the gap between the light and what it opened. A
+           press pins it, which is the only way in on a touch screen and the
+           way to keep it open while you read. */
+        wrap.addEventListener('pointerenter', function (e) {
+          if (e.pointerType === 'touch') return;
+          openCluster(c, 'hover');
+        });
+        wrap.addEventListener('pointerleave', function (e) {
+          if (e.pointerType === 'touch') return;
+          if (c.pinned) return;
+          closeClusterSoon(c);
+        });
+        wrap.addEventListener('focusin', function () { openCluster(c, 'hover'); });
+        wrap.addEventListener('focusout', function (e) {
+          if (c.pinned) return;
+          if (e.relatedTarget && wrap.contains(e.relatedTarget)) return;
+          closeCluster(c);
+        });
+        hub.addEventListener('click', function () {
+          if (c.open && c.pinned) { closeCluster(c); return; }
+          openCluster(c, 'press');
+          goTo(c.x, c.y, Math.max(cam.z, zFit * 1.9), 420);
+        });
+        layer.appendChild(wrap);
       });
 
       /* Where the record starts, and where the paint gives out. No finish:
@@ -3223,6 +3342,154 @@
       markFocus();
     }
 
+    /* =============================================== A YEAR THAT HOLDS MORE
+       The light on the paper says how many memories are in the year and, in
+       a ring around it, what kind each of them is — so the colour code is
+       not lost by stacking them. Everything here is derived: nothing about
+       a cluster is written down in the archive, and a year stops being one
+       the moment a filter leaves a single memory standing in it. */
+    var FAN_STEP = 40, FAN_TIGHT = 31;
+
+    function ringOf(list) {
+      if (!list.length) return 'transparent';
+      if (list.length === 1) return list[0].tone;
+      var step = 100 / list.length, parts = [];
+      list.forEach(function (w, i) {
+        parts.push(w.tone + ' ' + (i * step).toFixed(2) + '% ' + ((i + 1) * step).toFixed(2) + '%');
+      });
+      return 'conic-gradient(from -90deg, ' + parts.join(', ') + ')';
+    }
+
+    /* Where each memory sits once its year is open, and how far back to the
+       light it came from. Across the line, evenly, centred on the year — so
+       the middle of the fan is the place the archive actually gave. */
+    function syncClusters() {
+      clusters.forEach(function (c) {
+        if (!c.node) return;
+        var shown = c.members.filter(function (w) {
+          return w.node && w.node.dataset.off !== '1';
+        });
+        c.shown = shown;
+        var n = shown.length;
+        /* A filter can take a shared year down to one memory, or to none.
+           One is not a stack — it is that memory, standing in its own
+           place, and the paper shows it rather than a light saying "1".
+           None is not gone: a filtered-out light stays on the paper faintly,
+           the same as every other memory the filter has set aside. */
+        c.solo = n === 1;
+        c.node.dataset.solo = c.solo ? '1' : '';
+        c.node.dataset.off = n === 0 ? '1' : '';
+        /* A cluster is one year on one line, so its memories are all on the
+           same side of whoever is being followed. */
+        c.node.dataset.aside = (n && shown[0].node.dataset.aside === '1') ? '1' : '';
+        c.hub.hidden = c.solo;
+        c.hub.tabIndex = (c.solo || !n) ? -1 : 0;
+        if (!c.solo) {
+          var says = n || c.members.length;
+          c.count.textContent = says;
+          c.cap.textContent = says + ' memories';
+          c.ring.style.background = ringOf(n ? shown : c.members);
+          c.hub.setAttribute('aria-label',
+            says + ' memories' + (c.year ? ' in ' + c.year : '') + '. Open them.');
+        }
+        if (n < 2 && c.open) closeCluster(c);
+
+        var step = n > 4 ? FAN_TIGHT : FAN_STEP;
+        c.members.forEach(function (w) { w.fanX = 0; w.fanY = 0; });
+        shown.forEach(function (w, i) {
+          var off = c.solo ? 0 : (i - (n - 1) / 2) * step;
+          w.fanX = c.nx * off;
+          w.fanY = c.ny * off;
+          /* the thread back to the light it came out of */
+          w.node.style.setProperty('--lead', Math.max(0, Math.abs(off) - 13).toFixed(1) + 'px');
+          w.node.style.setProperty('--ang',
+            (Math.atan2(-w.fanY, -w.fanX) * 180 / Math.PI).toFixed(1) + 'deg');
+        });
+        markCluster(c);
+      });
+      applyFan(true);
+    }
+
+    /* Open or shut, in the DOM. What a shut year holds is not tabbable and
+       not hoverable: it is not on the paper yet. */
+    function markCluster(c) {
+      if (!c.node) return;
+      var out = c.open || c.solo;
+      c.node.dataset.open = c.open ? '1' : '';
+      if (c.hub) c.hub.setAttribute('aria-expanded', c.open ? 'true' : 'false');
+      c.members.forEach(function (w) {
+        if (!w.node) return;
+        var on = w.node.dataset.off !== '1';
+        w.node.tabIndex = (out && on) ? 0 : -1;
+        w.node.setAttribute('aria-hidden', (out && on) ? 'false' : 'true');
+      });
+    }
+
+    /* The fan is measured in screen pixels — a year opens the same amount
+       wherever the reader has zoomed to — so the offsets are divided back
+       into map units every time the scale changes. `snap` is for the ones
+       that follow a zoom, which must not lag behind it. */
+    function applyFan(snap) {
+      var z = cam.z || 1;
+      clusters.forEach(function (c) {
+        if (c.node) c.node.dataset.snap = snap ? '1' : '';
+      });
+      /* The easing was just turned back on; read something back so that the
+         browser has it before the seats move, or the fan jumps open. */
+      if (!snap && clusters.length) void layer.offsetWidth;
+      clusters.forEach(function (c) {
+        if (!c.node) return;
+        var out = c.open || c.solo;
+        c.members.forEach(function (w) {
+          if (!w.seat) return;
+          w.seat.style.setProperty('--fx', (out ? w.fanX / z : 0).toFixed(2) + 'px');
+          w.seat.style.setProperty('--fy', (out ? w.fanY / z : 0).toFixed(2) + 'px');
+        });
+      });
+      fanZ = z;
+    }
+
+    function openCluster(c, why) {
+      if (!c || !c.node || c.solo) return;
+      if (fanTimer) { global.clearTimeout(fanTimer); fanTimer = 0; }
+      if (openFan && openFan !== c) closeCluster(openFan);
+      if (why === 'press') c.pinned = true;
+      if (c.open) return;
+      c.open = true;
+      c.settleAt = now() + (reduceMotion ? 0 : 380);
+      openFan = c;
+      markCluster(c);
+      applyFan(false);
+      wake();
+    }
+
+    function closeCluster(c) {
+      if (!c || !c.open) return;
+      if (fanTimer) { global.clearTimeout(fanTimer); fanTimer = 0; }
+      /* If the reader is standing inside the year, they come back out to the
+         light rather than being left holding a memory that is no longer on
+         the paper. It has to happen while the year is still open, because
+         landing on the light is what would otherwise open it again. */
+      var here = document.activeElement;
+      if (c.hub && c.node && here && here !== c.hub && c.node.contains(here)) c.hub.focus();
+      c.open = false; c.pinned = false;
+      if (openFan === c) openFan = null;
+      markCluster(c);
+      applyFan(false);
+      wake();
+    }
+
+    /* Enough grace to cross the gap between the light and what it opened. */
+    function closeClusterSoon(c) {
+      if (fanTimer) global.clearTimeout(fanTimer);
+      fanTimer = global.setTimeout(function () {
+        fanTimer = 0;
+        if (!c.pinned) closeCluster(c);
+      }, 240);
+    }
+
+    function closeAllFans() { if (openFan) closeCluster(openFan); }
+
     function syncLayer() {
       var s = cam.z;
       layer.style.transform = 'translate(' + (vw / 2) + 'px,' + (vh / 2) + 'px) scale(' + s +
@@ -3235,6 +3502,10 @@
          width and every town name lands on its neighbour. */
       var next = s < 0.95 ? 'far' : (s < 1.6 ? 'mid' : 'near');
       if (next !== lod) { lod = next; layer.dataset.lod = lod; }
+      /* An open year is spread in screen pixels, so a change of scale has
+         to be paid back into it — without easing, or the fan trails the
+         zoom it is supposed to be holding still against. */
+      if (openFan && Math.abs(s - fanZ) > 0.0005) applyFan(true);
     }
 
     /* ------------------------------------------------------------- tooltip */
@@ -3290,6 +3561,9 @@
           n.setAttribute('aria-pressed', mine ? 'true' : 'false');
           n.dataset.off = (emphasis.person && !mine) ? '1' : '';
         });
+      /* A filter changes what a shared year holds, so the light has to say
+         a different number — or stop being a stack altogether. */
+      syncClusters();
       drawWanted = true;
     }
     function markFocus() {
@@ -3297,6 +3571,11 @@
         if (!w.node) return;
         w.node.dataset.on = (w.id === focusedId) ? '1' : '';
       });
+      /* An open memory is shown standing on the paper, so if it is one of
+         several in a year, that year opens to put it there. */
+      var f = focusedId && wpById[focusedId];
+      if (f && f.cluster && !f.cluster.solo) openCluster(f.cluster, 'press');
+      else if (openFan && openFan.pinned) closeCluster(openFan);
       drawWanted = true;
     }
 
@@ -3317,7 +3596,9 @@
       }
 
       host.addEventListener('pointerdown', function (e) {
-        if (e.target.closest && e.target.closest('.atlas-wp')) return;
+        if (e.target.closest && e.target.closest('.atlas-wp, .atlas-cluster-hub')) return;
+        /* a press on open country shuts whatever year was being held open */
+        if (openFan && openFan.pinned) closeCluster(openFan);
         pts[e.pointerId] = { x: e.clientX, y: e.clientY };
         n = Object.keys(pts).length;
         moved = 0;
@@ -3420,6 +3701,11 @@
       host.addEventListener('keydown', function (e) {
         var step = 90 / cam.z;
         var k = e.key;
+        if (k === 'Escape' && openFan) {
+          closeCluster(openFan);
+          e.preventDefault();
+          return;
+        }
         if (k === 'ArrowLeft') cam.x -= step;
         else if (k === 'ArrowRight') cam.x += step;
         else if (k === 'ArrowUp') cam.y -= step;
@@ -3596,6 +3882,7 @@
         active = false;
         if (rafId) { global.cancelAnimationFrame(rafId); rafId = 0; }
         hideTip();
+        closeAllFans();
         clearFliers();
         host.hidden = true;
         return api;

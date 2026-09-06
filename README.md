@@ -539,6 +539,35 @@ to lift it off the ground and a ring of ink outside that, which is the part
 that does not depend on the colour being seen. A chaos event keeps the slow
 breath it has in every other view.
 
+**A year holding several memories is one light, and it opens.** The canvas
+trail fans them across the line and leaves them fanned (above); the map used
+to do the same, and on a sheet this size it did not hold — three discs where
+the archive has one year, printed that way whether or not anybody was looking,
+and two of those in a decade turned a stretch of trail into a scatter. It only
+gets worse as the archive grows, which is the wrong direction for a room whose
+whole job is to take more.
+
+So the map draws the year: one light carrying the number of memories in it,
+and a ring of arcs around it, one arc per memory in its category's tone, so
+stacking them does not cost the reader the thing the colours were for. Go near
+it — hover, focus, or a press on a touch screen — and it opens into exactly
+the fan that used to be printed permanently, across the line and never along
+it, each memory on a thread back to the light it came from. Leaving closes it;
+a press pins it open; Escape or a press on open country shuts it. The spread is
+measured in screen pixels rather than map ones, so a year opens the same amount
+however far in the reader has zoomed, and the offsets are paid back into map
+units on every change of scale.
+
+Nothing about this is written down in the archive and nothing is hidden by it.
+A cluster is derived from what is already true — the same strand, the same year
+— the count is printed on the light, and the memories are all still in the
+index, the route and the URL. It is also not a permanent fact about a year: a
+filter that leaves one memory standing collapses the light into that memory,
+in its own place, labelled the way every other single memory is; a filter that
+leaves none dims the light exactly as it dims a memory. Opening a memory from
+anywhere — a link, the index, a butterfly — opens its year on the paper and
+marks it standing there.
+
 **Everything written on the paper goes through one collision list**, and every
 label on it is two things: a mark that stays exactly where the braid put it,
 and a piece of type hung off it at an offset the collision list worked out.
@@ -548,7 +577,9 @@ the mark goes never was. The type is kept on a short leash as well — five step
 of eleven pixels, against sixteen of twenty-two for a memory's caption —
 because a label that walks three hundred pixels to avoid a collision has not
 solved anything, it has moved the confusion somewhere else. Add a story and
-every label re-negotiates.
+every label re-negotiates. A year holding several memories goes into the list
+once, as a single slightly larger mark, and is pushed clear of its neighbours
+as one thing — because one light is what the paper draws.
 
 **The braid's joints are map furniture, and they name people.** A birth is a
 circle on the line carrying the child's name and year; a marriage is a diamond
@@ -689,6 +720,11 @@ Amma's strand and a 2026 memory on Dad's occupy the same spot while carrying
 different strand names; keying on the strand called them strangers and
 stacked them anyway. That was live — Amma's letter to her father spent its
 first day buried underneath Dad's letter to his sons.
+
+This is the canvas trail's rule. The map keeps the geometry and changes when
+it is spent: a shared year there is one light that opens (see *A year holding
+several memories is one light*, above), because the paper is a wider sheet
+with a whole country on it and permanent fans across it read as clutter.
 
 **A birth or a join can carry the day, not just the year.** `start`/`end`
 take an optional `on` — "8 December 1984", "21 November 2021" — beside the
