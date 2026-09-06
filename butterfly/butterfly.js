@@ -196,6 +196,25 @@
     var e = eraOf(s);
     return e ? e.label : '';
   }
+  /* The index says the same thing about every memory in the same shape, so
+     the list can be scanned rather than read. That means the bare year, not
+     `whenOf`'s sentence — 'Circa 1974' on one row and '1997, and all the
+     years after' on the next is the same fact told at three lengths, and a
+     column of that cannot be read at a glance. Where the year was never
+     written down the row still says so rather than starting with the title. */
+  function yearOf(s) {
+    if (s.year !== null) return String(s.year);
+    var e = eraOf(s);
+    return e ? e.label : 'Undated';
+  }
+  /* `source` is attribution written as content — 'Amma, at the kitchen
+     table', 'Dad — drawn from his letter of 15th August'. The index wants
+     the name off the front of it and nothing else; the story itself still
+     prints the whole line, which is where the rest of it belongs. */
+  function narratorOf(s) {
+    if (!s.source) return '';
+    return s.source.split(/[—–,(:]/)[0].trim();
+  }
   /* The line a node shows before it is opened: era or decade, then place. */
   function standfirst(s) {
     var e = eraOf(s);
@@ -2539,8 +2558,9 @@
     if (ordered.length) {
       var mem = group('Memories');
       ordered.forEach(function (s) {
-        var when = whenOf(s);
-        into(mem, (when ? when + ' — ' : '') + s.title, function () { go('#' + s.id); });
+        var by = narratorOf(s);
+        into(mem, yearOf(s) + ': ' + s.title + (by ? ' (by ' + by + ')' : ''),
+          function () { go('#' + s.id); });
       });
     }
 
