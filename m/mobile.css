@@ -443,6 +443,45 @@ body.menu-open{ overflow: hidden; }
 }
 .game-panel .cta-stack{ margin-top: 0; }
 
+/* two playable versions of one game */
+.version-pick{
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding-left: 0.85rem;
+  border-left: 2px solid var(--hairline-strong);
+}
+.version-pick-lead{ border-left-color: var(--signal); }
+.version-label{
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ash);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.55em;
+}
+.version-pick-lead .version-label{ color: var(--paper); }
+.version-badge, .version-tag{
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  padding: 0.2em 0.55em;
+  border-radius: 2px;
+}
+.version-badge{ background: var(--signal); color: var(--ink); }
+.version-tag{ border: 1px solid var(--hairline-strong); color: var(--ash); }
+.version-note{
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  line-height: 1.55;
+  color: var(--ash);
+  margin: 0;
+}
+
 /* ---------- SECTIONS ---------- */
 section{ padding: 2.8rem 0; border-bottom: 1px solid var(--hairline); }
 section:last-of-type{ border-bottom: 0; }

@@ -1,7 +1,14 @@
-# Hosted copy — Little Heroes Hospital
+# Hosted copy — Little Heroes Hospital, Version 1
 
-This directory is a copy of the game, served from this site so the **Play it now**
+This directory is a copy of the game, served from this site so the **Play Version 1**
 button on `games.html` works in a browser with no setup.
+
+This is the original, kept as it was. Version 2 — the same game redrawn, from a
+separate repository — sits alongside it in `play/little-heroes-hospital-v2/`,
+and the games room leads with that one. Nothing here redirects there and
+nothing here follows it: this copy stays frozen at the commit below, so the
+original stays playable exactly as it shipped. Everything from the line below
+down is the note as it was written for that copy.
 
 - **Source:** https://github.com/despite-the-finite/Doctor-and-vet-game
 - **Copied at commit:** `0b9dcf8` (branch `claude/little-heroes-hospital-wniai3`)
