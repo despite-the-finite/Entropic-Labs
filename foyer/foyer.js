@@ -1,4 +1,4 @@
-/* Entropic Labs — the foyer field.
+/* The Entropic Labs — the foyer field.
  * ==========================================================================
  * Everything drawn behind the four rooms: the drifting field, the traces
  * running out from the wordmark, the light each room throws, the occasional
@@ -800,7 +800,7 @@
   try {
     var brand = 'color:#2FE0C7;font:600 12px ui-monospace,monospace';
     var quiet = 'color:#9C93B8;font:12px ui-monospace,monospace';
-    console.log('%cENTROPIC LABS %c— four rooms, one building.', brand, quiet);
+    console.log('%cTHE ENTROPIC LABS %c— four rooms, one building.', brand, quiet);
     console.log('%c01 observatory · 02 studio · 03 game room · 04 butterfly trails', quiet);
     console.log('%cS = k · log W. The mess is the evidence, not the problem.', quiet);
     console.log('%cThere is one thing in the field that is not a star.', quiet);

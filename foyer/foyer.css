@@ -1,4 +1,4 @@
-/* Entropic Labs — the foyer.
+/* The Entropic Labs — the foyer.
    ==========================================================================
    The way in. Four rooms hang in a dark field around the wordmark; the field
    itself is drawn by foyer/foyer.js on a canvas underneath. This stylesheet
@@ -122,9 +122,11 @@ body{
   font-weight: 700;
   /* Sized against Arial, the widest thing in the display stack — on a
      machine with Arial Narrow or Roboto Condensed it simply sits narrower.
-     ENTROPIC·LABS has no space in it and cannot wrap, so the ceiling has to
-     assume the worst case rather than the good one. */
-  font-size: clamp(1.85rem, 4.6vw, 3.7rem);
+     ENTROPIC·LABS cannot break, so the only wrap the mark has is the space
+     after THE, and the ceiling is set so the desktop composition never takes
+     it: the rooms hang around a mark one line tall. 3.55rem is what fits the
+     40rem core in Arial with a little room to spare. */
+  font-size: clamp(1.85rem, 4.6vw, 3.55rem);
   letter-spacing: 0.045em;
   line-height: 1;
   margin: 0;
@@ -553,6 +555,9 @@ body.leaving .sill, body.leaving .whisper{ transition: opacity 240ms ease; opaci
     max-width: 32rem;
   }
 
+  /* Here the mark is allowed the wrap the desktop denies it: the core is a
+     block in the flow rather than the centre of a composition, so THE sits on
+     its own line above the name and the type stays big. */
   .wordmark{ font-size: clamp(2rem, 9.5vw, 3.4rem); }
 
   .realms ul{
