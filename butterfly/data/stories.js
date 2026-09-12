@@ -1,4 +1,4 @@
-/* The Entropic Labs — Butterfly Trails archive.
+/* Entropic Labs — Butterfly Trails archive.
    ==========================================================================
    THIS FILE IS THE WHOLE CONTENT LAYER. Nothing here knows how it is drawn.
 

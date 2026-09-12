@@ -1,4 +1,4 @@
-/* The Entropic Labs — canvas motion.
+/* Entropic Labs — canvas motion.
  *
  * Two things on the site are drawn live rather than baked into an image:
  *

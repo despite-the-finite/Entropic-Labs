@@ -1,4 +1,4 @@
-/* The Entropic Labs — Observatory star field.
+/* Entropic Labs — Observatory star field.
    ==========================================================================
    A 2D canvas renderer with a tweened camera. It knows about drawing and
    hit-testing and nothing about the catalogue: observatory.js hands it a

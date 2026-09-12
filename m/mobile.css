@@ -1,4 +1,4 @@
-/* The Entropic Labs — mobile build.
+/* Entropic Labs — mobile build.
    Shared by m/index.html and m/games.html. Phone-first: one column, tap
    targets at 48px and up, no fixed side padding smaller than a thumb, and
    nothing that depends on hover. The palette matches the full site. */
@@ -99,7 +99,6 @@ img{ max-width: 100%; }
   font-size: 1rem;
   letter-spacing: 0.03em;
   text-decoration: none;
-  white-space: nowrap;
 }
 .bar-brand span{ color: var(--signal); }
 .menu-btn{

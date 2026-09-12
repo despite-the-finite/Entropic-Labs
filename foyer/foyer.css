@@ -120,17 +120,18 @@ body{
   font-family: var(--font-display);
   text-transform: uppercase;
   font-weight: 700;
-  /* Sized against Arial, the widest thing in the display stack — on a
-     machine with Arial Narrow or Roboto Condensed it simply sits narrower.
-     ENTROPIC·LABS cannot break, so the only wrap the mark has is the space
-     after THE, and the ceiling is set so the desktop composition never takes
-     it: the rooms hang around a mark one line tall. 3.55rem is what fits the
-     40rem core in Arial with a little room to spare. */
-  font-size: clamp(1.85rem, 4.6vw, 3.55rem);
+  /* One line, always. The dots are what hold the three words together, so a
+     wrap would read as a broken mark rather than a stacked one — nowrap makes
+     that structural instead of a hope, and the sizes below are picked so the
+     mark still fits the core it sits in. Sized against Arial, the widest thing
+     in the display stack; on a machine with Arial Narrow or Roboto Condensed
+     it simply sits narrower. 3.5rem is what THE·ENTROPIC·LABS fits the 40rem
+     core at, with a little room to spare. */
+  white-space: nowrap;
+  font-size: clamp(1.85rem, 4.6vw, 3.5rem);
   letter-spacing: 0.045em;
   line-height: 1;
   margin: 0;
-  text-wrap: balance;
   text-shadow:
     0 0 30px rgba(124,77,255,0.26),
     0 0 96px rgba(47,224,199,0.09);
@@ -555,10 +556,11 @@ body.leaving .sill, body.leaving .whisper{ transition: opacity 240ms ease; opaci
     max-width: 32rem;
   }
 
-  /* Here the mark is allowed the wrap the desktop denies it: the core is a
-     block in the flow rather than the centre of a composition, so THE sits on
-     its own line above the name and the type stays big. */
-  .wordmark{ font-size: clamp(2rem, 9.5vw, 3.4rem); }
+  /* The mark still may not wrap, and here the core is a block in the flow
+     with fixed 1.4rem gutters — so the narrower the phone, the larger a share
+     of it those gutters eat. 7.4vw is what survives a 320px screen; the 2.55rem
+     ceiling is what fits the 32rem core once the width stops growing. */
+  .wordmark{ font-size: min(7.4vw, 2.55rem); }
 
   .realms ul{
     display: flex;

@@ -1,4 +1,4 @@
-/* The Entropic Labs — Observatory catalogue.
+/* Entropic Labs — Observatory catalogue.
    ==========================================================================
    This is the whole content layer. Nothing here knows how it will be drawn.
    To add an observation, append an object to OBSERVATIONS below; to add a
