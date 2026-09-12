@@ -1,8 +1,8 @@
-![Entropic Labs](entropic-labs-banner.svg)
+![The Entropic Labs](entropic-labs-banner.svg)
 
-# Entropic Labs
+# The Entropic Labs
 
-Entropic Labs: four rooms in one building, run by **Despite the Finite** — a
+The Entropic Labs: four rooms in one building, run by **Despite the Finite** — a
 recording and production studio, an observatory of things worth wondering
 about, a game room, and a family archive. `index.html` is the foyer you come
 in through; everything else is a room off it.
@@ -178,7 +178,10 @@ field and the loop are shared with the hero rather than written twice.
 
 These are the sections of `studio.html`, the studio page:
 
-- Hero — the `ENTROPIC LABS / MUSIC ENGINEERING / STUDIO` backdrop, plus the booking CTA
+- Hero — the `ENTROPIC LABS / MUSIC ENGINEERING / STUDIO` backdrop, plus the booking CTA.
+  The backdrop is a raster file with the wordmark baked into the pixels, so it still
+  reads `ENTROPIC LABS` — it predates the name and needs the original 4K artwork to
+  re-render. Its alt text describes the picture, not the brand, and says the same.
 - Manifesto — studio philosophy
 - Behind the board — lead producer bio
 - Inside the room — studio photo

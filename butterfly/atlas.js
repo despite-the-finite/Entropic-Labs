@@ -1,4 +1,4 @@
-/* Entropic Labs — Butterfly Trails, the atlas.
+/* The Entropic Labs — Butterfly Trails, the atlas.
    ==========================================================================
    The braid, walked across a country.
 

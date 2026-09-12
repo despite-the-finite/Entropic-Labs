@@ -1,4 +1,4 @@
-/* Entropic Labs — Observatory controller.
+/* The Entropic Labs — Observatory controller.
    ==========================================================================
    Owns the state machine, the URL, the panels and the telemetry tick. The
    star field draws and reports; this decides what any of it means.
@@ -632,7 +632,7 @@
       recordEl.hidden = false;
       catalogEl.hidden = true;
       body.setAttribute('data-panel', '1');
-      doc.title = obs.title + ' — Observatory — Entropic Labs';
+      doc.title = obs.title + ' — Observatory — The Entropic Labs';
       say(isAnomaly(obs) ? 'OBSERVATION INCOMPLETE' : 'OBJECT CATALOGUED', 3200);
     } else if (next.mode === 'category') {
       renderCatalog(next.category);
@@ -641,13 +641,13 @@
       body.setAttribute('data-panel', '1');
       var cat = null;
       for (var i = 0; i < categories.length; i++) if (categories[i].id === next.category) cat = categories[i];
-      doc.title = (cat ? cat.name : 'Field') + ' — Observatory — Entropic Labs';
+      doc.title = (cat ? cat.name : 'Field') + ' — Observatory — The Entropic Labs';
       say('SIGNAL ACQUIRED', 2600);
     } else {
       catalogEl.hidden = true;
       recordEl.hidden = true;
       body.removeAttribute('data-panel');
-      doc.title = 'Observatory — Entropic Labs';
+      doc.title = 'Observatory — The Entropic Labs';
       if (wasMode !== 'field') say('RETURNING TO FIELD', 2200);
     }
 

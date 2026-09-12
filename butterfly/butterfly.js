@@ -1,4 +1,4 @@
-/* Entropic Labs — Butterfly Trails controller.
+/* The Entropic Labs — Butterfly Trails controller.
    ==========================================================================
    Owns the archive, the state machine, the URL and every panel. The renderer
    draws and reports; this decides what any of it means.
@@ -2734,7 +2734,7 @@
       essayEl.hidden = false;
       storyEl.hidden = true;
       body.setAttribute('data-panel', '1');
-      doc.title = ESSAY.title + ' — Butterfly Trails — Entropic Labs';
+      doc.title = ESSAY.title + ' — Butterfly Trails — The Entropic Labs';
       trails.clearFocus();
       if (atlas) atlas.clearFocus();
       beginningEl.hidden = true;
@@ -2751,7 +2751,7 @@
       var heading = renderStory(s);
       storyEl.hidden = false;
       body.setAttribute('data-panel', '1');
-      doc.title = s.title + ' — Butterfly Trails — Entropic Labs';
+      doc.title = s.title + ' — Butterfly Trails — The Entropic Labs';
       /* How close to go depends on what the view is for: the trail is a
          reading position, the constellation is a shape you would lose by
          zooming into it, the map is a place. */
@@ -2781,7 +2781,7 @@
          archive to, not to the whole of it. */
       applyFilters({ quiet: true });
       trails.hideGhostBranch();
-      doc.title = 'Butterfly Trails — Entropic Labs';
+      doc.title = 'Butterfly Trails — The Entropic Labs';
       renderBeginning();
       if (lastFocus && doc.contains(lastFocus)) { lastFocus.focus(); lastFocus = null; }
     }

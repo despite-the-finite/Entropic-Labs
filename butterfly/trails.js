@@ -1,4 +1,4 @@
-/* Entropic Labs — Butterfly Trails renderer.
+/* The Entropic Labs — Butterfly Trails renderer.
    ==========================================================================
    A 2D canvas world with a pannable camera, three layouts a node can morph
    between, and a small population of butterflies that fly under their own

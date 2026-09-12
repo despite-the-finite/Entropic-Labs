@@ -1,4 +1,4 @@
-/* Entropic Labs — Observatory telemetry.
+/* The Entropic Labs — Observatory telemetry.
    ==========================================================================
    Everything on the status panel is computed here, in the browser, from the
    clock. There are no network calls and no API keys: a panel that needs a
