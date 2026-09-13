@@ -109,9 +109,13 @@ The foyer, Observatory and Butterfly Trails are single responsive pages on purpo
 
 ### `play/`
 
-`play/meridian/`, `play/wandering-words/` and `play/little-heroes-hospital/` are
-vendored copies of games from other repos. **Treat them as read-only** — fix things
-upstream and re-copy per each directory's `UPSTREAM.md`.
+Every directory under `play/` is a vendored copy of a game from another repo —
+`meridian/` and `meridian-v2/`, `wandering-words/`, and `little-heroes-hospital/`
+and `little-heroes-hospital-v2/`. **Treat them as read-only** — fix things
+upstream and re-copy per each directory's `UPSTREAM.md`. Two games ship as two
+versions each, from two separate upstream repos; the `-v2` copy is the one the
+games room leads with and the original is kept playable beside it, so a version
+bump is a new directory rather than an overwrite.
 
 ## House rules
 

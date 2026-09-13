@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<!-- Without this a phone lays the page out at ~980px and zooms out, so the
+     game would render tiny. viewport-fit=cover lets the safe-area insets
+     below account for notches and home indicators. -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<!-- Barlow Condensed (headings) + Barlow (body) come from the project's design
+     system. They are a progressive enhancement: if the page is opened offline
+     or from file://, the stacks in src/art/palette.js fall back to condensed
+     system faces and everything still lays out. -->
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600&family=Barlow:wght@400;600&display=swap" rel="stylesheet" />
+<title>EPC QUEST</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: #0f1318;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Courier New', monospace;
+  }
+  /* Fills the window — Phaser's Scale Manager (see main.js) fits the 640x480
+     canvas inside it, centered, so the game scales up to whatever room the
+     browser gives it instead of sitting at a fixed 640x480. */
+  #game-container {
+    width: 100vw;
+    height: 100vh;
+    /* dvh where supported: mobile browsers count their collapsing address
+       bar in vh, which leaves the canvas taller than the visible page. */
+    height: 100dvh;
+    cursor: none;
+  }
+  /* Frame the canvas itself rather than the (now full-window) container. */
+  #game-container canvas {
+    box-shadow: 0 0 0 1px #5980a6, 0 0 0 6px #12151a, 0 0 60px rgba(0,0,0,0.7);
+  }
+  #boot-status {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #c3d3e2;
+    font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+    font-size: 18px;
+    letter-spacing: 1px;
+    text-align: center;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  #boot-status.error {
+    color: #ff8a8a;
+    font-size: 13px;
+    white-space: pre-wrap;
+    align-items: flex-start;
+    text-align: left;
+  }
+  #boot-bar-track {
+    margin-top: 14px;
+    width: 220px;
+    height: 10px;
+    border: 1px solid #5980a6;
+    background: #12151a;
+  }
+  #boot-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: #8fb0cd;
+    transition: width 0.15s ease-out;
+  }
+  #boot-status.error #boot-bar-track {
+    display: none;
+  }
+
+  /* ---- On-screen touch controls (see src/touch.js) ----
+     Hidden until touch.js decides this is a touch device, so a desktop
+     player never sees them. */
+  #touch-controls {
+    display: none;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    box-sizing: border-box;
+    padding: 10px 20px;
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    z-index: 10;
+    /* The browser must not treat these as scroll/zoom gestures — without
+       this, dragging the D-pad pans the page instead of moving Karsh. */
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  #touch-controls.visible {
+    display: flex;
+  }
+  /* Square-cornered and hairline-bordered, same grammar as the in-game
+     panels — the controls should look like part of the same instrument. */
+  #touch-dpad {
+    position: relative;
+    flex: none;
+    width: min(40vw, 180px);
+    aspect-ratio: 1;
+    background: rgba(18, 21, 26, 0.78);
+    box-shadow: inset 0 0 0 1px #5980a6, 0 0 0 1px rgba(0, 0, 0, 0.5);
+    touch-action: none;
+  }
+  /* Registration marks at the pad's corners. */
+  #touch-dpad::before,
+  #touch-dpad::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+    inset: 6px;
+    border: 1px solid rgba(143, 176, 205, 0.35);
+  }
+  #touch-dpad::after {
+    inset: 40%;
+    border-color: rgba(143, 176, 205, 0.5);
+  }
+  .touch-arrow {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34%;
+    height: 34%;
+    color: #c3d3e2;
+    font-size: min(6vw, 26px);
+    line-height: 1;
+    /* Input is read from the thumb's position on the pad as a whole, so
+       the arrows are decoration — let presses fall through to the pad. */
+    pointer-events: none;
+    opacity: 0.55;
+  }
+  .touch-arrow.active {
+    opacity: 1;
+    color: #f2f2f3;
+    text-shadow: 0 0 8px #5980a6;
+  }
+  #touch-dpad-up    { top: 2%;    left: 33%; }
+  #touch-dpad-down  { bottom: 2%; left: 33%; }
+  #touch-dpad-left  { left: 2%;   top: 33%; }
+  #touch-dpad-right { right: 2%;  top: 33%; }
+  #touch-buttons {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 12px;
+  }
+  .touch-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(18, 21, 26, 0.78);
+    box-shadow: inset 0 0 0 1px #5980a6, 0 0 0 1px rgba(0, 0, 0, 0.5);
+    color: #c3d3e2;
+    font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+    font-weight: 600;
+    letter-spacing: 2px;
+    touch-action: none;
+  }
+  .touch-btn.active {
+    background: rgba(89, 128, 166, 0.32);
+    box-shadow: inset 0 0 0 1px #8fb0cd, 0 0 0 1px rgba(0, 0, 0, 0.5);
+    color: #f2f2f3;
+  }
+  #touch-btn-space {
+    width: min(28vw, 122px);
+    aspect-ratio: 1;
+    font-size: min(3.6vw, 15px);
+  }
+  #touch-btn-h {
+    width: min(17vw, 74px);
+    aspect-ratio: 1;
+    font-size: min(4.4vw, 19px);
+  }
+  /* Portrait: give the controls a band of their own below the game rather
+     than covering it — the letterboxing from a 4:3 canvas on a tall phone
+     leaves plenty of room, and the game scales into whatever is left. */
+  @media (pointer: coarse) and (orientation: portrait) {
+    #game-container {
+      height: 62vh;
+      height: 62dvh;
+      /* body centers its children; without this the shortened container
+         floats to the middle of the viewport and the game overlaps the
+         (fixed-position) controls band instead of sitting above it. */
+      align-self: flex-start;
+    }
+    #touch-controls {
+      height: 38vh;
+      height: 38dvh;
+    }
+  }
+  /* Landscape: no vertical room to split, so the controls float over the
+     canvas edges — translucent, and tucked into the corners where the
+     game draws its own HUD least. */
+  @media (pointer: coarse) and (orientation: landscape) {
+    #touch-controls {
+      padding: 6px 14px;
+      padding-bottom: calc(6px + env(safe-area-inset-bottom));
+      opacity: 0.9;
+    }
+    #touch-dpad {
+      width: min(26vw, 34vh, 150px);
+    }
+    #touch-btn-space {
+      width: min(19vw, 24vh, 104px);
+      font-size: min(2.4vw, 14px);
+    }
+    #touch-btn-h {
+      width: min(12vw, 16vh, 64px);
+      font-size: min(3vw, 17px);
+    }
+  }
+</style>
+</head>
+<body>
+<div id="game-container"></div>
+
+<!-- Touch controls. Inert (and hidden) until src/touch.js wires them up;
+     it synthesizes the same key events the scenes already listen for, so
+     the labels match the game's own on-screen hints. -->
+<div id="touch-controls">
+  <div id="touch-dpad">
+    <div class="touch-arrow" id="touch-dpad-up">&#9650;</div>
+    <div class="touch-arrow" id="touch-dpad-left">&#9664;</div>
+    <div class="touch-arrow" id="touch-dpad-right">&#9654;</div>
+    <div class="touch-arrow" id="touch-dpad-down">&#9660;</div>
+  </div>
+  <div id="touch-buttons">
+    <div class="touch-btn" id="touch-btn-h">H</div>
+    <div class="touch-btn" id="touch-btn-space">SPACE</div>
+  </div>
+</div>
+
+<!-- Plain HTML/CSS, no dependency on any script below — shows immediately,
+     and stays up (with the real error, if there was one) if anything below
+     fails to load or throws, instead of a silent blank page. main.js
+     removes this once the game actually starts. -->
+<div id="boot-status">
+  <div id="boot-status-text">Loading...</div>
+  <div id="boot-bar-track"><div id="boot-bar-fill"></div></div>
+</div>
+<script>
+  (function () {
+    var statusEl = document.getElementById("boot-status");
+    var textEl = document.getElementById("boot-status-text");
+    var fillEl = document.getElementById("boot-bar-fill");
+
+    window.addEventListener("error", function (e) {
+      if (!statusEl) return;
+      statusEl.className = "error";
+      statusEl.textContent =
+        "Failed to load: " + (e.message || "unknown error") +
+        (e.filename ? "\n" + e.filename + ":" + e.lineno : "");
+    });
+
+    // Every script the game needs, loaded one at a time (in this order —
+    // later files reference globals earlier ones define) via plain
+    // <script src>, same as before: this still works from a bare file://
+    // page with no server. The only addition is a byte-weighted progress
+    // bar — Phaser's vendored build alone is ~90% of everything on this
+    // list, so weighting by file count would leave the bar sitting near 0%
+    // for nearly the whole real load.
+    var SCRIPTS = [
+      ["src/vendor/phaser.min.js", 1181917], // Phaser 3, vendored locally — no CDN dependency
+      ["src/audio.js", 3622],
+      ["src/art/palette.js", 3000],
+      ["src/art/ui.js", 5400],
+      ["src/art/fx.js", 7600],
+      ["src/art/chars.js", 2700],
+      ["src/art/tiles.js", 7200],
+      ["src/art/atlas_chars.js", 384600],
+      ["src/art/atlas_world.js", 83900],
+      ["src/art/atlas_enemies.js", 126200],
+      ["src/art/atlas_site.js", 194300],
+      ["src/data/ranks.js", 1499],
+      ["src/data/bonus.js", 1236],
+      ["src/data/coworkers.js", 11330],
+      ["src/data/enemies.js", 4805],
+      ["src/data/bosses.js", 1002],
+      ["src/data/clients.js", 5324],
+      ["src/data/site_hazards.js", 3768],
+      ["src/data/floorplan.js", 12449],
+      ["src/data/sitevisits.js", 16893],
+      ["src/data/visitors.js", 6334],
+      ["src/scenes/PreloadScene.js", 2000],
+      ["src/scenes/TitleScene.js", 6000],
+      ["src/scenes/IntroScene.js", 2823],
+      ["src/scenes/BootScene.js", 3000],
+      ["src/scenes/OfficeScene.js", 36700],
+      ["src/scenes/TransitionScene.js", 1129],
+      ["src/scenes/PromotionScene.js", 2205],
+      ["src/scenes/SiteVisitScene.js", 21400],
+      ["src/scenes/VisitorScene.js", 9556],
+      ["src/scenes/BattleScene.js", 27600],
+      ["src/main.js", 2005],
+      ["src/touch.js", 7938],
+    ];
+    var totalWeight = SCRIPTS.reduce(function (sum, s) { return sum + s[1]; }, 0);
+    var loadedWeight = 0;
+
+    function setProgress(pct) {
+      if (fillEl) fillEl.style.width = pct + "%";
+      if (textEl) textEl.textContent = "Loading... " + pct + "%";
+    }
+
+    function loadNext(i) {
+      if (i >= SCRIPTS.length) return;
+      var src = SCRIPTS[i][0];
+      var weight = SCRIPTS[i][1];
+      var script = document.createElement("script");
+      script.src = src;
+      script.onload = function () {
+        loadedWeight += weight;
+        setProgress(Math.round((loadedWeight / totalWeight) * 100));
+        loadNext(i + 1);
+      };
+      script.onerror = function () {
+        if (!statusEl) return;
+        statusEl.className = "error";
+        statusEl.textContent = "Failed to load script: " + src;
+      };
+      document.body.appendChild(script);
+    }
+
+    setProgress(0);
+    loadNext(0);
+  })();
+</script>
+</body>
+</html>

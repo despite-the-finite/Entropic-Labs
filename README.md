@@ -23,7 +23,8 @@ have keep working.
 - `games.html` — the games page: video game design as a minor function of the studio.
 - `observatory.html` + `observatory/` — the Observatory: an interactive star chart of things worth wondering about. One responsive page rather than a desktop page plus an `m/` twin; see below.
 - `butterfly.html` + `butterfly/` — Butterfly Trails: an interactive family archive, built around what small moments led to. Same single-responsive-page arrangement as the Observatory; see below.
-- `play/meridian/` — a hosted copy of *Donnell and McBurns: An EPC Epic*, so it's playable straight from the site. Read-only; see `play/meridian/UPSTREAM.md` for the source commit and how to refresh it.
+- `play/meridian/` — a hosted copy of *Donnell and McBurns: An EPC Epic*, Version 1, so it's playable straight from the site. Read-only; see `play/meridian/UPSTREAM.md` for the source commit and how to refresh it.
+- `play/meridian-v2/` — Version 2 of the same game, the graphical overhaul, from its own repository. Sits alongside Version 1 rather than replacing it; see `play/meridian-v2/UPSTREAM.md`.
 - `play/wandering-words/` — a hosted copy of *Indra and the Wandering Words*, same arrangement; see `play/wandering-words/UPSTREAM.md`.
 - `entropic-labs-banner.svg` — the banner at the top of this README.
 - `CNAME` — the custom domain, `theentropic.studio`. GitHub Pages reads it on every deploy; delete it and the site falls back to the `github.io` address.
@@ -205,7 +206,7 @@ buttons at it — the form provider holds the address, so the page never publish
 
 `games.html` covers the studio's game design work, in order:
 
-1. **Donnell and McBurns: An EPC Epic** — playable at [`/play/meridian/`](https://theentropic.studio/play/meridian/)
+1. **Donnell and McBurns: An EPC Epic** — playable in two versions, [Version 2](https://theentropic.studio/play/meridian-v2/) and [Version 1](https://theentropic.studio/play/meridian/)
 2. **Indra and the Wandering Words** — playable at [`/play/wandering-words/`](https://theentropic.studio/play/wandering-words/)
 3. **Live Trivia**
 
@@ -218,9 +219,13 @@ plain `<details>`/`<summary>`, so it needs no JavaScript and stays keyboard
 accessible.
 
 The first two are playable on the site itself: both are entirely static — Meridian
-vendors Phaser 3 locally and generates all its art procedurally at boot, and the
-reading game is classic script tags with inline SVG art and synthesised audio — so
-GitHub Pages serves them with no build step.
+vendors Phaser 3 locally and carries its art as code rather than as image files
+(Version 1 draws it at boot through Phaser's Graphics API, Version 2 bakes it
+ahead of time into atlases embedded in the JavaScript), and the reading game is
+classic script tags with inline SVG art and synthesised audio — so GitHub Pages
+serves them with no build step. Meridian ships as two versions, each a copy of
+its own repository: the games room leads with Version 2 and keeps Version 1
+playable beside it, and neither redirects to the other.
 
 **Live Trivia** can't be hosted the same way: its frontend calls `/api/*` with
 Postgres behind it, so a static copy would only ever show its offline screen.
