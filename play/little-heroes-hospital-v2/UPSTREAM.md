@@ -8,7 +8,7 @@ Version 1 is preserved, untouched, alongside this one in
 redirects to the other; the games room offers both and leads with this one.
 
 - **Source:** https://github.com/despite-the-finite/Doctor-and-vet-game-2
-- **Copied at commit:** `9756470` (branch `main`)
+- **Copied at commit:** `2a90a3e` (branch `main`)
 - **Played at:** https://theentropic.studio/play/little-heroes-hospital-v2/
 
 This is the redraw. `Doctor-and-vet-game` is the first pass and still ships as
@@ -27,6 +27,17 @@ assets to carry across. `src/main.js` is loaded as an ES module, which needs
 `http(s)` rather than `file://`; served off GitHub Pages like this, that is
 exactly what it gets, and progress saves to `localStorage`.
 
+Upstream now reads its dialogue aloud from pre-generated ElevenLabs clips in
+`public/audio/`, written by a Node script that needs an API key. **No clips are
+carried across** — that would be roughly two thousand MP3s, and it would be the
+first binary asset on the site. Upstream commits `public/audio/voice-index.json`
+empty precisely so a copy without them has nothing to 404 on, and the game then
+speaks every line through the browser's own speech synthesis, which is what it
+did before the clips existed and what this copy does now. That empty index is
+copied along with `index.html` and `src/`; `src/core/voicePlayback.js` looks for
+it next to the game, finds it, sees no recordings and falls back for good.
+Nothing here ever calls ElevenLabs, and no key is involved in serving it.
+
 The one thing it fetches from the network is its two display faces (Grandstander
 and Nunito), pulled from Google Fonts by the `@import` at the top of
 `src/styles/tokens.css`. That is a progressive enhancement rather than a
@@ -42,7 +53,9 @@ with this when refreshing the copy.
 Upstream also ships a single-file build at `dist/little-heroes-hospital.html`
 and a `<head>`-less fragment at `dist/artifact.html`. Neither is used here —
 the unbundled source is copied instead, matching the other hosted games and
-keeping the diff readable when refreshing.
+keeping the diff readable when refreshing. Its `package.json`, `tools/`, `docs/`
+and `.env.example` are the voice-generation and validation side of the project
+and play no part in serving the game, so they are not copied either.
 
 ## Refreshing this copy
 
@@ -51,8 +64,12 @@ upstream:
 
 ```bash
 git clone --depth 1 https://github.com/despite-the-finite/Doctor-and-vet-game-2 /tmp/lhh
-rm -rf play/little-heroes-hospital-v2/index.html play/little-heroes-hospital-v2/src
-cp -r /tmp/lhh/index.html /tmp/lhh/src play/little-heroes-hospital-v2/
+rm -rf play/little-heroes-hospital-v2/index.html play/little-heroes-hospital-v2/src \
+       play/little-heroes-hospital-v2/public
+cp -r /tmp/lhh/index.html /tmp/lhh/src /tmp/lhh/public play/little-heroes-hospital-v2/
 ```
 
-Then update the commit recorded above.
+Then update the commit recorded above. If upstream has started committing the
+generated MP3s, `public/audio/` will arrive heavy — drop everything under it
+except `voice-index.json` and `manifest.json`, or decide deliberately that the
+site now carries audio.
