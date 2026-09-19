@@ -831,20 +831,21 @@
         <article class="plugin">
           <div class="plugin-head">
             <h3>Doppler FX</h3>
-            <span class="plugin-format">VST3 &middot; AU &middot; Standalone</span>
+            <span class="plugin-format">VST3 &middot; AU</span>
           </div>
           <p class="plugin-line">A motion effect. The signal is put on a virtual source that travels a path around a listener with two ears, and everything else falls out of that geometry: the propagation delay shortens as the source arrives, so the pitch bends the way a passing siren does; the level swells on the inverse&#8209;distance law; the high end thins out with distance; and each ear gets its own delay, which is what throws it across the stereo field. A resonant filter, a gate and a bounded feedback path take it past realism when that is what the take needs.</p>
-          <p class="plugin-line">The output stage is layered so it cannot clip the track &mdash; resonance is gain&#8209;compensated as it climbs, the feedback path is soft&#8209;clipped, a DC blocker sits before the output and a look&#8209;ahead brickwall finishes at the ceiling. That look&#8209;ahead costs 4&nbsp;ms, reported to the host, so it stays sample&#8209;aligned with the rest of the project.</p>
+          <p class="plugin-line">The output stage is layered so it cannot clip the track &mdash; resonance is gain&#8209;compensated as it climbs, the feedback path is soft&#8209;clipped, a DC blocker sits before the output and a look&#8209;ahead brickwall finishes at the ceiling. That look&#8209;ahead costs 4&nbsp;ms, reported to the host, so it stays sample&#8209;aligned with the rest of the project. Twelve factory presets come with it, exposed as host programs so they turn up in the DAW&rsquo;s own preset menu.</p>
           <ul class="plugin-spec">
             <li><span>Built with</span><span>JUCE 8, C++20</span></li>
-            <li><span>Formats</span><span>VST3, AU (macOS), standalone</span></li>
+            <li><span>Formats</span><span>VST3, AU (macOS)</span></li>
             <li><span>Platforms</span><span>Windows, macOS, Linux</span></li>
             <li><span>Paths</span><span>Flyby, Orbit, Pendulum, Manual</span></li>
+            <li><span>Presets</span><span>Twelve, as host programs</span></li>
             <li><span>Licence</span><span>Not stated in the repo</span></li>
           </ul>
-          <p class="plugin-note">Every push builds Windows, macOS and Linux binaries: open the most recent green run and take the artefact for your platform &mdash; GitHub asks you to sign in before it hands one over. There is no tagged release yet. Building it yourself needs CMake 3.22+ and a C++20 compiler; JUCE is fetched at configure time, so <code>cmake -B build -DCMAKE_BUILD_TYPE=Release</code> is the whole setup. Install by copying <code>Doppler FX.vst3</code> into the system VST3 folder and rescanning.</p>
+          <p class="plugin-note">The release carries a zip per platform &mdash; no sign-in, and it does not expire. Every push also builds all three if you want something newer than the last release; those artefacts live in the repository&rsquo;s Actions tab. Building it yourself needs CMake 3.22+ and a C++20 compiler; JUCE is fetched at configure time, so <code>cmake -B build -DCMAKE_BUILD_TYPE=Release</code> is the whole setup. Install by copying <code>Doppler FX.vst3</code> into the system VST3 folder and rescanning.</p>
           <div class="plugin-actions">
-            <a class="btn btn-solid" href="https://github.com/despite-the-finite/Doppler-FX/actions" target="_blank" rel="noopener">Download a build</a>
+            <a class="btn btn-solid" href="https://github.com/despite-the-finite/Doppler-FX/releases/latest" target="_blank" rel="noopener">Download a build</a>
             <a class="btn btn-line" href="https://github.com/despite-the-finite/Doppler-FX" target="_blank" rel="noopener">Source on GitHub</a>
           </div>
         </article>
@@ -857,15 +858,16 @@
           <p class="plugin-line">A synthesiser for gritty, saturated bass, and the first plugin built here. Each of its eight voices runs a sawtooth against a sub oscillator an octave below, pushes the pair through a tanh waveshaper &mdash; soft clipping at low drive, hard at the top of the knob &mdash; and lands in a state&#8209;variable low&#8209;pass filter with an ADSR on the way out.</p>
           <p class="plugin-line">Nine knobs, no menus: Drive, Cutoff, Reso, Sub and Vol across the top, the envelope underneath. Drive is the one that earns the name, running the waveshaper from 1&times; to 19&times;.</p>
           <ul class="plugin-spec">
-            <li><span>Built with</span><span>JUCE</span></li>
+            <li><span>Built with</span><span>JUCE 8</span></li>
             <li><span>Formats</span><span>VST3</span></li>
-            <li><span>Platforms</span><span>Windows</span></li>
+            <li><span>Platforms</span><span>Windows, macOS, Linux</span></li>
             <li><span>Voices</span><span>8</span></li>
             <li><span>Licence</span><span>MIT</span></li>
           </ul>
-          <p class="plugin-note">There is no build to download for this one yet &mdash; it ships as source. It compiles on Windows with Visual Studio 2022, CMake 3.22+ and a JUCE checkout on disk; the bundle lands in <code>build/DirtyBass_artefacts/Release/</code>, and copying it into the system VST3 folder is the install.</p>
+          <p class="plugin-note">The release carries a zip per platform, same as its neighbour. Building it yourself needs CMake 3.22+ and a compiler &mdash; Visual Studio 2022 on Windows &mdash; with JUCE fetched at configure time; the bundle lands in <code>build/DirtyBass_artefacts/Release/</code>, and copying it into the system VST3 folder is the install.</p>
           <div class="plugin-actions">
-            <a class="btn btn-solid" href="https://github.com/despite-the-finite/dirty-bass" target="_blank" rel="noopener">Source on GitHub</a>
+            <a class="btn btn-solid" href="https://github.com/despite-the-finite/dirty-bass/releases/latest" target="_blank" rel="noopener">Download a build</a>
+            <a class="btn btn-line" href="https://github.com/despite-the-finite/dirty-bass" target="_blank" rel="noopener">Source on GitHub</a>
           </div>
         </article>
 

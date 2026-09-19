@@ -246,19 +246,24 @@ something over to be installed. Nothing is hosted here: each card carries a
 short description, a spec list and links out to the repository the plugin
 actually lives in.
 
-- **Doppler FX** (`despite-the-finite/Doppler-FX`) — a motion effect. VST3,
-  AU on macOS and a standalone, built with JUCE 8. Its CI builds Windows, macOS
-  and Linux binaries on every push, so the **Download a build** button points at
-  the Actions tab rather than at a release — there is no tagged release yet, and
-  the card says so rather than implying a download that does not exist.
-- **Dirty Bass** (`despite-the-finite/dirty-bass`) — the saturated bass synth,
-  VST3 and Windows only, MIT. There is no binary at all, so the card offers the
-  source and the build line and nothing else.
+- **Doppler FX** (`despite-the-finite/Doppler-FX`) — a motion effect. VST3, plus
+  AU on macOS, built with JUCE 8, with twelve factory presets.
+- **Dirty Bass** (`despite-the-finite/dirty-bass`) — the saturated bass synth.
+  VST3, MIT.
 
-The honest state of a plugin is part of the copy: where a build does not exist,
-or a licence is not stated in the repo, the card says that instead of guessing.
-Both cards are duplicated in `m/index.html`, like the rest of the studio page,
-so a copy change needs making twice.
+Both also build a standalone app, but the release zips carry the plugin bundles
+only, so the cards list the formats you actually get in the download.
+
+Both **Download a build** buttons point at `releases/latest` in the plugin's own
+repository. Each repo builds Windows, macOS and Linux on every push and, on a
+`v*` tag (or a manual run given a tag), attaches the three zips to a release —
+so the link on the site is a permanent download rather than a run artefact,
+which expires and which GitHub will not serve without a sign-in.
+
+The honest state of a plugin is part of the copy: where a licence is not stated
+in the repo, the card says that instead of guessing, and the same would go for a
+plugin with no build. Both cards are duplicated in `m/index.html`, like the rest
+of the studio page, so a copy change needs making twice.
 
 ## The Observatory
 
