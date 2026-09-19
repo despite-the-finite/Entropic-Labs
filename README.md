@@ -184,6 +184,7 @@ These are the sections of `studio.html`, the studio page:
 - Behind the board — lead producer bio
 - Inside the room — studio photo
 - Gear list — recording equipment
+- Plugins — the in-house VST3 plugins, each with its source and the way to get a build
 - Projects — placeholder catalog for upcoming releases
 - Side room — game design as a minor function, linking out to `games.html`
 - The observatory — curiosity as the third room, linking out to `observatory.html`
@@ -233,9 +234,31 @@ Deploying it (Vercel plus a Postgres URL and an Anthropic API key) would give it
 **Play it now** button too — drop the URL into `games.html` in place of the
 `play-note` beside its link.
 
-Dirty Bass, the in-house VST3 synth, is listed on the studio side in the gear
-table instead of here — it loads in a DAW rather than a browser, so it has no
-play link, just a link to its source.
+The in-house VST3 plugins — Dirty Bass and Doppler FX — are on the studio side
+rather than here: they load in a DAW instead of a browser, so there is nothing to
+play. Each one keeps a row in the gear table and a card in the Plugins section
+below it.
+
+## Plugins
+
+The Plugins section of `studio.html` is the one place on the site that hands
+something over to be installed. Nothing is hosted here: each card carries a
+short description, a spec list and links out to the repository the plugin
+actually lives in.
+
+- **Doppler FX** (`despite-the-finite/Doppler-FX`) — a motion effect. VST3,
+  AU on macOS and a standalone, built with JUCE 8. Its CI builds Windows, macOS
+  and Linux binaries on every push, so the **Download a build** button points at
+  the Actions tab rather than at a release — there is no tagged release yet, and
+  the card says so rather than implying a download that does not exist.
+- **Dirty Bass** (`despite-the-finite/dirty-bass`) — the saturated bass synth,
+  VST3 and Windows only, MIT. There is no binary at all, so the card offers the
+  source and the build line and nothing else.
+
+The honest state of a plugin is part of the copy: where a build does not exist,
+or a licence is not stated in the repo, the card says that instead of guessing.
+Both cards are duplicated in `m/index.html`, like the rest of the studio page,
+so a copy change needs making twice.
 
 ## The Observatory
 

@@ -633,6 +633,48 @@ figure{ margin: 0; }
 .card.dark-room{ border-left-color: var(--trace); }
 .card.warm-room{ border-left-color: #FFC46B; }
 
+/* ---------- PLUGINS ---------- */
+/* One card per in-house plugin: what it is, what it is built from, and the
+   links out to the repository it lives in. Same content as the full site's
+   plugins section. */
+.plugin-card{
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border-left-color: var(--violet);
+}
+.plugin-card + .plugin-card{ margin-top: 1rem; }
+.plugin-card h3{ font-size: 1.25rem; }
+.plugin-card p{ margin: 0; }
+.plugin-format{
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--trace);
+}
+.plugin-spec{
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--ash);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.plugin-spec li{
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+  border-bottom: 1px dashed var(--hairline);
+  padding-bottom: 0.5rem;
+}
+.plugin-spec li:last-child{ border-bottom: none; padding-bottom: 0; }
+.plugin-spec span:last-child{ color: var(--paper); text-align: right; }
+.plugin-note{ font-size: 0.82rem; color: var(--ash); }
+
 /* ---------- CONTACT ---------- */
 .patchbay{
   list-style: none;

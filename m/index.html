@@ -29,6 +29,7 @@
     <li><a href="#producer">Producer</a></li>
     <li><a href="#studio">Studio</a></li>
     <li><a href="#gear">Gear</a></li>
+    <li><a href="#plugins">Plugins</a></li>
     <li><a href="#sessions">Projects</a></li>
     <li><a href="games.html">Games</a></li>
     <li><a href="../observatory.html">Observatory</a></li>
@@ -175,7 +176,11 @@
       </li>
       <li>
         <div class="gear-head"><span class="gear-unit">Dirty Bass</span><span class="gear-type">Plugin / in-house</span></div>
-        <p class="gear-note">VST3 synth built here with JUCE, for gritty saturated bass — sawtooth and sub oscillator through a tanh waveshaper into a state-variable filter, eight voices. <a href="https://github.com/despite-the-finite/dirty-bass" target="_blank" rel="noopener">Source on GitHub</a>.</p>
+        <p class="gear-note">VST3 synth built here with JUCE, for gritty saturated bass — sawtooth and sub oscillator through a tanh waveshaper into a state-variable filter, eight voices. <a href="#plugins">Source and builds below</a>.</p>
+      </li>
+      <li>
+        <div class="gear-head"><span class="gear-unit">Doppler FX</span><span class="gear-type">Plugin / in-house</span></div>
+        <p class="gear-note">VST3 motion effect built here with JUCE — a virtual source moving around the listener, so the pitch bend, the level swell and the stereo throw all fall out of the geometry. <a href="#plugins">Source and builds below</a>.</p>
       </li>
       <li>
         <div class="gear-head"><span class="gear-unit">Acoustic panels</span><span class="gear-type">Treatment</span></div>
@@ -184,9 +189,45 @@
     </ul>
   </section>
 
+  <section id="plugins">
+    <div class="section-head">
+      <span class="section-index">05 / IN-HOUSE CODE</span>
+      <h2>Plugins</h2>
+    </div>
+    <div class="card plugin-card">
+      <h3>Doppler FX</h3>
+      <p class="plugin-format">VST3 &middot; AU &middot; Standalone</p>
+      <p>A motion effect. The signal is put on a virtual source that travels a path around a listener with two ears, and everything else falls out of that geometry: the propagation delay shortens as the source arrives, so the pitch bends the way a passing siren does; the level swells on the inverse&#8209;distance law; the high end thins out with distance; and each ear gets its own delay, which throws it across the stereo field. A resonant filter, a gate and a bounded feedback path take it past realism when that is what the take needs. The output stage is layered so it cannot clip the track, finishing on a look&#8209;ahead brickwall at the ceiling.</p>
+      <ul class="plugin-spec">
+        <li><span>Built with</span><span>JUCE 8, C++20</span></li>
+        <li><span>Formats</span><span>VST3, AU (macOS), standalone</span></li>
+        <li><span>Platforms</span><span>Windows, macOS, Linux</span></li>
+        <li><span>Paths</span><span>Flyby, Orbit, Pendulum, Manual</span></li>
+        <li><span>Licence</span><span>Not stated in the repo</span></li>
+      </ul>
+      <p class="plugin-note">Every push builds Windows, macOS and Linux binaries: open the most recent green run and take the artefact for your platform &mdash; GitHub asks you to sign in before it hands one over. There is no tagged release yet. Building it yourself needs CMake 3.22+ and a C++20 compiler; JUCE is fetched at configure time.</p>
+      <a class="btn btn-solid" href="https://github.com/despite-the-finite/Doppler-FX/actions" target="_blank" rel="noopener">Download a build</a>
+      <a class="btn btn-line" href="https://github.com/despite-the-finite/Doppler-FX" target="_blank" rel="noopener">Source on GitHub</a>
+    </div>
+    <div class="card plugin-card">
+      <h3>Dirty Bass</h3>
+      <p class="plugin-format">VST3 &middot; Synth</p>
+      <p>A synthesiser for gritty, saturated bass, and the first plugin built here. Each of its eight voices runs a sawtooth against a sub oscillator an octave below, pushes the pair through a tanh waveshaper &mdash; soft clipping at low drive, hard at the top of the knob &mdash; and lands in a state&#8209;variable low&#8209;pass filter with an ADSR on the way out. Nine knobs, no menus: Drive, Cutoff, Reso, Sub and Vol across the top, the envelope underneath.</p>
+      <ul class="plugin-spec">
+        <li><span>Built with</span><span>JUCE</span></li>
+        <li><span>Formats</span><span>VST3</span></li>
+        <li><span>Platforms</span><span>Windows</span></li>
+        <li><span>Voices</span><span>8</span></li>
+        <li><span>Licence</span><span>MIT</span></li>
+      </ul>
+      <p class="plugin-note">There is no build to download for this one yet &mdash; it ships as source. It compiles on Windows with Visual Studio 2022, CMake 3.22+ and a JUCE checkout on disk, and copying the bundle into the system VST3 folder is the install.</p>
+      <a class="btn btn-solid" href="https://github.com/despite-the-finite/dirty-bass" target="_blank" rel="noopener">Source on GitHub</a>
+    </div>
+  </section>
+
   <section id="sessions">
     <div class="section-head">
-      <span class="section-index">05 / CATALOG</span>
+      <span class="section-index">06 / CATALOG</span>
       <h2>Projects</h2>
     </div>
     <ul class="sessions">
@@ -199,7 +240,7 @@
 
   <section id="games">
     <div class="section-head">
-      <span class="section-index">06 / GAME DESIGN</span>
+      <span class="section-index">07 / GAME DESIGN</span>
       <h2>Side room</h2>
     </div>
     <div class="card">
@@ -210,7 +251,7 @@
 
   <section id="observatory">
     <div class="section-head">
-      <span class="section-index">07 / CURIOSITY</span>
+      <span class="section-index">08 / CURIOSITY</span>
       <h2>The observatory</h2>
     </div>
     <div class="card dark-room">
@@ -221,7 +262,7 @@
 
   <section id="trails">
     <div class="section-head">
-      <span class="section-index">08 / CONSEQUENCE</span>
+      <span class="section-index">09 / CONSEQUENCE</span>
       <h2>Butterfly Trails</h2>
     </div>
     <div class="card warm-room">
@@ -232,7 +273,7 @@
 
   <section id="contact">
     <div class="section-head">
-      <span class="section-index">09 / CONTACT</span>
+      <span class="section-index">10 / CONTACT</span>
       <h2>Book time</h2>
     </div>
     <!-- No contact details live in this page — see the note in studio.html. -->

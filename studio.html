@@ -117,7 +117,7 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-end;
-    gap: 0.4rem clamp(0.9rem, 2vw, 1.8rem);
+    gap: 0.4rem clamp(0.7rem, 1.5vw, 1.5rem);
     list-style: none;
     margin: 0; padding: 0;
     font-family: var(--font-mono);
@@ -521,6 +521,54 @@
   table.gear td.note a{ color: var(--paper); text-decoration: none; border-bottom: 1px solid var(--hairline-strong); }
   table.gear td.note a:hover{ color: var(--trace); border-color: var(--trace); }
 
+  /* ---------- PLUGINS ---------- */
+  /* The in-house plugins. Each one is a card: what it is, what it is built
+     from, and the two ways out of the page — a build to download, or the
+     source to compile. Nothing here is hosted on the site; the links go to
+     the repositories the plugins actually live in. */
+  .rack{ display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(1.2rem, 3vw, 2rem); }
+  @media (max-width: 860px){ .rack{ grid-template-columns: 1fr; } }
+  .plugin{
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+    background: var(--panel);
+    border: 1px solid var(--hairline);
+    border-left: 2px solid var(--violet);
+    padding: clamp(1.4rem, 3vw, 2rem);
+  }
+  .plugin-head{ display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+  .plugin-head h3{ font-size: clamp(1.25rem, 1.4vw + 0.9rem, 1.6rem); }
+  .plugin-format{
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--trace);
+    white-space: nowrap;
+  }
+  .plugin-line{ margin: 0; color: #E4DFF2; }
+  .plugin-spec{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--ash);
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+  .plugin-spec li{ display: flex; justify-content: space-between; gap: 1rem; border-bottom: 1px dashed var(--hairline); padding-bottom: 0.55rem; }
+  .plugin-spec li:last-child{ border-bottom: none; padding-bottom: 0; }
+  .plugin-spec span:last-child{ color: var(--paper); text-align: right; }
+  .plugin-actions{ display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: auto; }
+  .plugin-actions .btn{ padding: 0.8rem 1.2rem; }
+  .plugin-note{ margin: 0; font-size: 0.86rem; color: var(--ash); }
+  .plugin-note a{ color: var(--paper); text-decoration: none; border-bottom: 1px solid var(--hairline-strong); }
+  .plugin-note a:hover{ color: var(--trace); border-color: var(--trace); }
+  .plugin-note code{ font-family: var(--font-mono); font-size: 0.92em; color: var(--paper); background: var(--panel-raised); padding: 0.1em 0.35em; border-radius: 2px; overflow-wrap: anywhere; }
+
   /* ---------- SESSIONS ---------- */
   .sessions{ display: flex; flex-direction: column; }
   .session-row{
@@ -642,6 +690,7 @@
       <li><a href="#producer">Producer</a></li>
       <li><a href="#studio">Studio</a></li>
       <li><a href="#gear">Gear</a></li>
+      <li><a href="#plugins">Plugins</a></li>
       <li><a href="#sessions">Projects</a></li>
       <li><a href="games.html">Games</a></li>
       <li><a href="observatory.html">Observatory</a></li>
@@ -762,10 +811,64 @@
             <tr><td class="unit">AKG mic + compressor</td><td class="type">Mic / Outboard</td><td class="note">AKG microphone run through outboard compression.</td></tr>
             <tr><td class="unit">Lenovo ThinkPad</td><td class="type">Production PC</td><td class="note">Runs every session, start to mixdown.</td></tr>
             <tr><td class="unit">FL Studio</td><td class="type">DAW</td><td class="note">Primary recording and production software.</td></tr>
-            <tr><td class="unit">Dirty Bass</td><td class="type">Plugin / in-house</td><td class="note">VST3 synth built here with JUCE, for gritty saturated bass — sawtooth and sub oscillator through a tanh waveshaper into a state-variable filter, eight voices. <a href="https://github.com/despite-the-finite/dirty-bass" target="_blank" rel="noopener">Source on GitHub</a>.</td></tr>
+            <tr><td class="unit">Dirty Bass</td><td class="type">Plugin / in-house</td><td class="note">VST3 synth built here with JUCE, for gritty saturated bass — sawtooth and sub oscillator through a tanh waveshaper into a state-variable filter, eight voices. <a href="#plugins">Source and builds below</a>.</td></tr>
+            <tr><td class="unit">Doppler FX</td><td class="type">Plugin / in-house</td><td class="note">VST3 motion effect built here with JUCE — a virtual source moving around the listener, so the pitch bend, the level swell and the stereo throw all fall out of the geometry. <a href="#plugins">Source and builds below</a>.</td></tr>
             <tr><td class="unit">Acoustic panels</td><td class="type">Treatment</td><td class="note">Broadband absorption across the front wall.</td></tr>
           </tbody>
         </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="plugins">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2>Plugins</h2>
+        <span class="section-index">05 / IN-HOUSE CODE</span>
+      </div>
+      <div class="rack reveal">
+
+        <article class="plugin">
+          <div class="plugin-head">
+            <h3>Doppler FX</h3>
+            <span class="plugin-format">VST3 &middot; AU &middot; Standalone</span>
+          </div>
+          <p class="plugin-line">A motion effect. The signal is put on a virtual source that travels a path around a listener with two ears, and everything else falls out of that geometry: the propagation delay shortens as the source arrives, so the pitch bends the way a passing siren does; the level swells on the inverse&#8209;distance law; the high end thins out with distance; and each ear gets its own delay, which is what throws it across the stereo field. A resonant filter, a gate and a bounded feedback path take it past realism when that is what the take needs.</p>
+          <p class="plugin-line">The output stage is layered so it cannot clip the track &mdash; resonance is gain&#8209;compensated as it climbs, the feedback path is soft&#8209;clipped, a DC blocker sits before the output and a look&#8209;ahead brickwall finishes at the ceiling. That look&#8209;ahead costs 4&nbsp;ms, reported to the host, so it stays sample&#8209;aligned with the rest of the project.</p>
+          <ul class="plugin-spec">
+            <li><span>Built with</span><span>JUCE 8, C++20</span></li>
+            <li><span>Formats</span><span>VST3, AU (macOS), standalone</span></li>
+            <li><span>Platforms</span><span>Windows, macOS, Linux</span></li>
+            <li><span>Paths</span><span>Flyby, Orbit, Pendulum, Manual</span></li>
+            <li><span>Licence</span><span>Not stated in the repo</span></li>
+          </ul>
+          <p class="plugin-note">Every push builds Windows, macOS and Linux binaries: open the most recent green run and take the artefact for your platform &mdash; GitHub asks you to sign in before it hands one over. There is no tagged release yet. Building it yourself needs CMake 3.22+ and a C++20 compiler; JUCE is fetched at configure time, so <code>cmake -B build -DCMAKE_BUILD_TYPE=Release</code> is the whole setup. Install by copying <code>Doppler FX.vst3</code> into the system VST3 folder and rescanning.</p>
+          <div class="plugin-actions">
+            <a class="btn btn-solid" href="https://github.com/despite-the-finite/Doppler-FX/actions" target="_blank" rel="noopener">Download a build</a>
+            <a class="btn btn-line" href="https://github.com/despite-the-finite/Doppler-FX" target="_blank" rel="noopener">Source on GitHub</a>
+          </div>
+        </article>
+
+        <article class="plugin">
+          <div class="plugin-head">
+            <h3>Dirty Bass</h3>
+            <span class="plugin-format">VST3 &middot; Synth</span>
+          </div>
+          <p class="plugin-line">A synthesiser for gritty, saturated bass, and the first plugin built here. Each of its eight voices runs a sawtooth against a sub oscillator an octave below, pushes the pair through a tanh waveshaper &mdash; soft clipping at low drive, hard at the top of the knob &mdash; and lands in a state&#8209;variable low&#8209;pass filter with an ADSR on the way out.</p>
+          <p class="plugin-line">Nine knobs, no menus: Drive, Cutoff, Reso, Sub and Vol across the top, the envelope underneath. Drive is the one that earns the name, running the waveshaper from 1&times; to 19&times;.</p>
+          <ul class="plugin-spec">
+            <li><span>Built with</span><span>JUCE</span></li>
+            <li><span>Formats</span><span>VST3</span></li>
+            <li><span>Platforms</span><span>Windows</span></li>
+            <li><span>Voices</span><span>8</span></li>
+            <li><span>Licence</span><span>MIT</span></li>
+          </ul>
+          <p class="plugin-note">There is no build to download for this one yet &mdash; it ships as source. It compiles on Windows with Visual Studio 2022, CMake 3.22+ and a JUCE checkout on disk; the bundle lands in <code>build/DirtyBass_artefacts/Release/</code>, and copying it into the system VST3 folder is the install.</p>
+          <div class="plugin-actions">
+            <a class="btn btn-solid" href="https://github.com/despite-the-finite/dirty-bass" target="_blank" rel="noopener">Source on GitHub</a>
+          </div>
+        </article>
+
       </div>
     </div>
   </section>
@@ -774,7 +877,7 @@
     <div class="wrap">
       <div class="section-head reveal">
         <h2>Projects</h2>
-        <span class="section-index">05 / CATALOG</span>
+        <span class="section-index">06 / CATALOG</span>
       </div>
       <div class="sessions reveal">
         <div class="session-row">
@@ -805,7 +908,7 @@
     <div class="wrap">
       <div class="section-head reveal">
         <h2>Side room</h2>
-        <span class="section-index">06 / GAME DESIGN</span>
+        <span class="section-index">07 / GAME DESIGN</span>
       </div>
       <div class="sideroom reveal">
         <p>Alongside the sessions, the studio doubles as a small game design desk — a minor function next to recording and production, but the same working method: start from noise, keep whatever holds together. The projects are browser games — an office RPG, a reading adventure, a hospital game for children, a live trivia platform — three of them playable right here.</p>
@@ -818,7 +921,7 @@
     <div class="wrap">
       <div class="section-head reveal">
         <h2>The observatory</h2>
-        <span class="section-index">07 / CURIOSITY</span>
+        <span class="section-index">08 / CURIOSITY</span>
       </div>
       <div class="sideroom dark-room reveal">
         <p>The studio is what gets made here and the side room is what gets played. The Observatory is the third one — a darker room with a chart on the ceiling, catalogued with whatever this place finds worth wondering about: cities found under the Amazon, what a tardigrade survives, why the galaxy is so quiet. It runs on the same principle as a session. Start from noise, keep whatever holds together, and be honest about how much is still unresolved.</p>
@@ -831,7 +934,7 @@
     <div class="wrap">
       <div class="section-head reveal">
         <h2>Butterfly Trails</h2>
-        <span class="section-index">08 / CONSEQUENCE</span>
+        <span class="section-index">09 / CONSEQUENCE</span>
       </div>
       <div class="sideroom warm-room reveal">
         <p>The studio is what gets made here, the side room is what gets played, and the Observatory is what gets wondered about. Butterfly Trails is the room that isn&rsquo;t about this place at all &mdash; a family archive built on one idea: that a life turns on moments too small to notice while they are happening. A decision, a coincidence, a letter that arrives on the wrong day. Every story in it is a point on a much longer path, and the room is built to show what each one led to, decades later, to people who were not born yet. The archive is still being collected, so for now most of the trail is dark. That is the honest state of it.</p>
@@ -844,7 +947,7 @@
     <div class="wrap">
       <div class="section-head reveal">
         <h2>Book time</h2>
-        <span class="section-index">09 / CONTACT</span>
+        <span class="section-index">10 / CONTACT</span>
       </div>
       <!-- No contact details live in this page. Anything a browser can show, a
            visitor (or a scraper) can read — encoding it only hides it from the
