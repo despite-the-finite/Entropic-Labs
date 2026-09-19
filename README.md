@@ -25,7 +25,7 @@ have keep working.
 - `butterfly.html` + `butterfly/` — Butterfly Trails: an interactive family archive, built around what small moments led to. Same single-responsive-page arrangement as the Observatory; see below.
 - `play/meridian/` — a hosted copy of *Donnell and McBurns: An EPC Epic*, Version 1, so it's playable straight from the site. Read-only; see `play/meridian/UPSTREAM.md` for the source commit and how to refresh it.
 - `play/meridian-v2/` — Version 2 of the same game, the graphical overhaul, from its own repository. Sits alongside Version 1 rather than replacing it; see `play/meridian-v2/UPSTREAM.md`.
-- `play/wandering-words/` — a hosted copy of *Indra and the Wandering Words*, same arrangement; see `play/wandering-words/UPSTREAM.md`.
+- `play/wandering-words/` — a hosted copy of *Indra and the Wandering Words*, same arrangement. One version rather than two: upstream is a single repository that moved `main` forward, so a refresh replaces this directory instead of adding one beside it. See `play/wandering-words/UPSTREAM.md`.
 - `entropic-labs-banner.svg` — the banner at the top of this README.
 - `CNAME` — the custom domain, `theentropic.studio`. GitHub Pages reads it on every deploy; delete it and the site falls back to the `github.io` address.
 - `.nojekyll` — tells GitHub Pages to serve every file as-is, without running the content through Jekyll.
@@ -214,7 +214,7 @@ The site no longer links to any game's source. Each hosted copy still records wh
 it came from in its own `UPSTREAM.md`, which is what a refresh needs.
 
 Each entry is a disclosure: the catalog reads as three concise rows, and picking one
-opens its three-paragraph write-up along with its play button. That's
+opens its write-up along with its play button. That's
 plain `<details>`/`<summary>`, so it needs no JavaScript and stays keyboard
 accessible.
 
@@ -225,7 +225,10 @@ ahead of time into atlases embedded in the JavaScript), and the reading game is
 classic script tags with inline SVG art and synthesised audio — so GitHub Pages
 serves them with no build step. Meridian ships as two versions, each a copy of
 its own repository: the games room leads with Version 2 and keeps Version 1
-playable beside it, and neither redirects to the other.
+playable beside it, and neither redirects to the other. The reading game ships
+as one, because upstream is a single repository that moved forward rather than
+starting a second one — refreshing that copy replaces it in place, which is what
+its `UPSTREAM.md` describes.
 
 **Live Trivia** can't be hosted the same way: its frontend calls `/api/*` with
 Postgres behind it, so a static copy would only ever show its offline screen.

@@ -1,6 +1,9 @@
 /* =============================================================================
    screens/title.js — the front door.
-   One giant button. A returning player sees her own character waving.
+
+   One giant green button with a picture on it. The screen introduces itself
+   out loud and then points at the button, because the child arriving here
+   cannot read "Start the adventure" — and should not have to.
    ============================================================================= */
 (function (LTR) {
   'use strict';
@@ -38,31 +41,43 @@
     }
 
     var actions = el('div.title-actions');
-    actions.appendChild(el('button.btn.btn-huge.btn-leaf', {
-      text: returning ? '▶  Keep going!' : '✨  Start the adventure',
-      onClick: function () {
+
+    var playBtn = LTR.ui.bigButton({
+      glyph: returning ? '▶️' : '✨',
+      label: returning ? 'Keep going!' : 'Start!',
+      voice: returning ? 'Keep going' : 'Start the adventure',
+      style: 'btn-leaf',
+      className: 'tap-me',
+      sfx: 'unlock',
+      onTap: function () {
         LTR.audio.unlock();
-        LTR.audio.sfx('unlock');
         if (returning) LTR.ui.go('map');
         else LTR.ui.go('creator');
       }
-    }));
+    });
+    actions.appendChild(playBtn);
 
     if (returning) {
-      actions.appendChild(el('button.btn.btn-cream', {
-        text: '📔  My Adventure Book',
-        onClick: function () { LTR.audio.sfx('tap'); LTR.ui.go('book'); }
+      actions.appendChild(LTR.ui.bigButton({
+        glyph: '📔',
+        label: 'My book',
+        voice: 'My adventure book',
+        style: 'btn-cream',
+        big: false,
+        onTap: function () { LTR.ui.go('book'); }
       }));
     }
     wrap.appendChild(actions);
 
     body.appendChild(wrap);
     screen.appendChild(body);
+
     screen.appendChild(LTR.ui.parentGate());
 
     /* a few word-lights drifting past the title */
     U.later(200, function () {
       var fx = document.getElementById('fx');
+      if (!fx) return;
       // Kept to the margins so they never sit on top of the button.
       var spots = [[6, 26], [12, 58], [8, 76], [90, 30], [93, 62], [86, 80]];
       ['A', 'm', 'S', 'o', 'T', 'e'].forEach(function (ch, i) {
@@ -78,6 +93,35 @@
         fx.appendChild(p);
       });
     });
+
+    /* ------------------------------------------------------- first tap --- */
+    /* A browser will not let a page make a sound until someone has touched it.
+       Since every instruction in this game is spoken, the very first screen
+       would otherwise be silent for a child who cannot read it. So the book
+       asks to be woken: one tap anywhere, and the game starts talking. */
+    if (!LTR.audio.ready && LTR.audio.available) {
+      var waker = el('div.waker', [
+        el('div.waker-glyph', { text: '👆' }),
+        el('div.waker-text', { text: 'Tap anywhere to wake the book' })
+      ]);
+      waker.addEventListener('pointerdown', function () {
+        LTR.audio.unlock();
+        LTR.audio.sfx('sparkle');
+        waker.classList.add('gone');
+        U.later(400, function () { if (waker.parentNode) waker.parentNode.removeChild(waker); });
+      });
+      screen.appendChild(waker);
+    }
+
+    LTR.guide.narrate(
+      returning
+        ? ['Welcome back, ' + s.player.name + '!', { pause: 250 },
+           'Tap the big green arrow to keep going.']
+        : ['Hello!', { pause: 200 },
+           'This is Indra and the Wandering Words.', { pause: 300 },
+           'Tap the big green button to start.'],
+      { target: playBtn, idleAfter: 10000 }
+    );
 
     return screen;
   });

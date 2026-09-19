@@ -30,13 +30,13 @@
     w('cat', 1, ['c','a','t'], 'animals', '🐱', 'cvc', 'at'),
     w('hat', 1, ['h','a','t'], 'clothes', '🎩', 'cvc', 'at'),
     w('bat', 1, ['b','a','t'], 'animals', '🦇', 'cvc', 'at'),
-    w('mat', 1, ['m','a','t'], 'home',    '🧶', 'cvc', 'at'),
+    w('mat', 1, ['m','a','t'], 'home',    '🟫', 'cvc', 'at'),
     w('map', 1, ['m','a','p'], 'things',  '🗺️', 'cvc', 'ap'),
     w('cap', 1, ['c','a','p'], 'clothes', '🧢', 'cvc', 'ap'),
     w('van', 1, ['v','a','n'], 'things',  '🚐', 'cvc', 'an'),
     w('fan', 1, ['f','a','n'], 'home',    '🪭', 'cvc', 'an'),
     w('bag', 1, ['b','a','g'], 'things',  '🎒', 'cvc', 'ag'),
-    w('jam', 1, ['j','a','m'], 'food',    '🍓', 'cvc', 'am'),
+    w('jam', 1, ['j','a','m'], 'food',    '🍯', 'cvc', 'am'),
     w('ant', 1, ['a','n','t'], 'animals', '🐜', 'cvcc','ant'),
 
     /* ---- CVC, difficulty 1–2: other short vowels -------------------------- */
@@ -51,13 +51,13 @@
     w('bus', 1, ['b','u','s'], 'things',  '🚌', 'cvc', 'us'),
     w('cup', 1, ['c','u','p'], 'home',    '🥤', 'cvc', 'up'),
     w('bug', 1, ['b','u','g'], 'animals', '🐛', 'cvc', 'ug'),
-    w('rug', 2, ['r','u','g'], 'home',    '🧶', 'cvc', 'ug'),
+    w('rug', 2, ['r','u','g'], 'home',    '🟪', 'cvc', 'ug'),
     w('nut', 2, ['n','u','t'], 'food',    '🥜', 'cvc', 'ut'),
     w('mud', 2, ['m','u','d'], 'nature',  '🟤', 'cvc', 'ud'),
     w('pig', 1, ['p','i','g'], 'animals', '🐷', 'cvc', 'ig'),
     w('fig', 3, ['f','i','g'], 'food',    '🫐', 'cvc', 'ig'),
     w('pin', 2, ['p','i','n'], 'things',  '📌', 'cvc', 'in'),
-    w('fin', 3, ['f','i','n'], 'animals', '🐟', 'cvc', 'in'),
+    w('fin', 3, ['f','i','n'], 'animals', '🦈', 'cvc', 'in'),
     w('lip', 2, ['l','i','p'], 'body',    '👄', 'cvc', 'ip'),
     w('zip', 3, ['z','i','p'], 'clothes', '🤐', 'cvc', 'ip'),
     w('six', 2, ['s','i','x'], 'numbers', '6️⃣', 'cvc', 'ix'),
@@ -133,7 +133,7 @@
     w('see',   2, ['s','ee'],'sight', '👀', 'sight'),
     w('you',   2, ['you'],   'sight', null, 'sight'),
     w('like',  2, ['l','i','ke'], 'sight', null, 'sight'),
-    w('look',  2, ['l','oo','k'], 'sight', '👀', 'sight'),
+    w('look',  2, ['l','oo','k'], 'sight', '🔍', 'sight'),
     w('big',   2, ['b','i','g'],  'sight', null, 'sight'),
     w('can',   2, ['c','a','n'],  'sight', null, 'sight'),
     w('up',    1, ['u','p'],  'sight', '⬆️', 'sight'),
@@ -145,7 +145,51 @@
     w('run',   1, ['r','u','n'], 'action', '🏃', 'cvc', 'un'),
     w('sit',   2, ['s','i','t'], 'action', '🪑', 'cvc', 'it'),
     w('hop',   2, ['h','o','p'], 'action', '🐇', 'cvc', 'op'),
-    w('dig',   2, ['d','i','g'], 'action', '⛏️', 'cvc', 'ig')
+    w('dig',   2, ['d','i','g'], 'action', '⛏️', 'cvc', 'ig'),
+
+    /* ---- rhyme partners ---------------------------------------------------
+       Rhyme Time can only use a word that has a partner in this corpus with a
+       picture of its own. Most rime families here used to be only children,
+       so the game silently skipped them; these complete the families. */
+    w('tag',   2, ['t','a','g'],     'things',  '🏷️', 'cvc',  'ag'),
+    w('ram',   3, ['r','a','m'],     'animals', '🐏', 'cvc',  'am'),
+    w('dot',   2, ['d','o','t'],     'things',  '🔴', 'cvc',  'ot'),
+    w('cot',   3, ['c','o','t'],     'home',    '🛌', 'cvc',  'ot'),
+    w('pup',   2, ['p','u','p'],     'animals', '🐕', 'cvc',  'up'),
+    w('hut',   2, ['h','u','t'],     'home',    '🛖', 'cvc',  'ut'),
+    w('bud',   3, ['b','u','d'],     'nature',  '🌱', 'cvc',  'ud'),
+    w('mix',   3, ['m','i','x'],     'action',  '🥣', 'cvc',  'ix'),
+    w('red',   1, ['r','e','d'],     'colours', '🟥', 'cvc',  'ed'),
+    w('sled',  3, ['s','l','e','d'], 'things',  '🛷', 'cvcc', 'ed'),
+    w('cab',   3, ['c','a','b'],     'things',  '🚕', 'cvc',  'ab'),
+    w('crab',  3, ['c','r','a','b'], 'animals', '🦀', 'cvcc', 'ab'),
+    w('car',   1, ['c','ar'],        'things',  '🚗', 'cvcc', 'ar'),
+    w('jar',   3, ['j','ar'],        'home',    '🫙', 'cvcc', 'ar'),
+    w('spoon', 3, ['s','p','oo','n'],'home',    '🥄', 'cvcc', 'oon'),
+    w('dish',  3, ['d','i','sh'],    'home',    '🍽️', 'cvcc', 'ish'),
+    w('truck', 3, ['t','r','u','ck'],'things',  '🚚', 'cvcc', 'uck'),
+    w('sock',  2, ['s','o','ck'],    'clothes', '🧦', 'cvcc', 'ock'),
+    w('rake',  4, ['r','a','ke'],    'things',  '🪒', 'cvcc', 'ake'),
+    w('train', 3, ['t','r','ai','n'],'things',  '🚂', 'cvcc', 'ain'),
+    w('kit',   3, ['k','i','t'],     'things',  '🧰', 'cvc',  'it'),
+    w('plus',  3, ['p','l','u','s'], 'things',  '➕', 'cvcc', 'us'),
+
+    /* ---- more everyday CVC words ------------------------------------------
+       Variety matters: eight words on rotation stops feeling like reading and
+       starts feeling like remembering which picture is which. */
+    w('hug',   1, ['h','u','g'],     'action',  '🤗', 'cvc',  'ug'),
+    w('bun',   2, ['b','u','n'],     'food',    '🥐', 'cvc',  'un'),
+    w('wig',   3, ['w','i','g'],     'clothes', '👱', 'cvc',  'ig'),
+    w('lid',   3, ['l','i','d'],     'home',    '🥫', 'cvc',  'id'),
+    w('kid',   2, ['k','i','d'],     'people',  '🧒', 'cvc',  'id'),
+    w('gum',   3, ['g','u','m'],     'food',    '🍬', 'cvc',  'um'),
+    w('plum',  3, ['p','l','u','m'], 'food',    '🍑', 'cvcc', 'um'),
+    w('pant',  4, ['p','a','nt'],    'clothes', '👖', 'cvcc', 'ant'),
+    w('cow',   1, ['c','ow'],        'animals', '🐄', 'cvcc', 'ow'),
+    w('bow',   3, ['b','ow'],        'things',  '🎀', 'cvcc', 'ow'),
+    w('cub',   3, ['c','u','b'],     'animals', '🐻', 'cvc',  'ub'),
+    w('tub',   3, ['t','u','b'],     'home',    '🛁', 'cvc',  'ub'),
+    w('ham',   2, ['h','a','m'],     'food',    '🍖', 'cvc',  'am')
   ];
 
   /* --------------------------------------------------------------- lookup -- */

@@ -3,6 +3,10 @@
 
    This is the only place that knows how to *stage* a chapter; the chapter
    itself is pure data. Node types handled: story, activity, gauntlet, discover.
+
+   Everything a scene says is spoken, and the words light up as they are read,
+   so a child who cannot read yet still follows the story — and starts to see
+   which marks on the page made which sound.
    ============================================================================= */
 (function (LTR) {
   'use strict';
@@ -24,7 +28,7 @@
     },
     {
       id: 'sp-joke', glyph: '🦊', title: 'Pip has a joke',
-      body: 'Why did the letter B go to bed? Because it was BEE-tired! …Pip laughs alone.',
+      body: 'Why did the letter B go to bed? Because it was BEE-tired! Pip laughs alone.',
       reward: [{ kind: 'stars', n: 2 }]
     },
     {
@@ -34,12 +38,22 @@
     },
     {
       id: 'sp-map', glyph: '🗺️', title: 'A mysterious map',
-      body: 'Someone left it on a stump. There is a lantern drawn in the corner…',
+      body: 'Someone left it on a stump. There is a lantern drawn in the corner.',
       reward: [{ kind: 'treasures', item: { id: 't-map', glyph: '🗺️', name: 'Old Map', note: 'Left by the Lantern Wanderer.' } }]
+    },
+    {
+      id: 'sp-frog', glyph: '🐸', title: 'A singing frog',
+      body: 'He sings one note, bows, and hops away very pleased with himself.',
+      reward: [{ kind: 'animals', item: { id: 'croak', glyph: '🐸', name: 'Croak', note: 'Knows exactly one note. Loves it.' } }]
+    },
+    {
+      id: 'sp-rainbow', glyph: '🌈', title: 'A rainbow, just for you',
+      body: 'It arrives, waits until you have seen it properly, and leaves.',
+      reward: [{ kind: 'stickers', item: { id: 'st-rainbow', glyph: '🌈', name: 'Rainbow Finder' } }]
     }
   ];
 
-  function maybeSurprise(chapterId) {
+  function maybeSurprise() {
     var seen = LTR.state.data.progress.surprisesSeen;
     var pool = SURPRISES.filter(function (s) { return seen.indexOf(s.id) === -1; });
     if (!pool.length) return Promise.resolve();
@@ -55,9 +69,33 @@
       glyph: sp.glyph,
       title: sp.title,
       body: sp.body,
-      actions: [{ label: 'Ooh!', value: 1, style: 'btn-magic', big: true }]
+      actions: [{ label: 'Ooh!', glyph: '😮', value: 1, style: 'btn-magic', big: true }]
     }).then(function () {
       return LTR.ui.grantRewards(sp.reward, { title: 'A surprise for you!' });
+    });
+  }
+
+  /* ---------------------------------------------------- spoken story line -- */
+
+  /**
+   * Render a line of dialogue as individual word spans and read it aloud,
+   * lighting each word as the voice reaches it.
+   */
+  function speakLine(host, who, text) {
+    U.clear(host);
+    var words = String(text).split(/(\s+)/);
+    var spans = [];
+    words.forEach(function (chunk) {
+      if (/^\s+$/.test(chunk)) { host.appendChild(document.createTextNode(chunk)); return; }
+      var sp = el('span.w', { text: chunk });
+      spans.push(sp);
+      host.appendChild(sp);
+    });
+
+    return LTR.audio.character(who, text, {
+      onWord: function (i) {
+        spans.forEach(function (sp, idx) { sp.classList.toggle('lit', idx === i); });
+      }
     });
   }
 
@@ -67,12 +105,22 @@
     var ch = LTR.data.chapter(params.chapter);
     var screen = el('div.screen');
 
-    if (!ch || !ch.nodes.length) {
+    if (!ch || !ch.nodes || !ch.nodes.length) {
+      // Never a dead end: a chapter with nothing in it still offers a way out.
       screen.appendChild(LTR.ui.env('forest'));
-      screen.appendChild(el('div.screen-body', el('div.panel', [
-        el('h2', { text: 'Coming soon!' }),
-        el('button.btn', { text: 'Back to the map', onClick: function () { LTR.ui.go('map'); } })
+      screen.appendChild(LTR.ui.hud({ back: function () { LTR.ui.go('map'); }, backLabel: 'Map' }));
+      var mapBtn = LTR.ui.bigButton({
+        glyph: '🗺️', label: 'Back to the map', voice: 'Back to the map',
+        style: 'btn-leaf', className: 'tap-me',
+        onTap: function () { LTR.ui.go('map'); }
+      });
+      screen.appendChild(el('div.screen-body', el('div.panel.dead-end', [
+        el('div', { text: '🌱', style: { fontSize: 'clamp(3rem,14vw,5rem)' } }),
+        el('h2', { text: 'This place is still growing!' }),
+        mapBtn
       ])));
+      LTR.guide.narrate(['This place is still growing.', { pause: 250 },
+                         'Tap the map button to go back.'], { target: mapBtn });
       return screen;
     }
 
@@ -89,7 +137,7 @@
     var envHost = el('div', { style: { position: 'absolute', inset: '0', zIndex: '0' } });
     screen.appendChild(envHost);
 
-    var hud = LTR.ui.hud({ back: function () { leave(); }, book: true });
+    var hud = LTR.ui.hud({ back: function () { leave(); }, backLabel: 'Back to the map', book: true });
     screen.appendChild(hud);
 
     var trail = el('div.trail');
@@ -141,17 +189,23 @@
         var after = function () {
           // A surprise sometimes waits between scenes — never during one.
           var isLast = idx + 1 >= ch.nodes.length;
-          var maybe = (!isLast && node.type !== 'story') ? maybeSurprise(ch.id) : Promise.resolve();
+          var maybe = (!isLast && node.type !== 'story') ? maybeSurprise() : Promise.resolve();
           maybe.then(function () { runNode(idx + 1); });
         };
 
         LTR.ui.grantRewards(node.rewards, { title: rewardTitle(node) }).then(after);
       };
 
-      if (node.type === 'story')     return runStory(node, done);
-      if (node.type === 'activity')  return runActivity(node, done);
-      if (node.type === 'gauntlet')  return runGauntlet(node, done);
-      if (node.type === 'discover')  return runDiscover(node, done);
+      try {
+        if (node.type === 'story')     return runStory(node, done);
+        if (node.type === 'activity')  return runActivity(node, done);
+        if (node.type === 'gauntlet')  return runGauntlet(node, done);
+        if (node.type === 'discover')  return runDiscover(node, done);
+      } catch (err) {
+        // A broken scene must never trap a child on a frozen screen.
+        console.error('[LTR] node failed', node.id, err);
+        return done();
+      }
       console.warn('[LTR] unknown node type', node.type);
       return done();
     }
@@ -169,6 +223,7 @@
       var cast = el('div.cast');
       var speech = el('div.speech.enter-up');
       var actors = {};
+      var lockedUntil = 0;       // stops a flurry of taps skipping the story
 
       (node.cast || []).forEach(function (id, i) {
         var a = LTR.ui.actor(id, { enter: i % 2 ? 'enter-right' : 'enter-left' });
@@ -179,11 +234,10 @@
       content.appendChild(cast);
       content.appendChild(speech);
 
-      var tapHint = el('div.tap-on', { text: 'tap to keep going  👉' });
-
       function paint() {
         var b = node.beats[beat];
         if (!b) return;
+        lockedUntil = Date.now() + 550;
 
         // Bring the speaker forward; everyone else steps back a little.
         if (!actors[b.who] && b.who) {
@@ -203,37 +257,64 @@
 
         var who = LTR.data.character(b.who);
         U.clear(speech);
-        speech.appendChild(el('div.who', { text: who ? who.name : (b.who === 'player' ? LTR.state.data.player.name : '') }));
-        speech.appendChild(el('div', { text: b.text, style: { minHeight: '2.6em' } }));
+        speech.appendChild(el('div.who', {
+          text: who ? who.name : (b.who === 'player' ? LTR.state.data.player.name : '')
+        }));
+        var line = el('div.line', { style: { minHeight: '2.6em' } });
+        speech.appendChild(line);
 
-        var tools = el('div.row', { style: { marginTop: '.5rem' } });
+        var isLast = beat + 1 >= node.beats.length;
+        var nextBtn = LTR.ui.bigButton({
+          glyph: isLast ? '✅' : '▶️',
+          label: isLast ? 'Go!' : 'Next',
+          voice: isLast ? 'Go' : 'Next',
+          style: 'btn-leaf',
+          big: false,
+          className: 'tap-me',
+          onTap: advance
+        });
+
+        var tools = el('div.beat-next');
         tools.appendChild(el('button.icon-btn.speaker', {
           text: '🔊', 'aria-label': 'Hear it again',
-          onClick: function () { LTR.audio.character(b.who, b.text); }
+          onClick: function () { LTR.audio.stop(); speakLine(line, b.who, b.text); }
         }));
-        tools.appendChild(el('button.btn.btn-leaf', {
-          text: beat + 1 >= node.beats.length ? 'Go!  ▶' : 'Next  ▶',
-          onClick: advance
-        }));
+        tools.appendChild(nextBtn);
         speech.appendChild(tools);
-        speech.appendChild(tapHint);
+        speech.appendChild(el('div.tap-on', [
+          el('span', { text: 'tap anywhere' }), el('span', { text: '👉' })
+        ]));
 
         speech.classList.remove('enter-up'); void speech.offsetWidth; speech.classList.add('enter-up');
         LTR.audio.sfx('tap');
 
-        /* Story lines are read aloud in each character's own voice: this is
-           the part of the game a pre-reader is meant to *listen* to, so she
-           can follow the adventure with nobody sitting beside her. */
+        /* Story lines are read aloud in each character's own voice, with the
+           words lighting up in time: this is the part of the game a pre-reader
+           is meant to *listen* to, so she can follow the adventure with nobody
+           sitting beside her. */
         var st = LTR.state.data.settings;
         if (st.speech !== false && st.autoVoice !== false) {
-          U.later(260, function () { LTR.audio.character(b.who, b.text); });
+          LTR.audio.stop();
+          U.later(200, function () { speakLine(line, b.who, b.text); });
+        } else {
+          line.textContent = b.text;
         }
+
+        // The ear button repeats this beat; going quiet points at "next".
+        LTR.guide.narrate([{ text: b.text, rate: .8 }], { silent: true, idle: false });
+        LTR.guide.watchIdle({
+          target: nextBtn, side: 'above', every: 13000,
+          say: ['Tap the green arrow to keep going.']
+        });
       }
 
       function advance() {
+        if (Date.now() < lockedUntil) return;
+        LTR.audio.stop();
         beat += 1;
         if (beat >= node.beats.length) {
           content.removeEventListener('click', bgAdvance);
+          LTR.guide.unpoint();
           return done();
         }
         paint();
@@ -300,8 +381,13 @@
           grand.hintsUsed += t.hintsUsed; grand.misses += t.misses;
           // A lock clunks open between each challenge.
           LTR.audio.sfx('unlock');
-          LTR.ui.toast('Lock ' + (i + 1) + ' of ' + node.steps.length + ' opened!', '🔓');
-          return U.wait(650).then(function () { return step(i + 1); });
+          var left = node.steps.length - (i + 1);
+          LTR.ui.toast('Lock ' + (i + 1) + ' of ' + node.steps.length + ' opened!', '🔓', {
+            voice: left
+              ? 'One lock open! ' + left + ' to go.'
+              : 'All the locks are open!'
+          });
+          return U.wait(900).then(function () { return step(i + 1); });
         });
       }
 
@@ -317,19 +403,23 @@
     /* A hidden-letter hunt in the scenery: reading as *searching*. */
 
     function runDiscover(node, done) {
+      var find = node.find || {};
       var letter = LTR.reading.pickLetter('letterRecognition', {});
-      var decoyCount = (node.find && node.find.decoys) || 5;
+      if (!letter) return done();
+      var decoyCount = find.decoys || 5;
       var decoys = LTR.reading.letterDistractors(letter, decoyCount, { tier: 3 });
       var all = U.shuffle([letter].concat(decoys));
       var solved = false;
+      var misses = 0;
 
       var intro = node.intro ? sceneCard(node.intro, node.title) : Promise.resolve();
 
       intro.then(function () {
         U.clear(content);
 
+        var promptText = (find.prompt || 'Find the letter') + ' ' + letter.char.toUpperCase();
         content.appendChild(el('div.prompt-bar.enter-up', [
-          el('div.txt', { text: (node.find.prompt || 'Find the letter') + ' ' + letter.char.toUpperCase() }),
+          el('div.txt', { text: promptText }),
           LTR.ui.speakerButton(letter.char, 'letterName')
         ]));
 
@@ -338,6 +428,8 @@
         });
         var field = el('div', { style: { position: 'absolute', inset: '0' } });
         frame.appendChild(field);
+
+        var rightLeaf = null;      // filled in below; only read on a later tap
 
         all.forEach(function (l, i) {
           var col = i % 3, rowN = Math.floor(i / 3);
@@ -368,17 +460,22 @@
               fontSize: 'clamp(1.6rem,7vw,2.6rem)', textShadow: '0 .1rem 0 rgba(0,0,0,.25)'
             }
           }));
+          if (l.char === letter.char) rightLeaf = leaf;
 
           leaf.addEventListener('click', function () {
             if (solved) return;
             if (l.char === letter.char) {
               solved = true;
+              LTR.guide.watchIdle(null);
+              LTR.guide.unpoint();
               LTR.audio.sfx('sparkle');
               LTR.ui.sparkleOn(leaf, 26);
               LTR.progression.recordAnswer({
                 skill: 'letterRecognition', correct: true, hintLevel: 0,
                 bucket: 'letters', key: letter.char
               });
+              LTR.audio.speak('You found it! ', { interrupt: true });
+              LTR.audio.letterName(letter.char);
               // the butterfly bursts out
               var fly = el('div', {
                 text: '🦋',
@@ -398,14 +495,36 @@
               if (node.secret && LTR.state.findSecret(node.secret)) {
                 U.later(900, function () { LTR.ui.toast('A secret path opened!', '🌟'); });
               }
-              U.later(1700, function () {
+              U.later(2100, function () {
                 (node.outro ? sceneCard(node.outro) : Promise.resolve()).then(done);
               });
             } else {
               LTR.audio.sfx('tryagain');
               leaf.classList.remove('is-wrong'); void leaf.offsetWidth;
               leaf.classList.add('is-wrong');
-              LTR.ui.cheer(U.pick(LTR.activity.NUDGE), 'soft', content);
+              var nudge = U.pick(LTR.activity.NUDGE);
+              LTR.ui.cheer(nudge, 'soft', content);
+              LTR.audio.stop();
+              LTR.audio.speak(nudge.replace('…', ''), { rate: .9, pitch: 1.15 });
+              // A leaf she has already tried blows away, so the field narrows
+              // and the hunt cannot become an endless loop of the same leaf.
+              misses += 1;
+              U.later(420, function () {
+                leaf.disabled = true;
+                leaf.style.pointerEvents = 'none';
+                leaf.style.transition = 'opacity .5s, transform .5s';
+                leaf.style.opacity = '0';
+                leaf.style.transform = 'translate(-50%,-50%) rotate(40deg) scale(.6)';
+              });
+              // Two wrong leaves and the game simply shows her the right one.
+              if (misses >= 2 && rightLeaf) {
+                U.later(700, function () {
+                  if (solved) return;
+                  rightLeaf.classList.add('is-hinted');
+                  LTR.guide.point(rightLeaf);
+                  LTR.audio.speak('It is this one. Tap the glowing leaf!', { rate: .82 });
+                });
+              }
             }
           });
 
@@ -413,6 +532,18 @@
         });
 
         content.appendChild(frame);
+
+        LTR.guide.narrate([
+          { text: find.prompt || 'Find the letter', rate: .8 },
+          { letterName: letter.char }
+        ], {
+          target: null, idleAfter: 12000,
+          say: [{ text: 'Look for the letter', rate: .8 }, { letterName: letter.char }]
+        });
+        // After a good while lost, put the hand on the answer. She always wins.
+        U.later(26000, function () {
+          if (!solved && rightLeaf) LTR.guide.point(rightLeaf);
+        });
       });
     }
 
@@ -430,11 +561,9 @@
         var box = el('div.speech.enter-up');
         var who = LTR.data.character(beat.who);
         box.appendChild(el('div.who', { text: who ? who.name : '' }));
-        if (title) box.appendChild(el('div', {
-          text: title,
-          style: { fontSize: 'var(--fs-small)', color: 'var(--magic-deep)', fontWeight: '900', letterSpacing: '.05em' }
-        }));
-        box.appendChild(el('div', { text: beat.text }));
+        if (title) box.appendChild(el('div.scene-title', { text: title }));
+        var line = el('div.line');
+        box.appendChild(line);
 
         if (tally && tally.total) {
           box.appendChild(el('div', {
@@ -443,22 +572,34 @@
           }));
         }
 
-        var tools = el('div.row', { style: { marginTop: '.5rem' } });
+        var readyBtn = LTR.ui.bigButton({
+          glyph: '👍', label: 'Ready!', voice: 'Ready',
+          style: 'btn-leaf', big: false, className: 'tap-me',
+          onTap: function () { LTR.audio.stop(); LTR.guide.unpoint(); resolve(); }
+        });
+
+        var tools = el('div.beat-next');
         tools.appendChild(el('button.icon-btn.speaker', {
           text: '🔊', 'aria-label': 'Hear it again',
-          onClick: function () { LTR.audio.character(beat.who, beat.text); }
+          onClick: function () { LTR.audio.stop(); speakLine(line, beat.who, beat.text); }
         }));
-        tools.appendChild(el('button.btn.btn-leaf', {
-          text: 'Ready!  ▶',
-          onClick: function () { LTR.audio.sfx('tap'); resolve(); }
-        }));
+        tools.appendChild(readyBtn);
         box.appendChild(tools);
         content.appendChild(box);
 
         var st2 = LTR.state.data.settings;
         if (st2.speech !== false && st2.autoVoice !== false) {
-          U.later(260, function () { LTR.audio.character(beat.who, beat.text); });
+          LTR.audio.stop();
+          U.later(200, function () { speakLine(line, beat.who, beat.text); });
+        } else {
+          line.textContent = beat.text;
         }
+
+        LTR.guide.narrate([{ text: beat.text, rate: .8 }], { silent: true, idle: false });
+        LTR.guide.watchIdle({
+          target: readyBtn, side: 'above', every: 12000,
+          say: ['Tap the thumbs up when you are ready.']
+        });
       });
     }
 
@@ -495,7 +636,10 @@
               style: { fontWeight: '900', color: 'var(--magic-deep)', fontSize: 'var(--fs-mid)' },
               text: 'Reading Power ' + LTR.progression.level + ' · ' + LTR.progression.rank().name
             }),
-            actions: [{ label: 'What happens next?', value: 1, style: 'btn-magic', big: true }]
+            voice: [c.title || 'Chapter complete!', { pause: 250 }, c.text || '',
+                    { pause: 250 }, 'You are a ' + LTR.progression.rank().name + '!',
+                    { pause: 250 }, 'Tap the button to see what happens next.'],
+            actions: [{ label: 'What happens next?', glyph: '➡️', value: 1, style: 'btn-magic', big: true }]
           }).then(function () { return opened; });
         })
         .then(function (opened) {
@@ -507,7 +651,9 @@
             glyph: next.emoji,
             title: next.name + ' is open!',
             body: next.tagline,
-            actions: [{ label: 'To the map!', value: 1, style: 'btn-leaf', big: true }]
+            voice: ['A new place is open!', { pause: 220 }, next.name + '!',
+                    { pause: 250 }, next.tagline, { pause: 250 }, 'To the map!'],
+            actions: [{ label: 'To the map!', glyph: '🗺️', value: 1, style: 'btn-leaf', big: true }]
           });
         })
         .then(function () {
@@ -518,7 +664,13 @@
 
     /* kick off */
     U.later(30, function () { runNode(startIdx); });
-    if (replaying) U.later(400, function () { LTR.ui.toast('Exploring again — everything still counts!', '🔁'); });
+    if (replaying) {
+      U.later(700, function () {
+        LTR.ui.toast('Exploring again — everything still counts!', '🔁', {
+          voice: 'You have finished this place. Let us explore it again!'
+        });
+      });
+    }
 
     return screen;
   });

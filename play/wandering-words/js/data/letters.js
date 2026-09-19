@@ -68,6 +68,27 @@
     return rec ? rec.say : c;
   };
 
+  /**
+   * Letters that make the SAME sound as each other. These must never appear
+   * together in a beginning-sound question: asking "which starts with /k/?"
+   * with both a cat and a kite on screen has two right answers, and a child
+   * who picks the kite is told she is wrong for being right.
+   */
+  D.sameSound = {
+    c: ['k'], k: ['c'],
+    s: ['c'], g: ['j'], j: ['g'],
+    x: ['z'], z: ['x', 's'],
+    u: ['a'], q: ['k', 'c']
+  };
+
+  /** Does `a` make (or often make) the same opening sound as `b`? */
+  D.soundsAlike = function (a, b) {
+    a = String(a || '').toLowerCase(); b = String(b || '').toLowerCase();
+    if (a === b) return true;
+    return (D.sameSound[a] || []).indexOf(b) !== -1 ||
+           (D.sameSound[b] || []).indexOf(a) !== -1;
+  };
+
   /** Letters that look or sound confusable — useful as *fair* distractors. */
   D.confusable = {
     b: ['d', 'p'], d: ['b', 'p'], p: ['q', 'b'], q: ['p', 'g'],

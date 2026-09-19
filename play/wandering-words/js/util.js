@@ -126,9 +126,29 @@
     return function off() { bus[evt] = bus[evt].filter(function (f) { return f !== fn; }); };
   };
   LTR.emit = function (evt, payload) {
-    (bus[evt] || []).forEach(function (fn) {
+    (bus[evt] || []).slice().forEach(function (fn) {
       try { fn(payload); } catch (err) { console.error('[LTR] listener error on "' + evt + '"', err); }
     });
+  };
+
+  /**
+   * Subscribe for as long as the current screen lives.
+   *
+   * Screens and the HUD subscribe to things like 'wallet-changed' every time
+   * they are built. Without this, every screen change left another listener
+   * behind holding a detached DOM node: after twenty screens the game was
+   * painting twenty dead HUDs on every star earned. The screen manager calls
+   * clearScoped() on each swap, so these simply go away.
+   */
+  var scoped = [];
+  LTR.onScreen = function (evt, fn) {
+    var off = LTR.on(evt, fn);
+    scoped.push(off);
+    return off;
+  };
+  U.clearScoped = function () {
+    scoped.forEach(function (off) { try { off(); } catch (e) {} });
+    scoped = [];
   };
 
   /* --------------------------------------------------------------- Misc ---- */

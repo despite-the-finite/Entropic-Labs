@@ -16,7 +16,18 @@
   LTR.screens.parentChallenge = function () {
     var a = 3 + U.rand(7), b = 4 + U.rand(8);
     var answer = a * b;
-    var options = U.shuffle([answer, answer + 3 + U.rand(5), Math.max(2, answer - (3 + U.rand(5))), answer + 10]);
+
+    /* Three distinct wrong answers. Generating them blind produced duplicate
+       buttons (and occasionally a second correct one), which made the gate
+       either confusing or guessable. */
+    var wrong = [];
+    var guard = 0;
+    while (wrong.length < 3 && guard++ < 100) {
+      var delta = (1 + U.rand(9)) * (U.rand(2) ? 1 : -1);
+      var v = answer + delta;
+      if (v > 1 && v !== answer && wrong.indexOf(v) === -1) wrong.push(v);
+    }
+    var options = U.shuffle([answer].concat(wrong));
 
     var row = el('div.row');
     var body = el('div.stack', [
@@ -28,10 +39,13 @@
       row
     ]);
 
+    /* `speak: false` matters: every other modal in the game reads itself out,
+       and a gate that announces its own answer is not a gate. */
     LTR.ui.modal({
       title: 'Parent Zone',
       extra: body,
-      actions: [{ label: 'Cancel', value: 'cancel', style: 'btn-cream' }]
+      speak: false,
+      actions: [{ label: 'Cancel', glyph: '✖️', value: 'cancel', style: 'btn-cream' }]
     }).then(function (v) { /* cancelled — nothing to do */ });
 
     // Wire the answer buttons into the modal that was just created.
@@ -81,7 +95,9 @@
 
   LTR.ui.screen('parent', function () {
     var S = LTR.state.data, P = LTR.progression;
-    var screen = el('div.screen');
+    // `no-ear`: this screen is for a grown-up who can read it, and the ear
+    // would only give a child a way to have the dashboard read to her.
+    var screen = el('div.screen.no-ear');
     screen.appendChild(LTR.ui.env('map'));
 
     var body = el('div.screen-body', { style: { justifyContent: 'flex-start' } });
@@ -113,7 +129,9 @@
       ['Answers given', String(S.stats.totalAttempts)],
       ['Hints used', String(S.stats.hintsUsed)],
       ['Letters mastered', String(LTR.state.masteredList('letters').length) + ' / 26'],
-      ['Words mastered', String(LTR.state.masteredList('words').length)]
+      ['Words mastered', String(LTR.state.masteredList('words').length)],
+      ['Sight words mastered', String(LTR.state.masteredList('sight').length)],
+      ['Regions finished', String(S.progress.completedChapters.length) + ' / ' + LTR.data.chapters.length]
     ].forEach(function (p) {
       stats.appendChild(el('div.stat-card', [
         el('div.k', { text: p[0] }), el('div.v', { text: p[1] })
@@ -195,6 +213,12 @@
 
     /* settings + data */
     panel.appendChild(el('h3', { text: 'Settings' }));
+    panel.appendChild(el('div.muted', {
+      style: { marginBottom: '.4rem' },
+      text: 'The game is built to be played alone, so it reads every screen, ' +
+            'button and instruction aloud. Turning "Spoken instructions" off ' +
+            'means a child who cannot read yet will need you beside her.'
+    }));
     var settingsRow = el('div.row', { style: { justifyContent: 'flex-start' } });
     [['speech', 'Voice help'], ['autoVoice', 'Spoken instructions'], ['sfx', 'Sound effects']].forEach(function (p) {
       var on = S.settings[p[0]] !== false;
@@ -211,6 +235,28 @@
       settingsRow.appendChild(b);
     });
     panel.appendChild(settingsRow);
+
+    /* Voice speed. Synthesised voices vary hugely between devices; on some the
+       default is too quick for a four-year-old to follow. */
+    var speeds = [['slow', 0.72], ['normal', 0.85], ['brisk', 1]];
+    var speedRow = el('div.row', { style: { justifyContent: 'flex-start', marginTop: '.4rem' } });
+    speedRow.appendChild(el('div.muted', { text: 'Voice speed:' }));
+    speeds.forEach(function (sp) {
+      var on = Math.abs((S.settings.voiceRate || 0.85) - sp[1]) < 0.01;
+      var b = el('button.btn.btn-sm', {
+        class: 'btn btn-sm ' + (on ? 'btn-leaf' : 'btn-cream'),
+        text: sp[0]
+      });
+      b.addEventListener('click', function () {
+        LTR.state.setSetting('voiceRate', sp[1]);
+        U.qsa('button', speedRow).forEach(function (x) { x.className = 'btn btn-sm btn-cream'; });
+        b.className = 'btn btn-sm btn-leaf';
+        LTR.audio.stop();
+        LTR.audio.speak('This is how fast I will talk.');
+      });
+      speedRow.appendChild(b);
+    });
+    panel.appendChild(speedRow);
 
     panel.appendChild(el('h3', { text: 'Progress data' }));
     panel.appendChild(el('div.muted', {

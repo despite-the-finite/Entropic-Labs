@@ -19,6 +19,18 @@
     { id: 'places',     label: 'Places',    glyph: '🗺️' }
   ];
 
+  /* What each page is called out loud, so a child can find the page she wants
+     by tapping the pictures and listening. */
+  var TAB_VOICE = {
+    characters: 'Your friends',
+    animals:    'Animals you met',
+    treasures:  'Your treasures',
+    stickers:   'Your stickers',
+    letters:    'Letters you know',
+    words:      'Words you can read',
+    places:     'Places you have been'
+  };
+
   LTR.ui.screen('book', function (params) {
     var active = params.tab || 'characters';
     var screen = el('div.screen');
@@ -26,6 +38,7 @@
 
     screen.appendChild(LTR.ui.hud({
       back: function () { LTR.ui.go(LTR.state.data.player.created ? 'map' : 'title'); },
+      backLabel: 'Back',
       book: false
     }));
 
@@ -71,6 +84,7 @@
         var seen = mw.concat(lw);
         if (!seen.length) {
           cells.push({ glyph: '📖', nm: 'No words yet', dsc: 'Read some words to fill this page!', empty: true });
+          LTR.audio.speak('No words on this page yet. Play some games to fill it up!');
         }
         seen.forEach(function (word) {
           var rec = LTR.data.wordByText(word);
@@ -104,9 +118,21 @@
           cell.style.cursor = 'pointer';
           cell.addEventListener('click', function () {
             LTR.audio.sfx('pop');
+            LTR.audio.stop();
             LTR.ui.sparkleOn(cell, 10);
-            if (id === 'words' || id === 'letters') LTR.audio.word(c.nm.toLowerCase());
-            else LTR.audio.speak(c.nm + '. ' + (c.dsc || ''));
+            if (id === 'letters') {
+              // The cell shows "Aa": say the letter's name, then its sound and
+              // the picture word, which is the whole point of the page.
+              var ch = c.nm.charAt(0).toLowerCase();
+              LTR.audio.letterName(ch);
+              LTR.audio.letterSound(ch);
+              var rec = LTR.data.letterByChar(ch);
+              if (rec) LTR.audio.word(rec.word);
+            } else if (id === 'words') {
+              LTR.audio.word(c.nm.toLowerCase());
+            } else {
+              LTR.audio.speak(c.nm + '. ' + (c.dsc || ''));
+            }
           });
         }
         grid.appendChild(cell);
@@ -128,10 +154,17 @@
 
     TABS.forEach(function (t) {
       var b = el('button.book-tab', {
-        text: t.glyph + ' ' + t.label,
         dataset: { tab: t.id },
-        onClick: function () { LTR.audio.sfx('tap'); renderTab(t.id); }
-      });
+        'aria-label': TAB_VOICE[t.id],
+        onClick: function () {
+          LTR.audio.sfx('tap');
+          LTR.audio.speak(TAB_VOICE[t.id], { interrupt: true });
+          renderTab(t.id);
+        }
+      }, [
+        el('span.tg', { text: t.glyph }),
+        el('span.tl', { text: t.label })
+      ]);
       tabs.appendChild(b);
     });
 
@@ -139,6 +172,13 @@
     body.appendChild(scroll);
     screen.appendChild(body);
     renderTab(active);
+
+    LTR.guide.narrate([
+      'This is your adventure book.', { pause: 250 },
+      'Everything you have found is in here.', { pause: 250 },
+      'Tap a picture at the top to turn the page. Tap a thing to hear its name.'
+    ], { idleAfter: 18000 });
+
     return screen;
   });
 

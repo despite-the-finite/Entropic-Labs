@@ -22,6 +22,7 @@
 
       var n = Math.max(2, ctx.choiceCount);
       var wrong = LTR.reading.pictureNotStartingWith(letter.char, n - 1, [right]);
+      if (!wrong.length) return null;
       var all = U.shuffle([right].concat(wrong));
 
       return {
@@ -31,7 +32,12 @@
         flyWord: letter.char.toUpperCase(),
         prompt: 'Which one starts with ' + letter.char.toUpperCase() + '?',
         speak: { text: letter.char, kind: 'letterSound' },
-        autoVoice: 'Which one starts with ' + letter.say + '?',
+        autoVoice: [
+          { text: 'Which one starts with', rate: .82 },
+          { letterSound: letter.char },
+          { pause: 150 },
+          { letterSound: letter.char }
+        ],
 
         render: function (area, api) {
           // The letter we are listening for, sitting on the bank.
@@ -80,7 +86,7 @@
           area.appendChild(row);
 
           // Poppy waits on the far bank so the goal is visible.
-          area.appendChild(el('div', {
+          area.appendChild(el('div.companion', {
             style: { width: 'clamp(3.5rem,12vw,5.5rem)', alignSelf: 'flex-end', marginRight: '4%' },
             html: LTR.art.poppy('hop')
           }));

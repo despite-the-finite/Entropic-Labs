@@ -20,6 +20,13 @@
     overlayLayer = overlayLayer || document.getElementById('overlays');
   }
 
+  /** "a, b and c" — small thing, but a list read as "a b c" sounds broken. */
+  function listWords(items) {
+    if (!items.length) return '';
+    if (items.length === 1) return items[0];
+    return items.slice(0, -1).join(', ') + ' and ' + items[items.length - 1];
+  }
+
   var UI = LTR.ui = {
 
     get currentScreen() { return currentName; },
@@ -32,11 +39,20 @@
       if (!screens[name]) { console.error('[LTR] no screen named ' + name); return; }
 
       U.cancelTimers();
+      U.clearScoped();          // drop the old screen's event subscriptions
       LTR.audio.stop();
+      LTR.guide.reset();
       UI.clearFx();
+      UI.closeOverlays();
 
+      UI._lastParams = params || {};
       var next = screens[name](params || {});
       next.classList.add('screen', 'is-entering');
+
+      // Every screen gets the ear, in the same corner, without having to ask.
+      if (!next.classList.contains('no-ear') && !next.querySelector('.floating-ear')) {
+        next.appendChild(UI.floatingEar());
+      }
 
       var old = current;
       if (old) {
@@ -53,6 +69,17 @@
 
     /** Rebuild the screen currently displayed (after a dev-mode change etc). */
     refresh: function () { if (currentName) UI.go(currentName, UI._lastParams || {}); },
+
+    /** Dismiss any modal/veil left standing (e.g. when a screen is forced). */
+    closeOverlays: function () {
+      layers();
+      U.qsa('.veil', overlayLayer).forEach(function (v) {
+        if (v.parentNode) v.parentNode.removeChild(v);
+      });
+      U.qsa('.guide-hand', overlayLayer).forEach(function (v) {
+        if (v.parentNode) v.parentNode.removeChild(v);
+      });
+    },
 
     /* ================================================== world backdrops === */
 
@@ -193,16 +220,23 @@
 
     /**
      * The in-world HUD: a way back, the treasure counters, and Reading Power.
-     * opts: { back: fn|null, power: bool, wallet: bool, book: bool }
+     * opts: { back: fn|null, power: bool, wallet: bool, book: bool, ear: bool }
+     *
+     * Every button here is a picture, never a word, and says what it is when
+     * tapped — the child has to be able to leave any screen without help.
      */
     hud: function (opts) {
       opts = opts || {};
       var bar = el('div.hud');
 
       if (opts.back) {
-        bar.appendChild(el('button.icon-btn', {
-          text: '⬅️', 'aria-label': 'Back to the map',
-          onClick: function () { LTR.audio.sfx('tap'); opts.back(); }
+        bar.appendChild(el('button.icon-btn.hud-back', {
+          text: opts.backGlyph || '🏠', 'aria-label': opts.backLabel || 'Back to the map',
+          onClick: function () {
+            LTR.audio.sfx('tap');
+            LTR.audio.stop();
+            opts.back();
+          }
         }));
       }
       bar.appendChild(el('div.spacer'));
@@ -212,7 +246,7 @@
         var starChip = el('div.hud-chip', [el('span.emo', { text: '⭐' }), el('span.n', { text: String(w.stars) })]);
         var gemChip  = el('div.hud-chip', [el('span.emo', { text: '💎' }), el('span.n', { text: String(w.gems) })]);
         bar.appendChild(starChip); bar.appendChild(gemChip);
-        LTR.on('wallet-changed', function (wal) {
+        LTR.onScreen('wallet-changed', function (wal) {
           var a = starChip.querySelector('.n'), b = gemChip.querySelector('.n');
           if (a) { a.textContent = String(wal.stars); starChip.classList.remove('nudge'); void starChip.offsetWidth; starChip.classList.add('nudge'); }
           if (b) b.textContent = String(wal.gems);
@@ -224,10 +258,61 @@
       if (opts.book) {
         bar.appendChild(el('button.icon-btn', {
           text: '📔', 'aria-label': 'My Adventure Book',
-          onClick: function () { LTR.audio.sfx('tap'); LTR.ui.go('book'); }
+          onClick: function () {
+            LTR.audio.sfx('tap');
+            LTR.audio.speak('Your adventure book!', { interrupt: true });
+            LTR.ui.go('book');
+          }
         }));
       }
+
       return bar;
+    },
+
+    /**
+     * "Say that again." — the one control a child has to learn, so it lives in
+     * exactly the same corner of exactly every screen and never moves. It is
+     * attached by go() rather than by each screen, which is also why it cannot
+     * be squeezed off the edge of a small phone by a crowded HUD.
+     */
+    floatingEar: function () {
+      return el('div.floating-ear', UI.earButton());
+    },
+
+    /**
+     * "Say that again." Always present, always the same shape, always here.
+     * Falls back to a friendly prompt when a screen has nothing registered.
+     */
+    earButton: function () {
+      var b = el('button.icon-btn.ear', { text: '👂', 'aria-label': 'Say it again' });
+      b.addEventListener('click', function () {
+        LTR.audio.sfx('tap');
+        b.classList.remove('nudge'); void b.offsetWidth; b.classList.add('nudge');
+        if (LTR.guide.hasScript()) LTR.guide.replay();
+        else LTR.audio.speak('Tap a picture to play!', { interrupt: true });
+      });
+      return b;
+    },
+
+    /**
+     * The one big button shape used for every "go on then" in the game.
+     * A huge picture first, the word second — she reads the picture.
+     * cfg: { glyph, label, voice, style, onTap, big, className }
+     */
+    bigButton: function (cfg) {
+      var b = el('button', {
+        class: 'btn ' + (cfg.style || 'btn-leaf') + (cfg.big === false ? '' : ' btn-huge') +
+               ' btn-glyph' + (cfg.className ? ' ' + cfg.className : ''),
+        'aria-label': cfg.voice || cfg.label || 'go'
+      }, [
+        el('span.g', { text: cfg.glyph || '▶' }),
+        cfg.label ? el('span.l', { text: cfg.label }) : null
+      ]);
+      b.addEventListener('click', function (e) {
+        LTR.audio.sfx(cfg.sfx || 'tap');
+        if (cfg.onTap) cfg.onTap(e, b);
+      });
+      return b;
     },
 
     powerMeter: function () {
@@ -245,13 +330,13 @@
         node.querySelector('.label').textContent = P.rank().name;
       };
       setTimeout(paint, 60);
-      LTR.on('power-changed', paint);
+      LTR.onScreen('power-changed', paint);
       return node;
     },
 
     /* ========================================================== helpers === */
 
-    /** A tappable speaker that says something on demand (never automatic). */
+    /** A tappable speaker that says the thing being worked on, on demand. */
     speakerButton: function (getText, kind) {
       var b = el('button.icon-btn.speaker', { text: '🔊', 'aria-label': 'Hear it' });
       b.addEventListener('click', function () {
@@ -260,6 +345,7 @@
         if (!t) return;
         b.classList.add('nudge');
         setTimeout(function () { b.classList.remove('nudge'); }, 450);
+        LTR.audio.stop();
         if (kind === 'letterSound') LTR.audio.letterSound(t);
         else if (kind === 'letterName') LTR.audio.letterName(t);
         else if (kind === 'word') LTR.audio.word(t);
@@ -371,21 +457,59 @@
         if (cfg.body) box.appendChild(typeof cfg.body === 'string' ? el('p', { text: cfg.body }) : cfg.body);
         if (cfg.extra) box.appendChild(cfg.extra);
 
+        var actionList = cfg.actions || [{ label: 'OK', glyph: '👍', value: true }];
         var actions = el('div.modal-actions');
-        (cfg.actions || [{ label: 'OK', value: true }]).forEach(function (a) {
-          actions.appendChild(el('button', {
-            class: 'btn ' + (a.style || 'btn-leaf') + (a.big ? ' btn-huge' : ''),
-            text: a.label,
+        var firstBtn = null;
+
+        function close(value) {
+          if (!veil.parentNode) return;
+          LTR.guide.unpoint();
+          if (cfg.speak !== false) LTR.guide.restore();
+          veil.parentNode.removeChild(veil);
+          resolve(value);
+        }
+
+        actionList.forEach(function (a) {
+          var b = el('button', {
+            class: 'btn ' + (a.style || 'btn-leaf') + (a.big ? ' btn-huge' : '') + ' btn-glyph',
+            'aria-label': a.label,
             onClick: function () {
               LTR.audio.sfx('tap');
-              if (veil.parentNode) veil.parentNode.removeChild(veil);
-              resolve(a.value);
+              LTR.audio.stop();
+              close(a.value);
             }
-          }));
+          }, [
+            el('span.g', { text: a.glyph || '👍' }),
+            el('span.l', { text: a.label })
+          ]);
+          if (!firstBtn) firstBtn = b;
+          actions.appendChild(b);
         });
         box.appendChild(actions);
         veil.appendChild(box);
         overlayLayer.appendChild(veil);
+
+        /* A modal is a wall of text to anyone who cannot read, so it reads
+           itself out and then points at the button that dismisses it. If the
+           child taps first, the pointing stops — she did not need it. */
+        if (cfg.speak !== false) {
+          var lines = [];
+          if (cfg.voice) lines = [].concat(cfg.voice);
+          else {
+            if (cfg.title) lines.push(cfg.title);
+            if (typeof cfg.body === 'string' && cfg.body) lines.push({ pause: 180 }, cfg.body);
+          }
+          if (actionList.length === 1 && actionList[0].label) {
+            lines.push({ pause: 250 }, actionList[0].label);
+          }
+          LTR.guide.narrate(lines, {
+            delay: 260,
+            transient: true,
+            target: function () { return firstBtn; },
+            side: 'above',
+            idleAfter: 9000
+          });
+        }
       });
     },
 
@@ -438,11 +562,21 @@
         }));
       }
 
+      // Say what was actually won — "two stars and a firefly sticker" — so a
+      // pre-reader knows what the picture means, not just that it sparkled.
+      var spoken = shown.map(function (s) {
+        if (s.glyph === '⭐') return s.label.replace('+', '') + (s.label === '+1' ? ' star' : ' stars');
+        if (s.glyph === '💎') return s.label.replace('+', '') + (s.label === '+1' ? ' gem' : ' gems');
+        return s.label;
+      });
+
       return UI.modal({
         title: opts.title || 'You found treasure!',
         body: opts.body || null,
         extra: grid,
-        actions: [{ label: 'Yay!', value: true, style: 'btn-leaf', big: true }]
+        voice: [opts.title || 'You found treasure!', { pause: 200 },
+                'You got ' + listWords(spoken) + '.', { pause: 200 }, 'Yay!'],
+        actions: [{ label: 'Yay!', glyph: '🎉', value: true, style: 'btn-leaf', big: true }]
       });
     },
 
@@ -457,12 +591,21 @@
           badge,
           el('div', { style: { fontSize: 'var(--fs-big)', fontWeight: '900', color: 'var(--magic-deep)' }, text: 'You are now a ' + rank.name + '!' })
         ]),
-        actions: [{ label: 'Wow!', value: true, style: 'btn-magic', big: true }]
+        voice: ['Your reading power went up!', { pause: 250 },
+                'You are now a ' + rank.name + '!', { pause: 250 }, 'Wow!'],
+        actions: [{ label: 'Wow!', glyph: '⭐', value: true, style: 'btn-magic', big: true }]
       });
     },
 
-    /** Small non-blocking note (used sparingly). */
-    toast: function (text, glyph) {
+    /** Small non-blocking note (used sparingly). Always spoken as well as
+        written — a toast nobody can read is just a flash of colour. */
+    toast: function (text, glyph, opts) {
+      opts = opts || {};
+      if (opts.speak !== false) LTR.audio.speak(opts.voice || text);
+      return UI._toast(text, glyph);
+    },
+
+    _toast: function (text, glyph) {
       layers();
       var t = el('div', {
         style: {

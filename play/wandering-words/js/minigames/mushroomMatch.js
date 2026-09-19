@@ -27,7 +27,11 @@
         key: target.char,
         prompt: 'Find the baby mushroom for ' + target.char.toUpperCase(),
         speak: { text: target.char, kind: 'letterName' },
-        autoVoice: 'Find the little ' + target.char.toUpperCase(),
+        autoVoice: [
+          { text: 'This big mushroom is', rate: .82 }, { letterName: target.char },
+          { pause: 200 },
+          { text: 'Find its little one.', rate: .82 }
+        ],
 
         render: function (area, api) {
           /* the parent mushroom */

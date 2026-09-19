@@ -36,7 +36,11 @@
         key: target.word,
         prompt: 'Which one rhymes with ' + target.word.toUpperCase() + '?',
         speak: { text: target.word, kind: 'word' },
-        autoVoice: { text: 'Which one rhymes with ' + target.word + '?', kind: 'sentence' },
+        autoVoice: [
+          { text: 'Which one rhymes with', rate: .82 },
+          { word: target.word },
+          { text: '?', rate: .82 }
+        ],
 
         render: function (area, api) {
           area.appendChild(el('div.enter-up', {
