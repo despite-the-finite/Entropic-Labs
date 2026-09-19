@@ -208,7 +208,7 @@ buttons at it — the form provider holds the address, so the page never publish
 
 1. **Donnell and McBurns: An EPC Epic** — playable in two versions, [Version 2](https://theentropic.studio/play/meridian-v2/) and [Version 1](https://theentropic.studio/play/meridian/)
 2. **Indra and the Wandering Words** — playable at [`/play/wandering-words/`](https://theentropic.studio/play/wandering-words/)
-3. **Live Trivia**
+3. **Live Trivia** — playable at [`https://trivia-game-five-lac.vercel.app`](https://trivia-game-five-lac.vercel.app), which is a different origin rather than a page on this site
 
 The site no longer links to any game's source. Each hosted copy still records where
 it came from in its own `UPSTREAM.md`, which is what a refresh needs.
@@ -228,10 +228,14 @@ its own repository: the games room leads with Version 2 and keeps Version 1
 playable beside it, and neither redirects to the other.
 
 **Live Trivia** can't be hosted the same way: its frontend calls `/api/*` with
-Postgres behind it, so a static copy would only ever show its offline screen.
-Deploying it (Vercel plus a Postgres URL and an Anthropic API key) would give it a
-**Play it now** button too — drop the URL into `games.html` in place of the
-`play-note` beside its link.
+Postgres behind it, so a static copy would only ever show its offline screen. It is
+deployed separately — Vercel, plus a Postgres URL and an Anthropic API key — and the
+games room links out to it at `https://trivia-game-five-lac.vercel.app`. Its
+**Play it now** button is therefore an absolute URL to another origin, where the
+other three are relative paths into `play/`; it opens in a new tab, and the note
+beside it says so. Nothing is embedded and no keys are shared, so a link is the
+whole of the integration. If that deployment ever moves to a custom domain, the URL
+lives in exactly three places: `games.html`, `m/games.html` and this paragraph.
 
 Dirty Bass, the in-house VST3 synth, is listed on the studio side in the gear
 table instead of here — it loads in a DAW rather than a browser, so it has no
