@@ -8,7 +8,7 @@ Version 1 is preserved, untouched, alongside this one in
 redirects to the other; the games room offers both and leads with this one.
 
 - **Source:** https://github.com/despite-the-finite/Doctor-and-vet-game-2
-- **Copied at commit:** `2a90a3e` (branch `main`)
+- **Copied at commit:** `4582652` (branch `main`)
 - **Played at:** https://theentropic.studio/play/little-heroes-hospital-v2/
 
 This is the redraw. `Doctor-and-vet-game` is the first pass and still ships as
