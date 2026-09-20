@@ -130,7 +130,7 @@ over it as live elements:
 |---|---|
 | Spectrum bars | Drawn into `.hero-fx` canvas, three detuned oscillators per bar so it reads as music rather than a wave. Colour ramp sampled from the original. |
 | Falling code | Same canvas. Extra glyph columns fall through the static ones already in the artwork. |
-| Strapline | Live SVG text over the erased band, turning slowly on its own axis. |
+| Strapline | Live SVG text, set just below the erased band so it clears the wordmark. Flat and still — it is type, not an effect. |
 | The five figures | Cut out of the artwork as sprites in `img/hero-fig-*.png` and screen-blended back at their exact positions, each animated as its own activity: the mountain biker's fork compresses and rebounds over a hit, the road cyclist holds an aero tuck while speed lines stream off the back, the skateboarder ollies (crouch, tail snap, level out, land and absorb), the snowboarder pops a 300-degree spin on the vertical axis and unwinds it to land straight, and the truck works both axles over trail chatter. Transform origins sit at each one's contact patch so compression loads onto the ground. |
 
 Figures animate **on hover** where there's a pointer, and **take turns
