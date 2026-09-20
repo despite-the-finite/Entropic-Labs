@@ -197,18 +197,20 @@ the page means renumbering it — and the same order is kept in the top nav, in
 ### Studio Tech
 
 Two cards, one per plugin, each with a short description written from that
-plugin's own README, a row of spec chips, and one button to its **latest
-release** on GitHub:
+plugin's own README, a row of spec chips, and one button out to its
+repository on GitHub:
 
-| Plugin | Kind | Release |
+| Plugin | Kind | Repository |
 |---|---|---|
-| Dirty Bass | VSTi (instrument) | `despite-the-finite/dirty-bass/releases/latest` |
-| Doppler FX | VST FX (motion) | `despite-the-finite/Doppler-FX/releases/latest` |
+| Dirty Bass | VSTi (instrument) | `despite-the-finite/dirty-bass` |
+| Doppler FX | VST FX (motion) | `despite-the-finite/Doppler-FX` |
 
-The `/releases/latest` form is what both plugin READMEs point at as the permanent
-download, so the link keeps working as versions are cut and never needs editing
-here. Nothing is hosted by this site and nothing is embedded — a link is the whole
-of the integration, the same way the games room links out to Live Trivia.
+The button goes to the repository root rather than to a release, so it lands on
+the README — the sound design, the full parameter list, the install notes and the
+downloads are all reachable from there, and the link never needs editing as
+versions are cut. Nothing is hosted by this site and nothing is embedded — a link
+is the whole of the integration, the same way the games room links out to Live
+Trivia.
 
 The instrument keeps the card's signal-pink edge and the effect takes the trace
 teal one, matching the colour code the side rooms already use.
