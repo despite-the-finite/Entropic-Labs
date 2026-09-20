@@ -633,6 +633,56 @@ figure{ margin: 0; }
 .card.dark-room{ border-left-color: var(--trace); }
 .card.warm-room{ border-left-color: #FFC46B; }
 
+/* ---------- STUDIO TECH / PLUGINS ---------- */
+.tech-stack{ display: flex; flex-direction: column; gap: 1rem; }
+/* the instrument keeps the card's signal edge, the effect takes the trace one */
+.tech-fx{ border-left-color: var(--trace); }
+.tech-head{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.9rem;
+}
+.tech-name{ font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; }
+.tech-kind{
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--trace);
+}
+.tech-spec{
+  list-style: none;
+  margin: 0 0 1.2rem;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+.tech-spec li{
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ash);
+  border: 1px solid var(--hairline);
+  padding: 0.28rem 0.5rem;
+}
+.tech-note{
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  line-height: 1.7;
+  color: var(--ash);
+  margin: 1.3rem var(--pad) 0;
+}
+.tech-note code{
+  color: var(--paper);
+  background: var(--panel-raised);
+  padding: 0.1em 0.35em;
+}
+
 /* ---------- CONTACT ---------- */
 .patchbay{
   list-style: none;

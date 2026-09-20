@@ -25,11 +25,12 @@
   </div>
   <ol>
     <li><a href="../index.html">Entropic Labs</a></li>
-    <li><a href="#manifesto">The room</a></li>
     <li><a href="#producer">Producer</a></li>
+    <li><a href="#sessions">Projects</a></li>
+    <li><a href="#tech">Studio Tech</a></li>
+    <li><a href="#manifesto">The room</a></li>
     <li><a href="#studio">Studio</a></li>
     <li><a href="#gear">Gear</a></li>
-    <li><a href="#sessions">Projects</a></li>
     <li><a href="games.html">Games</a></li>
     <li><a href="../observatory.html">Observatory</a></li>
     <li><a href="../butterfly.html">Butterfly Trails</a></li>
@@ -68,26 +69,9 @@
     </div>
   </section>
 
-  <section id="manifesto">
-    <div class="section-head">
-      <span class="section-index">01 / MANIFESTO</span>
-      <h2>The room</h2>
-    </div>
-    <div class="body-copy">
-      <p>Entropy is what happens to a signal left alone — pedals drift, amps breathe, a room has its own opinion whether you ask for one or not. We don't fight it, we mix with it. Guitars come straight off the wall, the pedalboard's been built up over years, and it all runs into a treated room and a proper monitoring setup — nothing simulated unless we choose to. We work across recording, mixing, and production, for songwriters, bands, and anyone building something track by track.</p>
-    </div>
-    <ul class="fact-list">
-      <li><span>Est.</span><span>2026</span></li>
-      <li><span>Location</span><span>Shared on request</span></li>
-      <li><span>Room</span><span>Converted home studio</span></li>
-      <li><span>Rig</span><span>Guitars, amps, pedalboard, DAW</span></li>
-      <li><span>Booking</span><span>By appointment</span></li>
-    </ul>
-  </section>
-
   <section id="producer">
     <div class="section-head">
-      <span class="section-index">02 / LEAD PRODUCER</span>
+      <span class="section-index">01 / LEAD PRODUCER</span>
       <h2>Behind the board</h2>
     </div>
     <figure class="photo">
@@ -104,9 +88,77 @@
     </ul>
   </section>
 
+  <section id="sessions">
+    <div class="section-head">
+      <span class="section-index">02 / CATALOG</span>
+      <h2>Projects</h2>
+    </div>
+    <ul class="sessions">
+      <li><span class="session-year">P.01</span><span class="session-title">Can You Rap?<small>Awaiting upload</small></span><span class="session-tag">Soon</span></li>
+      <li><span class="session-year">P.02</span><span class="session-title">Restructured Phoenix<small>Awaiting upload</small></span><span class="session-tag">Soon</span></li>
+      <li><span class="session-year">P.03</span><span class="session-title">MM Studio<small>Awaiting upload</small></span><span class="session-tag">Soon</span></li>
+      <li><span class="session-year">P.04</span><span class="session-title">Silver Lining<small>Awaiting upload</small></span><span class="session-tag">Soon</span></li>
+    </ul>
+  </section>
+
+  <section id="tech">
+    <div class="section-head">
+      <span class="section-index">03 / PLUGINS</span>
+      <h2>Studio Tech (VSTi/VSTfx)</h2>
+    </div>
+    <div class="tech-stack">
+      <article class="card tech-card">
+        <div class="tech-head">
+          <span class="tech-name">Dirty Bass</span>
+          <span class="tech-kind">VSTi · Instrument</span>
+        </div>
+        <p>A synthesiser built here for gritty, saturated bass. Each voice runs a sawtooth against a sub oscillator an octave below, pushes the pair through a tanh waveshaper for the dirt, and lands on a state-variable low-pass. Nine knobs, no menus: Drive, Cutoff, Reso, Sub, Vol and a full ADSR.</p>
+        <ul class="tech-spec">
+          <li>VST3</li>
+          <li>8 voices</li>
+          <li>JUCE</li>
+          <li>Win · macOS · Linux</li>
+        </ul>
+        <a class="btn btn-solid" href="https://github.com/despite-the-finite/dirty-bass/releases/latest" target="_blank" rel="noopener">Latest release</a>
+      </article>
+      <article class="card tech-card tech-fx">
+        <div class="tech-head">
+          <span class="tech-name">Doppler FX</span>
+          <span class="tech-kind">VST FX · Motion</span>
+        </div>
+        <p>A motion effect that puts the signal on a source moving around a listener and hands back everything that falls out of that: the pitch bend of a shortening propagation delay, the swell as it arrives, the high end thinning as it leaves, the delay between the ears throwing it across the field. A resonant filter, a gate and a bounded feedback path push it past realism on request. Twelve factory presets, and the output stage will not send anything above 0&nbsp;dBFS to the next device in the chain.</p>
+        <ul class="tech-spec">
+          <li>VST3 · AU</li>
+          <li>Flyby · Orbit · Pendulum</li>
+          <li>Tempo sync</li>
+          <li>12 presets</li>
+        </ul>
+        <a class="btn btn-solid" href="https://github.com/despite-the-finite/Doppler-FX/releases/latest" target="_blank" rel="noopener">Latest release</a>
+      </article>
+    </div>
+    <p class="tech-note">Both are built in-house with JUCE and released for Windows, macOS and Linux. Each download is a zip of the plugin for your platform — drop the <code>.vst3</code> into your system plugin folder and rescan. Nothing here is hosted by the studio; the releases live on GitHub.</p>
+  </section>
+
+  <section id="manifesto">
+    <div class="section-head">
+      <span class="section-index">04 / MANIFESTO</span>
+      <h2>The room</h2>
+    </div>
+    <div class="body-copy">
+      <p>Entropy is what happens to a signal left alone — pedals drift, amps breathe, a room has its own opinion whether you ask for one or not. We don't fight it, we mix with it. Guitars come straight off the wall, the pedalboard's been built up over years, and it all runs into a treated room and a proper monitoring setup — nothing simulated unless we choose to. We work across recording, mixing, and production, for songwriters, bands, and anyone building something track by track.</p>
+    </div>
+    <ul class="fact-list">
+      <li><span>Est.</span><span>2026</span></li>
+      <li><span>Location</span><span>Shared on request</span></li>
+      <li><span>Room</span><span>Converted home studio</span></li>
+      <li><span>Rig</span><span>Guitars, amps, pedalboard, DAW</span></li>
+      <li><span>Booking</span><span>By appointment</span></li>
+    </ul>
+  </section>
+
   <section id="studio">
     <div class="section-head">
-      <span class="section-index">03 / THE STUDIO</span>
+      <span class="section-index">05 / THE STUDIO</span>
       <h2>Inside the room</h2>
     </div>
     <figure class="photo">
@@ -117,7 +169,7 @@
 
   <section id="gear">
     <div class="section-head">
-      <span class="section-index">04 / PATCH SHEET</span>
+      <span class="section-index">06 / PATCH SHEET</span>
       <h2>Gear list</h2>
     </div>
     <ul class="gear-list">
@@ -174,32 +226,15 @@
         <p class="gear-note">Primary recording and production software.</p>
       </li>
       <li>
-        <div class="gear-head"><span class="gear-unit">Dirty Bass</span><span class="gear-type">Plugin / in-house</span></div>
-        <p class="gear-note">VST3 synth built here with JUCE, for gritty saturated bass — sawtooth and sub oscillator through a tanh waveshaper into a state-variable filter, eight voices. <a href="https://github.com/despite-the-finite/dirty-bass" target="_blank" rel="noopener">Source on GitHub</a>.</p>
-      </li>
-      <li>
         <div class="gear-head"><span class="gear-unit">Acoustic panels</span><span class="gear-type">Treatment</span></div>
         <p class="gear-note">Broadband absorption across the front wall.</p>
       </li>
     </ul>
   </section>
 
-  <section id="sessions">
-    <div class="section-head">
-      <span class="section-index">05 / CATALOG</span>
-      <h2>Projects</h2>
-    </div>
-    <ul class="sessions">
-      <li><span class="session-year">P.01</span><span class="session-title">Can You Rap?<small>Awaiting upload</small></span><span class="session-tag">Soon</span></li>
-      <li><span class="session-year">P.02</span><span class="session-title">Restructured Phoenix<small>Awaiting upload</small></span><span class="session-tag">Soon</span></li>
-      <li><span class="session-year">P.03</span><span class="session-title">MM Studio<small>Awaiting upload</small></span><span class="session-tag">Soon</span></li>
-      <li><span class="session-year">P.04</span><span class="session-title">Silver Lining<small>Awaiting upload</small></span><span class="session-tag">Soon</span></li>
-    </ul>
-  </section>
-
   <section id="games">
     <div class="section-head">
-      <span class="section-index">06 / GAME DESIGN</span>
+      <span class="section-index">07 / GAME DESIGN</span>
       <h2>Side room</h2>
     </div>
     <div class="card">
@@ -210,7 +245,7 @@
 
   <section id="observatory">
     <div class="section-head">
-      <span class="section-index">07 / CURIOSITY</span>
+      <span class="section-index">08 / CURIOSITY</span>
       <h2>The observatory</h2>
     </div>
     <div class="card dark-room">
@@ -221,7 +256,7 @@
 
   <section id="trails">
     <div class="section-head">
-      <span class="section-index">08 / CONSEQUENCE</span>
+      <span class="section-index">09 / CONSEQUENCE</span>
       <h2>Butterfly Trails</h2>
     </div>
     <div class="card warm-room">
@@ -232,7 +267,7 @@
 
   <section id="contact">
     <div class="section-head">
-      <span class="section-index">09 / CONTACT</span>
+      <span class="section-index">10 / CONTACT</span>
       <h2>Book time</h2>
     </div>
     <!-- No contact details live in this page — see the note in studio.html. -->

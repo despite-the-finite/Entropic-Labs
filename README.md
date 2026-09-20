@@ -177,18 +177,41 @@ field and the loop are shared with the hero rather than written twice.
 
 ## Sections
 
-These are the sections of `studio.html`, the studio page:
+These are the sections of `studio.html`, the studio page, in the order they appear.
+The `section-index` counter beside each heading is written by hand, so reordering
+the page means renumbering it — and the same order is kept in the top nav, in
+`m/index.html`, and in that page's menu.
 
 - Hero — the `ENTROPIC LABS / MUSIC ENGINEERING / STUDIO` backdrop, plus the booking CTA
-- Manifesto — studio philosophy
 - Behind the board — lead producer bio
+- Projects — placeholder catalog for upcoming releases
+- Studio Tech (VSTi/VSTfx) — the in-house plugins; see below
+- Manifesto — studio philosophy
 - Inside the room — studio photo
 - Gear list — recording equipment
-- Projects — placeholder catalog for upcoming releases
 - Side room — game design as a minor function, linking out to `games.html`
 - The observatory — curiosity as the third room, linking out to `observatory.html`
 - Butterfly Trails — the family archive, linking out to `butterfly.html`
 - Contact — booking terms and hours only; see the note below
+
+### Studio Tech
+
+Two cards, one per plugin, each with a short description written from that
+plugin's own README, a row of spec chips, and one button to its **latest
+release** on GitHub:
+
+| Plugin | Kind | Release |
+|---|---|---|
+| Dirty Bass | VSTi (instrument) | `despite-the-finite/dirty-bass/releases/latest` |
+| Doppler FX | VST FX (motion) | `despite-the-finite/Doppler-FX/releases/latest` |
+
+The `/releases/latest` form is what both plugin READMEs point at as the permanent
+download, so the link keeps working as versions are cut and never needs editing
+here. Nothing is hosted by this site and nothing is embedded — a link is the whole
+of the integration, the same way the games room links out to Live Trivia.
+
+The instrument keeps the card's signal-pink edge and the effect takes the trace
+teal one, matching the colour code the side rooms already use.
 
 ## Contact details
 
@@ -237,9 +260,9 @@ beside it says so. Nothing is embedded and no keys are shared, so a link is the
 whole of the integration. If that deployment ever moves to a custom domain, the URL
 lives in exactly three places: `games.html`, `m/games.html` and this paragraph.
 
-Dirty Bass, the in-house VST3 synth, is listed on the studio side in the gear
-table instead of here — it loads in a DAW rather than a browser, so it has no
-play link, just a link to its source.
+The in-house plugins — Dirty Bass and Doppler FX — are on the studio side in
+**Studio Tech**, not here: they load in a DAW rather than a browser, so neither
+has a play link, just a download.
 
 ## The Observatory
 

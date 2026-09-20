@@ -117,7 +117,8 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-end;
-    gap: 0.4rem clamp(0.9rem, 2vw, 1.8rem);
+    /* eleven links: the column gap is tuned so the row still fits on one line */
+    gap: 0.4rem clamp(0.85rem, 1.4vw, 1.2rem);
     list-style: none;
     margin: 0; padding: 0;
     font-family: var(--font-mono);
@@ -549,6 +550,67 @@
     .session-tag{ text-align: left; }
   }
 
+  /* ---------- STUDIO TECH / PLUGINS ---------- */
+  .tech-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
+    gap: clamp(1rem, 2.5vw, 1.6rem);
+  }
+  .tech-card{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border: 1px solid var(--hairline);
+    border-top: 2px solid var(--signal);
+    background: var(--panel);
+    padding: clamp(1.4rem, 3.5vw, 2rem);
+  }
+  /* the instrument takes the signal colour, the effect the trace one */
+  .tech-card.is-fx{ border-top-color: var(--trace); }
+  .tech-head{
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .tech-name{ font-size: clamp(1.3rem, 1.4vw + 0.9rem, 1.6rem); margin: 0; }
+  .tech-kind{
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--trace);
+    white-space: nowrap;
+  }
+  .tech-card p{ color: #E4DFF2; margin: 0; }
+  .tech-spec{ list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .tech-spec li{
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ash);
+    border: 1px solid var(--hairline);
+    padding: 0.3rem 0.6rem;
+  }
+  .tech-links{ display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: auto; padding-top: 0.3rem; }
+  .tech-note{
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    line-height: 1.7;
+    color: var(--ash);
+    margin: 1.4rem 0 0;
+    max-width: 68ch;
+  }
+  .tech-note code{
+    font-family: var(--font-mono);
+    color: var(--paper);
+    background: var(--panel-raised);
+    padding: 0.1em 0.35em;
+  }
+
   /* ---------- CONTACT / PATCHBAY ---------- */
   .patchbay{
     background: var(--panel);
@@ -638,11 +700,12 @@
     <a class="brand" href="index.html">ENTROPIC<span>·</span>LABS</a>
     <ul class="navlinks">
       <li><a href="index.html">Labs</a></li>
-      <li><a href="#manifesto">Manifesto</a></li>
       <li><a href="#producer">Producer</a></li>
+      <li><a href="#sessions">Projects</a></li>
+      <li><a href="#tech">Studio Tech</a></li>
+      <li><a href="#manifesto">Manifesto</a></li>
       <li><a href="#studio">Studio</a></li>
       <li><a href="#gear">Gear</a></li>
-      <li><a href="#sessions">Projects</a></li>
       <li><a href="games.html">Games</a></li>
       <li><a href="observatory.html">Observatory</a></li>
       <li><a href="butterfly.html">Butterfly Trails</a></li>
@@ -682,30 +745,11 @@
 </header>
 
 <main>
-  <section id="manifesto">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <h2>The room</h2>
-        <span class="section-index">01 / MANIFESTO</span>
-      </div>
-      <div class="manifesto reveal">
-        <p>Entropy is what happens to a signal left alone — pedals drift, amps breathe, a room has its own opinion whether you ask for one or not. We don't fight it, we mix with it. Guitars come straight off the wall, the pedalboard's been built up over years, and it all runs into a treated room and a proper monitoring setup — nothing simulated unless we choose to. We work across recording, mixing, and production, for songwriters, bands, and anyone building something track by track.</p>
-        <ul class="fact-list">
-          <li><span>Est.</span><span>2026</span></li>
-          <li><span>Location</span><span>Shared on request</span></li>
-          <li><span>Room</span><span>Converted home studio</span></li>
-          <li><span>Rig</span><span>Guitars, amps, pedalboard, DAW</span></li>
-          <li><span>Booking</span><span>By appointment</span></li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
   <section id="producer">
     <div class="wrap">
       <div class="section-head reveal">
         <h2>Behind the board</h2>
-        <span class="section-index">02 / LEAD PRODUCER</span>
+        <span class="section-index">01 / LEAD PRODUCER</span>
       </div>
       <div class="producer-grid reveal">
         <figure class="producer-photo">
@@ -724,57 +768,11 @@
     </div>
   </section>
 
-  <section id="studio">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <h2>Inside the room</h2>
-        <span class="section-index">03 / THE STUDIO</span>
-      </div>
-      <figure class="studio-photo reveal">
-        <img src="img/studio.jpg" width="2400" height="729" alt="Panoramic view of the Entropic Labs studio room: an orange leather couch beneath a shuttered window, two electric guitars mounted on the left wall above an amp stack and pedalboard, and to the right a desk with dual monitors, acoustic foam panels, and a ukulele and acoustic guitar on the wall, all lit with blue and green LED lighting." loading="lazy">
-        <figcaption>The room as it stands today — guitars off the wall, pedalboard on the floor, desk running the sessions.</figcaption>
-      </figure>
-    </div>
-  </section>
-
-  <section id="gear">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <h2>Gear list</h2>
-        <span class="section-index">04 / PATCH SHEET</span>
-      </div>
-      <div class="gear-scroll reveal">
-        <table class="gear">
-          <thead>
-            <tr><th>Unit</th><th>Type</th><th>Notes</th></tr>
-          </thead>
-          <tbody>
-            <tr><td class="unit">PRS Hollow Body II</td><td class="type">Guitar</td><td class="note">Semi-hollow, wall-mounted and ready to grab mid-session.</td></tr>
-            <tr><td class="unit">Ibanez RG300 series</td><td class="type">Guitar</td><td class="note">Fast neck, the go-to whenever a take needs speed.</td></tr>
-            <tr><td class="unit">Kala ukulele</td><td class="type">Strings</td><td class="note">Wall-mounted on the right, in reach for a quick overdub.</td></tr>
-            <tr><td class="unit">Hand drums</td><td class="type">Percussion</td><td class="note">Djembe-style hand drums for texture and rhythm parts.</td></tr>
-            <tr><td class="unit">Tube amp + cabinet</td><td class="type">Amplification</td><td class="note">Floor stack, mic'd or run direct depending on the take.</td></tr>
-            <tr><td class="unit">Pedalboard</td><td class="type">Effects</td><td class="note">Full multi-pedal board, built up over years of sessions.</td></tr>
-            <tr><td class="unit">KRK Rokit 5</td><td class="type">Monitors</td><td class="note">Matched nearfield pair, wall-mounted either side of the desk.</td></tr>
-            <tr><td class="unit">NI Komplete Kontrol</td><td class="type">MIDI controller</td><td class="note">Keyboard controller with deep Komplete integration.</td></tr>
-            <tr><td class="unit">Custom MIDI controller</td><td class="type">MIDI controller</td><td class="note">Built in-house for one-off performance control.</td></tr>
-            <tr><td class="unit">NI audio interface</td><td class="type">Interface</td><td class="note">Native Instruments interface running the whole signal chain in and out.</td></tr>
-            <tr><td class="unit">AKG mic + compressor</td><td class="type">Mic / Outboard</td><td class="note">AKG microphone run through outboard compression.</td></tr>
-            <tr><td class="unit">Lenovo ThinkPad</td><td class="type">Production PC</td><td class="note">Runs every session, start to mixdown.</td></tr>
-            <tr><td class="unit">FL Studio</td><td class="type">DAW</td><td class="note">Primary recording and production software.</td></tr>
-            <tr><td class="unit">Dirty Bass</td><td class="type">Plugin / in-house</td><td class="note">VST3 synth built here with JUCE, for gritty saturated bass — sawtooth and sub oscillator through a tanh waveshaper into a state-variable filter, eight voices. <a href="https://github.com/despite-the-finite/dirty-bass" target="_blank" rel="noopener">Source on GitHub</a>.</td></tr>
-            <tr><td class="unit">Acoustic panels</td><td class="type">Treatment</td><td class="note">Broadband absorption across the front wall.</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </section>
-
   <section id="sessions">
     <div class="wrap">
       <div class="section-head reveal">
         <h2>Projects</h2>
-        <span class="section-index">05 / CATALOG</span>
+        <span class="section-index">02 / CATALOG</span>
       </div>
       <div class="sessions reveal">
         <div class="session-row">
@@ -801,11 +799,120 @@
     </div>
   </section>
 
+  <section id="tech">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2>Studio Tech (VSTi/VSTfx)</h2>
+        <span class="section-index">03 / PLUGINS</span>
+      </div>
+      <div class="tech-grid reveal">
+        <article class="tech-card">
+          <div class="tech-head">
+            <h3 class="tech-name">Dirty Bass</h3>
+            <span class="tech-kind">VSTi · Instrument</span>
+          </div>
+          <p>A synthesiser built here for gritty, saturated bass. Each voice runs a sawtooth against a sub oscillator an octave below, pushes the pair through a tanh waveshaper for the dirt, and lands on a state-variable low-pass. Nine knobs, no menus: Drive, Cutoff, Reso, Sub, Vol and a full ADSR.</p>
+          <ul class="tech-spec">
+            <li>VST3</li>
+            <li>8 voices</li>
+            <li>JUCE</li>
+            <li>Win · macOS · Linux</li>
+          </ul>
+          <div class="tech-links">
+            <a class="btn btn-solid" href="https://github.com/despite-the-finite/dirty-bass/releases/latest" target="_blank" rel="noopener">Latest release</a>
+          </div>
+        </article>
+
+        <article class="tech-card is-fx">
+          <div class="tech-head">
+            <h3 class="tech-name">Doppler FX</h3>
+            <span class="tech-kind">VST FX · Motion</span>
+          </div>
+          <p>A motion effect that puts the signal on a source moving around a listener and hands back everything that falls out of that: the pitch bend of a shortening propagation delay, the swell as it arrives, the high end thinning as it leaves, the delay between the ears throwing it across the field. A resonant filter, a gate and a bounded feedback path push it past realism on request. Twelve factory presets, and the output stage will not send anything above 0&nbsp;dBFS to the next device in the chain.</p>
+          <ul class="tech-spec">
+            <li>VST3 · AU</li>
+            <li>Flyby · Orbit · Pendulum</li>
+            <li>Tempo sync</li>
+            <li>12 presets</li>
+          </ul>
+          <div class="tech-links">
+            <a class="btn btn-solid" href="https://github.com/despite-the-finite/Doppler-FX/releases/latest" target="_blank" rel="noopener">Latest release</a>
+          </div>
+        </article>
+      </div>
+      <p class="tech-note reveal">Both are built in-house with JUCE and released for Windows, macOS and Linux. Each download is a zip of the plugin for your platform — drop the <code>.vst3</code> into your system plugin folder and rescan. Nothing here is hosted by the studio; the releases live on GitHub.</p>
+    </div>
+  </section>
+
+  <section id="manifesto">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2>The room</h2>
+        <span class="section-index">04 / MANIFESTO</span>
+      </div>
+      <div class="manifesto reveal">
+        <p>Entropy is what happens to a signal left alone — pedals drift, amps breathe, a room has its own opinion whether you ask for one or not. We don't fight it, we mix with it. Guitars come straight off the wall, the pedalboard's been built up over years, and it all runs into a treated room and a proper monitoring setup — nothing simulated unless we choose to. We work across recording, mixing, and production, for songwriters, bands, and anyone building something track by track.</p>
+        <ul class="fact-list">
+          <li><span>Est.</span><span>2026</span></li>
+          <li><span>Location</span><span>Shared on request</span></li>
+          <li><span>Room</span><span>Converted home studio</span></li>
+          <li><span>Rig</span><span>Guitars, amps, pedalboard, DAW</span></li>
+          <li><span>Booking</span><span>By appointment</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="studio">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2>Inside the room</h2>
+        <span class="section-index">05 / THE STUDIO</span>
+      </div>
+      <figure class="studio-photo reveal">
+        <img src="img/studio.jpg" width="2400" height="729" alt="Panoramic view of the Entropic Labs studio room: an orange leather couch beneath a shuttered window, two electric guitars mounted on the left wall above an amp stack and pedalboard, and to the right a desk with dual monitors, acoustic foam panels, and a ukulele and acoustic guitar on the wall, all lit with blue and green LED lighting." loading="lazy">
+        <figcaption>The room as it stands today — guitars off the wall, pedalboard on the floor, desk running the sessions.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="gear">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2>Gear list</h2>
+        <span class="section-index">06 / PATCH SHEET</span>
+      </div>
+      <div class="gear-scroll reveal">
+        <table class="gear">
+          <thead>
+            <tr><th>Unit</th><th>Type</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="unit">PRS Hollow Body II</td><td class="type">Guitar</td><td class="note">Semi-hollow, wall-mounted and ready to grab mid-session.</td></tr>
+            <tr><td class="unit">Ibanez RG300 series</td><td class="type">Guitar</td><td class="note">Fast neck, the go-to whenever a take needs speed.</td></tr>
+            <tr><td class="unit">Kala ukulele</td><td class="type">Strings</td><td class="note">Wall-mounted on the right, in reach for a quick overdub.</td></tr>
+            <tr><td class="unit">Hand drums</td><td class="type">Percussion</td><td class="note">Djembe-style hand drums for texture and rhythm parts.</td></tr>
+            <tr><td class="unit">Tube amp + cabinet</td><td class="type">Amplification</td><td class="note">Floor stack, mic'd or run direct depending on the take.</td></tr>
+            <tr><td class="unit">Pedalboard</td><td class="type">Effects</td><td class="note">Full multi-pedal board, built up over years of sessions.</td></tr>
+            <tr><td class="unit">KRK Rokit 5</td><td class="type">Monitors</td><td class="note">Matched nearfield pair, wall-mounted either side of the desk.</td></tr>
+            <tr><td class="unit">NI Komplete Kontrol</td><td class="type">MIDI controller</td><td class="note">Keyboard controller with deep Komplete integration.</td></tr>
+            <tr><td class="unit">Custom MIDI controller</td><td class="type">MIDI controller</td><td class="note">Built in-house for one-off performance control.</td></tr>
+            <tr><td class="unit">NI audio interface</td><td class="type">Interface</td><td class="note">Native Instruments interface running the whole signal chain in and out.</td></tr>
+            <tr><td class="unit">AKG mic + compressor</td><td class="type">Mic / Outboard</td><td class="note">AKG microphone run through outboard compression.</td></tr>
+            <tr><td class="unit">Lenovo ThinkPad</td><td class="type">Production PC</td><td class="note">Runs every session, start to mixdown.</td></tr>
+            <tr><td class="unit">FL Studio</td><td class="type">DAW</td><td class="note">Primary recording and production software.</td></tr>
+            <tr><td class="unit">Acoustic panels</td><td class="type">Treatment</td><td class="note">Broadband absorption across the front wall.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
   <section id="games">
     <div class="wrap">
       <div class="section-head reveal">
         <h2>Side room</h2>
-        <span class="section-index">06 / GAME DESIGN</span>
+        <span class="section-index">07 / GAME DESIGN</span>
       </div>
       <div class="sideroom reveal">
         <p>Alongside the sessions, the studio doubles as a small game design desk — a minor function next to recording and production, but the same working method: start from noise, keep whatever holds together. The projects are browser games — an office RPG, a reading adventure, a hospital game for children, a live trivia platform — three of them playable right here.</p>
@@ -818,7 +925,7 @@
     <div class="wrap">
       <div class="section-head reveal">
         <h2>The observatory</h2>
-        <span class="section-index">07 / CURIOSITY</span>
+        <span class="section-index">08 / CURIOSITY</span>
       </div>
       <div class="sideroom dark-room reveal">
         <p>The studio is what gets made here and the side room is what gets played. The Observatory is the third one — a darker room with a chart on the ceiling, catalogued with whatever this place finds worth wondering about: cities found under the Amazon, what a tardigrade survives, why the galaxy is so quiet. It runs on the same principle as a session. Start from noise, keep whatever holds together, and be honest about how much is still unresolved.</p>
@@ -831,7 +938,7 @@
     <div class="wrap">
       <div class="section-head reveal">
         <h2>Butterfly Trails</h2>
-        <span class="section-index">08 / CONSEQUENCE</span>
+        <span class="section-index">09 / CONSEQUENCE</span>
       </div>
       <div class="sideroom warm-room reveal">
         <p>The studio is what gets made here, the side room is what gets played, and the Observatory is what gets wondered about. Butterfly Trails is the room that isn&rsquo;t about this place at all &mdash; a family archive built on one idea: that a life turns on moments too small to notice while they are happening. A decision, a coincidence, a letter that arrives on the wrong day. Every story in it is a point on a much longer path, and the room is built to show what each one led to, decades later, to people who were not born yet. The archive is still being collected, so for now most of the trail is dark. That is the honest state of it.</p>
@@ -844,7 +951,7 @@
     <div class="wrap">
       <div class="section-head reveal">
         <h2>Book time</h2>
-        <span class="section-index">09 / CONTACT</span>
+        <span class="section-index">10 / CONTACT</span>
       </div>
       <!-- No contact details live in this page. Anything a browser can show, a
            visitor (or a scraper) can read — encoding it only hides it from the
