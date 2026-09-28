@@ -4578,6 +4578,15 @@
       story: [
         'The low hum of single-engine aircraft vibrated through the warm air at the Chingola flying club, where the local family fun day was in full swing around 2001. The main event was an irresistible offer: 20 Thousand Kwacha for a spin over the open-pit copper mines in a Cessna. I had already gone up earlier that morning, captivated by the red-earth geometry of the mines far below, touching down effortlessly on the sun-baked runway without a single hitch.',
         'By late afternoon, my best friend, Stefan, unexpectedly showed up. Eager to see the town from the clouds, he wanted to head up too. The pilot was preparing for the final flight of the day and generously offered to let me tag along with Stefan for free.',
+        {
+          kind: 'image',
+          src: 'img/trails/miscalculated-touchdown.jpg',
+          alt: 'A boy in a black cap and glasses grins and gives a thumbs up from the front seat of a white Cessna with brown and gold stripes, its door open on a gravel apron. A man in a white shirt and dark trousers stands beside the plane holding a sheet of paper; someone sits in the seat behind the boy. Dry bush and a pale sky behind.',
+          caption: 'Thumbs up from the Cessna — the Chingola flying club, circa 2001.',
+          width: 1194,
+          height: 812,
+          mount: 'photo'
+        },
         'The takeoff was effortless, lifting us into a picture-perfect Zambian sky. From the window, the vast landscape glinted beneath us, and the weather couldn’t have been better. Everything about the ride was smooth and idyllic — right up until our final approach.',
         'We were barely 20 to 30 feet above the tarmac, lining up for a routine landing, when a sudden, violent gust of wind shear caught us. The Cessna veered sharply to the right, dropping out of the sky and slamming into the ground with terrifying force.',
         { kind: 'beat', text: 'Dust everywhere.' },
