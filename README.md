@@ -233,13 +233,17 @@ buttons at it — the form provider holds the address, so the page never publish
 
 1. **Donnell and McBurns: An EPC Epic** — playable in two versions, [Version 2](https://theentropic.studio/play/meridian-v2/) and [Version 1](https://theentropic.studio/play/meridian/)
 2. **Indra and the Wandering Words** — playable at [`/play/wandering-words/`](https://theentropic.studio/play/wandering-words/)
-3. **Live Trivia** — playable at [`https://trivia-game-five-lac.vercel.app`](https://trivia-game-five-lac.vercel.app), which is a different origin rather than a page on this site
+3. **Little Heroes Hospital** — playable in two versions, [Version 2](https://theentropic.studio/play/little-heroes-hospital-v2/) and [Version 1](https://theentropic.studio/play/little-heroes-hospital/)
+4. **Live Trivia** — playable at [`https://trivia-game-five-lac.vercel.app`](https://trivia-game-five-lac.vercel.app), which is a different origin rather than a page on this site
 
 The site no longer links to any game's source. Each hosted copy still records where
 it came from in its own `UPSTREAM.md`, which is what a refresh needs.
 
-Each entry is a disclosure: the catalog reads as three concise rows, and picking one
-opens its three-paragraph write-up along with its play button. That's
+Each entry is a disclosure: the catalog reads as four concise rows, and picking one
+opens a short write-up (two or three brief paragraphs: what it is, how it plays, and
+what Version 2 changed where there is one) along with its play button. Keep them
+short and in step with the hosted build — when a copy under `play/` is refreshed,
+check its write-up in both `games.html` and `m/games.html` still describes it. That's
 plain `<details>`/`<summary>`, so it needs no JavaScript and stays keyboard
 accessible.
 
