@@ -89,7 +89,10 @@
       /** Rolling log of finished activities — powers the parent dashboard. */
       activityLog: [],
 
-      settings: { speech: true, sfx: true, autoVoice: true },
+      /* voiceRate is the *baseline* speaking rate; every utterance's own rate
+         is scaled against it, so slowing the voice down slows sounding-out
+         and story narration together. */
+      settings: { speech: true, sfx: true, autoVoice: true, voiceRate: 0.85 },
 
       stats: { sessions: 0, totalCorrect: 0, totalAttempts: 0, hintsUsed: 0, playMs: 0 }
     };

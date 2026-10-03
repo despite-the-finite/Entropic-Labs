@@ -91,12 +91,19 @@
     /**
      * Distractor letters. Mixes one visually/aurally confusable letter with
      * clearly-different ones: enough challenge to be real, never a trap.
+     *
+     * `sameSoundOk: false` (the default for sound work) drops letters that
+     * make the target's sound — C and K both say /k/, so offering both and
+     * marking one wrong teaches the child that her correct answer was not.
      */
     letterDistractors: function (target, n, opts) {
       opts = opts || {};
       var tier = opts.tier || 3;
       var t = (target.char || target).toLowerCase();
       var pool = D.lettersByTier(tier).filter(function (l) { return l.char !== t; });
+      if (opts.sameSoundOk === false) {
+        pool = pool.filter(function (l) { return !D.soundsAlike(l.char, t); });
+      }
       var out = [];
 
       if (n >= 3 && !opts.noConfusable) {
@@ -151,6 +158,10 @@
         pool = D.query({ types: ['cvc', 'cvcc'], needEmoji: true, exclude: [target] });
       }
 
+      // A distractor drawn with the SAME picture as the answer makes the
+      // question unanswerable, so those are removed before anything else.
+      pool = pool.filter(function (x) { return x.emoji !== target.emoji; });
+
       // Rank by "closeness" so options are similar but never ambiguous.
       var scored = pool.map(function (x) {
         var score = 0;
@@ -160,7 +171,10 @@
         return { x: x, s: score + Math.random() * 2 };
       }).sort(function (a, b) { return b.s - a.s; });
 
-      return scored.slice(0, n).map(function (o) { return o.x; });
+      // …and no two options may share a picture with each other either.
+      return U.uniqueBy(scored.map(function (o) { return o.x; }), function (x) {
+        return x.emoji || x.word;
+      }).slice(0, n);
     },
 
     /** A picture word that starts with a given letter (for sound work). */
@@ -174,11 +188,66 @@
       return pool.length ? U.pick(pool) : null;
     },
 
-    /** A picture word that does NOT start with the given letter. */
+    /**
+     * Picture words that do NOT begin with the given letter's SOUND.
+     *
+     * Matching on the letter alone was not enough: asked for /k/ with "cat"
+     * as the answer, "kite" was a perfectly good second answer and the game
+     * called it a mistake. Anything that sounds like the target is excluded,
+     * as is anything sharing a picture with the answer or with each other.
+     */
     pictureNotStartingWith: function (letterChar, n, exclude) {
-      var pool = D.query({ types: ['picture', 'cvc'], needEmoji: true, exclude: exclude || [] })
-        .filter(function (x) { return x.word.charAt(0).toLowerCase() !== String(letterChar).toLowerCase(); });
-      return U.sample(pool, n);
+      var ex = exclude || [];
+      var exEmoji = ex.map(function (x) { return x && x.emoji; }).filter(Boolean);
+      var pool = D.query({ types: ['picture', 'cvc'], needEmoji: true, exclude: ex })
+        .filter(function (x) {
+          if (D.soundsAlike(x.word.charAt(0), letterChar)) return false;
+          return exEmoji.indexOf(x.emoji) === -1;
+        });
+      return U.uniqueBy(U.shuffle(pool), function (x) { return x.emoji; }).slice(0, n);
+    },
+
+    /* ---------------------------------------------------- sight words ---- */
+
+    /**
+     * A high-frequency word — the ones English refuses to spell sensibly, so
+     * they are learned by shape rather than sounded out. Tracked in its own
+     * mastery bucket so the parent dashboard can show them separately.
+     */
+    pickSight: function (opts) {
+      opts = opts || {};
+      var max = opts.maxDifficulty || LTR.progression.difficultyFor('sightWords');
+      var pool = D.query({ type: 'sight', maxDifficulty: max, exclude: opts.exclude || [] });
+      if (!pool.length) pool = D.query({ type: 'sight', exclude: opts.exclude || [] });
+      if (!pool.length) pool = D.query({ type: 'sight' });
+      var chosen = weightedPick(pool, 'sight', function (x) { return x.word; });
+      if (chosen) remember('words', chosen.word);
+      return chosen;
+    },
+
+    /**
+     * Other sight words to sit beside it. Words of a similar length make the
+     * child actually look at the letters instead of picking by silhouette,
+     * but a word that only differs by one letter from the target ("is"/"it")
+     * is kept to at most one, so the round stays winnable.
+     */
+    sightDistractors: function (target, n, opts) {
+      opts = opts || {};
+      var pool = D.query({ type: 'sight', exclude: [target].concat(opts.exclude || []) })
+        .filter(function (x) { return x.word.toLowerCase() !== target.word.toLowerCase(); });
+
+      function nearMiss(x) {
+        if (Math.abs(x.word.length - target.word.length) > 0) return false;
+        var diff = 0;
+        for (var i = 0; i < x.word.length; i++) {
+          if (x.word[i].toLowerCase() !== target.word[i].toLowerCase()) diff++;
+        }
+        return diff === 1;
+      }
+
+      var near = U.shuffle(pool.filter(nearMiss)).slice(0, 1);
+      var rest = U.shuffle(pool.filter(function (x) { return near.indexOf(x) === -1; }));
+      return near.concat(rest).slice(0, n);
     },
 
     /* -------------------------------------------------------- stories ---- */
@@ -186,15 +255,27 @@
       opts = opts || {};
       var max = opts.maxDifficulty || LTR.progression.difficultyFor('comprehension');
       var pool = D.storiesFor(max);
-      if (!pool.length) pool = D.stories;
+      if (opts.exclude && opts.exclude.length) {
+        var ids = opts.exclude.map(function (x) { return x && x.id; });
+        var trimmed = pool.filter(function (s) { return ids.indexOf(s.id) === -1; });
+        if (trimmed.length) pool = trimmed;
+      }
       return U.pick(pool);
     },
 
     pickSentence: function (opts) {
       opts = opts || {};
       var max = opts.maxDifficulty || LTR.progression.difficultyFor('sentenceReading');
-      var pool = D.sentences.filter(function (s) { return s.difficulty <= max; });
-      if (!pool.length) pool = D.sentences;
+      var pool = D.sentencesFor(max);
+      if (opts.exclude && opts.exclude.length) {
+        var texts = opts.exclude.map(function (x) { return x && x.text; });
+        var trimmed = pool.filter(function (s) { return texts.indexOf(s.text) === -1; });
+        if (trimmed.length) pool = trimmed;
+      }
+      if (opts.maxWords) {
+        var short = pool.filter(function (s) { return s.words.length <= opts.maxWords; });
+        if (short.length) pool = short;
+      }
       return U.pick(pool);
     }
   };

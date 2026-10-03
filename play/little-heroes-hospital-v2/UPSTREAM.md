@@ -8,7 +8,7 @@ Version 1 is preserved, untouched, alongside this one in
 redirects to the other; the games room offers both and leads with this one.
 
 - **Source:** https://github.com/despite-the-finite/Doctor-and-vet-game-2
-- **Copied at commit:** `4582652` (branch `main`)
+- **Copied at commit:** `7da0cbc` (branch `main`)
 - **Played at:** https://theentropic.studio/play/little-heroes-hospital-v2/
 
 This is the redraw. `Doctor-and-vet-game` is the first pass and still ships as
@@ -22,10 +22,16 @@ rather than anything a child sees.
 
 The game is entirely static — no build step and no dependencies. Every
 character, room, X-ray plate and microscope slide in the game is drawn as
-inline SVG and CSS, and every sound is synthesised, so there are no binary
-assets to carry across. `src/main.js` is loaded as an ES module, which needs
+inline SVG and CSS, and every sound effect is synthesised. `src/main.js` is loaded as an ES module, which needs
 `http(s)` rather than `file://`; served off GitHub Pages like this, that is
 exactly what it gets, and progress saves to `localStorage`.
+
+It opens on the Entropic Labs studio ident — the logo video with its sound,
+played full-screen by `src/ident.js` from `src/assets/entropic-ident.mp4` while the game loads underneath.
+That one MP4 (about 1.2 MB) is the copy's only binary file, carried across
+deliberately. Browsers won't start sound before the player interacts, so on a
+first visit it shows "Tap to begin"; a tap or Enter/Space/Escape skips it once
+it is playing, and `?noident` on the URL skips it entirely.
 
 Upstream now reads its dialogue aloud from pre-generated ElevenLabs clips in
 `public/audio/`, written by a Node script that needs an API key. **No clips are

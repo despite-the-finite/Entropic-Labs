@@ -42,6 +42,14 @@
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
+/* Every drawing in the game is an inline <svg viewBox="…"> with no width or
+   height attribute, so that it can scale to whatever box it is dropped into.
+   A browser lays such an element out at the replaced-element default of
+   300×150, which stretched Pip, Tock, Grumblewink, the mushrooms, the chests
+   and the bridge planks flat wherever the art was not already inside a rule
+   that happened to size it. Sizing them here, once, fixes all of them. */
+svg { display: block; width: 100%; height: auto; }
+
 html, body {
   margin: 0; padding: 0;
   height: 100%;
@@ -758,4 +766,266 @@ html, body {
   .trail { padding: .1rem .6rem; }
   .trail i { width: .7rem; height: .7rem; }
   .screen-body { padding-top: calc(.3rem + var(--safe-t)); padding-bottom: calc(.3rem + var(--safe-b)); }
+}
+
+/* ==========================================================================
+   Reading-free interface
+   Everything below exists so a child who cannot read a single word can still
+   see where to tap, hear what a thing is, and never get stuck.
+   ========================================================================== */
+
+/* Big picture-first buttons: the glyph is the label, the word is a footnote
+   for the grown-up reading over her shoulder. */
+.btn.btn-glyph {
+  flex-direction: column;
+  gap: .1em;
+  padding: .55em 1.2em;
+  line-height: 1.05;
+}
+.btn.btn-glyph .g {
+  font-size: 1.55em;
+  line-height: 1;
+  filter: drop-shadow(0 .12rem .2rem rgba(0,0,0,.25));
+}
+.btn.btn-glyph .l {
+  font-size: .62em;
+  letter-spacing: .01em;
+  opacity: .95;
+}
+.btn.btn-huge.btn-glyph .g { font-size: 1.7em; }
+
+/* The "say it again" ear, in the same corner of every screen. */
+.icon-btn.ear {
+  background: linear-gradient(#ffe0b0, #ffbd6b);
+  box-shadow: 0 .3rem 0 #cf8a33, var(--shadow-soft);
+}
+.icon-btn.ear:active { box-shadow: 0 .04rem 0 #cf8a33; }
+
+/* The pointing hand. Positioned in page coordinates by guide.js and kept
+   glued to its target every frame, so it follows bobbing fireflies too. */
+.guide-hand {
+  position: fixed;
+  z-index: 88;
+  pointer-events: none;
+  font-size: clamp(2.2rem, 8vw, 3.4rem);
+  line-height: 1;
+  transform: translate(-50%, .1rem);
+  filter: drop-shadow(0 .3rem .5rem rgba(0,0,0,.4));
+  animation: handTap 1.15s ease-in-out infinite;
+}
+.guide-hand.above {
+  transform: translate(-50%, -110%) rotate(180deg);
+}
+
+/* Whatever the hand is pointing at gets a halo, because a hand alone is easy
+   to miss on a busy forest background. */
+.guide-target {
+  position: relative;
+  animation: guideHalo 1.4s ease-in-out infinite;
+  z-index: 12;
+}
+
+/* A gentle "tap me" heartbeat for the one thing a scene wants next. */
+.tap-me { animation: tapMe 1.8s ease-in-out infinite; }
+
+/* Story scenes: an unmissable continue affordance that is a shape, not a word */
+.beat-next {
+  display: flex; align-items: center; justify-content: center; gap: .5rem;
+  margin-top: .55rem;
+}
+.speech .tap-on {
+  display: flex; align-items: center; justify-content: center; gap: .4rem;
+  margin-top: .45rem;
+  font-size: var(--fs-small); color: var(--ink-soft); font-weight: 700;
+  animation: bob 1.6s ease-in-out infinite;
+}
+
+/* The word being spoken lights up as the voice reaches it, so a child can
+   follow along and start to connect sound with shape. */
+.speech .line .w { transition: color .15s ease, background .15s ease; border-radius: .3rem; padding: 0 .06em; }
+.speech .line .w.lit { color: var(--magic-deep); background: rgba(255,215,94,.7); }
+
+/* Map: a chapter is a picture and a number of stars, never a paragraph. */
+.region .prog {
+  display: flex; gap: .1rem; font-size: .34em; margin-top: .1rem;
+  filter: drop-shadow(0 .06rem .1rem rgba(0,0,0,.25));
+}
+.region .num {
+  position: absolute; left: -.3rem; top: -.3rem;
+  width: 1.6em; height: 1.6em; font-size: .38em;
+  border-radius: 50%; display: grid; place-items: center;
+  background: linear-gradient(#a58cff, #6b46d6); color: #fff; font-weight: 900;
+  box-shadow: var(--shadow-soft);
+}
+
+/* Book tabs become pictures with a small caption. */
+.book-tab .tg { font-size: 1.35em; line-height: 1; display: block; }
+.book-tab { display: flex; flex-direction: column; align-items: center; gap: .05rem; min-width: 3.6rem; }
+
+/* Character creator: rows are labelled by a picture, not a word. */
+.cc-row .lbl {
+  width: 2.6rem; font-size: 1.35rem; text-align: center;
+  display: grid; place-items: center;
+}
+
+/* Sentence games: word cards that sit on a line like real print. */
+.sent-slots, .sent-tray {
+  display: flex; flex-wrap: wrap; gap: clamp(.25rem, 1.4vw, .55rem);
+  justify-content: center; align-items: center;
+  max-width: min(46rem, 96vw);
+}
+.sent-slot {
+  min-width: clamp(3.2rem, min(16vw, 13vh), 6.5rem);
+  height: clamp(2.8rem, min(13vw, 11vh), 4.6rem);
+  border-radius: .9rem;
+  background: rgba(255,255,255,.45);
+  border: .2rem dashed rgba(91,63,189,.5);
+  display: grid; place-items: center;
+  font-size: clamp(1rem, min(4.4vw, 4vh), 1.8rem);
+  font-weight: 900; color: var(--magic-deep);
+  padding: 0 .4rem;
+}
+.sent-slot.filled {
+  background: linear-gradient(#fffdf6, #ffe9bf);
+  border: .2rem solid #ffd75e;
+}
+.word-card.choice {
+  min-width: clamp(3.4rem, min(17vw, 14vh), 7rem);
+  min-height: clamp(2.8rem, min(13vw, 11vh), 4.6rem);
+  padding: .3rem .6rem;
+}
+.word-card .txt { font-size: clamp(1rem, min(4.4vw, 4vh), 1.8rem); letter-spacing: .02em; }
+
+/* Sight-word signposts along the village path. */
+.signpost { display: flex; flex-direction: column; align-items: center; }
+.signpost .post { width: .7rem; background: #a8703f; border-radius: .2rem; }
+
+/* A full-screen "all done, nothing to do here" never happens: every dead end
+   gets this card with a way onward. */
+.dead-end { text-align: center; }
+
+/* --- pieces introduced by the reading-free rebuild ------------------------- */
+
+/* The ear's fixed corner. Same place on every screen, on every device: it is
+   attached by the screen manager, not by individual screens, so it cannot be
+   forgotten and cannot be squeezed off the edge by a crowded HUD. */
+.floating-ear {
+  position: absolute; right: .6rem; bottom: calc(.6rem + var(--safe-b));
+  z-index: 72;
+}
+.floating-ear .icon-btn { box-shadow: 0 .3rem 0 #cf8a33, var(--shadow-pop); }
+
+/* Character creator */
+.cc-title {
+  font-size: var(--fs-big); font-weight: 900; color: #fff;
+  text-shadow: 0 .16rem 0 #6b46d6, 0 .4rem 1rem rgba(0,0,0,.3);
+  text-align: center;
+}
+.cc-pip-hint {
+  background: rgba(255,253,246,.95); border-radius: 999px;
+  padding: .3rem 1rem; font-weight: 800; font-size: var(--fs-small);
+  box-shadow: var(--shadow-soft); text-align: center; max-width: 90vw;
+}
+.cc-row button.lbl {
+  appearance: none; border: 0; cursor: pointer; font: inherit;
+  background: transparent; padding: 0; line-height: 1;
+}
+.cc-row button.lbl:active { transform: scale(.9); }
+.cc-name {
+  font: inherit; font-weight: 900; font-size: var(--fs-mid); text-align: center;
+  border: 0; border-radius: 999px; padding: .35rem .9rem; width: 9rem;
+  box-shadow: var(--shadow-soft); background: #fff; color: var(--ink);
+}
+
+/* Map banner */
+.map-title {
+  position: absolute; left: 50%; top: 3%; transform: translateX(-50%);
+  font-weight: 900; font-size: var(--fs-mid); color: #6b4a20;
+  background: rgba(255,248,233,.85); padding: .2rem 1rem; border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* Scene cards */
+.scene-title {
+  font-size: var(--fs-small); color: var(--magic-deep);
+  font-weight: 900; letter-spacing: .05em;
+}
+
+/* Sentence Match: the sentence is tappable word by word. */
+.sentence-line {
+  font-size: var(--fs-mid); font-weight: 800; line-height: 1.5;
+  color: var(--ink); text-align: center;
+}
+.sentence-line .w {
+  display: inline-block; cursor: pointer;
+  padding: .05em .18em; border-radius: .35rem;
+  transition: background .15s ease, color .15s ease, transform .15s ease;
+}
+.sentence-line .w:active { transform: scale(.94); }
+.sentence-line .w.lit { background: rgba(255,215,94,.8); color: var(--magic-deep); }
+
+/* Book tabs: picture above, small caption below. */
+.book-tab .tl { font-size: .74em; line-height: 1; opacity: .9; }
+
+/* A scene's own text, word by word, for the karaoke highlight. */
+.speech .line { font-size: var(--fs-mid); font-weight: 700; line-height: 1.4; }
+
+/* Landscape phones: the new chrome has to give ground too. */
+@media (max-height: 500px) {
+  .btn.btn-glyph .l { display: none; }
+  .book-tab .tl { display: none; }
+  .cc-title { font-size: var(--fs-mid); }
+  .cc-pip-hint { display: none; }
+  .guide-hand { font-size: clamp(1.6rem, 6vh, 2.4rem); }
+  .sent-slot { height: clamp(2.2rem, 11vh, 3.6rem); font-size: clamp(.85rem, 4.5vh, 1.4rem); }
+  .word-card.choice { min-height: clamp(2.2rem, 11vh, 3.6rem); }
+}
+
+/* The "tap to wake the book" gate on a cold start. Browsers block audio until
+   a gesture, and every instruction in this game is spoken, so the first screen
+   asks for that gesture in the only language a pre-reader has: a big hand. */
+.waker {
+  position: absolute; inset: 0; z-index: 75;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: .8rem;
+  background: rgba(20, 14, 40, .55);
+  backdrop-filter: blur(2px);
+  transition: opacity .35s ease;
+  cursor: pointer;
+}
+.waker.gone { opacity: 0; pointer-events: none; }
+.waker-glyph {
+  font-size: clamp(3.5rem, 18vw, 7rem); line-height: 1;
+  filter: drop-shadow(0 .4rem .8rem rgba(0,0,0,.5));
+  animation: handTap 1.1s ease-in-out infinite;
+  transform-origin: 50% 50%;
+}
+.waker-text {
+  color: #ffe9b8; font-weight: 900; font-size: var(--fs-mid);
+  text-shadow: 0 .14rem 0 #6b46d6, 0 .4rem 1rem rgba(0,0,0,.4);
+  text-align: center; max-width: 80vw;
+}
+
+/* Very small phones: the HUD is a single row of fixed-size buttons, so at
+   320px it used to push its last button off the right edge — the Adventure
+   Book became unreachable. Everything in the row is allowed to shrink, and
+   the Reading Power bar (the only decorative item) gives way first. */
+.hud { min-width: 0; flex-wrap: nowrap; }
+.hud > * { flex-shrink: 0; }
+.hud .spacer { flex: 1 1 auto; min-width: 0; }
+
+@media (max-width: 380px) {
+  :root { --tap: 3.2rem; }
+  .hud { gap: .22rem; padding-left: .3rem; padding-right: .3rem; }
+  .hud .power .bar { display: none; }
+  .hud .power { padding: .2rem .35rem; }
+  .hud-chip { padding: .2rem .4rem .2rem .3rem; font-size: .72rem; }
+  .hud-chip .emo { font-size: 1.15em; }
+}
+
+/* Decorative characters that share a play area with the puzzle. They make the
+   scene feel inhabited, but on a short landscape screen the puzzle comes
+   first, so they step aside rather than pushing it off the bottom. */
+@media (max-height: 560px) {
+  .companion { display: none; }
 }

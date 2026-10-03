@@ -108,7 +108,7 @@
   };
 
   function refresh() {
-    if (LTR.ui.currentScreen) LTR.ui.go(LTR.ui.currentScreen, {});
+    LTR.ui.refresh();
   }
 
   /* ----------------------------------------------------------- the panel -- */
@@ -177,7 +177,7 @@
       chRow.appendChild(btn('go ' + c.id, function () {
         LTR.state.unlockChapter(c.id);
         LTR.state.data.progress.currentChapter = c.id;
-        LTR.ui.go(c.preview ? 'preview' : 'chapter', { chapter: c.id });
+        LTR.ui.go(c.nodes && c.nodes.length ? 'chapter' : 'preview', { chapter: c.id });
       }));
     });
     LTR.data.chapters.forEach(function (c) {
@@ -236,9 +236,10 @@
         LTR.ui.modal({
           title: 'Dev run finished',
           body: t.correct + ' / ' + t.total + ' clean · ' + t.hintsUsed + ' hints · ' + t.misses + ' misses',
+          speak: false,
           actions: [
-            { label: 'Again', value: 'again', style: 'btn-leaf' },
-            { label: 'Map', value: 'map', style: 'btn-cream' }
+            { label: 'Again', glyph: '🔁', value: 'again', style: 'btn-leaf' },
+            { label: 'Map', glyph: '🗺️', value: 'map', style: 'btn-cream' }
           ]
         }).then(function (v) {
           if (v === 'again') LTR.ui.go('devplay', params);

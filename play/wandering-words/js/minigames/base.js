@@ -152,6 +152,10 @@
               function () { return typeof round.speak.text === 'function' ? round.speak.text() : round.speak.text; },
               round.speak.kind
             ));
+          } else {
+            // No round goes without a speaker: the bar must never be a wall of
+            // text with no way to hear it.
+            speakerSlot.appendChild(LTR.ui.earButton());
           }
 
           /* ------------------------------------------------- the API ---- */
@@ -216,6 +220,9 @@
             state.resolved = true;
             tally.total += 1;
             hintBtn.disabled = true;
+            LTR.guide.watchIdle(null);
+            LTR.guide.unpoint();
+            LTR.audio.stop();
 
             var clean = state.misses === 0 && state.hintLevel === 0;
             if (state.misses === 0) tally.correct += 1;
@@ -237,6 +244,16 @@
               ? (LTR.progression.skill(skill).streak >= 3 ? U.pick(PRAISE_BIG) : U.pick(PRAISE))
               : U.pick(['You got it!', 'There it is!', 'Yes — that\'s the one!']);
             LTR.ui.cheer(msg, 'good', wrap);
+            // Praise she can hear. A flash of green text says nothing at all
+            // to someone who cannot read it.
+            U.later(240, function () {
+              LTR.audio.speak(msg.replace('—', ''), { rate: .9, pitch: 1.25 });
+              // Then the thing she just read, so the win and the word connect.
+              if (round.sayOnSolve !== false) {
+                if (round.bucket === 'letters' && round.key) LTR.audio.letterName(round.key);
+                else if (round.key && round.key.length <= 12) LTR.audio.word(round.key);
+              }
+            });
 
             var result = LTR.progression.recordAnswer({
               skill: skill,
@@ -277,7 +294,10 @@
                 node.disabled = true;
               });
             }
-            LTR.ui.cheer(U.pick(NUDGE), 'soft', wrap);
+            var nudge = U.pick(NUDGE);
+            LTR.ui.cheer(nudge, 'soft', wrap);
+            LTR.audio.stop();
+            LTR.audio.speak(nudge.replace('…', ''), { rate: .9, pitch: 1.15 });
             if (round.onMiss) { try { round.onMiss(api, node); } catch (e) {} }
 
             // After two wobbles, quietly light the answer so she always wins.
@@ -320,6 +340,8 @@
               right.el.classList.add('is-hinted');
               wrongs.forEach(function (c) { c.el.style.opacity = '.4'; });
               LTR.ui.cheer('It\'s this one — tap it!', 'soft', wrap);
+              LTR.audio.speak('It is this one. Tap the glowing one!', { rate: .82 });
+              LTR.guide.point(right.el);
             }
           }
 
@@ -340,7 +362,10 @@
             if (level >= 3) hintBtn.disabled = true;
           }
 
-          hintBtn.onclick = function () { applyHint(); };
+          hintBtn.onclick = function () {
+            LTR.audio.stop();
+            applyHint();
+          };
 
           /* ------------------------------------------------- go! -------- */
           try {
@@ -353,23 +378,46 @@
           if (round.onReady) { try { round.onReady(api); } catch (e) {} }
 
           /* Spoken cue. A four-year-old cannot read the instruction bar, so
-             each round says its CUE out loud once — "catch the letter M",
-             "which one starts with sss". Never the answer: games where the
-             written word IS the answer (Treasure Cave, Story Detective) only
-             ever speak a generic instruction. Turn it off in the Parent Zone
-             and the speaker buttons still work on demand. */
-          var st = LTR.state.data.settings;
-          if (round.autoVoice && st.speech !== false && st.autoVoice !== false) {
-            U.later(520, function () {
-              if (state.resolved) return;
-              var v = round.autoVoice;
-              if (typeof v === 'string') LTR.audio.sentence(v);
-              else if (v.kind === 'letterName') LTR.audio.letterName(v.text);
-              else if (v.kind === 'letterSound') LTR.audio.letterSound(v.text);
-              else if (v.kind === 'word') LTR.audio.word(v.text);
-              else LTR.audio.sentence(v.text);
-            });
-          }
+             EVERY round says its cue out loud — "catch the letter M", "which
+             one starts with sss". Never the answer: games where the written
+             word IS the answer (Treasure Cave, Story Detective) fall back to a
+             generic instruction instead of reading the word out. A game that
+             forgets to supply a cue gets its prompt read, so no round is ever
+             silent. Turn it off in the Parent Zone and the speaker buttons
+             still work on demand. */
+          var cue = cueScript(round);
+          LTR.guide.narrate(cue, {
+            delay: 460,
+            silent: !(round.autoVoice || round.prompt),
+            target: null,
+            idleAfter: 12000,
+            say: cue
+          });
+
+          /* Nobody is coming to help. If she has been stuck and silent for a
+             long time, the game quietly walks her to the answer — a child who
+             cannot finish a round cannot leave it either. */
+          U.later(30000, function () {
+            if (state.resolved) return;
+            applyHint(3, false);
+            var right = state.choices.filter(function (c) { return c.correct; })[0];
+            if (right) LTR.guide.point(right.el);
+          });
+        }
+
+        /**
+         * What this round should say out loud, as an audio.script() list.
+         * Prefers the game's own cue, falls back to the written prompt.
+         */
+        function cueScript(round) {
+          var v = round.autoVoice;
+          if (!v) return round.prompt ? [{ text: round.prompt, rate: .8 }] : [];
+          if (typeof v === 'string') return [{ text: v, rate: .8 }];
+          if (v.kind === 'letterName') return [{ letterName: v.text }];
+          if (v.kind === 'letterSound') return [{ letterSound: v.text }];
+          if (v.kind === 'word') return [{ word: v.text }];
+          if (Array.isArray(v)) return v;
+          return [{ text: v.text, rate: .8 }];
         }
 
         nextRound();

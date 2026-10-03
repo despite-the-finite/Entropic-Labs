@@ -1,6 +1,9 @@
 # assets/
 
-Deliberately empty.
+Almost empty: the only shipped asset is `video/entropic-ident.mp4`, the
+Entropic Labs opening ident (played by `js/ident.js`).
+
+Everything else is deliberate:
 
 Every character, prop and backdrop in the game is drawn as inline SVG
 (`js/art.js`) or painted with CSS gradients (`css/styles.css`), and every

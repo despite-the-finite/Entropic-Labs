@@ -4,14 +4,20 @@ This directory is a copy of the reading game, served from this site so the
 **Play it now** button on `games.html` works in a browser with no setup.
 
 - **Source:** https://github.com/despite-the-finite/Learn-to-Read
-- **Copied at commit:** `4f0e8e99c8009f22c4fec61643dc6a309d9e3a0b`
+- **Copied at commit:** `2041d74` (branch `main`)
 - **Played at:** https://despite-the-finite.github.io/Entropic-Labs/play/wandering-words/
 
 The game is entirely static — classic `<script>` tags, no frameworks, no build
 step, and no network calls of any kind. Every character and prop is inline SVG
-and every sound is synthesised, so `assets/` is empty by design and there is
-nothing to carry across. Served over HTTP like this, progress saves to
-`localStorage` on every platform.
+and every sound effect is synthesised. Served over HTTP like this, progress
+saves to `localStorage` on every platform.
+
+It opens on the Entropic Labs studio ident — the logo video with its sound,
+played full-screen by `js/ident.js` from `assets/video/entropic-ident.mp4` while the game loads underneath.
+That one MP4 (about 1.2 MB) is the copy's only binary file, carried across
+deliberately. Browsers won't start sound before the player interacts, so on a
+first visit it shows "Tap to begin"; a tap or Enter/Space/Escape skips it once
+it is playing, and `?noident` on the URL skips it entirely.
 
 ## Refreshing this copy
 

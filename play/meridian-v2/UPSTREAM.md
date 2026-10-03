@@ -8,7 +8,7 @@ are independently playable and neither redirects to the other; the games room
 offers both and leads with this one.
 
 - **Source:** https://github.com/despite-the-finite/Work-Video-Game-Meridian-2
-- **Copied at commit:** `866d396c9d0a3b9a17144fb4dfd45136f53c1915` (branch `main`)
+- **Copied at commit:** `14894dc` (branch `main`)
 - **Played at:** https://theentropic.studio/play/meridian-v2/
 
 This is the graphical overhaul. `Work-Video-Game-Meridian` is the first pass and
@@ -24,8 +24,14 @@ The game is entirely static — relative paths, no build step, and Phaser 3 is
 vendored in `src/vendor/` (MIT) rather than loaded from a CDN — so it runs as-is
 off GitHub Pages. Where V1 drew every sprite at boot through Phaser's Graphics
 API, V2 bakes its art ahead of time and ships it as data URIs inside
-`src/art/atlas_*.js`, so there are still no image files to carry across; the
-whole copy is HTML, CSS and JavaScript.
+`src/art/atlas_*.js`, so there are still no image files to carry across.
+
+It opens on the Entropic Labs studio ident — the logo video with its sound,
+played full-screen by `src/ident.js` from `src/media/entropic-ident.mp4` while the game loads underneath.
+That one MP4 (about 1.2 MB) is the copy's only binary file, carried across
+deliberately. Browsers won't start sound before the player interacts, so on a
+first visit it shows "Tap to begin"; a tap or Enter/Space/Escape skips it once
+it is playing, and `?noident` on the URL skips it entirely.
 
 The one thing it fetches from the network is its two display faces (Barlow
 Condensed and Barlow) from Google Fonts. That is a progressive enhancement

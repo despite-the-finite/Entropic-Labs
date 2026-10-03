@@ -27,7 +27,9 @@
 
       var n = Math.max(2, ctx.choiceCount);
       var others = LTR.reading.letterDistractors(target, n - 1, {
-        tier: Math.max(2, LTR.progression.letterTierFor(ctx.skill))
+        tier: Math.max(2, LTR.progression.letterTierFor(ctx.skill)),
+        // In sound mode, a C and a K on screen together both answer "kuh".
+        sameSoundOk: soundMode ? false : undefined
       });
 
       // Case: start with capitals only, mix in lowercase as she gets stronger.
@@ -49,9 +51,12 @@
           text: target.char,
           kind: soundMode ? 'letterSound' : 'letterName'
         },
+        /* Said as a script rather than one sentence: several speech engines
+           read a lone "A" as the article "uh", which is exactly the sound a
+           child must not hear when she is being asked for the letter's name. */
         autoVoice: soundMode
-          ? 'Catch the firefly that says ' + target.say
-          : 'Catch the letter ' + target.char.toUpperCase(),
+          ? [{ text: 'Catch the firefly that says', rate: .82 }, { letterSound: target.char }]
+          : [{ text: 'Catch the letter', rate: .82 }, { letterName: target.char }],
 
         render: function (area, api) {
           // A frame that fills whatever room is left, with the fireflies
@@ -71,7 +76,10 @@
                 position: 'absolute',
                 left: pos[0] + '%', top: pos[1] + '%',
                 transform: 'translate(-50%,-50%)',
-                width: 'clamp(4.2rem, min(21vw, 19vh), 8.5rem)',
+                // Two fireflies on a big screen looked abandoned; the fewer
+                // there are, the bigger each one gets.
+                width: 'clamp(4.2rem, min(' + (16 + (5 - all.length) * 3) + 'vw, ' +
+                       (15 + (5 - all.length) * 3) + 'vh), ' + (7 + (5 - all.length) * .8) + 'rem)',
                 minWidth: '0', minHeight: '0',
                 aspectRatio: '1 / 1',
                 borderRadius: '50%',

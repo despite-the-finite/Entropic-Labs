@@ -42,7 +42,12 @@
         solvedDelay: 1600,
         prompt: 'Build the word!',
         speak: { text: word.word, kind: 'word' },
-        autoVoice: { text: 'Build the word ' + word.word, kind: 'sentence' },
+        autoVoice: [
+          { text: 'Build the word', rate: .82 },
+          { word: word.word },
+          { pause: 200 },
+          { word: word.word }
+        ],
 
         render: function (area, api) {
           /* the thing we are making */
